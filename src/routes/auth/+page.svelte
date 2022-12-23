@@ -100,14 +100,14 @@
 
   {#if isLogin}
     <a
-      href="/auth"
+      href="/"
       on:click={() => {
         isLogin = !isLogin
       }}>Don't have an account? Click here to create an account.</a
     >
   {:else}
     <a
-      href="/auth"
+      href="/"
       on:click={() => {
         isLogin = !isLogin
       }}>Already have an account? Click here to sign in.</a

@@ -1,11 +1,16 @@
 <script lang="ts">
-  import Nav from '$lib/components/Nav.svelte'
+  import Nav from '../lib/components/Nav.svelte'
+  import Auth from './auth/+page.svelte'
+  import Dashboard from './dashboard/+page.svelte'
   import '../app.css'
+  import { Container } from 'sveltestrap/src'
   import { onMount } from 'svelte'
   // Import the functions you need from the SDKs you need
   import { initializeApp } from 'firebase/app'
   import { getAnalytics } from 'firebase/analytics'
-  import 'firebase/auth'
+  import { getAuth, onAuthStateChanged } from 'firebase/auth'
+
+  let isLoggedIn = true
 
   onMount(() => {
     const firebaseConfig = {
@@ -19,10 +24,24 @@
     }
     const app = initializeApp(firebaseConfig)
     const analytics = getAnalytics(app)
+
+    onAuthStateChanged(getAuth(), user => {
+      if (user) {
+        isLoggedIn = true
+      } else {
+        isLoggedIn = false
+      }
+    })
   })
 </script>
 
-<Nav />
-<main class="mt-20 px-dynamic">
-  <slot />
-</main>
+{#if isLoggedIn}
+  <Nav />
+  <main class="mt-20 px-dynamic">
+    <Dashboard />
+  </main>
+{:else}
+  <main class="mt-20 px-dynamic">
+    <Auth />
+  </main>
+{/if}

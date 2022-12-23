@@ -1,4 +1,5 @@
 <script>
+  import { getAuth, signOut } from 'firebase/auth'
   let open = false
 </script>
 
@@ -27,7 +28,14 @@
   {#if open}
     <div class="absolute top-12 right-0 bg-white rounded-md border border-gray-400 py-2 w-36">
       <a class="block hover:bg-gray-200 py-2 px-6 w-full" href="/profile">Profile</a>
-      <a class="block hover:bg-gray-200 py-2 px-6 w-full" href="/logout">Logout</a>
+      <a
+        class="block hover:bg-gray-200 py-2 px-6 w-full"
+        href="/auth"
+        on:click={() => {
+          const auth = getAuth()
+          signOut(auth)
+        }}>Logout</a
+      >
     </div>
   {/if}
 </div>
