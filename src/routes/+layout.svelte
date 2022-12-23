@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Nav from '$lib/components/Nav.svelte'
   import '../app.css'
   import { Container } from 'sveltestrap/src'
   import { onMount } from 'svelte'
@@ -22,6 +23,7 @@
   })
 </script>
 
-<Container>
+<Nav />
+<main class="mt-20 px-dynamic">
   <slot />
-</Container>
+</main>

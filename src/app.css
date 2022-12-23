@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .p-dynamic {
+    padding: calc((100vw + 5rem) / 21);
+  }
+  .px-dynamic {
+    padding-right: calc((100vw + 5rem) / 21);
+    padding-left: calc((100vw + 5rem) / 21);
+  }
+  .py-dynamic {
+    padding-top: calc((100vw + 5rem) / 21);
+    padding-bottom: calc((100vw + 5rem) / 21);
+  }
+  .m-dynamic {
+    margin: calc((100vw + 5rem) / 21);
+  }
+  .mx-dynamic {
+    margin-right: calc((100vw + 5rem) / 21);
+    margin-left: calc((100vw + 5rem) / 21);
+  }
+  .my-dynamic {
+    margin-top: calc((100vw + 5rem) / 21);
+    margin-bottom: calc((100vw + 5rem) / 21);
+  }
+  .shadow-b {
+    box-shadow: 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+}
