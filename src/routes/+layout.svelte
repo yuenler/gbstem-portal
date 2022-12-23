@@ -1,5 +1,10 @@
 <script>
   import '../app.css'
+  import Nav from '$lib/components/Nav.svelte'
 </script>
 
-<slot />
+<Nav />
+
+<main class="mt-20 px-dynamic">
+  <slot />
+</main>
