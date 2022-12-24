@@ -60,56 +60,58 @@
     crossorigin="anonymous"
   ></script>
 
-  <div class="mt-5">
+  <div class="w-50 mx-auto">
+    <div class="mt-5">
+      {#if isLogin}
+        <h1>Login</h1>
+      {:else}
+        <h1>Create account</h1>
+      {/if}
+    </div>
+
+    <form>
+      <div class="form-group">
+        <label for="email" class="mt-3">Email</label>
+        <input type="email" class="form-control" id="email" bind:value={email} />
+      </div>
+      <div class="form-group">
+        <label for="password" class="mt-3">Password</label>
+        <input type="password" class="form-control" id="password" bind:value={password} />
+      </div>
+      {#if !isLogin}
+        <div class="form-group">
+          <label for="password-confirmation" class="mt-3">Password Confirmation</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password-confirmation"
+            bind:value={passwordConfirmation}
+          />
+        </div>
+      {/if}
+      <button
+        type="submit"
+        class="btn btn-primary mt-3 mb-3"
+        on:click={() => {
+          onSubmit()
+        }}>Submit</button
+      >
+    </form>
+
     {#if isLogin}
-      <h1>Login</h1>
+      <a
+        href="/"
+        on:click={() => {
+          isLogin = !isLogin
+        }}>Don't have an account? Click here to create an account.</a
+      >
     {:else}
-      <h1>Create account</h1>
+      <a
+        href="/"
+        on:click={() => {
+          isLogin = !isLogin
+        }}>Already have an account? Click here to sign in.</a
+      >
     {/if}
   </div>
-
-  <form>
-    <div class="form-group">
-      <label for="email" class="mt-3">Email</label>
-      <input type="email" class="form-control" id="email" bind:value={email} />
-    </div>
-    <div class="form-group">
-      <label for="password" class="mt-3">Password</label>
-      <input type="password" class="form-control" id="password" bind:value={password} />
-    </div>
-    {#if !isLogin}
-      <div class="form-group">
-        <label for="password-confirmation" class="mt-3">Password Confirmation</label>
-        <input
-          type="password"
-          class="form-control"
-          id="password-confirmation"
-          bind:value={passwordConfirmation}
-        />
-      </div>
-    {/if}
-    <button
-      type="submit"
-      class="btn btn-primary mt-3 mb-3"
-      on:click={() => {
-        onSubmit()
-      }}>Submit</button
-    >
-  </form>
-
-  {#if isLogin}
-    <a
-      href="/"
-      on:click={() => {
-        isLogin = !isLogin
-      }}>Don't have an account? Click here to create an account.</a
-    >
-  {:else}
-    <a
-      href="/"
-      on:click={() => {
-        isLogin = !isLogin
-      }}>Already have an account? Click here to sign in.</a
-    >
-  {/if}
 </div>

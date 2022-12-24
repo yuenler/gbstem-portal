@@ -242,24 +242,31 @@
 
     <div class="form-group mt-3">
       <label for="role" class="form-label">What do you see as your role on a hackathon team?</label>
-      <input type="text" class="form-control" id="role" placeholder="Role" />
+      <textarea
+        rows="5"
+        type="text"
+        class="form-control"
+        id="role"
+        placeholder="150 words max..."
+      />
     </div>
 
     <div class="form-group mt-3">
       <label for="proud" class="form-label"
         >What's something you've made that you're proud of?</label
       >
-      <input type="text" class="form-control" id="proud" placeholder="Something you're proud of" />
+      <textarea
+        rows="5"
+        type="text"
+        class="form-control"
+        id="proud"
+        placeholder="150 words max..."
+      />
     </div>
 
     <div class="form-group mt-3">
-      <label for="hacking" class="form-label">What’s something you want to try hacking?</label>
-      <input
-        type="text"
-        class="form-control"
-        id="hacking"
-        placeholder="Something you want to try hacking"
-      />
+      <label for="why" class="form-label">Why do you want to come to HackHarvard?</label>
+      <textarea rows="5" type="text" class="form-control" id="why" placeholder="150 words max..." />
     </div>
 
     <div class="form-group mt-3">
