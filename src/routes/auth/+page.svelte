@@ -37,7 +37,6 @@
           // Signed in
           const user = userCredential.user
           alert('Signed up successfully')
-          // navigate to home page
         })
         .catch(error => {
           const errorCode = error.code

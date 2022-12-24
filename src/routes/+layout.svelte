@@ -11,6 +11,7 @@
   import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
   let isLoggedIn = true
+  let isEmailVerified = false
 
   onMount(() => {
     const firebaseConfig = {
@@ -28,6 +29,10 @@
     onAuthStateChanged(getAuth(), user => {
       if (user) {
         isLoggedIn = true
+        isEmailVerified = user.emailVerified
+        if (!isEmailVerified) {
+          alert('Please verify your email address. But imma just let you in anyway for now.')
+        }
       } else {
         isLoggedIn = false
       }
@@ -38,7 +43,7 @@
 {#if isLoggedIn}
   <Nav />
   <main class="mt-20 px-dynamic">
-    <Dashboard />
+    <slot />
   </main>
 {:else}
   <main class="mt-20 px-dynamic">

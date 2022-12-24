@@ -9,6 +9,10 @@
       href: '/dashboard'
     },
     {
+      name: 'Apply',
+      href: '/apply'
+    },
+    {
       name: 'Group',
       href: '/group'
     }
