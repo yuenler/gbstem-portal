@@ -30,7 +30,7 @@
       <a class="block hover:bg-gray-200 py-2 px-6 w-full" href="/profile">Profile</a>
       <a
         class="block hover:bg-gray-200 py-2 px-6 w-full"
-        href="/auth"
+        href="/"
         on:click={() => {
           const auth = getAuth()
           signOut(auth)
