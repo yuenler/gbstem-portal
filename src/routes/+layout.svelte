@@ -1,6 +1,5 @@
 <script lang="ts">
   import Nav from '../lib/components/Nav.svelte'
-  import Auth from './auth/+page.svelte'
   import '../app.css'
   import { onMount } from 'svelte'
   import { initializeApp } from 'firebase/app'
@@ -37,7 +36,7 @@
 
 <Nav />
 <div class="flex flex-col min-h-screen">
-  <main class="mt-20 p-dynamic grow">
+  <main class="mt-20 px-dynamic py-8 grow">
     <slot />
   </main>
   <Footer />
