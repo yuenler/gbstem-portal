@@ -21,7 +21,7 @@
     measurementId: 'G-N72ZTKXS9Y'
   }
   const app = initializeApp(firebaseConfig)
-  const analytics = getAnalytics(app)
+  //   const analytics = getAnalytics(app)
 
   onMount(() => {
     onAuthStateChanged(getAuth(), user => {
