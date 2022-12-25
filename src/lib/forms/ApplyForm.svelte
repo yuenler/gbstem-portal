@@ -98,9 +98,9 @@
         bind:value={values.academic.graduationYear}
         placeholder="Graduation year"
         maskOptions={{
-          mask: '{2\0}#0',
+          mask: '{2\\0}#0',
           definitions: {
-            '#': /[2-9]/
+            '#': /^[2-9]$/
           }
         }}
         floating
