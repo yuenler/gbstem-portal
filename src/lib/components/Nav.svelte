@@ -35,7 +35,7 @@
 <svelte:window on:scroll={updateShadow} />
 <nav
   class={classNames(
-    'fixed top-0 left-0 z-10 bg-white h-20 flex items-center w-full px-dynamic justify-between transition-all border-b',
+    'fixed top-0 left-0 z-50 bg-white h-20 flex items-center w-full px-dynamic justify-between transition-all border-b',
     shadow && !open ? 'border-gray-200 shadow-b' : 'border-white'
   )}
 >
@@ -92,7 +92,7 @@
 </nav>
 {#if open}
   <div
-    class="sm:hidden absolute top-20 left-0 h-[calc(100vh-5rem)] w-screen bg-white z-10 p-dynamic flex flex-col gap-2"
+    class="sm:hidden absolute top-20 left-0 h-[calc(100vh-5rem)] w-screen bg-white z-50 p-dynamic flex flex-col gap-2"
   >
     {#each pages as page}
       <a
