@@ -1,12 +1,18 @@
 <script>
   import { getAuth, signOut } from 'firebase/auth'
   import { fade } from 'svelte/transition'
+  import { classNames } from '$lib/utils.js'
+
   let open = false
+  let className = ''
+  export { className as class }
+
   const auth = getAuth()
 </script>
 
-<div class="relative flex items-center">
+<div class={classNames('relative md:flex md:items-center', className)}>
   <button
+    class="hidden sm:block"
     type="button"
     on:click={() => {
       open = !open
@@ -29,15 +35,15 @@
   </button>
   {#if open}
     <div
-      class="absolute top-12 right-0 bg-white rounded-md border border-gray-200 shadow py-1 w-36"
+      class="absolute top-12 right-0 bg-white rounded-md border border-gray-200 shadow-sm py-1 w-36"
       transition:fade={{ duration: 150 }}
     >
       <a
-        class="block hover:bg-gray-200 py-2 px-6 w-full transition-colors duration-300"
+        class="block hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300"
         href="/profile">Profile</a
       >
       <button
-        class="text-left hover:bg-gray-200 py-2 px-6 w-full transition-colors duration-300"
+        class="text-left hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300"
         type="button"
         on:click={() => {
           signOut(auth)
@@ -47,4 +53,19 @@
       </button>
     </div>
   {/if}
+  <div class="sm:hidden grid grid-cols-2 gap-3 text-center">
+    <a
+      class="block hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300 rounded-md border border-gray-200 shadow-sm"
+      href="/profile">Profile</a
+    >
+    <button
+      class="hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300 rounded-md border border-gray-200 shadow-sm"
+      type="button"
+      on:click={() => {
+        signOut(auth)
+      }}
+    >
+      Logout
+    </button>
+  </div>
 </div>

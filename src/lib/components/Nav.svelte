@@ -3,8 +3,10 @@
   import { classNames } from '$lib/utils.js'
   import { page } from '$app/stores'
   import { onMount } from 'svelte'
+  import Brand from './Brand.svelte'
 
-  let shadow
+  let shadow = false
+  let open = false
   $: pathname = $page.url.pathname
 
   onMount(() => {
@@ -34,28 +36,77 @@
 <nav
   class={classNames(
     'fixed top-0 left-0 z-10 bg-white h-20 flex items-center w-full px-dynamic justify-between transition-all border-b',
-    shadow ? 'border-gray-200 shadow-b' : 'border-white'
+    shadow && !open ? 'border-gray-200 shadow-b' : 'border-white'
   )}
 >
   <div class="flex items-center gap-8">
-    <div class="flex items-center gap-2 rounded-md border border-gray-200 p-2 shadow">
-      <a href="https://hackharvard.io"><img class="w-8 h-8" src="/favicon.png" alt="" /></a>
-      <a
-        class="text-lg uppercase rounded-md shadow bg-red-200 py-1 px-2"
-        href="https://portal.hackharvard.io">Portal</a
-      >
-    </div>
-    <div class="flex items-center gap-2">
+    <Brand />
+    <div class="hidden md:flex items-center gap-3">
       {#each pages as page}
         <a
           class={classNames(
             'rounded-md py-2 px-3 transition-colors',
-            pathname === page.href && 'bg-gray-200'
+            pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
           )}
-          href={page.href}>{page.name}</a
+          href={page.href}
         >
+          {page.name}
+        </a>
       {/each}
     </div>
   </div>
-  <ProfileMenu />
+  <div>
+    <ProfileMenu class="hidden sm:block" />
+    <button
+      class="sm:hidden"
+      type="button"
+      on:click={() => {
+        open = !open
+      }}
+    >
+      {#if open}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-8 h-8"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      {:else}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-8 h-8"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+        </svg>
+      {/if}
+    </button>
+  </div>
 </nav>
+{#if open}
+  <div
+    class="sm:hidden absolute top-20 left-0 h-[calc(100vh-5rem)] w-screen bg-white z-10 p-dynamic flex flex-col gap-2"
+  >
+    {#each pages as page}
+      <a
+        class={classNames(
+          'rounded-md py-2 px-3 transition-colors',
+          pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
+        )}
+        href={page.href}
+      >
+        {page.name}
+      </a>
+    {/each}
+    <div class="mt-dynamic">
+      <ProfileMenu />
+    </div>
+  </div>
+{/if}
