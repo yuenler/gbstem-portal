@@ -26,7 +26,7 @@
       />
     </svg>
   </button>
-  {#if open}
+  {#if isOpen}
     <div class="absolute top-12 right-0 bg-white rounded-md border border-gray-400 py-2 w-36">
       <a class="block hover:bg-gray-200 py-2 px-6 w-full" href="/profile">Profile</a>
       <button
