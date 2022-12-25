@@ -3,24 +3,34 @@
   import '../app.css'
   import { onMount } from 'svelte'
   import { initializeApp } from 'firebase/app'
-  // import { getAnalytics } from 'firebase/analytics'
+  import { getAnalytics } from 'firebase/analytics'
   import { getAuth, onAuthStateChanged } from 'firebase/auth'
   import Footer from '../lib/components/Footer.svelte'
 
   let isLoggedIn = false
   let isEmailVerified = false
 
-  const firebaseConfig = {
-    apiKey: 'AIzaSyBuFDxD2Zt2i40-dSNZz3Xrt0YypVRj6OA',
-    authDomain: 'hackharvard-portal.firebaseapp.com',
-    projectId: 'hackharvard-portal',
-    storageBucket: 'hackharvard-portal.appspot.com',
-    messagingSenderId: '831224207920',
-    appId: '1:831224207920:web:ae366f9b14464726f5abf5',
-    measurementId: 'G-N72ZTKXS9Y'
+  const env = process.env.NODE_ENV
+  if (env === 'development') {
+    const firebaseConfig = {
+      apiKey: process.env.FIREBASE_API_KEY,
+      authDomain: 'hackharvard-portal.firebaseapp.com',
+      projectId: 'hackharvard-portal',
+      storageBucket: 'hackharvard-portal.appspot.com',
+      messagingSenderId: process.env.FIREBASE_MSG_ID,
+      appId: process.env.FIREBASE_APP_ID,
+      measurementId: process.env.FIREBASE_MSR_ID
+    }
+    const app = initializeApp(firebaseConfig)
+    //   const analytics = getAnalytics(app)
+  } else if (env === 'production') {
+    fetch('/__/firebase/init.json')
+      .then(async response => {
+        const app = initializeApp(await response.json())
+        getAnalytics(app)
+      })
+      .catch(response => console.log(response))
   }
-  const app = initializeApp(firebaseConfig)
-  //   const analytics = getAnalytics(app)
 
   onMount(() => {
     onAuthStateChanged(getAuth(), user => {
