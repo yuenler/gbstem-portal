@@ -28,9 +28,6 @@
       if (user) {
         isLoggedIn = true
         isEmailVerified = user.emailVerified
-        if (!isEmailVerified) {
-          alert('Please verify your email address. But imma just let you in anyway for now.')
-        }
       } else {
         isLoggedIn = false
       }
