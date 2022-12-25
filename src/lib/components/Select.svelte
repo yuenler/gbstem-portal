@@ -1,5 +1,9 @@
+<script context="module">
+  let current
+</script>
+
 <script>
-  import { classNames } from '$lib/utils.js'
+  import { classNames, clickOutside } from '$lib/utils.js'
   import { uniqueId, debounce } from 'lodash'
   import { fade } from 'svelte/transition'
 
@@ -13,14 +17,16 @@
   let open = false
   let selectedIndex = 0
   let source = []
+  let inputEl
 
-  const throttledSourceFilter = debounce(() => {
-    const lowerCaseValue = value.toLowerCase()
+  const throttledSourceFilter = debounce(givenValue => {
+    const lowerCaseValue = givenValue.toLowerCase()
     source = sourceJson.filter(item => {
       return item.name.toLowerCase().indexOf(lowerCaseValue) !== -1
     })
   }, 150)
   $: throttledSourceFilter(value)
+  $: catchCurrent(open)
 
   const id = uniqueId('input-')
   const name = placeholder.toLowerCase().split(' ').join('-')
@@ -34,10 +40,16 @@
   function handleKeyDown(e) {
     switch (e.code) {
       case 'Enter':
-      case 'Tab':
         e.preventDefault()
         open = false
         value = source[selectedIndex].name
+        break
+      case 'Tab':
+        if (open) {
+          e.preventDefault()
+          open = false
+          value = source[selectedIndex].name
+        }
         break
       case 'ArrowUp':
         e.preventDefault()
@@ -53,22 +65,44 @@
         break
     }
   }
+  function handleClick() {
+    open = true
+  }
+  function catchCurrent() {
+    if (current && current.id !== id) {
+      current.setOpen(false)
+    }
+    current = {
+      id,
+      setOpen: value => {
+        open = value
+      }
+    }
+  }
 </script>
 
-<div class={classNames('relative', className)}>
+<div
+  class={classNames('relative mt-2', className)}
+  use:clickOutside
+  on:outclick={() => {
+    open = false
+  }}
+>
   {#if floating}
-    <div class="relative mt-2">
+    <div class="relative">
       <input
         class={classNames(
-          'block pl-3 pr-9 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border appearance-none focus:outline-none  peer',
+          'appearance-none block pl-3 pr-9 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none  peer',
           error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600'
         )}
         type="text"
         {id}
         {value}
         {name}
+        bind:this={inputEl}
         on:input={handleInput}
         on:keydown={handleKeyDown}
+        on:click={handleClick}
         placeholder=" "
         {...$$restProps}
       />
@@ -82,45 +116,51 @@
   {:else}
     <input
       class={classNames(
-        'block mt-2 pl-3 pr-9 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 appearance-none focus:outline-none focus:border-gray-600 placeholder:text-gray-500',
+        'appearance-none block pl-3 pr-9 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500',
         error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600'
       )}
       type="text"
       {id}
       {value}
       {name}
+      bind:this={inputEl}
       on:input={handleInput}
       on:keydown={handleKeyDown}
+      on:click={handleClick}
       placeholder={placeholder ? placeholder : ' '}
       {...$$restProps}
     />
   {/if}
-  <button
-    class="absolute top-5 right-2"
-    type="button"
-    on:click={() => {
-      open = !open
-    }}
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke-width="1.5"
-      stroke="currentColor"
-      class="w-6 h-6"
+  <div class="absolute top-0 right-0 pr-2 flex items-center h-12">
+    <button
+      type="button"
+      on:click={() => {
+        open = !open
+        if (open) {
+          inputEl.focus()
+        }
+      }}
     >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-      />
-    </svg>
-  </button>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+        />
+      </svg>
+    </button>
+  </div>
   {#if open}
     <div
-      class="absolute top-16 left-0 w-full bg-white rounded-md border border-gray-200 shadow-sm py-1 max-h-60 overflow-y-auto overflow-hidden z-20"
-      transition:fade={{ duration: 150 }}
+      class="absolute top-14 left-0 w-full bg-white rounded-md border border-gray-200 shadow-sm py-1 max-h-60 overflow-y-auto overflow-hidden z-20"
+      transition:fade={{ duration: 100 }}
     >
       {#if source.length === 0}
         <div class="text-left py-2 px-6 w-full">Nothing found.</div>

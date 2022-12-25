@@ -8,16 +8,10 @@
   export let error = false
   export let placeholder = ''
   export let floating = false
+  export let checked = false
   let className = ''
   export { className as class }
-
-  $: options =
-    type === 'tel'
-      ? {
-          mask: '+{1}(000) 000-000',
-          lazy: false
-        }
-      : { mask: /[^]*/ }
+  export let maskOptions = { mask: /[^]*/ }
 
   const id = uniqueId('input-')
   const name = placeholder.toLowerCase().split(' ').join('-')
@@ -26,12 +20,24 @@
   }
 </script>
 
-<div class={classNames(className)}>
-  {#if floating}
-    <div class="relative mt-2">
+<div class={classNames('mt-2', className)}>
+  {#if type === 'checkbox'}
+    <div class="flex mt-2">
+      <input
+        class="mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600"
+        type="checkbox"
+        {id}
+        {checked}
+      />
+      <label for={id} class="ml-3 text-gray-900">
+        {placeholder}
+      </label>
+    </div>
+  {:else if floating}
+    <div class="relative">
       <input
         class={classNames(
-          'block px-3 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border appearance-none focus:outline-none  peer',
+          'appearance-none block px-3 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none peer',
           error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600'
         )}
         {type}
@@ -39,7 +45,7 @@
         {value}
         {name}
         on:input={handleInput}
-        use:imask={options}
+        use:imask={maskOptions}
         placeholder=" "
         {...$$restProps}
       />
@@ -53,7 +59,7 @@
   {:else}
     <input
       class={classNames(
-        'block mt-2 px-3 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 appearance-none focus:outline-none focus:border-gray-600 placeholder:text-gray-500',
+        'appearance-none block px-3 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500',
         error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600'
       )}
       {type}
@@ -61,9 +67,18 @@
       {value}
       {name}
       on:input={handleInput}
-      use:imask={options}
+      use:imask={maskOptions}
       placeholder={placeholder ? placeholder : ' '}
       {...$$restProps}
     />
   {/if}
 </div>
+
+<style>
+  input:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+</style>
