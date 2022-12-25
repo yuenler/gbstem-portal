@@ -3,10 +3,10 @@
   import Auth from './auth/+page.svelte'
   import '../app.css'
   import { onMount } from 'svelte'
-  // Import the functions you need from the SDKs you need
   import { initializeApp } from 'firebase/app'
-  import { getAnalytics } from 'firebase/analytics'
+  // import { getAnalytics } from 'firebase/analytics'
   import { getAuth, onAuthStateChanged } from 'firebase/auth'
+  import Footer from '../lib/components/Footer.svelte'
 
   let isLoggedIn = false
   let isEmailVerified = false
@@ -36,6 +36,9 @@
 </script>
 
 <Nav />
-<main class="mt-20 px-dynamic">
-  <slot />
-</main>
+<div class="flex flex-col min-h-screen">
+  <main class="mt-20 p-dynamic grow">
+    <slot />
+  </main>
+  <Footer />
+</div>

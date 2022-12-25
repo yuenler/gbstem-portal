@@ -2,6 +2,14 @@
   import ProfileMenu from './ProfileMenu.svelte'
   import { classNames } from '$lib/utils.js'
   import { page } from '$app/stores'
+  import { onMount } from 'svelte'
+
+  let shadow
+  $: pathname = $page.url.pathname
+
+  onMount(() => {
+    updateShadow()
+  })
 
   const pages = [
     {
@@ -17,31 +25,25 @@
       href: '/group'
     }
   ]
-  $: pathname = $page.url.pathname
+  function updateShadow() {
+    shadow = window.pageYOffset !== 0
+  }
 </script>
 
+<svelte:window on:scroll={updateShadow} />
 <nav
-  class="fixed top-0 left-0 z-10 border-b border-gray-400 h-20 flex items-center w-full px-dynamic justify-between"
+  class={classNames(
+    'fixed top-0 left-0 z-10 bg-white h-20 flex items-center w-full px-dynamic justify-between transition-all border-b',
+    shadow ? 'border-gray-200 shadow-b' : 'border-white'
+  )}
 >
-  <div class="flex items-center gap-6">
-    <div class="flex items-center rounded-md shadow-md gap-2 p-3 bg-red-200">
+  <div class="flex items-center gap-8">
+    <div class="flex items-center gap-2 rounded-md border border-gray-200 p-2 shadow">
       <a href="https://hackharvard.io"><img class="w-8 h-8" src="/favicon.png" alt="" /></a>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="w-6 h-6"
+      <a
+        class="text-lg uppercase rounded-md shadow bg-red-200 py-1 px-2"
+        href="https://portal.hackharvard.io">Portal</a
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3"
-        />
-      </svg>
-
-      <a class="text-2xl" href="https://portal.hackharvard.io">Portal</a>
     </div>
     <div class="flex items-center gap-2">
       {#each pages as page}
