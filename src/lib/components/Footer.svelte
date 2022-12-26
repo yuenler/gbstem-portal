@@ -1,3 +1,3 @@
-<footer class="flex items-center justify-center py-8 text-lg">
+<footer class="flex items-center justify-center py-6">
   <span>&copy; {new Date().getFullYear()} HackHarvard</span>
 </footer>

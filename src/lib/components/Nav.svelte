@@ -4,15 +4,19 @@
   import { page } from '$app/stores'
   import { onMount } from 'svelte'
   import Brand from './Brand.svelte'
-
-  let shadow = false
-  let open = false
-  $: pathname = $page.url.pathname
+  import { navigating } from '$app/stores'
+  import { fade } from 'svelte/transition'
 
   onMount(() => {
     updateShadow()
   })
 
+  let shadow = false
+  let open = false
+  $: pathname = $page.url.pathname
+  $: if ($navigating) {
+    open = false
+  }
   const pages = [
     {
       name: 'Dashboard',
@@ -92,7 +96,8 @@
 </nav>
 {#if open}
   <div
-    class="sm:hidden absolute top-20 left-0 h-[calc(100vh-5rem)] w-screen bg-white z-50 p-dynamic flex flex-col gap-2"
+    class="sm:hidden fixed top-20 left-0 h-[calc(100vh-5rem)] w-screen bg-white z-50 p-dynamic flex flex-col gap-2"
+    transition:fade
   >
     {#each pages as page}
       <a

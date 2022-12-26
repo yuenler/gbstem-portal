@@ -3,9 +3,12 @@
   import { uniqueId } from 'lodash'
   import { imask } from '@imask/svelte'
 
+  export let self
   export let type = 'text'
-  export let value = ''
-  export let error = false
+  export let field = {
+    value: '',
+    error: false
+  }
   export let placeholder = ''
   export let floating = false
   export let checked = false
@@ -16,18 +19,22 @@
   const id = uniqueId('input-')
   const name = placeholder.toLowerCase().split(' ').join('-')
   function handleInput(e) {
-    value = type.match(/^(number|range)$/) ? +e.target.value : e.target.value
+    field.value = type.match(/^(number|range)$/) ? +e.target.value : e.target.value
   }
 </script>
 
-<div class={classNames('mt-2', className)}>
+<div class="mt-2">
   {#if type === 'checkbox'}
     <div class="flex mt-2">
       <input
-        class="mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600"
+        class={classNames(
+          'mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600',
+          className
+        )}
         type="checkbox"
         {id}
         {checked}
+        bind:this={self}
       />
       <label for={id} class="ml-3 text-gray-900">
         {placeholder}
@@ -38,12 +45,16 @@
       <input
         class={classNames(
           'appearance-none block px-3 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none peer',
-          error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600'
+          field.error
+            ? 'border-red-300 focus:border-red-600'
+            : 'border-gray-300 focus:border-gray-600',
+          className
         )}
         {type}
         {id}
-        {value}
         {name}
+        value={field.value}
+        bind:this={self}
         on:input={handleInput}
         use:imask={maskOptions}
         placeholder=" "
@@ -60,12 +71,16 @@
     <input
       class={classNames(
         'appearance-none block px-3 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500',
-        error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600'
+        field.error
+          ? 'border-red-300 focus:border-red-600'
+          : 'border-gray-300 focus:border-gray-600',
+        className
       )}
       {type}
       {id}
-      {value}
       {name}
+      value={field.value}
+      bind:this={self}
       on:input={handleInput}
       use:imask={maskOptions}
       placeholder={placeholder ? placeholder : ' '}

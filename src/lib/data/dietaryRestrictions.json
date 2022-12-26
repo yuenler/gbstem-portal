@@ -5,7 +5,5 @@
   { "name": "Nut-free", "code": 3 },
   { "name": "Dairy-free", "code": 4 },
   { "name": "Halal", "code": 5 },
-  { "name": "Kosher", "code": 6 },
-  { "name": "None", "code": 7 },
-  { "name": "Other", "code": 8 }
+  { "name": "Kosher", "code": 6 }
 ]

@@ -1,53 +1,42 @@
-<script lang="ts">
-  import Nav from '../lib/components/Nav.svelte'
+<script>
   import '../app.css'
+  import Nav from '$lib/components/Nav.svelte'
+  import Footer from '$lib/components/Footer.svelte'
+  import Alert from '$lib/components/Alert.svelte'
+  import { auth, user } from '$lib/firebase'
+  import { onAuthStateChanged } from 'firebase/auth'
   import { onMount } from 'svelte'
-  import { initializeApp } from 'firebase/app'
-  import { getAnalytics } from 'firebase/analytics'
-  import { getAuth, onAuthStateChanged } from 'firebase/auth'
-  import Footer from '../lib/components/Footer.svelte'
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
 
-  let isLoggedIn = false
-  let isEmailVerified = false
-
-  const env = process.env.NODE_ENV
-  if (env === 'development') {
-    const firebaseConfig = {
-      apiKey: process.env.FIREBASE_API_KEY,
-      authDomain: 'hackharvard-portal.firebaseapp.com',
-      projectId: 'hackharvard-portal',
-      storageBucket: 'hackharvard-portal.appspot.com',
-      messagingSenderId: process.env.FIREBASE_MSG_ID,
-      appId: process.env.FIREBASE_APP_ID,
-      measurementId: process.env.FIREBASE_MSR_ID
-    }
-    const app = initializeApp(firebaseConfig)
-    //   const analytics = getAnalytics(app)
-  } else if (env === 'production') {
-    fetch('/__/firebase/init.json')
-      .then(async response => {
-        const app = initializeApp(await response.json())
-        getAnalytics(app)
-      })
-      .catch(response => console.log(response))
-  }
-
+  let loading = true
   onMount(() => {
-    onAuthStateChanged(getAuth(), user => {
-      if (user) {
-        isLoggedIn = true
-        isEmailVerified = user.emailVerified
-      } else {
-        isLoggedIn = false
-      }
-    })
+    onAuthStateChanged($auth, handleSignInState)
   })
+  function handleSignInState(userData) {
+    loading = true
+    if (userData) {
+      if ($page.url.pathname === '/signin' || $page.url.pathname === '/signup') {
+        goto('/')
+      }
+    } else {
+      if ($page.url.pathname !== '/signin' && $page.url.pathname !== '/signup') {
+        goto('/signin')
+      }
+    }
+    loading = false
+  }
 </script>
 
-<Nav />
-<div class="flex flex-col min-h-screen">
-  <main class="mt-20 px-dynamic py-8 grow">
-    <slot />
-  </main>
-  <Footer />
-</div>
+{#if !loading}
+  {#if $user}
+    <Nav />
+  {/if}
+  <div class="flex flex-col min-h-screen overflow-y-auto">
+    <main class="mt-20 px-dynamic py-8 grow">
+      <slot />
+    </main>
+    <Footer />
+  </div>
+  <Alert />
+{/if}

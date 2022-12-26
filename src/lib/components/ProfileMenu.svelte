@@ -1,13 +1,15 @@
 <script>
-  import { getAuth, signOut } from 'firebase/auth'
   import { fade } from 'svelte/transition'
   import { classNames } from '$lib/utils.js'
+  import { auth } from '$lib/firebase.js'
+  import { navigating } from '$app/stores'
 
   let open = false
   let className = ''
   export { className as class }
-
-  const auth = getAuth()
+  $: if ($navigating) {
+    open = false
+  }
 </script>
 
 <div class={classNames('relative md:flex md:items-center', className)}>
@@ -46,10 +48,10 @@
         class="text-left hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300"
         type="button"
         on:click={() => {
-          signOut(auth)
+          auth.signOut()
         }}
       >
-        Logout
+        Sign out
       </button>
     </div>
   {/if}
@@ -62,10 +64,10 @@
       class="hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300 rounded-md border border-gray-200 shadow-sm"
       type="button"
       on:click={() => {
-        signOut(auth)
+        auth.signOut()
       }}
     >
-      Logout
+      Sign out
     </button>
   </div>
 </div>

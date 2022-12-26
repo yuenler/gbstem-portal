@@ -36,12 +36,10 @@
       sharing: false
     }
   }
-
-  $: console.log(values)
 </script>
 
-<form class="max-w-lg grid grid-cols-1 gap-6" autocomplete="off">
-  <div class="grid grid-cols-1 gap-1">
+<form class="max-w-lg grid gap-6">
+  <div class="grid gap-1">
     <span class="font-bold">Personal</span>
     <div class="grid grid-cols-2 gap-3">
       <Input type="text" bind:value={values.personal.firstName} placeholder="First name" floating />
@@ -82,7 +80,7 @@
       floating
     />
   </div>
-  <div>
+  <div class="grid gap-1">
     <span class="font-bold">Academic</span>
     <div class="grid grid-cols-3 gap-3">
       <div class="col-span-2">
@@ -108,7 +106,7 @@
     </div>
     <Input type="text" bind:value={values.academic.major} placeholder="Major" floating />
   </div>
-  <div>
+  <div class="grid gap-1">
     <span class="font-bold">Hackathon</span>
     <div class="grid grid-cols-3">
       <Select
@@ -131,7 +129,7 @@
       />
     </div>
   </div>
-  <div>
+  <div class="grid gap-1">
     <span class="font-bold">Dietary Restrictions</span>
     <div class="grid grid-cols-2">
       {#each dietaryRestrictionsJson as dietaryRestriction}
@@ -144,7 +142,7 @@
       {/each}
     </div>
   </div>
-  <div>
+  <div class="grid gap-1">
     <span class="font-bold">Agreements</span>
     <div class="grid grid-cols-1">
       <Input
