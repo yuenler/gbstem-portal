@@ -63,16 +63,10 @@
         placeholder="Ethnicity"
         sourceJson={ethnicitiesJson}
         floating
+        autocomplete="ethnicity"
       />
     </div>
-    <Input
-      type="tel"
-      bind:value={values.personal.phoneNumber}
-      maskOptions={{
-        mask: /^\d*$/
-      }}
-      placeholder="Phone number"
-    />
+    <Input type="tel" bind:value={values.personal.phoneNumber} placeholder="Phone number" />
     <Select
       bind:value={values.personal.countryOfResidence}
       placeholder="Country of residence"
@@ -92,15 +86,11 @@
         />
       </div>
       <Input
-        type="text"
+        type="number"
         bind:value={values.academic.graduationYear}
         placeholder="Graduation year"
-        maskOptions={{
-          mask: '{2\\0}#0',
-          definitions: {
-            '#': /^[2-9]$/
-          }
-        }}
+        min={new Date().getFullYear()}
+        max={new Date().getFullYear() + 20}
         floating
       />
     </div>

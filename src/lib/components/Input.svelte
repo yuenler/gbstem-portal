@@ -1,7 +1,6 @@
 <script>
   import { classNames } from '$lib/utils.js'
   import { uniqueId } from 'lodash'
-  import { imask } from '@imask/svelte'
 
   export let self
   export let type = 'text'
@@ -14,7 +13,6 @@
   export let checked = false
   let className = ''
   export { className as class }
-  export let maskOptions = { mask: /[^]*/ }
 
   const id = uniqueId('input-')
   const name = placeholder.toLowerCase().split(' ').join('-')
@@ -56,7 +54,6 @@
         value={field.value}
         bind:this={self}
         on:input={handleInput}
-        use:imask={maskOptions}
         placeholder=" "
         {...$$restProps}
       />
@@ -82,7 +79,6 @@
       value={field.value}
       bind:this={self}
       on:input={handleInput}
-      use:imask={maskOptions}
       placeholder={placeholder ? placeholder : ' '}
       {...$$restProps}
     />
