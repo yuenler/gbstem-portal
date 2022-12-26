@@ -7,8 +7,10 @@
   import { uniqueId, debounce } from 'lodash'
   import { fade } from 'svelte/transition'
 
-  export let value = ''
-  export let error = false
+  export let field = {
+    value: '',
+    error: false
+  }
   export let placeholder = ''
   export let floating = false
   export let sourceJson = []
@@ -25,7 +27,7 @@
       return item.name.toLowerCase().indexOf(lowerCaseValue) !== -1
     })
   }, 150)
-  $: throttledSourceFilter(value)
+  $: throttledSourceFilter(field.value)
   $: catchCurrent(open)
 
   const id = uniqueId('input-')
@@ -35,20 +37,20 @@
       open = true
     }
     selectedIndex = 0
-    value = e.target.value
+    field.value = e.target.value
   }
   function handleKeyDown(e) {
     switch (e.code) {
       case 'Enter':
         e.preventDefault()
         open = false
-        value = source[selectedIndex].name
+        field.value = source[selectedIndex].name
         break
       case 'Tab':
         if (open) {
           e.preventDefault()
           open = false
-          value = source[selectedIndex].name
+          field.value = source[selectedIndex].name
         }
         break
       case 'ArrowUp':
@@ -93,12 +95,14 @@
       <input
         class={classNames(
           'appearance-none block pl-3 pr-9 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none  peer',
-          error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600'
+          field.error
+            ? 'border-red-300 focus:border-red-600'
+            : 'border-gray-300 focus:border-gray-600'
         )}
         type="text"
         {id}
-        {value}
         {name}
+        value={field.value}
         bind:this={inputEl}
         on:input={handleInput}
         on:keydown={handleKeyDown}
@@ -117,17 +121,19 @@
     <input
       class={classNames(
         'appearance-none block pl-3 pr-9 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500',
-        error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600'
+        field.error
+          ? 'border-red-300 focus:border-red-600'
+          : 'border-gray-300 focus:border-gray-600'
       )}
       type="text"
       {id}
-      {value}
       {name}
+      value={field.value}
       bind:this={inputEl}
       on:input={handleInput}
       on:keydown={handleKeyDown}
       on:click={handleClick}
-      placeholder={placeholder ? placeholder : ' '}
+      {placeholder}
       {...$$restProps}
     />
   {/if}
@@ -169,7 +175,8 @@
           class="text-left py-2 px-6 w-full transition-colors duration-300 bg-gray-100"
           type="button"
           on:click={() => {
-            value = source[0].name
+            field.value = source[0].name
+            open = false
           }}
         >
           {source[0].name}
@@ -183,7 +190,8 @@
             )}
             type="button"
             on:click={() => {
-              value = item.name
+              field.value = item.name
+              open = false
             }}
             on:mouseenter={() => {
               selectedIndex = index

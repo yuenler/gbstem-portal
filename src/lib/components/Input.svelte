@@ -26,7 +26,7 @@
     <div class="flex mt-2">
       <input
         class={classNames(
-          'mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600',
+          'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600',
           className
         )}
         type="checkbox"
@@ -34,7 +34,7 @@
         {checked}
         bind:this={self}
       />
-      <label for={id} class="ml-3 text-gray-900">
+      <label for={id} class="ml-3 text-gray-900 cursor-pointer">
         {placeholder}
       </label>
     </div>
@@ -51,10 +51,10 @@
         {type}
         {id}
         {name}
+        placeholder=" "
         value={field.value}
         bind:this={self}
         on:input={handleInput}
-        placeholder=" "
         {...$$restProps}
       />
       <label
@@ -76,10 +76,10 @@
       {type}
       {id}
       {name}
+      {placeholder}
       value={field.value}
       bind:this={self}
       on:input={handleInput}
-      placeholder={placeholder ? placeholder : ' '}
       {...$$restProps}
     />
   {/if}
