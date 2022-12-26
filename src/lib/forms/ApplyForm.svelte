@@ -2,7 +2,7 @@
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import {
-    racesJson,
+    racesEthnicitiesJson,
     gendersJson,
     schoolsJson,
     worldJson,
@@ -17,7 +17,7 @@
       'lastName',
       'dateOfBirth',
       'gender',
-      'race',
+      'raceEthnicity',
       'phoneNumber',
       'countryOfResidence'
     ),
@@ -56,9 +56,11 @@
         floating
       />
       <Select
-        bind:field={fields.personal.race}
-        placeholder="Race"
-        sourceJson={racesJson}
+        bind:field={fields.personal.raceEthnicity}
+        name="race"
+        autocomplete="race"
+        placeholder="Race or ethnicity"
+        sourceJson={racesEthnicitiesJson}
         floating
       />
     </div>

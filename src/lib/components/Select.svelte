@@ -12,6 +12,7 @@
     error: false
   }
   export let placeholder = ''
+  export let name = placeholder.toLowerCase().split(' ').join('-')
   export let floating = false
   export let sourceJson = []
   let className = ''
@@ -31,7 +32,6 @@
   $: catchCurrent(open)
 
   const id = uniqueId('input-')
-  const name = placeholder.toLowerCase().split(' ').join('-')
   function handleInput(e) {
     if (!open) {
       open = true

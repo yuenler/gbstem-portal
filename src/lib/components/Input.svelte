@@ -9,13 +9,13 @@
     error: false
   }
   export let placeholder = ''
+  export let name = placeholder.toLowerCase().split(' ').join('-')
   export let floating = false
   export let checked = false
   let className = ''
   export { className as class }
 
   const id = uniqueId('input-')
-  const name = placeholder.toLowerCase().split(' ').join('-')
   function handleInput(e) {
     field.value = type.match(/^(number|range)$/) ? +e.target.value : e.target.value
   }
