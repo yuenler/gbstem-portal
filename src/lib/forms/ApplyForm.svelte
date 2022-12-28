@@ -19,6 +19,7 @@ some questions about technical experience and interests to help with grouping pe
 
   let fields = {
     personal: createFields(
+      'email',
       'firstName',
       'lastName',
       'dateOfBirth',
@@ -40,6 +41,7 @@ some questions about technical experience and interests to help with grouping pe
     },
     submitted: false
   }
+  fields.personal.email.value = $user.email
 
   const save = () => {
     const applicationRef = doc($db, 'applications', $user.uid)
