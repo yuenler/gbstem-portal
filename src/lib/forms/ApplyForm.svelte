@@ -16,7 +16,6 @@ some questions about technical experience and interests to help with grouping pe
     dietaryRestrictionsJson
   } from '$lib/data'
   import { createFields } from '$lib/utils'
-  import { saveApplication } from '$lib/firebase.js'
 
   let fields = {
     personal: createFields(
@@ -38,12 +37,18 @@ some questions about technical experience and interests to help with grouping pe
     agreements: {
       codeOfConduct: false,
       sharing: false
-    }
+    },
+    submitted: false
+  }
+
+  const save = () => {
+    const applicationRef = doc($db, 'applications', $user.uid)
+    setDoc(applicationRef, fields)
   }
 
   const handleSubmit = () => {
-    const applicationRef = doc($db, 'applications', $user.uid)
-    setDoc(applicationRef, fields)
+    fields.submitted = true
+    save()
   }
 </script>
 
@@ -157,5 +162,6 @@ some questions about technical experience and interests to help with grouping pe
       />
     </div>
   </div>
+  <button type="button" on:click={save} class="btn btn-primary"> Save Draft</button>
   <button type="button" on:click={handleSubmit} class="btn btn-primary"> Submit </button>
 </form>
