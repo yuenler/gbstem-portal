@@ -12,19 +12,20 @@ import {
 } from '$env/static/public'
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 let config
 if (dev) {
   config = PUBLIC_FIREBASE_USE_SERVER
     ? {
-        apiKey: PUBLIC_FIREBASE_API_KEY,
-        authDomain: PUBLIC_FIREBASE_AUTH_DOMAIN,
-        projectId: PUBLIC_FIREBASE_PROJECT_ID,
-        storageBucket: PUBLIC_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
-        appId: PUBLIC_FIREBASE_APP_ID,
-        measurementId: PUBLIC_FIREBASE_MEASUREMENT_ID
-      }
+      apiKey: PUBLIC_FIREBASE_API_KEY,
+      authDomain: PUBLIC_FIREBASE_AUTH_DOMAIN,
+      projectId: PUBLIC_FIREBASE_PROJECT_ID,
+      storageBucket: PUBLIC_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
+      appId: PUBLIC_FIREBASE_APP_ID,
+      measurementId: PUBLIC_FIREBASE_MEASUREMENT_ID
+    }
     : { apiKey: 'demo', authDomain: 'demo.firebaseapp.com' }
 } else {
   config = await fetch('/__/firebase/init.json')
@@ -66,4 +67,8 @@ export const user = derived(auth, ($auth, set) => {
   set(auth.currentUser)
   const unsubscribe = onAuthStateChanged($auth, set)
   return unsubscribe
+})
+
+export const db = derived(app, ($app, set) => {
+  set(getFirestore($app))
 })

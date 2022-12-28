@@ -3,6 +3,8 @@ how did you learn about HackHarvard?
 some questions about technical experience and interests to help with grouping people into teams
  -->
 <script>
+  import { doc, setDoc } from 'firebase/firestore'
+  import { db, user } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import {
@@ -14,6 +16,7 @@ some questions about technical experience and interests to help with grouping pe
     dietaryRestrictionsJson
   } from '$lib/data'
   import { createFields } from '$lib/utils'
+  import { saveApplication } from '$lib/firebase.js'
 
   let fields = {
     personal: createFields(
@@ -36,6 +39,11 @@ some questions about technical experience and interests to help with grouping pe
       codeOfConduct: false,
       sharing: false
     }
+  }
+
+  const handleSubmit = () => {
+    const applicationRef = doc($db, 'applications', $user.uid)
+    setDoc(applicationRef, fields)
   }
 </script>
 
@@ -149,4 +157,5 @@ some questions about technical experience and interests to help with grouping pe
       />
     </div>
   </div>
+  <button type="button" on:click={handleSubmit} class="btn btn-primary"> Submit </button>
 </form>
