@@ -54,7 +54,7 @@ some questions about technical experience and interests to help with grouping pe
   }
 </script>
 
-<form class="max-w-lg grid gap-6">
+<form class="max-w-lg grid gap-6" on:submit|preventDefault={handleSubmit}>
   <div class="grid gap-1">
     <span class="font-bold">Personal</span>
     <div class="grid grid-cols-2 gap-3">
@@ -165,5 +165,5 @@ some questions about technical experience and interests to help with grouping pe
     </div>
   </div>
   <button type="button" on:click={save} class="btn btn-primary"> Save Draft</button>
-  <button type="button" on:click={handleSubmit} class="btn btn-primary"> Submit </button>
+  <button type="submit" class="btn btn-primary"> Submit </button>
 </form>
