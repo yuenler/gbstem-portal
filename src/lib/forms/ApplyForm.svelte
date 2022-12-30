@@ -9,7 +9,7 @@
     shirtSizeJson,
     dietaryRestrictionsJson
   } from '$lib/data'
-  import { createFields } from '$lib/utils'
+  import { createFields } from '$lib/forms'
 
   let fields = {
     personal: createFields(

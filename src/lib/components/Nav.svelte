@@ -1,11 +1,12 @@
 <script>
   import ProfileMenu from './ProfileMenu.svelte'
-  import { classNames } from '$lib/utils.js'
+  import { classNames } from '$lib/utils'
   import { page } from '$app/stores'
   import { onMount } from 'svelte'
   import Brand from './Brand.svelte'
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
+  import { user } from '$lib/firebase'
 
   onMount(() => {
     updateShadow()
@@ -17,20 +18,23 @@
   $: if ($navigating) {
     open = false
   }
-  const pages = [
-    {
-      name: 'Dashboard',
-      href: '/dashboard'
-    },
-    {
-      name: 'Apply',
-      href: '/apply'
-    },
-    {
-      name: 'Group',
-      href: '/group'
-    }
-  ]
+  $: pages =
+    $user && $user.emailVerified
+      ? [
+          {
+            name: 'Dashboard',
+            href: '/dashboard'
+          },
+          {
+            name: 'Apply',
+            href: '/apply'
+          },
+          {
+            name: 'Group',
+            href: '/group'
+          }
+        ]
+      : []
   function updateShadow() {
     shadow = window.pageYOffset !== 0
   }

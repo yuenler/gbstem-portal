@@ -1,5 +1,5 @@
 <script>
-  import { classNames } from '$lib/utils.js'
+  import { classNames } from '$lib/utils'
   import { uniqueId } from 'lodash'
 
   export let self

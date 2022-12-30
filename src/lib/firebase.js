@@ -11,7 +11,7 @@ import {
   PUBLIC_FIREBASE_MEASUREMENT_ID
 } from '$env/static/public'
 import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getAuth } from 'firebase/auth'
 
 let config
 if (dev) {
@@ -27,7 +27,7 @@ if (dev) {
       }
     : { apiKey: 'demo', authDomain: 'demo.firebaseapp.com' }
 } else {
-  config = await fetch('/__/firebase/init.json')
+  // figure out
 }
 
 export const app = readable(initializeApp(config))
@@ -62,8 +62,60 @@ function createAuth() {
 
 export const auth = createAuth()
 
-export const user = derived(auth, ($auth, set) => {
-  set(auth.currentUser)
-  const unsubscribe = onAuthStateChanged($auth, set)
-  return unsubscribe
-})
+function createUser() {
+  let user = undefined
+  const { subscribe } = derived(auth, async ($auth, set) => {
+    set(user)
+    const { onAuthStateChanged } = await import('firebase/auth')
+    const unsubscribe = onAuthStateChanged($auth, userData => {
+      user = userData
+      set(user)
+    })
+    return unsubscribe
+  })
+  async function get() {
+    let unsubscribe
+    const userData = new Promise(resolve => {
+      unsubscribe = subscribe(userData => {
+        if (userData !== undefined) {
+          if (userData) {
+            resolve(userData)
+          } else {
+            resolve(null)
+          }
+        }
+      })
+    })
+    return new Promise(resolve => {
+      userData.then(result => {
+        unsubscribe()
+        resolve(result)
+      })
+    })
+  }
+  async function loaded() {
+    let unsubscribe
+    const userData = new Promise(resolve => {
+      unsubscribe = subscribe(userData => {
+        if (userData !== undefined) {
+          if (userData) {
+            resolve(true)
+          }
+        }
+      })
+    })
+    return new Promise(resolve => {
+      userData.then(result => {
+        unsubscribe()
+        resolve(result)
+      })
+    })
+  }
+  return {
+    subscribe,
+    get,
+    loaded
+  }
+}
+
+export const user = createUser()
