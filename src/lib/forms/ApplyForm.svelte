@@ -1,3 +1,7 @@
+<!-- TODO: also add the following questions to the form:
+how did you learn about HackHarvard?
+some questions about technical experience and interests to help with grouping people into teams
+ -->
 <script>
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'

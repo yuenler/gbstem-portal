@@ -4,7 +4,7 @@
 
 <div>
   <ApplyForm />
-  <form class="w-75 mx-auto">
+  <!-- <form class="w-75 mx-auto">
     <div class="row mt-3">
       <div class="col form-group">
         <label for="firstName" class="form-label">First Name</label>
@@ -34,7 +34,6 @@
 
       <div class="row">
         <div class="col">
-          <!-- dropdown -->
           <select class="form-select" aria-label="Default select example">
             <option selected>Month</option>
             <option value="1">January</option>
@@ -175,7 +174,6 @@
 
     <div class="form-group mt-3">
       <label for="gender" class="form-label">Gender</label>
-      <!-- dropdown -->
       <select class="form-select" aria-label="Default select example">
         <option selected>Gender</option>
         <option value="1">Man</option>
@@ -188,7 +186,6 @@
 
     <div class="form-group mt-3">
       <label for="ethnicity" class="form-label">Ethnicity</label>
-      <!-- dropdown -->
       <select class="form-select" aria-label="Default select example">
         <option selected>Ethnicity</option>
         <option value="1">Native American or Alaska Native</option>
@@ -204,7 +201,6 @@
 
     <div class="form-group mt-3">
       <label for="dietary" class="form-label">Do you have any dietary restrictions?</label>
-      <!-- dropdown -->
       <select class="form-select" aria-label="Default select example">
         <option selected>Dietary restrictions</option>
         <option value="1">Vegetarian</option>
@@ -221,7 +217,6 @@
 
     <div class="form-group mt-3">
       <label for="size" class="form-label">What is your unisex adult T-shirt size?</label>
-      <!-- dropdown -->
       <select class="form-select" aria-label="Default select example">
         <option selected>Size</option>
         <option value="1">XS</option>
@@ -286,7 +281,6 @@
       </label>
     </div>
 
-    <!-- I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or Organizer Newsletters and other communications from MLH. -->
     <div class="form-group mt-3">
       <label for="email" class="form-label"
         >I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or
@@ -315,5 +309,5 @@
       <button type="submit" class="btn btn-primary">Save Draft</button>
       <button type="submit" class="btn btn-primary">Submit Application</button>
     </div>
-  </form>
+  </form> -->
 </div>
