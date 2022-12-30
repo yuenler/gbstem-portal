@@ -53,17 +53,17 @@ function createAuth() {
     const { signOut: firebaseSignOut } = await import('firebase/auth')
     return await firebaseSignOut(auth)
   }
-  async function signInWithGoogle() {
-    const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth')
-    const provider = new GoogleAuthProvider()
-    return await signInWithPopup(auth, provider)
-  }
+  // TODO: reimplement if time remaining and make sure to ref https://developers.google.com/identity/branding-guidelines
+  // async function signInWithGoogle() {
+  //   const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth')
+  //   const provider = new GoogleAuthProvider()
+  //   return await signInWithPopup(auth, provider)
+  // }
   return {
     subscribe,
     signUp,
     signIn,
-    signOut,
-    signInWithGoogle
+    signOut
   }
 }
 

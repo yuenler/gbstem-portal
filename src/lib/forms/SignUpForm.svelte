@@ -83,12 +83,5 @@
     >
       Sign up
     </button>
-    <button
-      class="shadow-sm rounded-md bg-red-100 px-4 py-2 text-red-900 hover:bg-red-200 transition-colors duration-300"
-      type="button"
-      on:click={() => auth.signInWithGoogle()}
-    >
-      Sign up with Google
-    </button>
   </div>
 </form>
