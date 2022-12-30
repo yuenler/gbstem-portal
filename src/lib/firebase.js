@@ -11,7 +11,8 @@ import {
   PUBLIC_FIREBASE_MEASUREMENT_ID
 } from '$env/static/public'
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 let config
 if (dev) {
@@ -52,11 +53,17 @@ function createAuth() {
     const { signOut: firebaseSignOut } = await import('firebase/auth')
     return await firebaseSignOut(auth)
   }
+  async function signInWithGoogle() {
+    const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth')
+    const provider = new GoogleAuthProvider()
+    return await signInWithPopup(auth, provider)
+  }
   return {
     subscribe,
     signUp,
     signIn,
-    signOut
+    signOut,
+    signInWithGoogle
   }
 }
 
@@ -66,7 +73,6 @@ function createUser() {
   let user = undefined
   const { subscribe } = derived(auth, async ($auth, set) => {
     set(user)
-    const { onAuthStateChanged } = await import('firebase/auth')
     const unsubscribe = onAuthStateChanged($auth, userData => {
       user = userData
       set(user)
@@ -119,3 +125,7 @@ function createUser() {
 }
 
 export const user = createUser()
+
+export const db = derived(app, ($app, set) => {
+  set(getFirestore($app))
+})
