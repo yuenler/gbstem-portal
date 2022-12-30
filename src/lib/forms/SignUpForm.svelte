@@ -1,9 +1,10 @@
 <script>
   import Input from '$lib/components/Input.svelte'
-  import { classNames, createFields } from '$lib/utils'
-  import { auth } from '$lib/firebase'
+  import { classNames } from '$lib/utils'
+  import { createFields, getErrorMessage, enableErrors, disableErrors } from '$lib/forms'
+  import { auth, user } from '$lib/firebase'
   import { goto } from '$app/navigation'
-  import Brand from '../components/Brand.svelte'
+  import Brand from '$lib/components/Brand.svelte'
   import { alert } from '$lib/stores'
 
   let emailEl, passwordEl, confirmPasswordEl
@@ -14,29 +15,27 @@
   function handleSubmit() {
     showValidation = true
     if (emailEl.checkValidity()) {
-      fields.default.email.error = false
-      if (
-        passwordEl.checkValidity() &&
-        fields.default.password.value === fields.default.confirmPassword.value
-      ) {
-        auth
-          .signUp(fields.default.email.value, fields.default.password.value)
-          .then(() => {
-            goto('/')
-          })
-          .catch(err => {
-            if (err.code === 'auth/weak-password') {
-              alert.trigger('error', 'Password should be at least 6 characters.')
-            } else {
-              console.log(err)
-            }
-          })
-      } else {
-        fields.default.password.error = true
-        fields.default.confirmPassword.error = true
+      fields.default = disableErrors(fields.default, 'email')
+      if (passwordEl.checkValidity()) {
+        if (fields.default.password.value === fields.default.confirmPassword.value) {
+          auth
+            .signUp(fields.default.email.value, fields.default.password.value)
+            .then(async () => {
+              fields.default = disableErrors(fields.default, 'password', 'confirmPassword')
+              await user.loaded()
+              goto('/')
+            })
+            .catch(err => {
+              fields.default = enableErrors(fields.default, 'password', 'confirmPassword')
+              alert.trigger('error', getErrorMessage(err.code))
+            })
+        } else {
+          fields.default = enableErrors(fields.default, 'password', 'confirmPassword')
+          alert.trigger('error', 'Passwords do not match.')
+        }
       }
     } else {
-      fields.default.email.error = true
+      fields.default = enableErrors(fields.default, 'email')
     }
   }
 </script>

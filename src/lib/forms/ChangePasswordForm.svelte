@@ -10,33 +10,37 @@
   } from '$lib/forms'
   import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
-  import { verifyBeforeUpdateEmail } from 'firebase/auth'
+  import { updatePassword } from 'firebase/auth'
   import Modal from '$lib/components/Modal.svelte'
   import ReauthenticateForm from '$lib/forms/ReauthenticateForm.svelte'
 
   let modalEl
-  let newEmailEl
+  let newPasswordEl
+  let confirmPasswordEl
   let showValidation = false
   let fields = {
-    default: createFields('newEmail')
+    default: createFields('newPassword', 'confirmPassword')
   }
   function handleSubmit() {
     showValidation = true
-    if (newEmailEl.checkValidity()) {
-      fields.default = disableErrors(fields.default)
-      modalEl.setOpen(true)
-    } else {
-      fields.default = enableErrors(fields.default)
+    if (newPasswordEl.checkValidity() && confirmPasswordEl.checkValidity()) {
+      if (fields.default.newPassword.value === fields.default.confirmPassword.value) {
+        fields.default = disableErrors(fields.default)
+        modalEl.setOpen(true)
+      } else {
+        fields.default = enableErrors(fields.default)
+        alert.trigger('error', 'Passwords do not match.')
+      }
     }
   }
   function handleReauthenticated(reauthenticated) {
     if (reauthenticated) {
       modalEl.setOpen(false)
-      verifyBeforeUpdateEmail($user, fields.default.newEmail.value)
+      updatePassword($user, fields.default.newPassword.value)
         .then(() => {
           showValidation = false
           fields.default = clearFields(fields.default)
-          alert.trigger('info', 'A verification email was sent.')
+          alert.trigger('success', 'Password was successfully changed.')
         })
         .catch(err => {
           alert.trigger('error', getErrorMessage(err.code))
@@ -51,24 +55,22 @@
   novalidate
 >
   <div class="grid gap-1">
-    <span class="font-bold">Email</span>
+    <span class="font-bold">Password</span>
     <Input
-      type="email"
-      field={{
-        value: $user ? $user.email : '',
-        error: false
-      }}
-      placeholder="Current email"
+      type="password"
+      bind:self={newPasswordEl}
+      bind:field={fields.default.newPassword}
+      placeholder="New password"
       floating
-      readonly
+      required
     />
     <div class="relative">
       <Input
         class="pr-[5.25rem]"
-        bind:self={newEmailEl}
-        type="email"
-        bind:field={fields.default.newEmail}
-        placeholder="New email"
+        type="password"
+        bind:self={confirmPasswordEl}
+        bind:field={fields.default.confirmPassword}
+        placeholder="Confirm password"
         floating
         required
       />

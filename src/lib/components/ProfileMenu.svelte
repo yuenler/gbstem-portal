@@ -1,14 +1,19 @@
 <script>
   import { fade } from 'svelte/transition'
-  import { classNames } from '$lib/utils.js'
-  import { auth } from '$lib/firebase.js'
+  import { classNames } from '$lib/utils'
+  import { auth } from '$lib/firebase'
   import { navigating } from '$app/stores'
+  import { goto } from '$app/navigation'
 
   let open = false
   let className = ''
   export { className as class }
   $: if ($navigating) {
     open = false
+  }
+  async function handleSignOut() {
+    auth.signOut()
+    goto('/signin')
   }
 </script>
 
@@ -47,9 +52,7 @@
       <button
         class="text-left hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300"
         type="button"
-        on:click={() => {
-          auth.signOut()
-        }}
+        on:click={handleSignOut}
       >
         Sign out
       </button>
@@ -63,9 +66,7 @@
     <button
       class="hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300 rounded-md border border-gray-200 shadow-sm"
       type="button"
-      on:click={() => {
-        auth.signOut()
-      }}
+      on:click={handleSignOut}
     >
       Sign out
     </button>

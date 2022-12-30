@@ -15,7 +15,7 @@ some questions about technical experience and interests to help with grouping pe
     shirtSizeJson,
     dietaryRestrictionsJson
   } from '$lib/data'
-  import { createFields } from '$lib/utils'
+  import { createFields } from '$lib/forms'
 
   let fields = {
     personal: createFields(

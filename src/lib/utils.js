@@ -14,13 +14,3 @@ export function clickOutside(node) {
     }
   }
 }
-export function createFields(...fieldNames) {
-  const obj = {}
-  fieldNames.forEach(element => {
-    obj[element] = {
-      value: '',
-      error: false
-    }
-  })
-  return obj
-}

@@ -2,11 +2,14 @@
   import { fade } from 'svelte/transition'
   import { classNames } from '$lib/utils'
 
-  let open = false
+  export let title = ''
   export let size = 'full'
+  let open = false
   export function setOpen(value) {
     open = value
   }
+  let className
+  export { className as class }
 </script>
 
 {#if open}
@@ -21,8 +24,10 @@
           size === 'full' && 'absolute top-0 w-screen h-screen flex flex-col'
         )}
       >
-        <div class="mb-5 py-5 flex justify-end border-b border-gray-300 shrink-0">
+        <div class="mb-5 py-5 flex items-center justify-between border-b border-gray-300 shrink-0">
+          <h1 class="text-xl uppercase">{title}</h1>
           <button
+            class="shrink-0"
             type="button"
             on:click={() => {
               open = false
@@ -40,7 +45,7 @@
             </svg>
           </button>
         </div>
-        <div class="h-full overflow-y-auto overflow-hidden">
+        <div class={classNames('h-full overflow-y-auto overflow-hidden', className)}>
           <slot />
         </div>
       </div>

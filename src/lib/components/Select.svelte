@@ -3,7 +3,7 @@
 </script>
 
 <script>
-  import { classNames, clickOutside } from '$lib/utils.js'
+  import { classNames, clickOutside } from '$lib/utils'
   import { uniqueId, debounce } from 'lodash'
   import { fade } from 'svelte/transition'
 
@@ -31,7 +31,7 @@
   $: throttledSourceFilter(field.value)
   $: catchCurrent(open)
 
-  const id = uniqueId('input-')
+  const id = uniqueId('select-')
   function handleInput(e) {
     if (!open) {
       open = true
