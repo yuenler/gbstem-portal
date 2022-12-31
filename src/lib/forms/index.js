@@ -66,3 +66,15 @@ export function disableErrors(fieldSection, ...fieldNames) {
 export function getErrorMessage(code) {
   return authErrorsJson[code] ?? 'Something went wrong.'
 }
+
+export function isValid(formEl) {
+  let valid = true
+  Array.from(formEl.querySelectorAll('input')).every(input => {
+    if (!input.checkValidity()) {
+      valid = false
+      return false
+    }
+    return true
+  })
+  return valid
+}
