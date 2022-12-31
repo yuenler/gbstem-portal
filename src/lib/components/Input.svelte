@@ -32,6 +32,7 @@
         type="checkbox"
         {id}
         {checked}
+        {name}
         bind:this={self}
         {...$$restProps}
       />
