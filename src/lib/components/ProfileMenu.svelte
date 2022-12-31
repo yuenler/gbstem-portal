@@ -1,6 +1,6 @@
 <script>
   import { fade } from 'svelte/transition'
-  import { classNames } from '$lib/utils'
+  import { classNames, clickOutside } from '$lib/utils'
   import { auth } from '$lib/firebase'
   import { navigating } from '$app/stores'
   import { goto } from '$app/navigation'
@@ -17,7 +17,13 @@
   }
 </script>
 
-<div class={classNames('relative md:flex md:items-center', className)}>
+<div
+  class={classNames('relative md:flex md:items-center', className)}
+  use:clickOutside
+  on:outclick={() => {
+    open = false
+  }}
+>
   <button
     class="hidden sm:block"
     type="button"
