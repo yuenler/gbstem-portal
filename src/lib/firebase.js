@@ -29,10 +29,11 @@ function createAuth() {
     auth = getAuth($app)
     set(auth)
   })
-  async function signUp(firstName, lastName, email, password) {
+  async function signUp(firstName, email, password) {
     const { createUserWithEmailAndPassword, sendEmailVerification } = await import('firebase/auth')
     const res = await createUserWithEmailAndPassword(auth, email, password)
-    updateProfile(res.user, { displayName: `${firstName} ${lastName}` })
+    updateProfile(res.user, { displayName: firstName })
+
     sendEmailVerification(res.user)
     return res
   }

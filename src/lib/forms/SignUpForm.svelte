@@ -24,15 +24,17 @@
           auth
             .signUp(
               fields.default.firstName.value,
-              fields.default.lastName.value,
               fields.default.email.value,
               fields.default.password.value
             )
             .then(async () => {
               await user.loaded()
               setDoc(doc($db, 'users', $user.uid), {
-                hhid: '',
-                role: 'applicant'
+                hhid: Math.floor(Math.random() * 100000000),
+                role: 'applicant',
+                firstName: fields.default.firstName.value,
+                lastName: fields.default.lastName.value,
+                email: fields.default.email.value
               }).then(() => {
                 goto('/')
               })
