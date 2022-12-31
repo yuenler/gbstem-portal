@@ -26,15 +26,19 @@
     <div class="flex mt-2">
       <input
         class={classNames(
-          'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600',
+          'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600 peer disabled:checked:bg-gray-400 disabled:checked:border-gray-400 disabled:cursor-default',
           className
         )}
         type="checkbox"
         {id}
         {checked}
         bind:this={self}
+        {...$$restProps}
       />
-      <label for={id} class="ml-3 text-gray-900 cursor-pointer">
+      <label
+        for={id}
+        class="ml-3 text-gray-900 cursor-pointer peer-disabled:text-gray-400 peer-disabled:cursor-default"
+      >
         {placeholder}
       </label>
     </div>
@@ -42,7 +46,7 @@
     <div class="relative">
       <input
         class={classNames(
-          'appearance-none block px-3 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none peer',
+          'appearance-none block px-3 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none peer disabled:bg-white disabled:text-gray-400',
           field.error
             ? 'border-red-300 focus:border-red-600'
             : 'border-gray-300 focus:border-gray-600',
@@ -58,7 +62,7 @@
         {...$$restProps}
       />
       <label
-        class="absolute hover:cursor-text text-gray-500 duration-150 transform -translate-y-4 scale-75 top-2 z-10 origin-[20%_0%] bg-white px-2 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
+        class="absolute hover:cursor-text text-gray-500 duration-150 transform -translate-y-4 scale-75 top-2 z-10 origin-[20%_0%] bg-white px-2 peer-disabled:text-gray-400 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
         for={id}
       >
         {placeholder}
@@ -67,7 +71,7 @@
   {:else}
     <input
       class={classNames(
-        'appearance-none block px-3 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500',
+        'appearance-none block px-3 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         field.error
           ? 'border-red-300 focus:border-red-600'
           : 'border-gray-300 focus:border-gray-600',

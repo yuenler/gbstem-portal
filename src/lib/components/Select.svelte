@@ -7,6 +7,7 @@
   import { uniqueId, debounce } from 'lodash'
   import { fade } from 'svelte/transition'
 
+  let self
   export let field = {
     value: '',
     error: false
@@ -19,17 +20,22 @@
   export { className as class }
   let open = false
   let selectedIndex = 0
-  let source = []
-  let inputEl
+  const sourceNames = sourceJson.map(item => item.name)
+  let filteredSourceNames = []
 
-  const throttledSourceFilter = debounce(givenValue => {
+  const filterSourceNames = debounce(givenValue => {
     const lowerCaseValue = givenValue.toLowerCase()
-    source = sourceJson.filter(item => {
-      return item.name.toLowerCase().indexOf(lowerCaseValue) !== -1
-    })
+    filteredSourceNames = sourceNames.filter(
+      name => name.toLowerCase().indexOf(lowerCaseValue) !== -1
+    )
   }, 150)
-  $: throttledSourceFilter(field.value)
+  $: filterSourceNames(field.value)
   $: catchCurrent(open)
+  $: if (sourceNames.includes(field.value)) {
+    if (self) self.setCustomValidity('')
+  } else {
+    if (self) self.setCustomValidity(' ')
+  }
 
   const id = uniqueId('select-')
   function handleInput(e) {
@@ -44,13 +50,13 @@
       case 'Enter':
         e.preventDefault()
         open = false
-        field.value = source[selectedIndex].name
+        field.value = filteredSourceNames[selectedIndex]
         break
       case 'Tab':
         if (open) {
           e.preventDefault()
           open = false
-          field.value = source[selectedIndex].name
+          field.value = filteredSourceNames[selectedIndex]
         }
         break
       case 'ArrowUp':
@@ -94,7 +100,7 @@
     <div class="relative">
       <input
         class={classNames(
-          'appearance-none block pl-3 pr-9 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none  peer',
+          'appearance-none block pl-3 pr-9 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none peer disabled:bg-white disabled:text-gray-400',
           field.error
             ? 'border-red-300 focus:border-red-600'
             : 'border-gray-300 focus:border-gray-600'
@@ -103,7 +109,7 @@
         {id}
         {name}
         value={field.value}
-        bind:this={inputEl}
+        bind:this={self}
         on:input={handleInput}
         on:keydown={handleKeyDown}
         on:click={handleClick}
@@ -111,7 +117,7 @@
         {...$$restProps}
       />
       <label
-        class="absolute text-gray-500 duration-150 transform -translate-y-4 scale-75 top-2 z-10 origin-[20%_0%] bg-white px-2 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
+        class="absolute text-gray-500 duration-150 transform -translate-y-4 scale-75 top-2 z-10 origin-[20%_0%] bg-white px-2 peer-disabled:text-gray-400 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
         for={id}
       >
         {placeholder}
@@ -120,7 +126,7 @@
   {:else}
     <input
       class={classNames(
-        'appearance-none block pl-3 pr-9 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500',
+        'appearance-none block pl-3 pr-9 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         field.error
           ? 'border-red-300 focus:border-red-600'
           : 'border-gray-300 focus:border-gray-600'
@@ -129,7 +135,7 @@
       {id}
       {name}
       value={field.value}
-      bind:this={inputEl}
+      bind:this={self}
       on:input={handleInput}
       on:keydown={handleKeyDown}
       on:click={handleClick}
@@ -143,7 +149,7 @@
       on:click={() => {
         open = !open
         if (open) {
-          inputEl.focus()
+          self.focus()
         }
       }}
     >
@@ -168,21 +174,21 @@
       class="absolute top-14 left-0 w-full bg-white rounded-md border border-gray-200 shadow-sm py-1 max-h-60 overflow-y-auto overflow-hidden z-20"
       transition:fade={{ duration: 100 }}
     >
-      {#if source.length === 0}
+      {#if filteredSourceNames.length === 0}
         <div class="text-left py-2 px-6 w-full">Nothing found.</div>
-      {:else if source.length === 1}
+      {:else if filteredSourceNames.length === 1}
         <button
           class="text-left py-2 px-6 w-full transition-colors duration-300 bg-gray-100"
           type="button"
           on:click={() => {
-            field.value = source[0].name
+            field.value = filteredSourceNames[0]
             open = false
           }}
         >
-          {source[0].name}
+          {filteredSourceNames[0]}
         </button>
       {:else}
-        {#each source as item, index}
+        {#each filteredSourceNames as name, index}
           <button
             class={classNames(
               'text-left py-2 px-6 w-full transition-colors duration-300',
@@ -190,13 +196,13 @@
             )}
             type="button"
             on:click={() => {
-              field.value = item.name
+              field.value = name
               open = false
             }}
             on:mouseenter={() => {
               selectedIndex = index
             }}
-            >{item.name}
+            >{name}
           </button>
         {/each}
       {/if}
