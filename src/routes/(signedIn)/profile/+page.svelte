@@ -30,7 +30,15 @@
           />
         </svg>
         <div class="grow">
-          Email is not verified. Please check your email and verify to use the portal.
+          Email is not verified. Please check your email and verify to use the portal. Click <a
+            href="/"
+            class="link"
+            on:click={async e => {
+              const { sendEmailVerification } = await import('firebase/auth')
+              e.preventDefault()
+              await sendEmailVerification($user)
+            }}>here</a
+          > to resend verification email.
         </div>
       </div>
     {/if}
