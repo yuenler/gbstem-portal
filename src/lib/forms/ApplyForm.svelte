@@ -3,6 +3,7 @@ how did you learn about HackHarvard?
 some questions about technical experience and interests to help with grouping people into teams
  -->
 <script>
+  import { classNames } from '$lib/utils'
   import { doc, setDoc } from 'firebase/firestore'
   import { db, user } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
@@ -15,9 +16,12 @@ some questions about technical experience and interests to help with grouping pe
     shirtSizeJson,
     dietaryRestrictionsJson
   } from '$lib/data'
-  import { createFields, stripFieldSections } from '$lib/forms'
+  import { createFields, stripFieldSections, isValid } from '$lib/forms'
+  import { alert } from '$lib/stores'
 
+  let formEl
   let disabled = false
+  let showValidation = false
   let fields = {
     personal: createFields(
       'email',
@@ -46,17 +50,38 @@ some questions about technical experience and interests to help with grouping pe
     fields.personal.email.value = $user.email
   }
   function handleSave() {
-    const applicationRef = doc($db, 'applications', $user.uid)
-    setDoc(applicationRef, stripFieldSections(fields))
+    showValidation = true
+    if (isValid(formEl)) {
+      disabled = true
+      const applicationRef = doc($db, 'applications', $user.uid)
+      setDoc(applicationRef, stripFieldSections(fields)).then(() => {
+        disabled = false
+        showValidation = false
+        alert.trigger('success', 'Your application was saved.')
+      })
+    }
   }
   function handleSubmit() {
     fields.submitted = true
-    handleSave()
+    showValidation = true
+    if (isValid(formEl)) {
+      disabled = true
+      const applicationRef = doc($db, 'applications', $user.uid)
+      setDoc(applicationRef, stripFieldSections(fields)).then(() => {
+        showValidation = false
+        alert.trigger('success', 'Your application was successfully submitted!')
+      })
+    }
   }
 </script>
 
-<form class="max-w-lg grid gap-6" on:submit|preventDefault={handleSubmit}>
-  <fieldset {disabled}>
+<form
+  class={classNames('max-w-lg', showValidation && 'show-validation')}
+  bind:this={formEl}
+  on:submit|preventDefault={handleSubmit}
+  novalidate
+>
+  <fieldset class="grid gap-6" {disabled}>
     <div class="grid gap-1">
       <span class="font-bold">Personal</span>
       <div class="grid grid-cols-2 gap-3">
@@ -104,6 +129,7 @@ some questions about technical experience and interests to help with grouping pe
         type="tel"
         bind:field={fields.personal.phoneNumber}
         placeholder="Phone number"
+        floating
         required
       />
       <Select
@@ -196,12 +222,12 @@ some questions about technical experience and interests to help with grouping pe
       <button
         type="button"
         on:click={handleSave}
-        class="shadow-sm rounded-md bg-gray-100 px-4 py-2 text-yegray-900 hover:bg-gray-200 transition-colors duration-300"
+        class="shadow-sm rounded-md bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200 transition-colors duration-300 disabled:text-gray-500 disabled:bg-gray-200"
         >Save draft</button
       >
       <button
         type="submit"
-        class="shadow-sm rounded-md bg-blue-100 px-4 py-2 text-blue-900 hover:bg-blue-200 transition-colors duration-300"
+        class="shadow-sm rounded-md bg-blue-100 px-4 py-2 text-blue-900 hover:bg-blue-200 transition-colors duration-300 disabled:text-blue-500 disabled:bg-blue-200"
         >Submit</button
       >
     </div>
