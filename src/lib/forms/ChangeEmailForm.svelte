@@ -46,7 +46,7 @@
 </script>
 
 <form
-  class={classNames('w-full grid', showValidation && 'show-validation')}
+  class={classNames('max-w-lg w-full grid', showValidation && 'show-validation')}
   on:submit|preventDefault={handleSubmit}
   novalidate
 >
