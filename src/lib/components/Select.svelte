@@ -67,7 +67,7 @@
         break
       case 'ArrowDown':
         e.preventDefault()
-        if (selectedIndex !== source.length - 1) {
+        if (selectedIndex !== filteredSourceNames.length - 1) {
           ++selectedIndex
         }
         break
