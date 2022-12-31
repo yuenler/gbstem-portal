@@ -12,7 +12,7 @@
   <div class="flex flex-col gap-6 items-center">
     {#if !emailVerified}
       <div
-        class="w-full p-3 rounded-md shadow flex items-center gap-2 bg-red-200 mt-2"
+        class="max-w-lg w-full p-3 rounded-md shadow flex items-center gap-2 bg-red-200 mt-2"
         transition:fade
       >
         <svg
