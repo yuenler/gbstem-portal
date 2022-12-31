@@ -14,7 +14,7 @@ export function createFields(...fieldNames) {
 
 export function stripFieldSections(fields) {
   fields = cloneDeep(fields)
-  Object.keys(fieldSections).forEach(section => {
+  Object.keys(fields).forEach(section => {
     fields[section] = stripFields(fields[section])
   })
   return fields
