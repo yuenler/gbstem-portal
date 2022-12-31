@@ -2,5 +2,6 @@
   "auth/user-not-found": "User not found.",
   "auth/wrong-password": "Incorrect password.",
   "auth/too-many-request": "Too many failed sign in attempts. Please reset your password.",
-  "auth/weak-password": "Password should be at least 6 characters."
+  "auth/weak-password": "Password should be at least 6 characters.",
+  "auth/email-already-in-use": "User already exists."
 }
