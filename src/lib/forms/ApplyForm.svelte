@@ -4,7 +4,7 @@ some questions about technical experience and interests to help with grouping pe
  -->
 <script>
   import { classNames } from '$lib/utils'
-  import { doc, setDoc } from 'firebase/firestore'
+  import { doc, getDoc, setDoc } from 'firebase/firestore'
   import { db, user } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
@@ -16,11 +16,18 @@ some questions about technical experience and interests to help with grouping pe
     shirtSizeJson,
     dietaryRestrictionsJson
   } from '$lib/data'
-  import { createFields, stripFieldSections, isValid } from '$lib/forms'
+  import {
+    createFields,
+    stripFieldSections,
+    isValid,
+    getErrorMessage,
+    serializeFieldSections
+  } from '$lib/forms'
   import { alert } from '$lib/stores'
+  import { onMount } from 'svelte'
 
   let formEl
-  let disabled = false
+  let disabled = true
   let showValidation = false
   let fields = {
     personal: createFields(
@@ -42,35 +49,55 @@ some questions about technical experience and interests to help with grouping pe
     },
     agreements: {
       codeOfConduct: false,
-      sharing: false
+      sharing: false,
+      submitting: false
     },
-    submitted: false
+    meta: {
+      submitted: false
+    }
   }
   $: if ($user) {
     fields.personal.email.value = $user.email
   }
+  onMount(async () => {
+    const application = await getDoc(doc($db, 'applications', $user.uid))
+    if (application.exists()) {
+      fields = serializeFieldSections(application.data())
+    }
+    disabled = false
+  })
   function handleSave() {
     showValidation = true
-    if (isValid(formEl)) {
-      disabled = true
-      const applicationRef = doc($db, 'applications', $user.uid)
-      setDoc(applicationRef, stripFieldSections(fields)).then(() => {
+    disabled = true
+    setDoc(doc($db, 'applications', $user.uid), stripFieldSections(fields))
+      .then(() => {
         disabled = false
         showValidation = false
         alert.trigger('success', 'Your application was saved.')
       })
-    }
+      .catch(err => {
+        console.log(err)
+        disabled = false
+        alert.trigger('error', getErrorMessage(err.code))
+      })
   }
   function handleSubmit() {
-    fields.submitted = true
     showValidation = true
     if (isValid(formEl)) {
       disabled = true
-      const applicationRef = doc($db, 'applications', $user.uid)
-      setDoc(applicationRef, stripFieldSections(fields)).then(() => {
-        showValidation = false
-        alert.trigger('success', 'Your application was successfully submitted!')
-      })
+      let strippedFieldSections = stripFieldSections(fields)
+      strippedFieldSections.meta.submitted = true
+      setDoc(doc($db, 'applications', $user.uid), strippedFieldSections)
+        .then(() => {
+          disabled = false
+          showValidation = false
+          fields.meta.submitted = true
+          alert.trigger('success', 'Your application was submitted!')
+        })
+        .catch(err => {
+          disabled = false
+          alert.trigger('error', getErrorMessage(err.code))
+        })
     }
   }
 </script>
@@ -194,7 +221,7 @@ some questions about technical experience and interests to help with grouping pe
         {#each dietaryRestrictionsJson as dietaryRestriction}
           <Input
             type="checkbox"
-            bind:group={fields.dietaryRestrictions}
+            bind:group={fields.hackathon.dietaryRestrictions}
             value={dietaryRestriction.name}
             placeholder={dietaryRestriction.name}
           />
@@ -203,7 +230,7 @@ some questions about technical experience and interests to help with grouping pe
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Agreements</span>
-      <div class="grid grid-cols-1">
+      <div class="grid">
         <Input
           type="checkbox"
           bind:checked={fields.agreements.codeOfConduct}
@@ -216,20 +243,32 @@ some questions about technical experience and interests to help with grouping pe
           placeholder="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy (https://mlh.io/privacy). I further agree to the terms of both the MLH Contest Terms and Conditions (https://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy)"
           required
         />
+        <Input
+          type="checkbox"
+          bind:checked={fields.agreements.submitting}
+          placeholder="I understand submitting means I can no longer make changes to my application."
+          required
+        />
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-3">
-      <button
-        type="button"
-        on:click={handleSave}
-        class="shadow-sm rounded-md bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200 transition-colors duration-300 disabled:text-gray-500 disabled:bg-gray-200"
-        >Save draft</button
-      >
-      <button
-        type="submit"
-        class="shadow-sm rounded-md bg-blue-100 px-4 py-2 text-blue-900 hover:bg-blue-200 transition-colors duration-300 disabled:text-blue-500 disabled:bg-blue-200"
-        >Submit</button
-      >
+    <div class={classNames('grid gap-3', !fields.meta.submitted && 'grid-cols-2')}>
+      {#if fields.meta.submitted}
+        <div class="shadow-sm rounded-md bg-green-100 px-4 py-2 text-green-900 text-center">
+          Application submitted and in review!
+        </div>
+      {:else}
+        <button
+          type="button"
+          on:click={handleSave}
+          class="shadow-sm rounded-md bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200 transition-colors duration-300 disabled:text-gray-500 disabled:bg-gray-200"
+          >Save draft</button
+        >
+        <button
+          type="submit"
+          class="shadow-sm rounded-md bg-blue-100 px-4 py-2 text-blue-900 hover:bg-blue-200 transition-colors duration-300 disabled:text-blue-500 disabled:bg-blue-200"
+          >Submit</button
+        >
+      {/if}
     </div>
   </fieldset>
 </form>

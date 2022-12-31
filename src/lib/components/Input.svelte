@@ -12,37 +12,78 @@
   export let name = placeholder.toLowerCase().split(' ').join('-')
   export let floating = false
   export let checked = false
+  export let group = null
+  export let value = ''
   let className = ''
   export { className as class }
 
   const id = uniqueId('input-')
   function handleInput(e) {
-    field.value = type.match(/^(number|range)$/) ? +e.target.value : e.target.value
+    if (type === 'checkbox') {
+      if (group) {
+        if (e.target.checked) {
+          group = [value, ...group]
+        } else {
+          group = group.filter(item => item !== value)
+        }
+      } else {
+        checked = e.target.checked
+      }
+    } else if (type === 'number' || type === 'range') {
+      field.value = +e.target.value
+    } else {
+      field.value = e.target.value
+    }
   }
 </script>
 
 <div class="mt-2">
   {#if type === 'checkbox'}
-    <div class="flex mt-2">
-      <input
-        class={classNames(
-          'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600 peer disabled:checked:bg-gray-400 disabled:checked:border-gray-400 disabled:cursor-default',
-          className
-        )}
-        type="checkbox"
-        {id}
-        {checked}
-        {name}
-        bind:this={self}
-        {...$$restProps}
-      />
-      <label
-        for={id}
-        class="ml-3 text-gray-900 cursor-pointer peer-disabled:text-gray-400 peer-disabled:cursor-default"
-      >
-        {placeholder}
-      </label>
-    </div>
+    {#if group}
+      <div class="flex mt-2">
+        <input
+          class={classNames(
+            'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600 peer disabled:checked:bg-gray-400 disabled:checked:border-gray-400 disabled:cursor-default',
+            className
+          )}
+          type="checkbox"
+          {id}
+          checked={group.includes(value)}
+          {name}
+          bind:this={self}
+          on:input={handleInput}
+          {...$$restProps}
+        />
+        <label
+          for={id}
+          class="ml-3 text-gray-900 cursor-pointer peer-disabled:text-gray-400 peer-disabled:cursor-default"
+        >
+          {placeholder}
+        </label>
+      </div>
+    {:else}
+      <div class="flex mt-2">
+        <input
+          class={classNames(
+            'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600 peer disabled:checked:bg-gray-400 disabled:checked:border-gray-400 disabled:cursor-default',
+            className
+          )}
+          type="checkbox"
+          {id}
+          {checked}
+          {name}
+          bind:this={self}
+          on:input={handleInput}
+          {...$$restProps}
+        />
+        <label
+          for={id}
+          class="ml-3 text-gray-900 cursor-pointer peer-disabled:text-gray-400 peer-disabled:cursor-default"
+        >
+          {placeholder}
+        </label>
+      </div>
+    {/if}
   {:else if floating}
     <div class="relative">
       <input

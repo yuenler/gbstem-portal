@@ -1,5 +1,5 @@
 import { authErrorsJson } from '$lib/data'
-import { cloneDeep, isPlainObject } from 'lodash'
+import { cloneDeep, isPlainObject, isString, isNumber } from 'lodash'
 
 export function createFields(...fieldNames) {
   const fieldSection = {}
@@ -28,6 +28,27 @@ export function stripFields(fieldSection) {
     }
   })
   return fieldSection
+}
+
+export function serializeFieldSections(strippedFields) {
+  strippedFields = cloneDeep(strippedFields)
+  Object.keys(strippedFields).forEach(section => {
+    strippedFields[section] = serializeFields(strippedFields[section])
+  })
+  return strippedFields
+}
+
+export function serializeFields(strippedFieldSection) {
+  strippedFieldSection = cloneDeep(strippedFieldSection)
+  Object.keys(strippedFieldSection).forEach(element => {
+    if (isString(strippedFieldSection[element]) || isNumber(strippedFieldSection[element])) {
+      strippedFieldSection[element] = {
+        value: strippedFieldSection[element],
+        error: false
+      }
+    }
+  })
+  return strippedFieldSection
 }
 
 export function clearFields(fieldSection, ...fieldNames) {
