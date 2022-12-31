@@ -8,14 +8,14 @@ let config
 if (dev) {
   config = import.meta.env?.VITE_FIREBASE_API_KEY
     ? {
-        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
-        appId: import.meta.env.VITE_FIREBASE_APP_ID,
-        measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
-      }
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+    }
     : { apiKey: 'demo', authDomain: 'demo.firebaseapp.com' }
 } else {
   // figure out
@@ -29,9 +29,12 @@ function createAuth() {
     auth = getAuth($app)
     set(auth)
   })
-  async function signUp(email, password) {
+  async function signUp(firstName, lastName, email, password) {
     const { createUserWithEmailAndPassword, sendEmailVerification } = await import('firebase/auth')
     const res = await createUserWithEmailAndPassword(auth, email, password)
+    await res.user.updateProfile({
+      displayName: `${firstName} ${lastName}`
+    })
     sendEmailVerification(res.user)
     return res
   }

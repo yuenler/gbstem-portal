@@ -8,7 +8,7 @@
   import { alert } from '$lib/stores'
   import { doc, setDoc } from 'firebase/firestore'
 
-  let emailEl, passwordEl, confirmPasswordEl
+  let emailEl, passwordEl, confirmPasswordEl, firstNameEl, lastNameEl
   let disabled = false
   let showValidation = false
   let fields = {
@@ -22,7 +22,12 @@
         if (fields.default.password.value === fields.default.confirmPassword.value) {
           disabled = true
           auth
-            .signUp(fields.default.email.value, fields.default.password.value)
+            .signUp(
+              fields.default.firstName.value,
+              fields.default.lastName.value,
+              fields.default.email.value,
+              fields.default.password.value
+            )
             .then(async () => {
               await user.loaded()
               setDoc(doc($db, 'users', $user.uid), {
@@ -56,6 +61,23 @@
   <fieldset class="grid gap-2" {disabled}>
     <Brand />
     <h1 class="text-2xl mt-1 font-bold">Sign up</h1>
+    <Input
+      bind:self={firstNameEl}
+      type="text"
+      bind:field={fields.default.firstName}
+      placeholder="First name"
+      floating
+      required
+    />
+    <Input
+      bind:self={lastNameEl}
+      type="text"
+      bind:field={fields.default.lastName}
+      placeholder="Last name"
+      floating
+      required
+    />
+
     <Input
       bind:self={emailEl}
       type="email"
