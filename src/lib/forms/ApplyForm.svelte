@@ -47,12 +47,12 @@
     },
     meta: {
       ...createFields('hhid'),
-      submitted: false,
-      status: {
-        approved: false,
-        rejected: false,
-        waitlisted: false
-      }
+      submitted: false
+    },
+    status: {
+      approved: false,
+      rejected: false,
+      waitlisted: false
     }
   }
   onMount(async () => {
