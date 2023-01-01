@@ -27,6 +27,7 @@
   "type": "module",
   "dependencies": {
     "firebase": "^9.15.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "nanoid": "^4.0.0"
   }
 }
