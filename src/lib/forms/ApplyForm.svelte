@@ -43,7 +43,8 @@
       ...createFields('shirtSize', 'reason', 'why', 'role', 'proud'),
       firstHackathon: false,
       previouslyParticipated: false,
-      dietaryRestrictions: []
+      dietaryRestrictions: [],
+      resume: ''
     },
     agreements: {
       codeOfConduct: false,
@@ -117,23 +118,17 @@
         alert.trigger('error', err.code)
       })
   }
-  function handleSubmit() {
+  async function handleSubmit() {
     showValidation = true
     if (isValid(formEl)) {
       disabled = true
+      // upload resume
+      const downloadURL = await uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
+      alert.trigger('success', 'Resume uploaded!')
+      fields.hackathon.resume = downloadURL
+
       let strippedFieldSections = stripFieldSections(fields)
       strippedFieldSections.meta.submitted = true
-
-      // upload resume
-      const downloadURL = uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
-        .then(() => {
-          alert.trigger('success', 'Resume uploaded!')
-        })
-        .catch(err => {
-          alert.trigger('error', err.code)
-        })
-
-      strippedFieldSections.meta.resume = downloadURL
 
       // save application to firestore
       setDoc(doc($db, 'applications', $user.uid), strippedFieldSections)

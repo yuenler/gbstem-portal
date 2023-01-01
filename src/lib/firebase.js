@@ -128,26 +128,8 @@ async function uploadFile(file, filePath) {
   const { getStorage, ref, uploadBytesResumable, getDownloadURL } = await import('firebase/storage')
   const storage = getStorage()
   const storageRef = ref(storage, filePath)
-  console.log(file.name)
-  console.log(file)
   const uploadTask = uploadBytesResumable(storageRef, file)
-  uploadTask.on('state_changed', (snapshot) => {
-    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-    console.log('Upload is ' + progress + '% done')
-    switch (snapshot.state) {
-      case 'paused':
-        console.log('Upload is paused')
-        break
-      case 'running':
-        console.log('Upload is running')
-        break
-    }
-  }, (error) => {
-    console.log(error)
-  }, () => {
-    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-      return downloadURL
-    });
-  })
+  const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+  return downloadURL
 }
 export { uploadFile }
