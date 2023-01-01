@@ -8,6 +8,7 @@
   import ChangeNameForm from '$lib/forms/ChangeNameForm.svelte'
   import { onMount } from 'svelte'
   import { getDoc, doc } from 'firebase/firestore'
+  import Card from '$lib/components/Card.svelte'
 
   let hhid = ''
   $: emailVerified = $user?.emailVerified ?? true
@@ -54,12 +55,12 @@
         </div>
       </div>
     {/if}
-    <div class="max-w-lg w-full rounded-md shadow border border-gray-200 p-4 grid gap-3">
+    <Card class="max-w-lg grid gap-3">
       <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
         {`HHID: ${hhid}`}
       </div>
       <div class="text-sm">Any problems with changing your profile? Contact us.</div>
-    </div>
+    </Card>
     <ChangeNameForm />
     <ChangeEmailForm />
     <ChangePasswordForm />

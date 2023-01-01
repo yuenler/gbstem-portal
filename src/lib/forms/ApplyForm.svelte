@@ -16,6 +16,7 @@
   import { createFields, stripFieldSections, isValid, serializeFieldSections } from '$lib/forms'
   import { alert } from '$lib/stores'
   import { onMount } from 'svelte'
+  import Card from '$lib/components/Card.svelte'
 
   let formEl
   let disabled = true
@@ -129,7 +130,7 @@
   <fieldset class="grid gap-6" {disabled}>
     <div class="grid gap-1">
       <span class="font-bold">Personal</span>
-      <div class="rounded-md shadow border border-gray-200 p-4 grid gap-3 my-2">
+      <Card class=" grid gap-3 my-2">
         <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
           {`Name: ${fields.personal.firstName.value} ${fields.personal.lastName.value}`}
         </div>
@@ -140,7 +141,7 @@
           Wrong name or email? Go to your <a class="link" href="/profile">profile</a> to update your
           information.
         </div>
-      </div>
+      </Card>
       <Input
         type="date"
         bind:field={fields.personal.dateOfBirth}
