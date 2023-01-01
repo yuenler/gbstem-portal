@@ -37,7 +37,7 @@
           />
         </svg>
         <div class="grow">
-         Email is not verified. Please check your email and verify to use the portal. Can't find
+          Email is not verified. Please check your email and verify to use the portal. Can't find
           it? <button class="link" type="button" on:click={handleVerificationEmail}
             >Send it again.</button
           >

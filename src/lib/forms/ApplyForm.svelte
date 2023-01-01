@@ -76,7 +76,6 @@ some questions about technical experience and interests to help with grouping pe
         alert.trigger('success', 'Your application was saved.')
       })
       .catch(err => {
-        console.log(err)
         disabled = false
         alert.trigger('error', getErrorMessage(err.code))
       })
