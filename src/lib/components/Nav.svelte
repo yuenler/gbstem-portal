@@ -7,6 +7,7 @@
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
   import { user } from '$lib/firebase'
+  import AnnouncementsBell from './AnnouncementsBell.svelte'
 
   onMount(() => {
     updateShadow()
@@ -18,23 +19,21 @@
   $: if ($navigating) {
     open = false
   }
-  $: pages =
-    $user && $user.emailVerified
-      ? [
-          {
-            name: 'Dashboard',
-            href: '/dashboard'
-          },
-          {
-            name: 'Apply',
-            href: '/apply'
-          },
-          {
-            name: 'Group',
-            href: '/group'
-          }
-        ]
-      : []
+  $: emailVerified = $user?.emailVerified
+  const pages = [
+    {
+      name: 'Dashboard',
+      href: '/dashboard'
+    },
+    {
+      name: 'Apply',
+      href: '/apply'
+    },
+    {
+      name: 'Group',
+      href: '/group'
+    }
+  ]
   function updateShadow() {
     shadow = window.pageYOffset !== 0
   }
@@ -49,21 +48,26 @@
 >
   <div class="flex items-center gap-8">
     <Brand />
-    <div class="hidden md:flex items-center gap-3">
-      {#each pages as page}
-        <a
-          class={classNames(
-            'rounded-md py-2 px-3 transition-colors',
-            pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
-          )}
-          href={page.href}
-        >
-          {page.name}
-        </a>
-      {/each}
-    </div>
+    {#if emailVerified}
+      <div class="hidden md:flex items-center gap-3">
+        {#each pages as page}
+          <a
+            class={classNames(
+              'rounded-md py-2 px-3 transition-colors',
+              pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
+            )}
+            href={page.href}
+          >
+            {page.name}
+          </a>
+        {/each}
+      </div>
+    {/if}
   </div>
-  <div>
+  <div class="flex items-center gap-2">
+    {#if emailVerified}
+      <AnnouncementsBell />
+    {/if}
     <ProfileMenu class="hidden sm:block" />
     <button
       class="sm:hidden"
