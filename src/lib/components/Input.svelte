@@ -31,6 +31,8 @@
       }
     } else if (type === 'number' || type === 'range') {
       field.value = +e.target.value
+    } else if (type === 'file') {
+      field.value = e.target.files[0]
     } else {
       field.value = e.target.value
     }
@@ -123,7 +125,6 @@
       {type}
       {id}
       {name}
-      value={field.value}
       bind:this={self}
       on:input={handleInput}
       {...$$restProps}

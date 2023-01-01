@@ -1,7 +1,7 @@
 <script>
   import { classNames } from '$lib/utils'
   import { doc, getDoc, setDoc } from 'firebase/firestore'
-  import { db, user } from '$lib/firebase'
+  import { db, user, uploadFile } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import TextArea from '$lib/components/TextArea.svelte'
@@ -40,7 +40,7 @@
     ),
     academic: createFields('currentSchool', 'graduationYear', 'major'),
     hackathon: {
-      ...createFields('shirtSize', 'reason', 'why', 'role', 'proud', 'resume'),
+      ...createFields('shirtSize', 'reason', 'why', 'role', 'proud'),
       firstHackathon: false,
       previouslyParticipated: false,
       dietaryRestrictions: []
@@ -60,6 +60,12 @@
       rejected: false,
       waitlisted: false
     }
+  }
+  let resumeFile = {
+    value: {
+      name: 'No file selected'
+    },
+    error: false
   }
   onMount(async () => {
     const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
@@ -117,12 +123,25 @@
       disabled = true
       let strippedFieldSections = stripFieldSections(fields)
       strippedFieldSections.meta.submitted = true
+
+      // upload resume
+      const downloadURL = uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
+        .then(() => {
+          alert.trigger('success', 'Resume uploaded!')
+        })
+        .catch(err => {
+          alert.trigger('error', err.code)
+        })
+
+      strippedFieldSections.meta.resume = downloadURL
+
+      // save application to firestore
       setDoc(doc($db, 'applications', $user.uid), strippedFieldSections)
         .then(() => {
           disabled = false
           showValidation = false
           fields.meta.submitted = true
-          alert.trigger('success', 'Your application was submitted!')
+          alert.trigger('success', 'Your application has been submitted!')
         })
         .catch(err => {
           disabled = false
@@ -292,7 +311,7 @@
       </div>
       <div class="mt-2">
         <Input
-          bind:field={fields.hackathon.resume}
+          bind:field={resumeFile}
           type="file"
           placeholder="Upload your resume (Must be 1 page PDF)"
           required

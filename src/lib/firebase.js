@@ -8,14 +8,14 @@ let config
 if (dev) {
   config = import.meta.env?.VITE_FIREBASE_API_KEY
     ? {
-        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
-        appId: import.meta.env.VITE_FIREBASE_APP_ID,
-        measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
-      }
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+    }
     : { apiKey: 'demo', authDomain: 'demo.firebaseapp.com' }
 } else {
   // figure out
@@ -122,3 +122,32 @@ export const user = createUser()
 export const db = derived(app, ($app, set) => {
   set(getFirestore($app))
 })
+
+// uploads a file to firebase storage
+async function uploadFile(file, filePath) {
+  const { getStorage, ref, uploadBytesResumable, getDownloadURL } = await import('firebase/storage')
+  const storage = getStorage()
+  const storageRef = ref(storage, filePath)
+  console.log(file.name)
+  console.log(file)
+  const uploadTask = uploadBytesResumable(storageRef, file)
+  uploadTask.on('state_changed', (snapshot) => {
+    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    console.log('Upload is ' + progress + '% done')
+    switch (snapshot.state) {
+      case 'paused':
+        console.log('Upload is paused')
+        break
+      case 'running':
+        console.log('Upload is running')
+        break
+    }
+  }, (error) => {
+    console.log(error)
+  }, () => {
+    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+      return downloadURL
+    });
+  })
+}
+export { uploadFile }
