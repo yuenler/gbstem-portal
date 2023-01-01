@@ -1,13 +1,13 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, disableErrors } from '$lib/forms'
+  import { createFields, enableErrors, isValid } from '$lib/forms'
   import { auth, user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
   import { goto } from '$app/navigation'
 
-  let emailEl
+  let formEl
   let disabled = false
   let showValidation = false
   let fields = {
@@ -15,8 +15,7 @@
   }
   function handleSubmit() {
     showValidation = true
-    if (emailEl.checkValidity()) {
-      fields.default = disableErrors(fields.default, 'email')
+    if (isValid(formEl)) {
       disabled = true
       auth
         .signIn(fields.default.email.value, fields.default.password.value)
@@ -29,28 +28,20 @@
           disabled = false
           alert.trigger('error', err.code)
         })
-    } else {
-      fields.default = enableErrors(fields.default, 'email')
     }
   }
 </script>
 
 <form
   class={classNames('max-w-lg w-full', showValidation && 'show-validation')}
+  bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
 >
   <fieldset class="grid gap-2" {disabled}>
     <Brand />
     <h1 class="text-2xl mt-1 font-bold">Sign in</h1>
-    <Input
-      bind:self={emailEl}
-      type="email"
-      bind:field={fields.default.email}
-      placeholder="Email"
-      floating
-      required
-    />
+    <Input type="email" bind:field={fields.default.email} placeholder="Email" floating required />
     <Input
       type="password"
       bind:field={fields.default.password}

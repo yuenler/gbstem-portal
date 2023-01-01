@@ -16,13 +16,7 @@ some questions about technical experience and interests to help with grouping pe
     shirtSizeJson,
     dietaryRestrictionsJson
   } from '$lib/data'
-  import {
-    createFields,
-    stripFieldSections,
-    isValid,
-    getErrorMessage,
-    serializeFieldSections
-  } from '$lib/forms'
+  import { createFields, stripFieldSections, isValid, serializeFieldSections } from '$lib/forms'
   import { alert } from '$lib/stores'
   import { onMount } from 'svelte'
 
@@ -53,6 +47,7 @@ some questions about technical experience and interests to help with grouping pe
       submitting: false
     },
     meta: {
+      ...createFields('hhid'),
       submitted: false,
       approved: false
     }
@@ -62,18 +57,32 @@ some questions about technical experience and interests to help with grouping pe
     if (applicationDoc.exists()) {
       fields = serializeFieldSections(applicationDoc.data())
     }
-    const userDoc = await getDoc(doc($db, 'users', $user.uid))
-    const userDocData = userDoc.data()
+    const profileDoc = await getDoc(doc($db, 'users', $user.uid))
+    const profileDocData = profileDoc.data()
+    const temp = {
+      email: fields.personal.email.value,
+      firstName: fields.personal.firstName.value,
+      lastName: fields.personal.lastName.value
+    }
     fields.personal.email.value = $user.email
-    fields.personal.firstName.value = userDocData.firstName
-    fields.personal.lastName.value = userDocData.lastName
+    fields.personal.firstName.value = profileDocData.firstName
+    fields.personal.lastName.value = profileDocData.lastName
+    console.log(fields, profileDocData)
+    fields.meta.hhid.value = profileDocData.hhid
+    if (
+      temp.email !== fields.personal.email.value ||
+      temp.firstName !== fields.personal.firstName.value ||
+      temp.lastName !== fields.personal.lastName.value
+    ) {
+      handleSave(false)
+    }
     disabled = false
     if (!fields.meta.submitted) {
       const interval = setInterval(() => {
         if (!fields.meta.submitted) {
           handleSave(false)
         }
-      }, 300_000)
+      }, 300000)
       return () => clearInterval(interval)
     }
   })
@@ -124,13 +133,14 @@ some questions about technical experience and interests to help with grouping pe
       <span class="font-bold">Personal</span>
       <div class="rounded-md shadow border border-gray-200 p-4 grid gap-3 my-2">
         <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
-          {`${fields.personal.firstName.value} ${fields.personal.lastName.value}`}
+          {`Name: ${fields.personal.firstName.value} ${fields.personal.lastName.value}`}
         </div>
         <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
-          {fields.personal.email.value}
+          {`Email: ${fields.personal.email.value}`}
         </div>
         <div class="text-sm">
-          Wrong name or email? Go to your <a class="link" href="/profile">profile</a> to update the information.
+          Wrong name or email? Go to your <a class="link" href="/profile">profile</a> to update your
+          information.
         </div>
       </div>
       <Input

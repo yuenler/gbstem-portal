@@ -28,40 +28,41 @@
           })
           .then(async () => {
             await user.loaded()
-            const hhidsDoc = await getDoc(doc($db, 'meta', 'hhids'))
-            const hhids = hhidsDoc.exists() ? hhidsDoc.data() : {}
-            const alphabet = '0123456789'
-            const nanoid = customAlphabet(alphabet, 7)
-            let hhid = ''
-            for (let i = 0; i < 10; ++i) {
-              if (hhids['HH-' + nanoid()] === undefined) {
-                hhid = 'HH-' + nanoid()
-                break
+            getDoc(doc($db, 'meta', 'hhids')).then(res => {
+              const hhids = res.exists() ? res.data() : {}
+              const alphabet = '0123456789'
+              const nanoid = customAlphabet(alphabet, 7)
+              let hhid = ''
+              for (let i = 0; i < 100; ++i) {
+                if (hhids['HH-' + nanoid()] === undefined) {
+                  hhid = 'HH-' + nanoid()
+                  break
+                }
               }
-            }
-            if (hhid === '') {
-              return alert.trigger('error', 'Too many collisions. Please try again.')
-            } else {
-              setDoc(
-                doc($db, 'meta', 'hhids'),
-                {
-                  [hhid]: hhid
-                },
-                { merge: true }
-              ).then(() => {
-                setDoc(doc($db, 'users', $user.uid), {
-                  hhid,
-                  role: 'applicant',
-                  firstName,
-                  lastName
-                }).then(() => {
-                  goto('/')
+              if (hhid === '') {
+                return alert.trigger('error', 'Too many collisions. Please try again.')
+              } else {
+                setDoc(
+                  doc($db, 'meta', 'hhids'),
+                  {
+                    [hhid]: hhid
+                  },
+                  { merge: true }
+                ).then(() => {
+                  setDoc(doc($db, 'users', $user.uid), {
+                    hhid,
+                    role: 'applicant',
+                    firstName,
+                    lastName
+                  }).then(() => {
+                    goto('/')
+                  })
                 })
-              })
-            }
+              }
+            })
           })
           .catch(err => {
-            fields.default = enableErrors(fields.default, 'password', 'confirmPassword')
+            fields.default = enableErrors(fields.default)
             disabled = false
             alert.trigger('error', err.code)
           })

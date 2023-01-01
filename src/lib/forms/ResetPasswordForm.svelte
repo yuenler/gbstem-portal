@@ -29,7 +29,6 @@
           alert.trigger('info', 'Password reset email was sent. Please check your inbox.')
         })
         .catch(err => {
-          console.log(err)
           fields.default = enableErrors(fields.default)
           alert.trigger('error', err.code)
         })

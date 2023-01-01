@@ -2,11 +2,21 @@
   import ChangeEmailForm from '$lib/forms/ChangeEmailForm.svelte'
   import ChangePasswordForm from '$lib/forms/ChangePasswordForm.svelte'
   import { fade } from 'svelte/transition'
-  import { user } from '$lib/firebase'
+  import { user, db } from '$lib/firebase'
   import { sendEmailVerification } from 'firebase/auth'
   import { alert } from '$lib/stores'
+  import ChangeNameForm from '$lib/forms/ChangeNameForm.svelte'
+  import { onMount } from 'svelte'
+  import { getDoc, doc } from 'firebase/firestore'
 
+  let hhid = ''
   $: emailVerified = $user?.emailVerified ?? true
+  onMount(async () => {
+    getDoc(doc($db, 'users', $user.uid)).then(res => {
+      const profile = res.data()
+      hhid = profile.hhid
+    })
+  })
   function handleVerificationEmail() {
     sendEmailVerification($user).then(() => {
       alert.trigger('info', 'Verification email was sent.')
@@ -44,6 +54,13 @@
         </div>
       </div>
     {/if}
+    <div class="max-w-lg w-full rounded-md shadow border border-gray-200 p-4 grid gap-3">
+      <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
+        {`HHID: ${hhid}`}
+      </div>
+      <div class="text-sm">Any problems with changing your profile? Contact us.</div>
+    </div>
+    <ChangeNameForm />
     <ChangeEmailForm />
     <ChangePasswordForm />
   </div>
