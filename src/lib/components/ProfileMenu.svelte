@@ -12,7 +12,7 @@
     open = false
   }
   async function handleSignOut() {
-    auth.signOut()
+    await auth.signOut()
     goto('/signin')
   }
 </script>

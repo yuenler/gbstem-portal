@@ -85,7 +85,11 @@ export function disableErrors(fieldSection, ...fieldNames) {
 }
 
 export function getErrorMessage(code) {
-  return authErrorsJson[code] ?? 'Something went wrong.'
+  let str = ''
+  return (
+    authErrorsJson[code] ??
+    (str = code.split('/')[1].split('-').join(' ')).charAt(0).toUpperCase() + str.slice(1) + '.'
+  )
 }
 
 export function isValid(formEl) {

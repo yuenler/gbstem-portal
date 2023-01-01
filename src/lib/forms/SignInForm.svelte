@@ -61,7 +61,7 @@
     />
     <div class="flex items-center justify-between mt-2">
       <div class="flex flex-col gap-1">
-        <a class="link" href="/forgot-password">Forgot password?</a>
+        <a class="link" href="/reset-password">Forgot password?</a>
         <a class="link" href="/signup">Need to sign up?</a>
       </div>
       <button
