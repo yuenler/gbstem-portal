@@ -1,7 +1,7 @@
 import { dev } from '$app/environment'
 import { derived, readable } from 'svelte/store'
 import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getAuth, onAuthStateChanged, updateProfile } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 let config
@@ -29,9 +29,10 @@ function createAuth() {
     auth = getAuth($app)
     set(auth)
   })
-  async function signUp(email, password) {
+  async function signUp(firstName, email, password) {
     const { createUserWithEmailAndPassword, sendEmailVerification } = await import('firebase/auth')
     const res = await createUserWithEmailAndPassword(auth, email, password)
+    await updateProfile(res.user, { displayName: firstName })
     sendEmailVerification(res.user)
     return res
   }
