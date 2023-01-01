@@ -6,6 +6,7 @@ import shirtSizeJson from './shirtSizes.json'
 import dietaryRestrictionsJson from './dietaryRestrictions.json'
 import authErrorsJson from './authErrors.json'
 import reasonsJson from './reasons.json'
+import statesJson from './states.json'
 
 export {
   racesEthnicitiesJson,
@@ -15,5 +16,6 @@ export {
   shirtSizeJson,
   dietaryRestrictionsJson,
   authErrorsJson,
-  reasonsJson
+  reasonsJson,
+  statesJson
 }

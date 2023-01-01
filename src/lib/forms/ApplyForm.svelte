@@ -11,7 +11,8 @@
     worldJson,
     shirtSizeJson,
     dietaryRestrictionsJson,
-    reasonsJson
+    reasonsJson,
+    statesJson
   } from '$lib/data'
   import { createFields, stripFieldSections, isValid, serializeFieldSections } from '$lib/forms'
   import { alert } from '$lib/stores'
@@ -153,6 +154,40 @@
         floating
         required
       />
+      <Input
+        type="tel"
+        bind:field={fields.personal.phoneNumber}
+        placeholder="Phone number"
+        floating
+        required
+      />
+      <Input
+        type="text"
+        bind:field={fields.personal.addressLine1}
+        placeholder="Address"
+        floating
+        required
+      />
+      <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
+        <Input type="text" bind:field={fields.personal.city} placeholder="City" floating required />
+        <Select bind:field={fields.personal.state} placeholder="State" sourceJson={statesJson} />
+      </div>
+      <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
+        <Select
+          bind:field={fields.personal.country}
+          placeholder="Country"
+          sourceJson={worldJson}
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:field={fields.personal.zipCode}
+          placeholder="Zip code"
+          floating
+          required
+        />
+      </div>
       <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
         <Select
           bind:field={fields.personal.gender}
@@ -171,20 +206,6 @@
           required
         />
       </div>
-      <Input
-        type="tel"
-        bind:field={fields.personal.phoneNumber}
-        placeholder="Phone number"
-        floating
-        required
-      />
-      <Select
-        bind:field={fields.personal.countryOfResidence}
-        placeholder="Country of residence"
-        sourceJson={worldJson}
-        floating
-        required
-      />
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Academic</span>
