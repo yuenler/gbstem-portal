@@ -110,6 +110,24 @@
         {placeholder}
       </label>
     </div>
+  {:else if type === 'file'}
+    <label for={id}>{placeholder}</label>
+    <input
+      class={classNames(
+        'mt-2 min-h-[3rem] appearance-none block p-3 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+        field.error
+          ? 'border-red-300 focus:border-red-600'
+          : 'border-gray-300 focus:border-gray-600',
+        className
+      )}
+      {type}
+      {id}
+      {name}
+      value={field.value}
+      bind:this={self}
+      on:input={handleInput}
+      {...$$restProps}
+    />
   {:else}
     <input
       class={classNames(

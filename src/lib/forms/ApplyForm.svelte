@@ -292,10 +292,9 @@
       </div>
       <div class="mt-2">
         <Input
-          type="file"
           bind:field={fields.hackathon.resume}
-          placeholder="Upload resume"
-          floating
+          type="file"
+          placeholder="Upload your resume (Must be 1 page PDF)"
           required
         />
       </div>
