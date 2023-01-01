@@ -3,8 +3,15 @@
   import ChangePasswordForm from '$lib/forms/ChangePasswordForm.svelte'
   import { fade } from 'svelte/transition'
   import { user } from '$lib/firebase'
+  import { sendEmailVerification } from 'firebase/auth'
+  import { alert } from '$lib/stores'
 
   $: emailVerified = $user?.emailVerified ?? true
+  function handleVerificationEmail() {
+    sendEmailVerification($user).then(() => {
+      alert.trigger('info', 'Verification email was sent.')
+    })
+  }
 </script>
 
 <div class="grid md:grid-cols-2">
@@ -30,7 +37,10 @@
           />
         </svg>
         <div class="grow">
-          Email is not verified. Please check your email and verify to use the portal.
+          Email is not verified. Please check your email and verify to use the portal. Can't find
+          it? <button class="link" type="button" on:click={handleVerificationEmail}
+            >Send it again.</button
+          >
         </div>
       </div>
     {/if}
