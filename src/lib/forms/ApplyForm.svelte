@@ -1,7 +1,3 @@
-<!-- TODO: also add the following questions to the form:
-how did you learn about HackHarvard?
-some questions about technical experience and interests to help with grouping people into teams
- -->
 <script>
   import { classNames } from '$lib/utils'
   import { doc, getDoc, setDoc } from 'firebase/firestore'
@@ -14,11 +10,13 @@ some questions about technical experience and interests to help with grouping pe
     schoolsJson,
     worldJson,
     shirtSizeJson,
-    dietaryRestrictionsJson
+    dietaryRestrictionsJson,
+    reasonsJson
   } from '$lib/data'
   import { createFields, stripFieldSections, isValid, serializeFieldSections } from '$lib/forms'
   import { alert } from '$lib/stores'
   import { onMount } from 'svelte'
+  import Textarea from '../components/Textarea.svelte'
 
   let formEl
   let disabled = true
@@ -36,7 +34,7 @@ some questions about technical experience and interests to help with grouping pe
     ),
     academic: createFields('currentSchool', 'graduationYear', 'major'),
     hackathon: {
-      ...createFields('shirtSize'),
+      ...createFields('shirtSize', 'reason'),
       firstHackathon: false,
       previouslyParticipated: false,
       dietaryRestrictions: []
@@ -55,6 +53,8 @@ some questions about technical experience and interests to help with grouping pe
   onMount(async () => {
     const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
     if (applicationDoc.exists()) {
+      // comment this out when changing what data the application uses
+      // i.e., structure of fields
       fields = serializeFieldSections(applicationDoc.data())
     }
     const profileDoc = await getDoc(doc($db, 'users', $user.uid))
@@ -67,7 +67,6 @@ some questions about technical experience and interests to help with grouping pe
     fields.personal.email.value = $user.email
     fields.personal.firstName.value = profileDocData.firstName
     fields.personal.lastName.value = profileDocData.lastName
-    console.log(fields, profileDocData)
     fields.meta.hhid.value = profileDocData.hhid
     if (
       temp.email !== fields.personal.email.value ||
@@ -230,9 +229,18 @@ some questions about technical experience and interests to help with grouping pe
           placeholder="Have you previously participated at a HackHarvard hackathon?"
         />
       </div>
+      <div class="mt-2">
+        <Select
+          bind:field={fields.hackathon.reason}
+          placeholder="How did you learn about HackHarvard?"
+          sourceJson={reasonsJson}
+          floating
+          required
+        />
+      </div>
     </div>
     <div class="grid gap-1">
-      <span class="font-bold">Dietary Restrictions</span>
+      <span class="font-bold">Dietary restrictions</span>
       <div class="grid grid-cols-2">
         {#each dietaryRestrictionsJson as dietaryRestriction}
           <Input
@@ -262,7 +270,7 @@ some questions about technical experience and interests to help with grouping pe
         <Input
           type="checkbox"
           bind:checked={fields.agreements.submitting}
-          placeholder="I understand submitting means I can no longer make changes to my application."
+          placeholder="I understand submitting means I can no longer make changes to my application. Don't check this box until you are sure that you are ready to submit."
           required
         />
       </div>

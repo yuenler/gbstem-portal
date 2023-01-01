@@ -103,7 +103,8 @@
           'appearance-none block pl-3 pr-9 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none peer disabled:bg-white disabled:text-gray-400',
           field.error
             ? 'border-red-300 focus:border-red-600'
-            : 'border-gray-300 focus:border-gray-600'
+            : 'border-gray-300 focus:border-gray-600',
+          className
         )}
         type="text"
         {id}
@@ -129,7 +130,8 @@
         'appearance-none block pl-3 pr-9 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         field.error
           ? 'border-red-300 focus:border-red-600'
-          : 'border-gray-300 focus:border-gray-600'
+          : 'border-gray-300 focus:border-gray-600',
+        className
       )}
       type="text"
       {id}
