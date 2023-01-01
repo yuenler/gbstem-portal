@@ -33,8 +33,7 @@
                 hhid: Math.floor(Math.random() * 100000000),
                 role: 'applicant',
                 firstName: fields.default.firstName.value,
-                lastName: fields.default.lastName.value,
-                email: fields.default.email.value
+                lastName: fields.default.lastName.value
               }).then(() => {
                 goto('/')
               })
