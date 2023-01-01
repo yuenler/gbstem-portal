@@ -32,7 +32,11 @@
       'gender',
       'raceEthnicity',
       'phoneNumber',
-      'countryOfResidence'
+      'address',
+      'city',
+      'state',
+      'country',
+      'zipCode'
     ),
     academic: createFields('currentSchool', 'graduationYear', 'major'),
     hackathon: {
@@ -164,7 +168,7 @@
       />
       <Input
         type="text"
-        bind:field={fields.personal.addressLine1}
+        bind:field={fields.personal.address}
         placeholder="Address"
         floating
         required
