@@ -53,7 +53,8 @@ some questions about technical experience and interests to help with grouping pe
       submitting: false
     },
     meta: {
-      submitted: false
+      submitted: false,
+      approved: false
     }
   }
   $: if ($user) {
