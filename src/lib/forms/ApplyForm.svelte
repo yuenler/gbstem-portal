@@ -57,28 +57,39 @@ some questions about technical experience and interests to help with grouping pe
       approved: false
     }
   }
-  $: if ($user) {
-    fields.personal.email.value = $user.email
-  }
   onMount(async () => {
-    const application = await getDoc(doc($db, 'applications', $user.uid))
-    if (application.exists()) {
-      fields = serializeFieldSections(application.data())
+    const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
+    if (applicationDoc.exists()) {
+      fields = serializeFieldSections(applicationDoc.data())
     }
+    const userDoc = await getDoc(doc($db, 'users', $user.uid))
+    const userDocData = userDoc.data()
+    fields.personal.email.value = $user.email
+    fields.personal.firstName.value = userDocData.firstName
+    fields.personal.lastName.value = userDocData.lastName
     disabled = false
+    if (!fields.meta.submitted) {
+      const interval = setInterval(() => {
+        if (!fields.meta.submitted) {
+          handleSave(false)
+        }
+      }, 300_000)
+      return () => clearInterval(interval)
+    }
   })
-  function handleSave() {
-    showValidation = true
-    disabled = true
+  function handleSave(withDisabling) {
+    showValidation = false
+    if (withDisabling) {
+      disabled = true
+    }
     setDoc(doc($db, 'applications', $user.uid), stripFieldSections(fields))
       .then(() => {
         disabled = false
-        showValidation = false
         alert.trigger('success', 'Your application was saved.')
       })
       .catch(err => {
         disabled = false
-        alert.trigger('error', getErrorMessage(err.code))
+        alert.trigger('error', err.code)
       })
   }
   function handleSubmit() {
@@ -96,7 +107,7 @@ some questions about technical experience and interests to help with grouping pe
         })
         .catch(err => {
           disabled = false
-          alert.trigger('error', getErrorMessage(err.code))
+          alert.trigger('error', err.code)
         })
     }
   }
@@ -111,21 +122,16 @@ some questions about technical experience and interests to help with grouping pe
   <fieldset class="grid gap-6" {disabled}>
     <div class="grid gap-1">
       <span class="font-bold">Personal</span>
-      <div class="grid grid-cols-2 gap-3">
-        <Input
-          type="text"
-          bind:field={fields.personal.firstName}
-          placeholder="First name"
-          floating
-          required
-        />
-        <Input
-          type="text"
-          bind:field={fields.personal.lastName}
-          placeholder="Last name"
-          floating
-          required
-        />
+      <div class="rounded-md shadow border border-gray-200 p-4 grid gap-3 my-2">
+        <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
+          {`${fields.personal.firstName.value} ${fields.personal.lastName.value}`}
+        </div>
+        <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
+          {fields.personal.email.value}
+        </div>
+        <div class="text-sm">
+          Wrong name or email? Go to your <a class="link" href="/profile">profile</a> to update the information.
+        </div>
       </div>
       <Input
         type="date"
@@ -259,7 +265,7 @@ some questions about technical experience and interests to help with grouping pe
       {:else}
         <button
           type="button"
-          on:click={handleSave}
+          on:click={() => handleSave(true)}
           class="shadow-sm rounded-md bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200 transition-colors duration-300 disabled:text-gray-500 disabled:bg-gray-200"
           >Save draft</button
         >
