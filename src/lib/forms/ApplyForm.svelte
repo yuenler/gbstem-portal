@@ -48,6 +48,7 @@
     agreements: {
       codeOfConduct: false,
       sharing: false,
+      mlhEmails: false,
       submitting: false
     },
     meta: {
@@ -315,11 +316,18 @@
           placeholder="I have read and agree to the MLH Code of Conduct (https://static.mlh.io/docs/mlh-code-of-conduct.pdf)."
           required
         />
+
         <Input
           type="checkbox"
           bind:checked={fields.agreements.sharing}
           placeholder="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy (https://mlh.io/privacy). I further agree to the terms of both the MLH Contest Terms and Conditions (https://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy)"
           required
+        />
+        <Input
+          type="checkbox"
+          bind:checked={fields.agreements.mlhEmails}
+          placeholder="I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or
+        Organizer Newsletters and other communications from MLH."
         />
         <Input
           type="checkbox"
