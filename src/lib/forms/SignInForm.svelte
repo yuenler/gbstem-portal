@@ -1,7 +1,7 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, disableErrors, getErrorMessage } from '$lib/forms'
+  import { createFields, enableErrors, disableErrors } from '$lib/forms'
   import { auth, user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
@@ -27,7 +27,7 @@
         .catch(err => {
           fields.default = enableErrors(fields.default)
           disabled = false
-          alert.trigger('error', getErrorMessage(err.code))
+          alert.trigger('error', err.code)
         })
     } else {
       fields.default = enableErrors(fields.default, 'email')

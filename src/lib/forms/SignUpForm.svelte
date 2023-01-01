@@ -1,7 +1,7 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, getErrorMessage, enableErrors, isValid } from '$lib/forms'
+  import { createFields, enableErrors, isValid } from '$lib/forms'
   import { auth, user, db } from '$lib/firebase'
   import { goto } from '$app/navigation'
   import Brand from '$lib/components/Brand.svelte'
@@ -63,7 +63,7 @@
           .catch(err => {
             fields.default = enableErrors(fields.default, 'password', 'confirmPassword')
             disabled = false
-            alert.trigger('error', getErrorMessage(err.code))
+            alert.trigger('error', err.code)
           })
       } else {
         fields.default = enableErrors(fields.default, 'password', 'confirmPassword')

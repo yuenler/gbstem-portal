@@ -39,7 +39,7 @@
           alert.trigger('info', 'A verification email was sent.')
         })
         .catch(err => {
-          alert.trigger('error', getErrorMessage(err.code))
+          alert.trigger('error', err.code)
         })
     }
   }

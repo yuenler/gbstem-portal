@@ -1,13 +1,7 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import {
-    createFields,
-    enableErrors,
-    disableErrors,
-    getErrorMessage,
-    clearFields
-  } from '$lib/forms'
+  import { createFields, enableErrors, disableErrors, clearFields } from '$lib/forms'
   import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import { updatePassword } from 'firebase/auth'
@@ -43,7 +37,7 @@
           alert.trigger('success', 'Password was successfully changed.')
         })
         .catch(err => {
-          alert.trigger('error', getErrorMessage(err.code))
+          alert.trigger('error', err.code)
         })
     }
   }
