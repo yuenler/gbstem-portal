@@ -40,7 +40,7 @@
     ),
     academic: createFields('currentSchool', 'graduationYear', 'major'),
     hackathon: {
-      ...createFields('shirtSize', 'reason', 'why', 'role', 'proud'),
+      ...createFields('shirtSize', 'reason', 'why', 'role', 'proud', 'resume'),
       firstHackathon: false,
       previouslyParticipated: false,
       dietaryRestrictions: []
@@ -265,7 +265,6 @@
           bind:field={fields.hackathon.reason}
           placeholder="How did you learn about HackHarvard?"
           sourceJson={reasonsJson}
-          floating
           required
         />
       </div>
@@ -273,7 +272,6 @@
         <TextArea
           bind:field={fields.hackathon.why}
           placeholder="Why do you want to attend HackHarvard?"
-          floating
           required
         />
       </div>
@@ -281,7 +279,6 @@
         <TextArea
           bind:field={fields.hackathon.role}
           placeholder="What do you see as your role on a hackathon team?"
-          floating
           required
         />
       </div>
@@ -289,6 +286,15 @@
         <TextArea
           bind:field={fields.hackathon.proud}
           placeholder="What's something you've made that you're proud of?"
+          floating
+          required
+        />
+      </div>
+      <div class="mt-2">
+        <Input
+          type="file"
+          bind:field={fields.hackathon.resume}
+          placeholder="Upload resume"
           floating
           required
         />
