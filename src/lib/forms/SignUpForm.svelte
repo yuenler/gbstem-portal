@@ -31,7 +31,7 @@
             const hhidsDoc = await getDoc(doc($db, 'meta', 'hhids'))
             const hhids = hhidsDoc.exists() ? hhidsDoc.data() : {}
             const alphabet = '0123456789'
-            const nanoid = customAlphabet(alphabet, 9)
+            const nanoid = customAlphabet(alphabet, 7)
             let hhid = ''
             for (let i = 0; i < 10; ++i) {
               if (hhids['HH-' + nanoid()] === undefined) {
