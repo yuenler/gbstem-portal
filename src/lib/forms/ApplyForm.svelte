@@ -4,6 +4,7 @@
   import { db, user } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
+  import TextArea from '$lib/components/TextArea.svelte'
   import {
     racesEthnicitiesJson,
     gendersJson,
@@ -35,7 +36,7 @@
     ),
     academic: createFields('currentSchool', 'graduationYear', 'major'),
     hackathon: {
-      ...createFields('shirtSize', 'reason'),
+      ...createFields('shirtSize', 'reason', 'why', 'role', 'proud'),
       firstHackathon: false,
       previouslyParticipated: false,
       dietaryRestrictions: []
@@ -259,6 +260,30 @@
           bind:field={fields.hackathon.reason}
           placeholder="How did you learn about HackHarvard?"
           sourceJson={reasonsJson}
+          floating
+          required
+        />
+      </div>
+      <div class="mt-2">
+        <TextArea
+          bind:field={fields.hackathon.why}
+          placeholder="Why do you want to attend HackHarvard?"
+          floating
+          required
+        />
+      </div>
+      <div class="mt-2">
+        <TextArea
+          bind:field={fields.hackathon.role}
+          placeholder="What do you see as your role on a hackathon team?"
+          floating
+          required
+        />
+      </div>
+      <div class="mt-2">
+        <TextArea
+          bind:field={fields.hackathon.proud}
+          placeholder="What's something you've made that you're proud of?"
           floating
           required
         />
