@@ -16,7 +16,6 @@
   import { createFields, stripFieldSections, isValid, serializeFieldSections } from '$lib/forms'
   import { alert } from '$lib/stores'
   import { onMount } from 'svelte'
-  import Textarea from '../components/Textarea.svelte'
 
   let formEl
   let disabled = true
