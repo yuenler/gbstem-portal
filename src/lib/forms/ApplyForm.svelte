@@ -4,7 +4,7 @@
   import { db, user } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
-  import TextArea from '$lib/components/TextArea.svelte'
+  import Textarea from '$lib/components/Textarea.svelte'
   import {
     racesEthnicitiesJson,
     gendersJson,
@@ -160,6 +160,24 @@
         floating
         required
       />
+      <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
+        <Select
+          bind:field={fields.personal.gender}
+          placeholder="Gender"
+          sourceJson={gendersJson}
+          floating
+          required
+        />
+        <Select
+          bind:field={fields.personal.raceEthnicity}
+          name="race"
+          autocomplete="race"
+          placeholder="Race or ethnicity"
+          sourceJson={racesEthnicitiesJson}
+          floating
+          required
+        />
+      </div>
       <Input
         type="tel"
         bind:field={fields.personal.phoneNumber}
@@ -190,24 +208,6 @@
           type="text"
           bind:field={fields.personal.zipCode}
           placeholder="Zip code"
-          floating
-          required
-        />
-      </div>
-      <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
-        <Select
-          bind:field={fields.personal.gender}
-          placeholder="Gender"
-          sourceJson={gendersJson}
-          floating
-          required
-        />
-        <Select
-          bind:field={fields.personal.raceEthnicity}
-          name="race"
-          autocomplete="race"
-          placeholder="Race or ethnicity"
-          sourceJson={racesEthnicitiesJson}
           floating
           required
         />
@@ -269,24 +269,23 @@
         />
       </div>
       <div class="mt-2">
-        <TextArea
+        <Textarea
           bind:field={fields.hackathon.why}
           placeholder="Why do you want to attend HackHarvard?"
           required
         />
       </div>
       <div class="mt-2">
-        <TextArea
+        <Textarea
           bind:field={fields.hackathon.role}
           placeholder="What do you see as your role on a hackathon team?"
           required
         />
       </div>
       <div class="mt-2">
-        <TextArea
+        <Textarea
           bind:field={fields.hackathon.proud}
           placeholder="What's something you've made that you're proud of?"
-          floating
           required
         />
       </div>
