@@ -124,7 +124,7 @@
       // check file size and type. It must be a pdf and at most 1MB
       if (resumeFile.value.size > 1000000) {
         resumeFile.error = true
-        alert.trigger('customError', 'Resume must be at most 1MB')
+        alert.trigger('error', 'Resume must be at most 1MB')
         return
       }
 
@@ -153,7 +153,7 @@
         })
         .catch(err => {
           disabled = false
-          alert.trigger('customError', 'Error uploading resume. Please try again.')
+          alert.trigger('error', 'Error uploading resume. Please try again.')
           return
         })
     }
