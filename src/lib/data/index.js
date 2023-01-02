@@ -7,6 +7,7 @@ import dietaryRestrictionsJson from './dietaryRestrictions.json'
 import errorsJson from './errors.json'
 import reasonsJson from './reasons.json'
 import statesJson from './states.json'
+import fieldsJson from './fields.json'
 
 export {
   racesEthnicitiesJson,
@@ -17,5 +18,6 @@ export {
   dietaryRestrictionsJson,
   reasonsJson,
   statesJson,
-  errorsJson
+  errorsJson,
+  fieldsJson
 }

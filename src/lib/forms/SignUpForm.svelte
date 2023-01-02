@@ -1,7 +1,7 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, isValid } from '$lib/forms'
+  import { createFields, enableErrors, disableErrors, isValid } from '$lib/forms'
   import { auth, user, db } from '$lib/firebase'
   import { goto } from '$app/navigation'
   import Brand from '$lib/components/Brand.svelte'
@@ -13,7 +13,7 @@
   let disabled = false
   let showValidation = false
   let fields = {
-    default: createFields('email', 'password', 'confirmPassword')
+    default: createFields.text('email', 'password', 'confirmPassword')
   }
   function handleSubmit() {
     showValidation = true
@@ -40,7 +40,7 @@
                 }
               }
               if (hhid === '') {
-                return alert.trigger('error', 'Too many collisions. Please try again.')
+                return alert.trigger('error', 'Too many collisions. Please try again.', false)
               } else {
                 setDoc(
                   doc($db, 'meta', 'hhids'),
@@ -55,6 +55,7 @@
                     firstName,
                     lastName
                   }).then(() => {
+                    fields = disableErrors.allSections(fields)
                     goto('/')
                   })
                 })
@@ -62,13 +63,13 @@
             })
           })
           .catch(err => {
-            fields.default = enableErrors(fields.default)
+            fields = enableErrors.allSections(fields)
             disabled = false
             alert.trigger('error', err.code)
           })
       } else {
-        fields.default = enableErrors(fields.default, 'password', 'confirmPassword')
-        alert.trigger('error', 'Passwords do not match.')
+        fields.default = enableErrors.atSection(fields.default, 'password', 'confirmPassword')
+        alert.trigger('error', 'Passwords do not match.', false)
       }
     }
   }

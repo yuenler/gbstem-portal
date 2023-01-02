@@ -12,7 +12,7 @@
   let disabled = true
   let showValidation = false
   let fields = {
-    default: createFields('firstName', 'lastName')
+    default: createFields.text('firstName', 'lastName')
   }
   onMount(async () => {
     const userDoc = await getDoc(doc($db, 'users', $user.uid))

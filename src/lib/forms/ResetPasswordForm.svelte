@@ -11,7 +11,7 @@
   let formEl
   let showValidation = false
   let fields = {
-    default: createFields('email')
+    default: createFields.text('email')
   }
   $: signedIn = $user === undefined ? true : $user
   onMount(async () => {
@@ -25,11 +25,11 @@
     if (isValid(formEl)) {
       sendPasswordResetEmail($auth, fields.default.email.value)
         .then(() => {
-          fields.default = disableErrors(fields.default)
+          fields = disableErrors.allSections(fields)
           alert.trigger('info', 'Password reset email was sent. Please check your inbox.')
         })
         .catch(err => {
-          fields.default = enableErrors(fields.default)
+          fields = enableErrors.allSections(fields)
           alert.trigger('error', err.code)
         })
     }

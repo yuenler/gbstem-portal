@@ -1,7 +1,7 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, disableErrors, clearFields } from '$lib/forms'
+  import { createFields, enableErrors, clearFields, isValid } from '$lib/forms'
   import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import { verifyBeforeUpdateEmail } from 'firebase/auth'
@@ -9,18 +9,15 @@
   import ReauthenticateForm from '$lib/forms/ReauthenticateForm.svelte'
 
   let modalEl
-  let newEmailEl
+  let formEl
   let showValidation = false
   let fields = {
-    default: createFields('newEmail')
+    default: createFields.text('newEmail')
   }
   function handleSubmit() {
     showValidation = true
-    if (newEmailEl.checkValidity()) {
-      fields.default = disableErrors(fields.default)
+    if (isValid(formEl)) {
       modalEl.setOpen(true)
-    } else {
-      fields.default = enableErrors(fields.default)
     }
   }
   function handleReauthenticated(reauthenticated) {
@@ -29,10 +26,11 @@
       verifyBeforeUpdateEmail($user, fields.default.newEmail.value)
         .then(() => {
           showValidation = false
-          fields.default = clearFields(fields.default)
+          fields = clearFields.allSections(fields)
           alert.trigger('info', 'A verification email was sent.')
         })
         .catch(err => {
+          fields = enableErrors.allSections(fields)
           alert.trigger('error', err.code)
         })
     }
@@ -41,6 +39,7 @@
 
 <form
   class={classNames('max-w-lg w-full grid', showValidation && 'show-validation')}
+  bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
 >
@@ -59,7 +58,6 @@
     <div class="relative">
       <Input
         class="pr-[5.25rem]"
-        bind:self={newEmailEl}
         type="email"
         bind:field={fields.default.newEmail}
         placeholder="New email"

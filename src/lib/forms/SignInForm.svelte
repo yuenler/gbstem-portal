@@ -1,7 +1,7 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, isValid } from '$lib/forms'
+  import { createFields, enableErrors, disableErrors, isValid } from '$lib/forms'
   import { auth, user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
@@ -11,7 +11,7 @@
   let disabled = false
   let showValidation = false
   let fields = {
-    default: createFields('email', 'password')
+    default: createFields.text('email', 'password')
   }
   function handleSubmit() {
     showValidation = true
@@ -20,11 +20,12 @@
       auth
         .signIn(fields.default.email.value, fields.default.password.value)
         .then(async () => {
+          fields = disableErrors.allSections(fields)
           await user.loaded()
           goto('/')
         })
         .catch(err => {
-          fields.default = enableErrors(fields.default)
+          fields = enableErrors.allSections(fields)
           disabled = false
           alert.trigger('error', err.code)
         })

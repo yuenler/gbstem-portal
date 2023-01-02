@@ -1,7 +1,7 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, disableErrors, clearFields } from '$lib/forms'
+  import { createFields, enableErrors, disableErrors, clearFields, isValid } from '$lib/forms'
   import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import { updatePassword } from 'firebase/auth'
@@ -9,21 +9,20 @@
   import ReauthenticateForm from '$lib/forms/ReauthenticateForm.svelte'
 
   let modalEl
-  let newPasswordEl
-  let confirmPasswordEl
+  let formEl
   let showValidation = false
   let fields = {
-    default: createFields('newPassword', 'confirmPassword')
+    default: createFields.text('newPassword', 'confirmPassword')
   }
   function handleSubmit() {
     showValidation = true
-    if (newPasswordEl.checkValidity() && confirmPasswordEl.checkValidity()) {
+    if (isValid(formEl)) {
       if (fields.default.newPassword.value === fields.default.confirmPassword.value) {
-        fields.default = disableErrors(fields.default)
+        fields = disableErrors.allSections(fields)
         modalEl.setOpen(true)
       } else {
-        fields.default = enableErrors(fields.default)
-        alert.trigger('error', 'Passwords do not match.')
+        fields = enableErrors.allSections(fields)
+        alert.trigger('error', 'Passwords do not match.', false)
       }
     }
   }
@@ -33,10 +32,11 @@
       updatePassword($user, fields.default.newPassword.value)
         .then(() => {
           showValidation = false
-          fields.default = clearFields(fields.default)
+          fields = clearFields.allSections(fields)
           alert.trigger('success', 'Password was successfully changed.')
         })
         .catch(err => {
+          fields = enableErrors.allSections(fields)
           alert.trigger('error', err.code)
         })
     }
@@ -45,6 +45,7 @@
 
 <form
   class={classNames('max-w-lg w-full grid', showValidation && 'show-validation')}
+  bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
 >
@@ -52,7 +53,6 @@
     <span class="font-bold">Password</span>
     <Input
       type="password"
-      bind:self={newPasswordEl}
       bind:field={fields.default.newPassword}
       placeholder="New password"
       floating
@@ -62,7 +62,6 @@
       <Input
         class="pr-[5.25rem]"
         type="password"
-        bind:self={confirmPasswordEl}
         bind:field={fields.default.confirmPassword}
         placeholder="Confirm password"
         floating

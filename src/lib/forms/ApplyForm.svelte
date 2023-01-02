@@ -15,7 +15,7 @@
     reasonsJson,
     statesJson
   } from '$lib/data'
-  import { createFields, stripFieldSections, isValid, serializeFieldSections } from '$lib/forms'
+  import { createFields, serialize, isValid } from '$lib/forms'
   import { alert } from '$lib/stores'
   import { onMount } from 'svelte'
   import Card from '$lib/components/Card.svelte'
@@ -24,7 +24,7 @@
   let disabled = true
   let showValidation = false
   let fields = {
-    personal: createFields(
+    personal: createFields.text(
       'email',
       'firstName',
       'lastName',
@@ -38,42 +38,26 @@
       'country',
       'zipCode'
     ),
-    academic: createFields('currentSchool', 'graduationYear', 'major'),
+    academic: createFields.text('currentSchool', 'graduationYear', 'major'),
     hackathon: {
-      ...createFields('shirtSize', 'reason', 'why', 'role', 'proud'),
-      firstHackathon: false,
-      previouslyParticipated: false,
-      dietaryRestrictions: [],
-      resume: ''
+      ...createFields.text('shirtSize', 'reason', 'why', 'role', 'proud'),
+      ...createFields.checkbox('firstHackathon', 'previouslyParticipated'),
+      ...createFields.file('resume'),
+      ...createFields.group('dietaryRestrictions')
     },
-    agreements: {
-      codeOfConduct: false,
-      sharing: false,
-      mlhEmails: false,
-      submitting: false
-    },
+    agreements: createFields.checkbox('codeOfConduct', 'sharing', 'mlhEmails', 'submitting'),
     meta: {
-      ...createFields('hhid'),
-      submitted: false
+      ...createFields.text('hhid'),
+      ...createFields.checkbox('submitted')
     },
-    status: {
-      approved: false,
-      rejected: false,
-      waitlisted: false
-    }
-  }
-  let resumeFile = {
-    value: {
-      name: 'No file selected'
-    },
-    error: false
+    status: createFields.checkbox('approved', 'rejected', 'waitlisted')
   }
   onMount(async () => {
     const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
     if (applicationDoc.exists()) {
       // comment this out when changing what data the application uses
       // i.e., structure of fields
-      fields = serializeFieldSections(applicationDoc.data())
+      fields = serialize.fromServer(applicationDoc.data())
     }
     const profileDoc = await getDoc(doc($db, 'users', $user.uid))
     const profileDocData = profileDoc.data()
@@ -93,10 +77,10 @@
     ) {
       handleSave(false)
     }
-    disabled = false
-    if (!fields.meta.submitted) {
+    if (!fields.meta.submitted.checked) {
+      disabled = false
       const interval = setInterval(() => {
-        if (!fields.meta.submitted) {
+        if (!fields.meta.submitted.checked) {
           handleSave(false)
         }
       }, 300000)
@@ -108,7 +92,7 @@
     if (withDisabling) {
       disabled = true
     }
-    setDoc(doc($db, 'applications', $user.uid), stripFieldSections(fields))
+    setDoc(doc($db, 'applications', $user.uid), serialize.toServer(fields))
       .then(() => {
         disabled = false
         alert.trigger('success', 'Your application was saved.')
@@ -121,40 +105,33 @@
   async function handleSubmit() {
     showValidation = true
     if (isValid(formEl)) {
-      // check file size and type. It must be a pdf and at most 1MB
-      if (resumeFile.value.size > 1000000) {
-        resumeFile.error = true
-        alert.trigger('error', 'Resume must be at most 1MB', false)
-        return
-      }
-
       disabled = true
       storage
-        .uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
+        .uploadFile(fields.hackathon.resume.value, `resumes/${$user.uid}.pdf`)
         .then(downloadURL => {
-          alert.trigger('success', 'Resume uploaded!')
-          fields.hackathon.resume = downloadURL
-
-          let strippedFieldSections = stripFieldSections(fields)
-          strippedFieldSections.meta.submitted = true
-
-          // save application to firestore
-          setDoc(doc($db, 'applications', $user.uid), strippedFieldSections)
-            .then(() => {
-              disabled = false
+          let serializedFields = serialize.toServer(fields)
+          serializedFields.hackathon.resume.upload.url = downloadURL
+          serializedFields.hackathon.resume.upload.name = fields.hackathon.resume.value.name
+          serializedFields.meta.submitted.checked = true
+          setDoc(doc($db, 'applications', $user.uid), serializedFields)
+            .then(async () => {
               showValidation = false
-              fields.meta.submitted = true
               alert.trigger('success', 'Your application has been submitted!')
+              const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
+              fields = serialize.fromServer(applicationDoc.data())
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              })
             })
             .catch(err => {
               disabled = false
               alert.trigger('error', err.code)
             })
         })
-        .catch(err => {
+        .catch(() => {
           disabled = false
           alert.trigger('error', 'Error uploading resume. Please try again.', false)
-          return
         })
     }
   }
@@ -169,7 +146,7 @@
   <fieldset class="grid gap-6" {disabled}>
     <div class="grid gap-1">
       <span class="font-bold">Personal</span>
-      <Card class=" grid gap-3 my-2">
+      <Card class="grid gap-3 my-2">
         <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
           {`Name: ${fields.personal.firstName.value} ${fields.personal.lastName.value}`}
         </div>
@@ -181,6 +158,27 @@
           information.
         </div>
       </Card>
+      {#if fields.hackathon.resume.upload.url !== ''}
+        <a class="mb-2" href={fields.hackathon.resume.upload.url} target="_blank" rel="noreferrer">
+          <Card class="flex items-center gap-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+              />
+            </svg>
+            <span>{`${fields.hackathon.resume.upload.name} (resume)`}</span>
+          </Card>
+        </a>
+      {/if}
       <Input
         type="date"
         bind:field={fields.personal.dateOfBirth}
@@ -222,7 +220,12 @@
       />
       <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
         <Input type="text" bind:field={fields.personal.city} placeholder="City" floating required />
-        <Select bind:field={fields.personal.state} placeholder="State" sourceJson={statesJson} />
+        <Select
+          bind:field={fields.personal.state}
+          placeholder="State"
+          sourceJson={statesJson}
+          floating
+        />
       </div>
       <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
         <Select
@@ -279,12 +282,12 @@
       <div class="grid grid-cols-1">
         <Input
           type="checkbox"
-          bind:checked={fields.hackathon.firstHackathon}
+          bind:field={fields.hackathon.firstHackathon}
           placeholder="Will HackHarvard be your first hackathon?"
         />
         <Input
           type="checkbox"
-          bind:checked={fields.hackathon.previouslyParticipated}
+          bind:field={fields.hackathon.previouslyParticipated}
           placeholder="Have you previously participated at a HackHarvard hackathon?"
         />
       </div>
@@ -293,6 +296,7 @@
           bind:field={fields.hackathon.reason}
           placeholder="How did you learn about HackHarvard?"
           sourceJson={reasonsJson}
+          floating
           required
         />
       </div>
@@ -317,14 +321,18 @@
           required
         />
       </div>
-      <div class="mt-2">
-        <Input
-          bind:field={resumeFile}
-          type="file"
-          placeholder="Upload your resume (Must be 1 page PDF. Max 1MB)"
-          required
-        />
-      </div>
+      {#if fields.hackathon.resume.upload.url === ''}
+        <div class="mt-2">
+          <Input
+            bind:field={fields.hackathon.resume}
+            type="file"
+            placeholder="Upload your resume (max 1 MB; 1 page PDF)"
+            maxSize={1 * 1024 * 1024}
+            accept={['application/pdf']}
+            required
+          />
+        </div>
+      {/if}
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Dietary restrictions</span>
@@ -333,7 +341,6 @@
           <Input
             type="checkbox"
             bind:group={fields.hackathon.dietaryRestrictions}
-            value={dietaryRestriction.name}
             placeholder={dietaryRestriction.name}
           />
         {/each}
@@ -344,33 +351,33 @@
       <div class="grid">
         <Input
           type="checkbox"
-          bind:checked={fields.agreements.codeOfConduct}
+          bind:field={fields.agreements.codeOfConduct}
           placeholder="I have read and agree to the MLH Code of Conduct (https://static.mlh.io/docs/mlh-code-of-conduct.pdf)."
           required
         />
 
         <Input
           type="checkbox"
-          bind:checked={fields.agreements.sharing}
+          bind:field={fields.agreements.sharing}
           placeholder="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy (https://mlh.io/privacy). I further agree to the terms of both the MLH Contest Terms and Conditions (https://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy)"
           required
         />
         <Input
           type="checkbox"
-          bind:checked={fields.agreements.mlhEmails}
+          bind:field={fields.agreements.mlhEmails}
           placeholder="I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or
         Organizer Newsletters and other communications from MLH."
         />
         <Input
           type="checkbox"
-          bind:checked={fields.agreements.submitting}
+          bind:field={fields.agreements.submitting}
           placeholder="I understand submitting means I can no longer make changes to my application. Don't check this box until you are sure that you are ready to submit."
           required
         />
       </div>
     </div>
-    <div class={classNames('grid gap-3', !fields.meta.submitted && 'grid-cols-2')}>
-      {#if fields.meta.submitted}
+    <div class={classNames('grid gap-3', !fields.meta.submitted.checked && 'grid-cols-2')}>
+      {#if fields.meta.submitted.checked}
         <div class="shadow-sm rounded-md bg-green-100 px-4 py-2 text-green-900 text-center">
           Application submitted and in review!
         </div>

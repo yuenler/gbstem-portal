@@ -1,86 +1,144 @@
-import { cloneDeep, isPlainObject, isString, isNumber } from 'lodash'
+import { cloneDeep } from 'lodash'
+import { fieldsJson } from '$lib/data'
 
-export function createFields(...fieldNames) {
-  const fieldSection = {}
-  fieldNames.forEach(element => {
-    fieldSection[element] = {
-      value: '',
-      error: false
-    }
-  })
-  return fieldSection
-}
-
-export function stripFieldSections(fields) {
-  fields = cloneDeep(fields)
-  Object.keys(fields).forEach(section => {
-    fields[section] = stripFields(fields[section])
-  })
-  return fields
-}
-
-export function stripFields(fieldSection) {
-  fieldSection = cloneDeep(fieldSection)
-  Object.keys(fieldSection).forEach(element => {
-    if (isPlainObject(fieldSection[element])) {
-      fieldSection[element] = fieldSection[element].value
-    }
-  })
-  return fieldSection
-}
-
-export function serializeFieldSections(strippedFields) {
-  strippedFields = cloneDeep(strippedFields)
-  Object.keys(strippedFields).forEach(section => {
-    strippedFields[section] = serializeFields(strippedFields[section])
-  })
-  return strippedFields
-}
-
-export function serializeFields(strippedFieldSection) {
-  strippedFieldSection = cloneDeep(strippedFieldSection)
-  Object.keys(strippedFieldSection).forEach(element => {
-    if (isString(strippedFieldSection[element]) || isNumber(strippedFieldSection[element])) {
-      strippedFieldSection[element] = {
-        value: strippedFieldSection[element],
-        error: false
-      }
-    }
-  })
-  return strippedFieldSection
-}
-
-export function clearFields(fieldSection, ...fieldNames) {
-  fieldSection = cloneDeep(fieldSection)
-  if (fieldNames.length === 0) {
-    fieldNames = Object.keys(fieldSection)
+export const createFields = {
+  text: (...fieldNames) => {
+    const fieldSection = {}
+    fieldNames.forEach(fieldName => {
+      fieldSection[fieldName] = cloneDeep(fieldsJson.text)
+    })
+    return fieldSection
+  },
+  file: (...fieldNames) => {
+    const fieldSection = {}
+    fieldNames.forEach(fieldName => {
+      fieldSection[fieldName] = cloneDeep(fieldsJson.file)
+    })
+    return fieldSection
+  },
+  checkbox: (...fieldNames) => {
+    const fieldSection = {}
+    fieldNames.forEach(fieldName => {
+      fieldSection[fieldName] = cloneDeep(fieldsJson.checkbox)
+    })
+    return fieldSection
+  },
+  group: (...fieldNames) => {
+    const fieldSection = {}
+    fieldNames.forEach(fieldName => {
+      fieldSection[fieldName] = cloneDeep(fieldsJson.group)
+    })
+    return fieldSection
   }
-  fieldNames.forEach(element => {
-    fieldSection[element].value = ''
-  })
-  return fieldSection
 }
 
-export function enableErrors(fieldSection, ...fieldNames) {
-  fieldSection = cloneDeep(fieldSection)
-  if (fieldNames.length === 0) {
-    fieldNames = Object.keys(fieldSection)
+export const serialize = {
+  toServer: fields => {
+    fields = cloneDeep(fields)
+    Object.keys(fields).forEach(section => {
+      Object.keys(fields[section]).forEach(fieldName => {
+        let field = cloneDeep(fields[section][fieldName])
+        delete field.error
+        switch (field.type) {
+          case 'text':
+          case 'checkbox':
+            break
+          case 'file':
+            delete field.value
+            break
+        }
+        fields[section][fieldName] = field
+      })
+    })
+    return fields
+  },
+  fromServer: fields => {
+    fields = cloneDeep(fields)
+    Object.keys(fields).forEach(section => {
+      Object.keys(fields[section]).forEach(fieldName => {
+        let field = {
+          ...cloneDeep(fields[section][fieldName]),
+          error: false
+        }
+        switch (field.type) {
+          case 'text':
+          case 'checkbox':
+            break
+          case 'file':
+            field['value'] = {}
+            break
+        }
+        fields[section][fieldName] = field
+      })
+    })
+    return fields
   }
-  fieldNames.forEach(element => {
-    fieldSection[element].error = true
-  })
-  return fieldSection
 }
 
-export function disableErrors(fieldSection, ...fieldNames) {
-  fieldSection = cloneDeep(fieldSection)
-  if (fieldNames.length === 0) {
-    fieldNames = Object.keys(fieldSection)
+export const clearFields = {
+  allSections: fields => {
+    fields = cloneDeep(fields)
+    Object.keys(fields).forEach(section => {
+      Object.keys(fields[section]).forEach(fieldName => {
+        fields[section][fieldName] = cloneDeep(fieldsJson[fields[section][fieldName].type])
+      })
+    })
+    return fields
+  },
+  atSection: (fieldSection, ...fieldNames) => {
+    fieldSection = cloneDeep(fieldSection)
+    if (fieldNames.length === 0) {
+      fieldNames = Object.keys(fieldSection)
+    }
+    fieldNames.forEach(fieldName => {
+      fieldSection[fieldName] = cloneDeep(fieldsJson[fieldSection[fieldName].type])
+    })
+    return fieldSection
   }
-  fieldNames.forEach(element => {
-    fieldSection[element].error = false
-  })
-  return fieldSection
+}
+
+export const enableErrors = {
+  allSections: fields => {
+    fields = cloneDeep(fields)
+    Object.keys(fields).forEach(section => {
+      Object.keys(fields[section]).forEach(fieldName => {
+        fields[section][fieldName].error = true
+      })
+    })
+    return fields
+  },
+  atSection: (fieldSection, ...fieldNames) => {
+    fieldSection = cloneDeep(fieldSection)
+    if (fieldNames.length === 0) {
+      fieldNames = Object.keys(fieldSection)
+    }
+    fieldNames.forEach(fieldName => {
+      fieldSection[fieldName].error = true
+    })
+    return fieldSection
+  }
+}
+
+export const disableErrors = {
+  allSections: fields => {
+    fields = cloneDeep(fields)
+    Object.keys(fields).forEach(section => {
+      Object.keys(fields[section]).forEach(fieldName => {
+        fields[section][fieldName].error = false
+      })
+    })
+    return fields
+  },
+  atSection: (fieldSection, ...fieldNames) => {
+    fieldSection = cloneDeep(fieldSection)
+    if (fieldNames.length === 0) {
+      fieldNames = Object.keys(fieldSection)
+    }
+    fieldNames.forEach(fieldName => {
+      fieldSection[fieldName].error = false
+    })
+    return fieldSection
+  }
 }
 
 export function isValid(formEl) {

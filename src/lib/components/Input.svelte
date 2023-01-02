@@ -1,19 +1,19 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { uniqueId } from 'lodash'
+  import { uniqueId, kebabCase } from 'lodash'
+  import { fieldsJson } from '$lib/data'
+  import { alert } from '$lib/stores'
 
   export let self
   export let type = 'text'
-  export let field = {
-    value: '',
-    error: false
-  }
+  export let field = fieldsJson[type]
   export let placeholder = ''
-  export let name = placeholder.toLowerCase().split(' ').join('-')
+  export let name = kebabCase(placeholder)
   export let floating = false
-  export let checked = false
   export let group = null
-  export let value = ''
+  export let maxSize = 0
+  export let accept = []
+  export let required = false
   let className = ''
   export { className as class }
 
@@ -22,17 +22,23 @@
     if (type === 'checkbox') {
       if (group) {
         if (e.target.checked) {
-          group = [value, ...group]
+          group.value = [name, ...group.value]
         } else {
-          group = group.filter(item => item !== value)
+          group.value = group.value.filter(item => item !== name)
         }
       } else {
-        checked = e.target.checked
+        field.checked = e.target.checked
       }
     } else if (type === 'number' || type === 'range') {
       field.value = +e.target.value
     } else if (type === 'file') {
       field.value = e.target.files[0]
+      if (field.value?.size > maxSize) {
+        self.setCustomValidity(' ')
+        alert.trigger('error', 'File exceeds maximum size.', false)
+      } else {
+        self.setCustomValidity('')
+      }
     } else {
       field.value = e.target.value
     }
@@ -46,21 +52,27 @@
         <input
           class={classNames(
             'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600 peer disabled:checked:bg-gray-400 disabled:checked:border-gray-400 disabled:cursor-default',
+            field.error
+              ? 'border-red-300 focus:border-red-600'
+              : 'border-gray-300 focus:border-gray-600',
             className
           )}
           type="checkbox"
-          {id}
-          checked={group.includes(value)}
-          {name}
+          checked={group.value.includes(name)}
           bind:this={self}
           on:input={handleInput}
+          {id}
+          {name}
+          {required}
           {...$$restProps}
         />
         <label
           for={id}
           class="ml-3 text-gray-900 cursor-pointer peer-disabled:text-gray-400 peer-disabled:cursor-default"
         >
-          {placeholder}
+          <span>
+            {placeholder}<span class="text-red-500">*</span>
+          </span>
         </label>
       </div>
     {:else}
@@ -68,24 +80,53 @@
         <input
           class={classNames(
             'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600 peer disabled:checked:bg-gray-400 disabled:checked:border-gray-400 disabled:cursor-default',
+            field.error
+              ? 'border-red-300 focus:border-red-600'
+              : 'border-gray-300 focus:border-gray-600',
             className
           )}
           type="checkbox"
-          {id}
-          {checked}
-          {name}
+          checked={field.checked}
           bind:this={self}
           on:input={handleInput}
+          {id}
+          {name}
+          {required}
           {...$$restProps}
         />
         <label
           for={id}
           class="ml-3 text-gray-900 cursor-pointer peer-disabled:text-gray-400 peer-disabled:cursor-default"
         >
-          {placeholder}
+          <span>
+            {placeholder}<span class="text-red-500">*</span>
+          </span>
         </label>
       </div>
     {/if}
+  {:else if type === 'file'}
+    <label for={id}>
+      <span>
+        {placeholder}<span class="text-red-500">*</span>
+      </span>
+    </label>
+    <input
+      class={classNames(
+        'mt-2 appearance-none block h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400 file:bg-gray-700 file:text-white file:h-full file:border-none file:px-4 file:mr-4',
+        field.error
+          ? 'border-red-300 focus:border-red-600'
+          : 'border-gray-300 focus:border-gray-600',
+        className
+      )}
+      type="file"
+      accept={accept.join(',')}
+      bind:this={self}
+      on:input={handleInput}
+      {id}
+      {name}
+      {required}
+      {...$$restProps}
+    />
   {:else if floating}
     <div class="relative">
       <input
@@ -96,41 +137,31 @@
             : 'border-gray-300 focus:border-gray-600',
           className
         )}
-        {type}
-        {id}
-        {name}
         placeholder=" "
         value={field.value}
         bind:this={self}
         on:input={handleInput}
+        {type}
+        {id}
+        {name}
+        {required}
         {...$$restProps}
       />
       <label
-        class="absolute hover:cursor-text text-gray-500 duration-150 transform -translate-y-4 scale-75 top-2 z-10 origin-[20%_0%] bg-white px-2 peer-disabled:text-gray-400 peer-focus:text-gray-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
+        class="cursor-text absolute text-gray-500 duration-150 transform -translate-y-4 top-[0.65rem] left-1 text-[0.8rem] leading-none z-10 origin-[0%_0%] bg-white px-2 peer-focus:-translate-y-4 peer-focus:top-[0.65rem] peer-focus:left-1 peer-focus:text-[0.8rem] peer-focus:leading-none peer-placeholder-shown:text-base peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2"
         for={id}
       >
-        {placeholder}
+        <span>
+          {placeholder}<span class="text-red-500">*</span>
+        </span>
       </label>
     </div>
-  {:else if type === 'file'}
-    <label for={id}>{placeholder}</label>
-    <input
-      class={classNames(
-        'mt-2 min-h-[3rem] appearance-none block p-3 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
-        field.error
-          ? 'border-red-300 focus:border-red-600'
-          : 'border-gray-300 focus:border-gray-600',
-        className
-      )}
-      {type}
-      {id}
-      {name}
-      accept="application/pdf"
-      bind:this={self}
-      on:input={handleInput}
-      {...$$restProps}
-    />
   {:else}
+    <label for={id}>
+      <span>
+        {placeholder}<span class={classNames('text-red-500', !required && 'hidden')}>*</span>
+      </span>
+    </label>
     <input
       class={classNames(
         'appearance-none block px-3 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
@@ -139,13 +170,14 @@
           : 'border-gray-300 focus:border-gray-600',
         className
       )}
+      value={field.value}
+      bind:this={self}
+      on:input={handleInput}
       {type}
       {id}
       {name}
       {placeholder}
-      value={field.value}
-      bind:this={self}
-      on:input={handleInput}
+      {required}
       {...$$restProps}
     />
   {/if}
@@ -157,5 +189,11 @@
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center;
+  }
+  input:not(:required) + label > span > span {
+    display: none;
+  }
+  input:required:disabled + label > span > span {
+    color: #fca5a5;
   }
 </style>

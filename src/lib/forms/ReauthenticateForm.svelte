@@ -1,7 +1,7 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, disableErrors } from '$lib/forms'
+  import { createFields, enableErrors, disableErrors, isValid } from '$lib/forms'
   import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
@@ -9,24 +9,24 @@
   import { createEventDispatcher } from 'svelte'
 
   const dispatch = createEventDispatcher()
-  let passwordEl
+  let formEl
   let showValidation = false
   let fields = {
-    default: createFields('password')
+    default: createFields.text('password')
   }
   function handleSubmit() {
     showValidation = true
-    if (passwordEl.checkValidity() && $user) {
+    if (isValid(formEl)) {
       reauthenticateWithCredential(
         $user,
         EmailAuthProvider.credential($user.email, fields.default.password.value)
       )
         .then(() => {
-          fields.default = disableErrors(fields.default)
+          fields = disableErrors.allSections(fields)
           dispatch('reauthenticated', true)
         })
         .catch(err => {
-          fields.default = enableErrors(fields.default)
+          fields = enableErrors.allSections(fields)
           alert.trigger('error', err.code)
         })
     }
@@ -35,13 +35,13 @@
 
 <form
   class={classNames('max-w-lg w-full grid gap-2', showValidation && 'show-validation')}
+  bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
 >
   <Brand />
   <h1 class="text-2xl mt-1 font-bold">Reauthenticate</h1>
   <Input
-    bind:self={passwordEl}
     type="password"
     bind:field={fields.default.password}
     placeholder="Password"

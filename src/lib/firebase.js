@@ -125,16 +125,42 @@ export const db = derived(app, ($app, set) => {
 })
 
 function createStorage() {
-  let storage
+  let storage = undefined
   const { subscribe } = derived(app, ($app, set) => {
     storage = getStorage($app)
     set(storage)
   })
   async function uploadFile(file, filePath) {
-    const { ref, uploadBytesResumable, getDownloadURL } = await import('firebase/storage')
-    const uploadTask = uploadBytesResumable(ref(storage, filePath), file)
-    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
-    return downloadURL
+    await loaded()
+    const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage')
+    const fileRef = ref(storage, filePath)
+    return new Promise((resolve, reject) =>
+      uploadBytes(fileRef, file)
+        .then(() => {
+          getDownloadURL(fileRef).then(url => {
+            resolve(url)
+          })
+        })
+        .catch(reject)
+    )
+  }
+  async function loaded() {
+    let unsubscribe
+    const storageData = new Promise(resolve => {
+      unsubscribe = subscribe(storageData => {
+        if (storageData !== undefined) {
+          if (storageData) {
+            resolve(true)
+          }
+        }
+      })
+    })
+    return new Promise(resolve => {
+      storageData.then(result => {
+        unsubscribe()
+        resolve(result)
+      })
+    })
   }
   return {
     subscribe,
