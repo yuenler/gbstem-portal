@@ -3,19 +3,20 @@ import { derived, readable } from 'svelte/store'
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 let config
 if (dev) {
   config = import.meta.env?.VITE_FIREBASE_API_KEY
     ? {
-        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
-        appId: import.meta.env.VITE_FIREBASE_APP_ID,
-        measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
-      }
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+    }
     : { apiKey: 'demo', authDomain: 'demo.firebaseapp.com' }
 } else {
   // figure out
@@ -123,13 +124,23 @@ export const db = derived(app, ($app, set) => {
   set(getFirestore($app))
 })
 
-// uploads a file to firebase storage
-async function uploadFile(file, filePath) {
-  const { getStorage, ref, uploadBytesResumable, getDownloadURL } = await import('firebase/storage')
-  const storage = getStorage()
-  const storageRef = ref(storage, filePath)
-  const uploadTask = uploadBytesResumable(storageRef, file)
-  const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
-  return downloadURL
+function createStorage() {
+  let storage
+  const { subscribe } = derived(app, ($app, set) => {
+    storage = getStorage($app)
+    set(storage)
+  })
+  async function uploadFile(file, filePath) {
+    // uploads a file to firebase storage
+    const { ref, uploadBytesResumable, getDownloadURL } = await import('firebase/storage')
+    const storageRef = ref(storage, filePath)
+    const uploadTask = uploadBytesResumable(storageRef, file)
+    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+    return downloadURL
+  }
+  return {
+    subscribe,
+    uploadFile
+  }
 }
-export { uploadFile }
+export const storage = createStorage()

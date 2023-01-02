@@ -1,7 +1,7 @@
 <script>
   import { classNames } from '$lib/utils'
   import { doc, getDoc, setDoc } from 'firebase/firestore'
-  import { db, user, uploadFile } from '$lib/firebase'
+  import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import TextArea from '$lib/components/TextArea.svelte'
@@ -129,32 +129,32 @@
       }
 
       disabled = true
-      // upload resume
-      let downloadURL = ''
-      try {
-        downloadURL = await uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
-      } catch (err) {
-        disabled = false
-        alert.trigger('customError', 'Error uploading resume. Please try again.')
-        return
-      }
-      alert.trigger('success', 'Resume uploaded!')
-      fields.hackathon.resume = downloadURL
+      storage
+        .uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
+        .then(downloadURL => {
+          alert.trigger('success', 'Resume uploaded!')
+          fields.hackathon.resume = downloadURL
 
-      let strippedFieldSections = stripFieldSections(fields)
-      strippedFieldSections.meta.submitted = true
+          let strippedFieldSections = stripFieldSections(fields)
+          strippedFieldSections.meta.submitted = true
 
-      // save application to firestore
-      setDoc(doc($db, 'applications', $user.uid), strippedFieldSections)
-        .then(() => {
-          disabled = false
-          showValidation = false
-          fields.meta.submitted = true
-          alert.trigger('success', 'Your application has been submitted!')
+          // save application to firestore
+          setDoc(doc($db, 'applications', $user.uid), strippedFieldSections)
+            .then(() => {
+              disabled = false
+              showValidation = false
+              fields.meta.submitted = true
+              alert.trigger('success', 'Your application has been submitted!')
+            })
+            .catch(err => {
+              disabled = false
+              alert.trigger('error', err.code)
+            })
         })
         .catch(err => {
           disabled = false
-          alert.trigger('error', err.code)
+          alert.trigger('customError', 'Error uploading resume. Please try again.')
+          return
         })
     }
   }
