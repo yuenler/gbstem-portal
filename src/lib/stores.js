@@ -7,16 +7,22 @@ function createAlert() {
     message: ''
   })
   function trigger(type, message) {
-    if (type === 'error') {
+    if (type === 'customError') {
+      alert.set({
+        type: 'error',
+        message: message
+      })
+    } else if (type === 'error') {
       alert.set({
         type,
         message: getErrorMessage(message)
       })
+    } else {
+      alert.set({
+        type,
+        message
+      })
     }
-    alert.set({
-      type,
-      message
-    })
   }
   function reset() {
     alert.set({

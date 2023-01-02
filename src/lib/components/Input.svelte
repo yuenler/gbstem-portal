@@ -125,6 +125,7 @@
       {type}
       {id}
       {name}
+      accept="application/pdf"
       bind:this={self}
       on:input={handleInput}
       {...$$restProps}

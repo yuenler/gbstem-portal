@@ -121,7 +121,15 @@
   async function handleSubmit() {
     showValidation = true
     if (isValid(formEl)) {
+      // check file size and type. It must be a pdf and at most 1MB
+      if (resumeFile.value.size > 1000000) {
+        resumeFile.error = true
+        alert.trigger('customError', 'Resume must be at most 1MB')
+        return
+      }
+
       disabled = true
+
       // upload resume
       const downloadURL = await uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
       alert.trigger('success', 'Resume uploaded!')
