@@ -1,4 +1,3 @@
-import { authErrorsJson } from '$lib/data'
 import { cloneDeep, isPlainObject, isString, isNumber } from 'lodash'
 
 export function createFields(...fieldNames) {
@@ -82,14 +81,6 @@ export function disableErrors(fieldSection, ...fieldNames) {
     fieldSection[element].error = false
   })
   return fieldSection
-}
-
-export function getErrorMessage(code) {
-  let str = ''
-  return (
-    authErrorsJson[code] ??
-    (str = code.split('/')[1].split('-').join(' ')).charAt(0).toUpperCase() + str.slice(1) + '.'
-  )
 }
 
 export function isValid(formEl) {
