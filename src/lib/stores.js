@@ -20,11 +20,12 @@ function createAlert() {
         type,
         message: message
       })
+    } else {
+      alert.set({
+        type,
+        message
+      })
     }
-    alert.set({
-      type,
-      message
-    })
   }
   function reset() {
     alert.set({

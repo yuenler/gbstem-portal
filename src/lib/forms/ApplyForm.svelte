@@ -1,7 +1,7 @@
 <script>
   import { classNames } from '$lib/utils'
   import { doc, getDoc, setDoc } from 'firebase/firestore'
-  import { db, user } from '$lib/firebase'
+  import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import Textarea from '$lib/components/Textarea.svelte'
@@ -40,10 +40,11 @@
     ),
     academic: createFields('currentSchool', 'graduationYear', 'major'),
     hackathon: {
-      ...createFields('shirtSize', 'reason', 'why', 'role', 'proud', 'resume'),
+      ...createFields('shirtSize', 'reason', 'why', 'role', 'proud'),
       firstHackathon: false,
       previouslyParticipated: false,
-      dietaryRestrictions: []
+      dietaryRestrictions: [],
+      resume: ''
     },
     agreements: {
       codeOfConduct: false,
@@ -60,6 +61,12 @@
       rejected: false,
       waitlisted: false
     }
+  }
+  let resumeFile = {
+    value: {
+      name: 'No file selected'
+    },
+    error: false
   }
   onMount(async () => {
     const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
@@ -111,22 +118,43 @@
         alert.trigger('error', err.code)
       })
   }
-  function handleSubmit() {
+  async function handleSubmit() {
     showValidation = true
     if (isValid(formEl)) {
+      // check file size and type. It must be a pdf and at most 1MB
+      if (resumeFile.value.size > 1000000) {
+        resumeFile.error = true
+        alert.trigger('customError', 'Resume must be at most 1MB')
+        return
+      }
+
       disabled = true
-      let strippedFieldSections = stripFieldSections(fields)
-      strippedFieldSections.meta.submitted = true
-      setDoc(doc($db, 'applications', $user.uid), strippedFieldSections)
-        .then(() => {
-          disabled = false
-          showValidation = false
-          fields.meta.submitted = true
-          alert.trigger('success', 'Your application was submitted!')
+      storage
+        .uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
+        .then(downloadURL => {
+          alert.trigger('success', 'Resume uploaded!')
+          fields.hackathon.resume = downloadURL
+
+          let strippedFieldSections = stripFieldSections(fields)
+          strippedFieldSections.meta.submitted = true
+
+          // save application to firestore
+          setDoc(doc($db, 'applications', $user.uid), strippedFieldSections)
+            .then(() => {
+              disabled = false
+              showValidation = false
+              fields.meta.submitted = true
+              alert.trigger('success', 'Your application has been submitted!')
+            })
+            .catch(err => {
+              disabled = false
+              alert.trigger('error', err.code)
+            })
         })
         .catch(err => {
           disabled = false
-          alert.trigger('error', err.code)
+          alert.trigger('customError', 'Error uploading resume. Please try again.')
+          return
         })
     }
   }
@@ -291,10 +319,9 @@
       </div>
       <div class="mt-2">
         <Input
+          bind:field={resumeFile}
           type="file"
-          bind:field={fields.hackathon.resume}
-          placeholder="Upload resume"
-          floating
+          placeholder="Upload your resume (Must be 1 page PDF. Max 1MB)"
           required
         />
       </div>
