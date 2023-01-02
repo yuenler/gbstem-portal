@@ -129,9 +129,15 @@
       }
 
       disabled = true
-
       // upload resume
-      const downloadURL = await uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
+      let downloadURL = ''
+      try {
+        downloadURL = await uploadFile(resumeFile.value, `resumes/${$user.uid}.pdf`)
+      } catch (err) {
+        disabled = false
+        alert.trigger('customError', 'Error uploading resume. Please try again.')
+        return
+      }
       alert.trigger('success', 'Resume uploaded!')
       fields.hackathon.resume = downloadURL
 
