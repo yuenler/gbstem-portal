@@ -132,6 +132,7 @@ function createStorage() {
   })
   async function uploadFile(file, filePath) {
     // uploads a file to firebase storage
+    storage = getStorage()
     const { ref, uploadBytesResumable, getDownloadURL } = await import('firebase/storage')
     const storageRef = ref(storage, filePath)
     const uploadTask = uploadBytesResumable(storageRef, file)
