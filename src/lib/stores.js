@@ -1,21 +1,24 @@
 import { writable } from 'svelte/store'
-import { getErrorMessage } from '$lib/forms'
+import { errorsJson } from '$lib/data'
 
 function createAlert() {
   const alert = writable({
     type: '',
     message: ''
   })
-  function trigger(type, message) {
-    if (type === 'customError') {
-      alert.set({
-        type: 'error',
-        message: message
-      })
-    } else if (type === 'error') {
+  function trigger(type, message, auto = true) {
+    if (type === 'error') {
+      if (auto) {
+        let str = ''
+        message =
+          errorsJson[message] ??
+          (str = message.split('/')[1].split('-').join(' ')).charAt(0).toUpperCase() +
+            str.slice(1) +
+            '.'
+      }
       alert.set({
         type,
-        message: getErrorMessage(message)
+        message: message
       })
     } else {
       alert.set({
