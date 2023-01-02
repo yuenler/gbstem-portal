@@ -316,7 +316,7 @@
         <Input
           bind:field={resumeFile}
           type="file"
-          placeholder="Upload your resume (Must be 1 page PDF)"
+          placeholder="Upload your resume (Must be 1 page PDF. Max 1MB)"
           required
         />
       </div>
