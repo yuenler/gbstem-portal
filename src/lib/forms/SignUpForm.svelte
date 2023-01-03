@@ -13,7 +13,7 @@
   let disabled = false
   let showValidation = false
   let fields = {
-    default: createFields.text('email', 'password', 'confirmPassword')
+    default: createFields.text('firstName', 'lastName', 'email', 'password', 'confirmPassword')
   }
   function handleSubmit() {
     showValidation = true
