@@ -50,7 +50,7 @@
   novalidate
 >
   <div class="grid gap-1">
-    <span class="font-bold">Password</span>
+    <span class="font-bold">Change Password</span>
     <Input
       type="password"
       bind:field={fields.default.newPassword}

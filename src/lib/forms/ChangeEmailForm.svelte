@@ -44,7 +44,7 @@
   novalidate
 >
   <div class="grid gap-1">
-    <span class="font-bold">Email</span>
+    <span class="font-bold">Change Email</span>
     <Input
       type="email"
       field={{
