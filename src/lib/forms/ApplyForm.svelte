@@ -1,6 +1,6 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { doc, getDoc, setDoc } from 'firebase/firestore'
+  import { doc, getDoc, setDoc, addDoc, collection } from 'firebase/firestore'
   import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
@@ -19,6 +19,7 @@
   import { alert } from '$lib/stores'
   import { onMount } from 'svelte'
   import Card from '$lib/components/Card.svelte'
+  import { templates } from '$lib/mail'
 
   let formEl
   let disabled = true
@@ -123,6 +124,7 @@
                 top: 0,
                 behavior: 'smooth'
               })
+              handleEmail()
             })
             .catch(err => {
               disabled = false
@@ -134,6 +136,15 @@
           alert.trigger('error', 'Error uploading resume. Please try again.', false)
         })
     }
+  }
+  function handleEmail() {
+    return addDoc(collection($db, 'mail'), {
+      to: $user.email,
+      message: templates.applicationSubmitted({
+        firstName: fields.personal.firstName.value,
+        lastName: fields.personal.lastName.value
+      })
+    })
   }
 </script>
 

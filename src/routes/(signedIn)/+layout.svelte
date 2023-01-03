@@ -3,8 +3,7 @@
   import { user } from '$lib/firebase'
   import { onMount } from 'svelte'
 
-  $: emailVerified = $user?.emailVerified ?? true
-  $: if (!emailVerified) {
+  $: if (!($user?.emailVerified ?? true)) {
     sessionStorage.setItem('emailVerified', 'false')
   }
   onMount(async () => {
