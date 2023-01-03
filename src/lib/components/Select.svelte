@@ -4,7 +4,8 @@
 
 <script>
   import { classNames, clickOutside } from '$lib/utils'
-  import { uniqueId, debounce } from 'lodash'
+  import lodash from 'lodash'
+  const { uniqueId, debounce } = lodash
   import { fade } from 'svelte/transition'
 
   let self

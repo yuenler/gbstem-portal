@@ -1,6 +1,7 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { uniqueId, kebabCase } from 'lodash'
+  import lodash from 'lodash'
+  const { uniqueId, kebabCase } = lodash
 
   export let self
   export let field = {
