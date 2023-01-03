@@ -1,4 +1,4 @@
-import { dev } from '$app/environment'
+// import { dev } from '$app/environment'
 import { derived, readable } from 'svelte/store'
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
