@@ -135,6 +135,8 @@
           disabled = false
           alert.trigger('error', 'Error uploading resume. Please try again.', false)
         })
+    } else {
+      alert.trigger('error', 'Please fill all required fields correctly.', false)
     }
   }
   function handleEmail() {
