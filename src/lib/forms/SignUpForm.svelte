@@ -16,6 +16,25 @@
     default: createFields.text('firstName', 'lastName', 'email', 'password', 'confirmPassword')
   }
   function handleSubmit() {
+    const validEmails = [
+      'yuenlerchow@college.harvard.edu',
+      'lerchow@gmail.com',
+      'dseum@college.harvard.edu',
+      'dseum@gmail.com',
+      'jooeunjunelee@college.harvard.edu',
+      'nathanli@college.harvard.edu',
+      'edwardkang@college.harvard.edu',
+      'testing@hackharvard.io'
+    ]
+    if (!validEmails.includes(fields.default.email.value)) {
+      alert.trigger(
+        'error',
+        'Only HackHarvard board members can create accounts at the moment',
+        false
+      )
+      return
+    }
+
     showValidation = true
     if (isValid(formEl)) {
       if (fields.default.password.value === fields.default.confirmPassword.value) {
