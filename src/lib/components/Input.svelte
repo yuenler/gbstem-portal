@@ -112,7 +112,7 @@
     </label>
     <input
       class={classNames(
-        'mt-2 appearance-none block h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400 file:bg-gray-700 file:text-white file:h-full file:border-none file:px-4 file:mr-4',
+        'cursor-pointer file:cursor-pointer mt-2 appearance-none block h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400 file:bg-gray-700 file:text-white file:h-full file:border-none file:px-4 file:mr-4',
         field.error
           ? 'border-red-300 focus:border-red-600'
           : 'border-gray-300 focus:border-gray-600',
