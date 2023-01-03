@@ -4,7 +4,7 @@
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
 
-  let timer
+  let timer = null
   $: bgColor =
     $alert.type === ''
       ? ''
@@ -13,16 +13,17 @@
           info: 'bg-gray-200',
           error: 'bg-red-200'
         }[$alert.type]
-  $: if ($navigating && $alert.type !== '') {
+  $: if ($navigating && timer) {
     closeAlert()
   }
-  $: if ($alert.type !== '') {
+  $: if ($alert.type !== '' && !timer) {
     timer = setTimeout(() => {
-      alert.reset()
+      closeAlert()
     }, 3000)
   }
   function closeAlert() {
     clearTimeout(timer)
+    timer = null
     alert.reset()
   }
   function handleClick() {
