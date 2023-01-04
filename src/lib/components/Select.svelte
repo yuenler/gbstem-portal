@@ -4,8 +4,7 @@
 
 <script>
   import { classNames, clickOutside } from '$lib/utils'
-  import lodash from 'lodash'
-  const { uniqueId, debounce } = lodash
+  import { uniqueId, debounce, kebabCase } from 'lodash-es'
   import { fade } from 'svelte/transition'
 
   let self
@@ -14,7 +13,7 @@
     error: false
   }
   export let placeholder = ''
-  export let name = placeholder.toLowerCase().split(' ').join('-')
+  export let name = kebabCase(placeholder)
   export let floating = false
   export let sourceJson = []
   export let required = false

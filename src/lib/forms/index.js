@@ -1,7 +1,6 @@
-import lodash from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { fieldsJson } from '$lib/data'
 
-const cloneDeep = lodash.cloneDeep
 export const createFields = {
   text: (...fieldNames) => {
     const fieldSection = {}

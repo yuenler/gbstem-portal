@@ -1,7 +1,6 @@
 <script>
   import { classNames } from '$lib/utils'
-  import lodash from 'lodash'
-  const { uniqueId, kebabCase } = lodash
+  import { uniqueId, kebabCase } from 'lodash-es'
   import { fieldsJson } from '$lib/data'
   import { alert } from '$lib/stores'
 
