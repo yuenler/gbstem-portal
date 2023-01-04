@@ -1,17 +1,13 @@
 {
   "hosting": {
-    "site": "hackharvard-portal-2fed8",
     "public": "build",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
       }
     ]
-  }
+  },
+  "cleanUrls": true
 }
