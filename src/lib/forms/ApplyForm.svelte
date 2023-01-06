@@ -49,6 +49,7 @@
     agreements: createFields.checkbox('codeOfConduct', 'sharing', 'mlhEmails', 'submitting'),
     meta: {
       ...createFields.text('hhid'),
+      ...createFields.text('uid'),
       ...createFields.checkbox('submitted')
     },
     status: createFields.checkbox('accepted', 'rejected', 'waitlisted')
@@ -71,6 +72,7 @@
     fields.personal.firstName.value = profileDocData.firstName
     fields.personal.lastName.value = profileDocData.lastName
     fields.meta.hhid.value = profileDocData.hhid
+    fields.meta.uid.value = $user.uid
     if (
       temp.email !== fields.personal.email.value ||
       temp.firstName !== fields.personal.firstName.value ||
