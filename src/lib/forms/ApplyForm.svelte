@@ -51,7 +51,7 @@
       ...createFields.text('hhid'),
       ...createFields.checkbox('submitted')
     },
-    status: createFields.checkbox('approved', 'rejected', 'waitlisted')
+    status: createFields.checkbox('accepted', 'rejected', 'waitlisted')
   }
   onMount(async () => {
     const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
