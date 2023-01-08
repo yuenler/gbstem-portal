@@ -1,0 +1,31 @@
+[debug] [2023-01-08T05:24:49.488Z] ----------------------------------------------------------------------
+[debug] [2023-01-08T05:24:49.489Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy
+[debug] [2023-01-08T05:24:49.490Z] CLI Version:   11.20.0
+[debug] [2023-01-08T05:24:49.490Z] Platform:      darwin
+[debug] [2023-01-08T05:24:49.490Z] Node Version:  v18.12.1
+[debug] [2023-01-08T05:24:49.491Z] Time:          Sun Jan 08 2023 00:24:49 GMT-0500 (Eastern Standard Time)
+[debug] [2023-01-08T05:24:49.491Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-01-08T05:24:49.520Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"cleanUrls"}
+[debug] [2023-01-08T05:24:49.522Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-01-08T05:24:49.522Z] > authorizing via signed-in user (gbstemprogram@gmail.com)
+[debug] [2023-01-08T05:24:49.523Z] [iam] checking project hackharvard-core for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2023-01-08T05:24:49.524Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/hackharvard-core:testIamPermissions [none]
+[debug] [2023-01-08T05:24:49.524Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/hackharvard-core:testIamPermissions x-goog-quota-user=projects/hackharvard-core
+[debug] [2023-01-08T05:24:49.524Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/hackharvard-core:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2023-01-08T05:24:49.778Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/hackharvard-core:testIamPermissions 200
+[debug] [2023-01-08T05:24:49.779Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/hackharvard-core:testIamPermissions {}
+[debug] [2023-01-08T05:24:49.780Z] [iam] error while checking permissions, command may fail: FirebaseError: Authorization failed. This account is missing the following required permissions on project hackharvard-core:
+
+  firebase.projects.get
+  firebasehosting.sites.update
+[debug] [2023-01-08T05:24:49.781Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hackharvard-core [none]
+[debug] [2023-01-08T05:24:50.184Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hackharvard-core 403
+[debug] [2023-01-08T05:24:50.184Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hackharvard-core {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2023-01-08T05:24:50.185Z] HTTP Error: 403, The caller does not have permission
+[debug] [2023-01-08T05:24:50.317Z] FirebaseError: HTTP Error: 403, The caller does not have permission
+    at responseToError (/usr/local/lib/node_modules/firebase-tools/lib/responseToError.js:49:12)
+    at RetryOperation._fn (/usr/local/lib/node_modules/firebase-tools/lib/apiv2.js:288:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[error] 
+[error] Error: Failed to get Firebase project hackharvard-core. Please make sure the project exists and your account has permission to access it.
