@@ -17,7 +17,7 @@
             data.application =
               'You have been accepted to HackHarvard 2023! We look forward to seeing you.'
           } else {
-            data.application = application.submitted.checked
+            data.application = application.meta.submitted.checked
               ? 'Submitted and in review!'
               : 'In progress.'
           }
