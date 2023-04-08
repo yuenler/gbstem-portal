@@ -24,7 +24,11 @@
       'jooeunjunelee@college.harvard.edu',
       'nathanli@college.harvard.edu',
       'edwardkang@college.harvard.edu',
-      'testing@hackharvard.io'
+      'testing@hackharvard.io',
+      'dseum@college.harvard.edu',
+      'vcainamisir@college.harvard.edu',
+      'kharvey@college.harvard.edu',
+      'hzhang1@college.harvard.edu'
     ]
     if (!validEmails.includes(fields.default.email.value)) {
       alert.trigger(
