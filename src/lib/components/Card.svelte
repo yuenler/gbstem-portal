@@ -4,9 +4,9 @@
   export { className as class }
 </script>
 
-<div class={classNames('w-full rounded-md shadow border border-gray-200 p-4', className)}>
+<div class={classNames('w-full rounded-md border border-gray-200 p-4 shadow', className)}>
   {#if $$slots.title}
-    <h2 class="font-bold text-2xl">
+    <h2 class="text-2xl font-bold">
       <slot name="title" />
     </h2>
   {/if}

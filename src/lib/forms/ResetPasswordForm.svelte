@@ -37,15 +37,15 @@
 </script>
 
 <form
-  class={classNames('max-w-lg w-full grid gap-2', showValidation && 'show-validation')}
+  class={classNames('grid w-full max-w-lg gap-2', showValidation && 'show-validation')}
   bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
 >
   <Brand />
-  <h1 class="text-2xl mt-1 font-bold">Reset password</h1>
+  <h1 class="mt-1 text-2xl font-bold">Reset password</h1>
   <Input type="email" bind:field={fields.default.email} placeholder="Email" floating required />
-  <div class={classNames('flex items-center mt-2', signedIn ? 'justify-end' : 'justify-between')}>
+  <div class={classNames('mt-2 flex items-center', signedIn ? 'justify-end' : 'justify-between')}>
     {#if !signedIn}
       <span>
         <a class="link" href="/signup">Sign up</a> or
@@ -53,7 +53,7 @@
       </span>
     {/if}
     <button
-      class="shadow-sm rounded-md bg-blue-100 px-4 py-2 text-blue-900 hover:bg-blue-200 transition-colors duration-300"
+      class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200"
       type="submit"
     >
       Send email

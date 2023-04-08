@@ -4,7 +4,7 @@
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
 
-  let timer = null
+  let timer
   $: bgColor =
     $alert.type === ''
       ? ''
@@ -17,35 +17,39 @@
     closeAlert()
   }
   $: if ($alert.type !== '' && !timer) {
-    timer = setTimeout(() => {
+    timer = window.setTimeout(() => {
       closeAlert()
     }, 3000)
   }
   function closeAlert() {
     clearTimeout(timer)
-    timer = null
+    timer = undefined
     alert.reset()
   }
   function handleClick() {
-    closeAlert()
+    if (timer) {
+      closeAlert()
+    }
   }
   function handleKeyDown(e) {
-    if (e.code === 'Escape') {
+    if (timer && e.code === 'Escape') {
       closeAlert()
     }
   }
 </script>
 
+<svelte:body on:keydown={handleKeyDown} />
+
 {#if $alert.type !== ''}
   <div
-    class="z-50 fixed bottom-0 left-0 w-screen h-min-content flex justify-center"
+    class="h-min-content fixed bottom-0 left-0 z-50 flex w-screen justify-center"
     transition:fade
     on:click={handleClick}
     on:keydown={handleKeyDown}
   >
     <div
       class={classNames(
-        'w-full mx-3 mb-3 max-w-lg p-3 rounded-md shadow flex items-center gap-2',
+        'mx-3 mb-3 flex w-full max-w-lg items-center gap-2 rounded-md p-3 shadow',
         bgColor
       )}
     >
@@ -56,7 +60,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-6 h-6"
+          class="h-6 w-6"
         >
           <path
             stroke-linecap="round"
@@ -71,7 +75,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-6 h-6"
+          class="h-6 w-6"
         >
           <path
             stroke-linecap="round"
@@ -86,7 +90,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-6 h-6 shrink-0"
+          class="h-6 w-6 shrink-0"
         >
           <path
             stroke-linecap="round"

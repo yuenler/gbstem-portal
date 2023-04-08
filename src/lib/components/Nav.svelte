@@ -42,14 +42,14 @@
 <svelte:window on:scroll={updateShadow} />
 <nav
   class={classNames(
-    'fixed top-0 left-0 z-50 bg-white h-20 flex items-center w-full px-dynamic justify-between transition-all border-b',
-    shadow && !open ? 'border-gray-200 shadow-b' : 'border-white'
+    'px-dynamic fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between border-b bg-white transition-all',
+    shadow && !open ? 'shadow-b border-gray-200' : 'border-white'
   )}
 >
   <div class="flex items-center gap-8">
     <Brand />
     {#if emailVerified}
-      <div class="hidden md:flex items-center gap-3">
+      <div class="hidden items-center gap-3 md:flex">
         {#each pages as page}
           <a
             class={classNames(
@@ -83,7 +83,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-8 h-8"
+          class="h-8 w-8"
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -94,7 +94,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-8 h-8"
+          class="h-8 w-8"
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
         </svg>
@@ -104,7 +104,7 @@
 </nav>
 {#if open}
   <div
-    class="sm:hidden fixed top-20 left-0 h-[calc(100vh-5rem)] w-screen bg-white z-50 p-dynamic flex flex-col gap-2"
+    class="p-dynamic fixed top-20 left-0 z-50 flex h-[calc(100vh-5rem)] w-screen flex-col gap-2 bg-white sm:hidden"
     transition:fade
   >
     {#each pages as page}

@@ -95,15 +95,15 @@
 </script>
 
 <form
-  class={classNames('max-w-lg w-full', showValidation && 'show-validation')}
+  class={classNames('w-full max-w-lg', showValidation && 'show-validation')}
   bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
 >
   <fieldset class="grid gap-2" {disabled}>
     <Brand />
-    <h1 class="text-2xl mt-1 font-bold">Sign up</h1>
-    <div class="grid sm:grid-cols-2 gap-2 sm:gap-4">
+    <h1 class="mt-1 text-2xl font-bold">Sign up</h1>
+    <div class="grid gap-2 sm:grid-cols-2 sm:gap-4">
       <Input
         type="text"
         bind:field={fields.default.firstName}
@@ -136,12 +136,12 @@
       required
       autocomplete="new-password"
     />
-    <div class="flex items-center justify-between mt-2">
+    <div class="mt-2 flex items-center justify-between">
       <div>
         <a class="link" href="/signin">Need to sign in?</a>
       </div>
       <button
-        class="shadow-sm rounded-md bg-blue-100 px-4 py-2 text-blue-900 hover:bg-blue-200 transition-colors duration-300 disabled:text-blue-500 disabled:bg-blue-200"
+        class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
         type="submit"
       >
         Sign up

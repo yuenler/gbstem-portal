@@ -4,8 +4,8 @@
   import Footer from '$lib/components/Footer.svelte'
 </script>
 
-<div class="flex flex-col min-h-screen overflow-y-auto">
-  <main class="mt-20 px-dynamic py-8 grow">
+<div class="flex min-h-screen flex-col overflow-y-auto">
+  <main class="px-dynamic mt-20 grow py-8">
     <slot />
   </main>
   <Footer />

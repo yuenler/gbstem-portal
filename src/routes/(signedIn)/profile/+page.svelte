@@ -26,11 +26,11 @@
 </script>
 
 <div class="grid md:grid-cols-2">
-  <h1 class="font-bold text-5xl md:text-6xl mb-8">Profile</h1>
-  <div class="flex flex-col gap-6 items-center">
+  <h1 class="mb-8 text-5xl font-bold md:text-6xl">Profile</h1>
+  <div class="flex flex-col items-center gap-6">
     {#if !emailVerified}
       <div
-        class="max-w-lg w-full p-3 rounded-md shadow flex items-center gap-2 bg-red-200 mt-2"
+        class="mt-2 flex w-full max-w-lg items-center gap-2 rounded-md bg-red-200 p-3 shadow"
         transition:fade
       >
         <svg
@@ -39,7 +39,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-6 h-6 shrink-0"
+          class="h-6 w-6 shrink-0"
         >
           <path
             stroke-linecap="round"
@@ -55,8 +55,8 @@
         </div>
       </div>
     {/if}
-    <Card class="max-w-lg grid gap-3">
-      <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
+    <Card class="grid max-w-lg gap-3">
+      <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
         {`HHID: ${hhid}`}
       </div>
       <div class="text-sm">Any problems with changing your profile? Contact us.</div>

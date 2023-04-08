@@ -37,7 +37,7 @@
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      class="w-10 h-10"
+      class="h-10 w-10"
     >
       <path
         stroke-linecap="round"
@@ -48,15 +48,15 @@
   </button>
   {#if open}
     <div
-      class="absolute top-12 right-0 bg-white rounded-md border border-gray-200 shadow-sm py-1 w-36"
+      class="absolute top-12 right-0 w-36 rounded-md border border-gray-200 bg-white py-1 shadow-sm"
       transition:fade={{ duration: 150 }}
     >
       <a
-        class="block hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300"
+        class="block w-full py-2 px-6 transition-colors duration-300 hover:bg-gray-100"
         href="/profile">Profile</a
       >
       <button
-        class="text-left hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300"
+        class="w-full py-2 px-6 text-left transition-colors duration-300 hover:bg-gray-100"
         type="button"
         on:click={handleSignOut}
       >
@@ -64,13 +64,13 @@
       </button>
     </div>
   {/if}
-  <div class="sm:hidden grid grid-cols-2 gap-3 text-center">
+  <div class="grid grid-cols-2 gap-3 text-center sm:hidden">
     <a
-      class="block hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300 rounded-md border border-gray-200 shadow-sm"
+      class="block w-full rounded-md border border-gray-200 py-2 px-6 shadow-sm transition-colors duration-300 hover:bg-gray-100"
       href="/profile">Profile</a
     >
     <button
-      class="hover:bg-gray-100 py-2 px-6 w-full transition-colors duration-300 rounded-md border border-gray-200 shadow-sm"
+      class="w-full rounded-md border border-gray-200 py-2 px-6 shadow-sm transition-colors duration-300 hover:bg-gray-100"
       type="button"
       on:click={handleSignOut}
     >

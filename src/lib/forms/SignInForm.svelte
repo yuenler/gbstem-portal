@@ -34,14 +34,14 @@
 </script>
 
 <form
-  class={classNames('max-w-lg w-full', showValidation && 'show-validation')}
+  class={classNames('w-full max-w-lg', showValidation && 'show-validation')}
   bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
 >
   <fieldset class="grid gap-2" {disabled}>
     <Brand />
-    <h1 class="text-2xl mt-1 font-bold">Sign in</h1>
+    <h1 class="mt-1 text-2xl font-bold">Sign in</h1>
     <Input type="email" bind:field={fields.default.email} placeholder="Email" floating required />
     <Input
       type="password"
@@ -51,13 +51,13 @@
       required
       autocomplete="current-password"
     />
-    <div class="flex items-center justify-between mt-2">
+    <div class="mt-2 flex items-center justify-between">
       <div class="flex flex-col gap-1">
         <a class="link" href="/reset-password">Forgot password?</a>
         <a class="link" href="/signup">Need to sign up?</a>
       </div>
       <button
-        class="shadow-sm rounded-md bg-blue-100 px-4 py-2 text-blue-900 hover:bg-blue-200 transition-colors duration-300 disabled:text-blue-500 disabled:bg-blue-200"
+        class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
         type="submit"
       >
         Sign in

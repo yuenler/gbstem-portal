@@ -1,6 +1,6 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { uniqueId, kebabCase } from 'lodash-es'
+  import { uniqueId, kebabCase } from 'lodash'
 
   export let self
   export let field = {
@@ -28,7 +28,7 @@
   </label>
   <textarea
     class={classNames(
-      'mt-2 min-h-[10rem] appearance-none block p-3 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+      'mt-2 block min-h-[10rem] w-full appearance-none rounded-md border border-gray-300 p-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
       field.error ? 'border-red-300 focus:border-red-600' : 'border-gray-300 focus:border-gray-600',
       className
     )}

@@ -38,7 +38,7 @@
 </script>
 
 <form
-  class={classNames('max-w-lg w-full grid', showValidation && 'show-validation')}
+  class={classNames('grid w-full max-w-lg', showValidation && 'show-validation')}
   bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
@@ -64,9 +64,9 @@
         floating
         required
       />
-      <div class="absolute top-2 right-2 h-12 flex items-center">
+      <div class="absolute top-2 right-2 flex h-12 items-center">
         <button
-          class="shadow-sm rounded-md bg-blue-100 px-2 py-1 text-blue-900 hover:bg-blue-200 transition-colors duration-300"
+          class="rounded-md bg-blue-100 px-2 py-1 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200"
           type="submit"
         >
           Update

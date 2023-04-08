@@ -1,6 +1,6 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { uniqueId, kebabCase } from 'lodash-es'
+  import { uniqueId, kebabCase } from 'lodash'
   import { fieldsJson } from '$lib/data'
   import { alert } from '$lib/stores'
 
@@ -48,10 +48,10 @@
 <div class="mt-2">
   {#if type === 'checkbox'}
     {#if group}
-      <div class="flex mt-2">
+      <div class="mt-2 flex">
         <input
           class={classNames(
-            'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600 peer disabled:checked:bg-gray-400 disabled:checked:border-gray-400 disabled:cursor-default',
+            'peer mt-0.5 h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-gray-300 checked:border-gray-600 checked:bg-gray-600 focus:border-gray-600 focus:outline-none disabled:cursor-default disabled:checked:border-gray-400 disabled:checked:bg-gray-400',
             field.error
               ? 'border-red-300 focus:border-red-600'
               : 'border-gray-300 focus:border-gray-600',
@@ -68,7 +68,7 @@
         />
         <label
           for={id}
-          class="ml-3 text-gray-900 cursor-pointer peer-disabled:text-gray-400 peer-disabled:cursor-default"
+          class="ml-3 cursor-pointer text-gray-900 peer-disabled:cursor-default peer-disabled:text-gray-400"
         >
           <span>
             {placeholder}<span class="text-red-500">*</span>
@@ -76,10 +76,10 @@
         </label>
       </div>
     {:else}
-      <div class="flex mt-2">
+      <div class="mt-2 flex">
         <input
           class={classNames(
-            'cursor-pointer mt-0.5 shrink-0 appearance-none w-5 h-5 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 checked:bg-gray-600 checked:border-gray-600 peer disabled:checked:bg-gray-400 disabled:checked:border-gray-400 disabled:cursor-default',
+            'peer mt-0.5 h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-gray-300 checked:border-gray-600 checked:bg-gray-600 focus:border-gray-600 focus:outline-none disabled:cursor-default disabled:checked:border-gray-400 disabled:checked:bg-gray-400',
             field.error
               ? 'border-red-300 focus:border-red-600'
               : 'border-gray-300 focus:border-gray-600',
@@ -96,7 +96,7 @@
         />
         <label
           for={id}
-          class="ml-3 text-gray-900 cursor-pointer peer-disabled:text-gray-400 peer-disabled:cursor-default"
+          class="ml-3 cursor-pointer text-gray-900 peer-disabled:cursor-default peer-disabled:text-gray-400"
         >
           <span>
             {placeholder}<span class="text-red-500">*</span>
@@ -112,7 +112,7 @@
     </label>
     <input
       class={classNames(
-        'cursor-pointer file:cursor-pointer mt-2 appearance-none block h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400 file:bg-gray-700 file:text-white file:h-full file:border-none file:px-4 file:mr-4',
+        'mt-2 block h-12 w-full cursor-pointer appearance-none rounded-md border border-gray-300 text-gray-900 transition-colors file:mr-4 file:h-full file:cursor-pointer file:border-none file:bg-gray-700 file:px-4 file:text-white placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         field.error
           ? 'border-red-300 focus:border-red-600'
           : 'border-gray-300 focus:border-gray-600',
@@ -131,7 +131,7 @@
     <div class="relative">
       <input
         class={classNames(
-          'appearance-none block px-3 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none peer disabled:bg-white disabled:text-gray-400',
+          'peer block h-12 w-full appearance-none rounded-md border px-3 pt-1 text-gray-900 transition-colors focus:outline-none disabled:bg-white disabled:text-gray-400',
           field.error
             ? 'border-red-300 focus:border-red-600'
             : 'border-gray-300 focus:border-gray-600',
@@ -148,7 +148,7 @@
         {...$$restProps}
       />
       <label
-        class="cursor-text absolute text-gray-500 duration-150 transform -translate-y-4 top-[0.65rem] left-1 text-[0.8rem] leading-none z-10 origin-[0%_0%] bg-white px-2 peer-focus:-translate-y-4 peer-focus:top-[0.65rem] peer-focus:left-1 peer-focus:text-[0.8rem] peer-focus:leading-none peer-placeholder-shown:text-base peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2"
+        class="absolute top-[0.65rem] left-1 z-10 origin-[0%_0%] -translate-y-4 transform cursor-text bg-white px-2 text-[0.8rem] leading-none text-gray-500 duration-150 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-base peer-focus:top-[0.65rem] peer-focus:left-1 peer-focus:-translate-y-4 peer-focus:text-[0.8rem] peer-focus:leading-none"
         for={id}
       >
         <span>
@@ -164,7 +164,7 @@
     </label>
     <input
       class={classNames(
-        'appearance-none block px-3 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+        'block h-12 w-full appearance-none rounded-md border border-gray-300 px-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         field.error
           ? 'border-red-300 focus:border-red-600'
           : 'border-gray-300 focus:border-gray-600',

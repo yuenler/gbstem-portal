@@ -161,11 +161,11 @@
   <fieldset class="grid gap-6" {disabled}>
     <div class="grid gap-1">
       <span class="font-bold">Personal</span>
-      <Card class="grid gap-3 my-2">
-        <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
+      <Card class="my-2 grid gap-3">
+        <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
           {`Name: ${fields.personal.firstName.value} ${fields.personal.lastName.value}`}
         </div>
-        <div class="bg-gray-100 shadow-sm rounded-md px-3 py-2">
+        <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
           {`Email: ${fields.personal.email.value}`}
         </div>
         <div class="text-sm">
@@ -182,7 +182,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6"
+              class="h-6 w-6"
             >
               <path
                 stroke-linecap="round"
@@ -201,7 +201,7 @@
         floating
         required
       />
-      <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
+      <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
         <Select
           bind:field={fields.personal.gender}
           placeholder="Gender"
@@ -233,7 +233,7 @@
         floating
         required
       />
-      <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
+      <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
         <Input type="text" bind:field={fields.personal.city} placeholder="City" floating required />
         <Select
           bind:field={fields.personal.state}
@@ -242,7 +242,7 @@
           floating
         />
       </div>
-      <div class="grid sm:grid-cols-2 gap-1 sm:gap-3">
+      <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
         <Select
           bind:field={fields.personal.country}
           placeholder="Country"
@@ -261,7 +261,7 @@
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Academic</span>
-      <div class="grid sm:grid-cols-3 gap-1 sm:gap-3">
+      <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
         <div class="sm:col-span-2">
           <Select
             bind:field={fields.academic.currentSchool}
@@ -393,19 +393,19 @@
     </div>
     <div class={classNames('grid gap-3', !fields.meta.submitted.checked && 'grid-cols-2')}>
       {#if fields.meta.submitted.checked}
-        <div class="shadow-sm rounded-md bg-green-100 px-4 py-2 text-green-900 text-center">
+        <div class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm">
           Application submitted and in review!
         </div>
       {:else}
         <button
           type="button"
           on:click={() => handleSave(true)}
-          class="shadow-sm rounded-md bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200 transition-colors duration-300 disabled:text-gray-500 disabled:bg-gray-200"
+          class="rounded-md bg-gray-100 px-4 py-2 text-gray-900 shadow-sm transition-colors duration-300 hover:bg-gray-200 disabled:bg-gray-200 disabled:text-gray-500"
           >Save draft</button
         >
         <button
           type="submit"
-          class="shadow-sm rounded-md bg-blue-100 px-4 py-2 text-blue-900 hover:bg-blue-200 transition-colors duration-300 disabled:text-blue-500 disabled:bg-blue-200"
+          class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
           >Submit</button
         >
       {/if}

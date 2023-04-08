@@ -48,7 +48,7 @@
 </script>
 
 <form
-  class={classNames('max-w-lg w-full grid', showValidation && 'show-validation')}
+  class={classNames('grid w-full max-w-lg', showValidation && 'show-validation')}
   bind:this={formEl}
   on:submit|preventDefault={handleSubmit}
   novalidate
@@ -56,7 +56,7 @@
   <fieldset {disabled}>
     <span class="font-bold">Name</span>
     <div class="flex items-center gap-3">
-      <div class="grid grid-cols-2 gap-3 grow">
+      <div class="grid grow grid-cols-2 gap-3">
         <Input
           type="text"
           field={fields.default.firstName}
@@ -73,7 +73,7 @@
         />
       </div>
       <button
-        class="mt-2 flex items-center justify-center h-12 w-12 shadow-sm rounded-md bg-blue-100 text-blue-900 hover:bg-blue-200 transition-colors duration-300 disabled:text-blue-500 disabled:bg-blue-200"
+        class="mt-2 flex h-12 w-12 items-center justify-center rounded-md bg-blue-100 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
         type="submit"
         ><svg
           xmlns="http://www.w3.org/2000/svg"

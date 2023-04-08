@@ -4,7 +4,7 @@
 
 <script>
   import { classNames, clickOutside } from '$lib/utils'
-  import { uniqueId, debounce, kebabCase } from 'lodash-es'
+  import { uniqueId, debounce, kebabCase } from 'lodash'
   import { fade } from 'svelte/transition'
 
   let self
@@ -119,7 +119,7 @@
     <div class="relative">
       <input
         class={classNames(
-          'appearance-none block pl-3 pr-9 pt-1 h-12 w-full transition-colors text-gray-900 rounded-md border focus:outline-none peer disabled:bg-white disabled:text-gray-400',
+          'peer block h-12 w-full appearance-none rounded-md border pl-3 pr-9 pt-1 text-gray-900 transition-colors focus:outline-none disabled:bg-white disabled:text-gray-400',
           field.error
             ? 'border-red-300 focus:border-red-600'
             : 'border-gray-300 focus:border-gray-600',
@@ -138,7 +138,7 @@
         {...$$restProps}
       />
       <label
-        class="cursor-text absolute text-gray-500 duration-150 transform -translate-y-4 top-[0.65rem] left-1 text-[0.8rem] leading-none z-10 origin-[0%_0%] bg-white px-2 peer-focus:-translate-y-4 peer-focus:top-[0.65rem] peer-focus:left-1 peer-focus:text-[0.8rem] peer-focus:leading-none peer-placeholder-shown:text-base peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2"
+        class="absolute top-[0.65rem] left-1 z-10 origin-[0%_0%] -translate-y-4 transform cursor-text bg-white px-2 text-[0.8rem] leading-none text-gray-500 duration-150 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-base peer-focus:top-[0.65rem] peer-focus:left-1 peer-focus:-translate-y-4 peer-focus:text-[0.8rem] peer-focus:leading-none"
         for={id}
       >
         <span>
@@ -154,7 +154,7 @@
     </label>
     <input
       class={classNames(
-        'appearance-none block pl-3 pr-9 h-12 w-full transition-colors text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:border-gray-600 placeholder:text-gray-500 disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+        'block h-12 w-full appearance-none rounded-md border border-gray-300 pl-3 pr-9 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         field.error
           ? 'border-red-300 focus:border-red-600'
           : 'border-gray-300 focus:border-gray-600',
@@ -173,7 +173,7 @@
       {...$$restProps}
     />
   {/if}
-  <div class="absolute top-0 right-0 pr-2 flex items-center h-12">
+  <div class="absolute top-0 right-0 flex h-12 items-center pr-2">
     <button
       type="button"
       on:click={() => {
@@ -189,7 +189,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="w-6 h-6"
+        class="h-6 w-6"
       >
         <path
           stroke-linecap="round"
@@ -201,14 +201,14 @@
   </div>
   {#if open}
     <div
-      class="absolute top-14 left-0 w-full bg-white rounded-md border border-gray-200 shadow-sm py-1 max-h-60 overflow-y-auto overflow-hidden z-20"
+      class="absolute top-14 left-0 z-20 max-h-60 w-full overflow-hidden overflow-y-auto rounded-md border border-gray-200 bg-white py-1 shadow-sm"
       transition:fade={{ duration: 100 }}
     >
       {#if filteredSourceNames.length === 0}
-        <div class="text-left py-2 px-6 w-full">Nothing found.</div>
+        <div class="w-full py-2 px-6 text-left">Nothing found.</div>
       {:else if filteredSourceNames.length === 1}
         <button
-          class="text-left py-2 px-6 w-full transition-colors duration-300 bg-gray-100"
+          class="w-full bg-gray-100 py-2 px-6 text-left transition-colors duration-300"
           type="button"
           on:click={() => {
             field.value = filteredSourceNames[0]
@@ -221,7 +221,7 @@
         {#each filteredSourceNames as name, index}
           <button
             class={classNames(
-              'text-left py-2 px-6 w-full transition-colors duration-300',
+              'w-full py-2 px-6 text-left transition-colors duration-300',
               index === selectedIndex && 'bg-gray-100'
             )}
             type="button"
