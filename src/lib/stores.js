@@ -12,9 +12,7 @@ function createAlert() {
         let str = ''
         message =
           errorsJson[message] ??
-          (str = message.split('/')[1].split('-').join(' ')).charAt(0).toUpperCase() +
-            str.slice(1) +
-            '.'
+          (str = message.split('/')[1].split('-').join(' ')).charAt(0).toUpperCase() + str.slice(1)
       }
       alert.set({
         type,

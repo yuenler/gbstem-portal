@@ -1,35 +1,29 @@
 // import { dev } from '$app/environment'
 import { derived, readable } from 'svelte/store'
 import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
+import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth'
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
+import { getStorage, connectStorageEmulator } from 'firebase/storage'
 
+const useEmulators = (import.meta.env?.VITE_FIREBASE_API_KEY ?? '') === ''
 let config
-config = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+if (useEmulators) {
+  config = {
+    projectId: 'test',
+    appId: 'test',
+    apiKey: 'test'
+  }
+} else {
+  config = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  }
 }
-// if (dev) {
-//   config = import.meta.env?.VITE_FIREBASE_API_KEY
-//     ? {
-//         apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-//         authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-//         projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-//         storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-//         messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
-//         appId: import.meta.env.VITE_FIREBASE_APP_ID,
-//         measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
-//       }
-//     : { apiKey: 'demo', authDomain: 'demo.firebaseapp.com' }
-// } else {
-//   // figure out
-// }
 
 export const app = readable(initializeApp(config))
 
@@ -37,6 +31,7 @@ function createAuth() {
   let auth
   const { subscribe } = derived(app, ($app, set) => {
     auth = getAuth($app)
+    if (useEmulators) connectAuthEmulator(auth, 'http://127.0.0.1:9099')
     set(auth)
   })
   async function signUp(email, password, profile) {
@@ -130,13 +125,16 @@ function createUser() {
 export const user = createUser()
 
 export const db = derived(app, ($app, set) => {
-  set(getFirestore($app))
+  const db = getFirestore($app)
+  if (useEmulators) connectFirestoreEmulator(db, 'localhost', '8080')
+  set(db)
 })
 
 function createStorage() {
   let storage = undefined
   const { subscribe } = derived(app, ($app, set) => {
     storage = getStorage($app)
+    if (useEmulators) connectStorageEmulator(storage, 'http://127.0.0.1:9199')
     set(storage)
   })
   async function uploadFile(file, filePath) {
