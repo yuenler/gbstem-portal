@@ -31,7 +31,10 @@ function createAuth() {
   let auth
   const { subscribe } = derived(app, ($app, set) => {
     auth = getAuth($app)
-    if (useEmulators) connectAuthEmulator(auth, 'http://127.0.0.1:9099')
+    if (useEmulators)
+      connectAuthEmulator(auth, 'http://localhost:9099', {
+        disableWarnings: true
+      })
     set(auth)
   })
   async function signUp(email, password, profile) {
@@ -126,7 +129,7 @@ export const user = createUser()
 
 export const db = derived(app, ($app, set) => {
   const db = getFirestore($app)
-  if (useEmulators) connectFirestoreEmulator(db, 'localhost', '8080')
+  if (useEmulators) connectFirestoreEmulator(db, 'localhost', 8080)
   set(db)
 })
 

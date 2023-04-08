@@ -7,6 +7,7 @@
   import Brand from '$lib/components/Brand.svelte'
   import { sendPasswordResetEmail } from 'firebase/auth'
   import { onMount } from 'svelte'
+  import { goto } from '$app/navigation'
 
   let formEl
   let showValidation = false
@@ -27,6 +28,7 @@
         .then(() => {
           fields = disableErrors.allSections(fields)
           alert.trigger('info', 'Password reset email was sent. Please check your inbox.')
+          goto('/signin')
         })
         .catch(err => {
           fields = enableErrors.allSections(fields)
