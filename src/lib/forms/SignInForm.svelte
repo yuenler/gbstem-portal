@@ -1,51 +1,48 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, disableErrors, isValid } from '$lib/forms'
   import { auth, user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
   import { goto } from '$app/navigation'
+  import Form from '$lib/components/Form.svelte'
 
-  let formEl
   let disabled = false
   let showValidation = false
-  let fields = {
-    default: createFields.text('email', 'password')
+  let values = {
+    email: '',
+    password: ''
   }
-  function handleSubmit() {
-    showValidation = true
-    if (isValid(formEl)) {
+
+  function handleSubmit(e) {
+    if (e.detail.error.state) {
+      showValidation = true
+      alert.trigger('error', e.detail.error.message)
+    } else {
+      showValidation = false
       disabled = true
       auth
-        .signIn(fields.default.email.value, fields.default.password.value)
+        .signIn(values.email, values.password)
         .then(async () => {
-          fields = disableErrors.allSections(fields)
           await user.loaded()
           goto('/')
         })
         .catch(err => {
-          fields = enableErrors.allSections(fields)
           disabled = false
-          alert.trigger('error', err.code)
+          alert.trigger('error', err.code, true)
         })
     }
   }
 </script>
 
-<form
-  class={classNames('w-full max-w-lg', showValidation && 'show-validation')}
-  bind:this={formEl}
-  on:submit|preventDefault={handleSubmit}
-  novalidate
->
+<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
   <fieldset class="grid gap-2" {disabled}>
     <Brand />
     <h1 class="mt-1 text-2xl font-bold">Sign in</h1>
-    <Input type="email" bind:field={fields.default.email} placeholder="Email" floating required />
+    <Input type="email" bind:value={values.email} placeholder="Email" floating required />
     <Input
       type="password"
-      bind:field={fields.default.password}
+      bind:value={values.password}
       placeholder="Password"
       floating
       required
@@ -64,4 +61,4 @@
       </button>
     </div>
   </fieldset>
-</form>
+</Form>

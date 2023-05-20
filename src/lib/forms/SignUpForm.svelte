@@ -1,144 +1,139 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, disableErrors, isValid } from '$lib/forms'
   import { auth, user, db } from '$lib/firebase'
   import { goto } from '$app/navigation'
   import Brand from '$lib/components/Brand.svelte'
   import { alert } from '$lib/stores'
   import { doc, getDoc, setDoc } from 'firebase/firestore'
   import { customAlphabet } from 'nanoid'
+  import Form from '$lib/components/Form.svelte'
+  import { deleteUser } from 'firebase/auth'
 
-  let formEl
   let disabled = false
   let showValidation = false
-  let fields = {
-    default: createFields.text('firstName', 'lastName', 'email', 'password', 'confirmPassword')
+  let values = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
   }
-  function handleSubmit() {
-    const validEmails = [
-      'yuenlerchow@college.harvard.edu',
-      'lerchow@gmail.com',
-      'dseum@college.harvard.edu',
-      'dseum@gmail.com',
-      'jooeunjunelee@college.harvard.edu',
-      'nathanli@college.harvard.edu',
-      'edwardkang@college.harvard.edu',
-      'testing@hackharvard.io',
-      'dseum@college.harvard.edu',
-      'vcainamisir@college.harvard.edu',
-      'kharvey@college.harvard.edu',
-      'hzhang1@college.harvard.edu'
-    ]
-    if (!validEmails.includes(fields.default.email.value)) {
-      alert.trigger(
-        'error',
-        'Only HackHarvard board members can create accounts at the moment',
-        false
-      )
-      return
-    }
-
-    showValidation = true
-    if (isValid(formEl)) {
-      if (fields.default.password.value === fields.default.confirmPassword.value) {
-        disabled = true
-        const firstName = fields.default.firstName.value.trim()
-        const lastName = fields.default.lastName.value.trim()
-        auth
-          .signUp(fields.default.email.value, fields.default.password.value, {
-            displayName: `${firstName} ${lastName}`
-          })
-          .then(async () => {
-            await user.loaded()
-            getDoc(doc($db, 'meta', 'hhids')).then(res => {
-              const hhids = res.exists() ? res.data() : {}
-              const alphabet = '0123456789'
-              const nanoid = customAlphabet(alphabet, 7)
-              let hhid = ''
-              for (let i = 0; i < 100; ++i) {
-                if (hhids['HH-' + nanoid()] === undefined) {
-                  hhid = 'HH-' + nanoid()
-                  break
-                }
-              }
-              if (hhid === '') {
-                return alert.trigger('error', 'Too many collisions. Please try again.', false)
-              } else {
-                setDoc(
-                  doc($db, 'meta', 'hhids'),
-                  {
-                    [hhid]: hhid
-                  },
-                  { merge: true }
-                ).then(() => {
-                  setDoc(doc($db, 'users', $user.uid), {
-                    hhid,
-                    role: 'applicant',
-                    firstName,
-                    lastName
-                  }).then(() => {
-                    fields = disableErrors.allSections(fields)
-                    goto('/')
-                  })
-                })
-              }
-            })
-          })
-          .catch(err => {
-            fields = enableErrors.allSections(fields)
-            disabled = false
-            alert.trigger('error', err.code)
-          })
-      } else {
-        fields.default = enableErrors.atSection(fields.default, 'password', 'confirmPassword')
-        alert.trigger('error', 'Passwords do not match.', false)
+  function generateId() {
+    const alphabet = '0123456789'
+    const nanoid = customAlphabet(alphabet, 7)
+    return 'HH-' + nanoid()
+  }
+  function handleSubmit(e) {
+    if (e.detail.error.state) {
+      showValidation = true
+      alert.trigger('error', e.detail.error.message)
+    } else {
+      // remove later
+      const validEmails = [
+        'yuenlerchow@college.harvard.edu',
+        'lerchow@gmail.com',
+        'dseum@college.harvard.edu',
+        'dseum@gmail.com',
+        'jooeunjunelee@college.harvard.edu',
+        'nathanli@college.harvard.edu',
+        'edwardkang@college.harvard.edu',
+        'testing@hackharvard.io',
+        'dseum@college.harvard.edu',
+        'vcainamisir@college.harvard.edu',
+        'kharvey@college.harvard.edu',
+        'hzhang1@college.harvard.edu'
+      ]
+      if (!validEmails.includes(values.email)) {
+        alert.trigger(
+          'error',
+          'Account creation temporarily restricted to HackHarvard board members.'
+        )
+        return
       }
+
+      // actual
+      showValidation = false
+      disabled = true
+      const firstName = values.firstName.trim()
+      const lastName = values.lastName.trim()
+      auth
+        .signUp(values.email, values.password, {
+          displayName: `${firstName} ${lastName}`
+        })
+        .then(async () => {
+          await user.loaded()
+
+          // attempt to generate hhid
+          let hhid = generateId()
+          console.log(hhid)
+          console.log('running1')
+          for (let i = 0; i < 5; ++i) {
+            const res = await getDoc(doc($db, 'hhids', hhid))
+            if (res.exists()) {
+              hhid = generateId()
+              if (i == 4) {
+                hhid = ''
+              }
+            } else {
+              break
+            }
+          }
+          if (hhid === '') {
+            alert.trigger(
+              'error',
+              'HHID could not be generated. Contact admin and create a new account.'
+            )
+            deleteUser($user)
+          } else {
+            setDoc(doc($db, 'hhids', hhid), {})
+              .then(() => {
+                setDoc(doc($db, 'users', $user.uid), {
+                  hhid,
+                  role: 'applicant',
+                  firstName,
+                  lastName
+                }).then(() => {
+                  goto('/')
+                })
+              })
+              .catch(err => console.log(err))
+          }
+        })
+        .catch(err => {
+          disabled = false
+          alert.trigger('error', err.code, true)
+        })
     }
   }
 </script>
 
-<form
-  class={classNames('w-full max-w-lg', showValidation && 'show-validation')}
-  bind:this={formEl}
-  on:submit|preventDefault={handleSubmit}
-  novalidate
->
+<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
   <fieldset class="grid gap-2" {disabled}>
     <Brand />
     <h1 class="mt-1 text-2xl font-bold">Sign up</h1>
     <div class="grid gap-2 sm:grid-cols-2 sm:gap-4">
-      <Input
-        type="text"
-        bind:field={fields.default.firstName}
-        placeholder="First name"
-        floating
-        required
-      />
-      <Input
-        type="text"
-        bind:field={fields.default.lastName}
-        placeholder="Last name"
-        floating
-        required
-      />
+      <Input type="text" bind:value={values.firstName} placeholder="First name" floating required />
+      <Input type="text" bind:value={values.lastName} placeholder="Last name" floating required />
     </div>
-    <Input type="email" bind:field={fields.default.email} placeholder="Email" floating required />
+    <Input type="email" bind:value={values.email} placeholder="Email" floating required />
     <Input
       type="password"
-      bind:field={fields.default.password}
+      bind:value={values.password}
       placeholder="New password"
       floating
       required
       autocomplete="new-password"
+      validation={[[values.password === values.confirmPassword, 'Passwords do not match.']]}
     />
     <Input
       type="password"
-      bind:field={fields.default.confirmPassword}
+      bind:value={values.confirmPassword}
       placeholder="Confirm password"
       floating
       required
       autocomplete="new-password"
+      validation={[[values.password === values.confirmPassword, 'Passwords do not match.']]}
     />
     <div class="mt-2 flex items-center justify-between">
       <div>
@@ -152,4 +147,4 @@
       </button>
     </div>
   </fieldset>
-</form>
+</Form>

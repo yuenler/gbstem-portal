@@ -1,56 +1,54 @@
 <script>
   import Input from '$lib/components/Input.svelte'
   import { classNames } from '$lib/utils'
-  import { createFields, enableErrors, clearFields, isValid } from '$lib/forms'
   import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import { verifyBeforeUpdateEmail } from 'firebase/auth'
   import Modal from '$lib/components/Modal.svelte'
   import ReauthenticateForm from '$lib/forms/ReauthenticateForm.svelte'
+  import Form from '$lib/components/Form.svelte'
 
   let modalEl
-  let formEl
+  let disabled = false
   let showValidation = false
-  let fields = {
-    default: createFields.text('newEmail')
+  let values = {
+    newEmail: ''
   }
-  function handleSubmit() {
-    showValidation = true
-    if (isValid(formEl)) {
+  function handleSubmit(e) {
+    if (e.detail.error.state) {
+      showValidation = true
+      alert.trigger('error', e.detail.error.message)
+    } else {
+      showValidation = false
+      disabled = true
       modalEl.setOpen(true)
     }
   }
   function handleReauthenticated(reauthenticated) {
     if (reauthenticated) {
       modalEl.setOpen(false)
-      verifyBeforeUpdateEmail($user, fields.default.newEmail.value)
+      verifyBeforeUpdateEmail($user, values.newEmail)
         .then(() => {
-          showValidation = false
-          fields = clearFields.allSections(fields)
+          disabled = false
+          values = {
+            newEmail: ''
+          }
           alert.trigger('info', 'A verification email was sent.')
         })
         .catch(err => {
-          fields = enableErrors.allSections(fields)
-          alert.trigger('error', err.code)
+          disabled = false
+          alert.trigger('error', err.code, true)
         })
     }
   }
 </script>
 
-<form
-  class={classNames('grid w-full max-w-lg', showValidation && 'show-validation')}
-  bind:this={formEl}
-  on:submit|preventDefault={handleSubmit}
-  novalidate
->
-  <div class="grid gap-1">
+<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
+  <fieldset {disabled}>
     <span class="font-bold">Change email</span>
     <Input
       type="email"
-      field={{
-        value: $user ? $user.email : '',
-        error: false
-      }}
+      value={$user ? $user.email : ''}
       placeholder="Current email"
       floating
       readonly
@@ -59,12 +57,12 @@
       <Input
         class="pr-[5.25rem]"
         type="email"
-        bind:field={fields.default.newEmail}
+        bind:value={values.newEmail}
         placeholder="New email"
         floating
         required
       />
-      <div class="absolute top-2 right-2 flex h-12 items-center">
+      <div class="absolute right-2 top-0 flex h-12 items-center">
         <button
           class="rounded-md bg-blue-100 px-2 py-1 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200"
           type="submit"
@@ -73,8 +71,8 @@
         </button>
       </div>
     </div>
-  </div>
-</form>
+  </fieldset>
+</Form>
 
 <Modal class="flex items-center justify-center" title="Reauthenticate" bind:this={modalEl}>
   <ReauthenticateForm on:reauthenticated={handleReauthenticated} />
