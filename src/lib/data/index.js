@@ -4,10 +4,8 @@ import schoolsJson from './schools.json'
 import worldJson from './world.json'
 import shirtSizeJson from './shirtSizes.json'
 import dietaryRestrictionsJson from './dietaryRestrictions.json'
-import errorsJson from './errors.json'
 import reasonsJson from './reasons.json'
 import statesJson from './states.json'
-import fieldsJson from './fields.json'
 
 export {
   racesEthnicitiesJson,
@@ -17,7 +15,5 @@ export {
   shirtSizeJson,
   dietaryRestrictionsJson,
   reasonsJson,
-  statesJson,
-  errorsJson,
-  fieldsJson
+  statesJson
 }
