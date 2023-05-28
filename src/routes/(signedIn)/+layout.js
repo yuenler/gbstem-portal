@@ -4,8 +4,8 @@ import { user } from '$lib/firebase'
 
 export async function load() {
   if (browser) {
-    const userData = await user.get()
-    if (!userData) {
+    const currentUser = await user.get()
+    if (!currentUser.signedIn) {
       goto('/signin')
     }
   }

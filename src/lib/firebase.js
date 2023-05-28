@@ -72,42 +72,23 @@ export const auth = createAuth()
 
 function createUser() {
   let user = undefined
-  const { subscribe } = derived(auth, async ($auth, set) => {
+  const { subscribe } = derived(auth, ($auth, set) => {
     set(user)
     const unsubscribe = onAuthStateChanged($auth, userData => {
-      user = userData
+      user = {
+        signedIn: Boolean(userData),
+        ...userData
+      }
       set(user)
     })
     return unsubscribe
   })
-  async function get() {
-    let unsubscribe
-    const userData = new Promise(resolve => {
-      unsubscribe = subscribe(userData => {
-        if (userData !== undefined) {
-          if (userData) {
-            resolve(userData)
-          } else {
-            resolve(null)
-          }
-        }
-      })
-    })
-    return new Promise(resolve => {
-      userData.then(result => {
-        unsubscribe()
-        resolve(result)
-      })
-    })
-  }
   async function loaded() {
     let unsubscribe
     const userData = new Promise(resolve => {
       unsubscribe = subscribe(userData => {
         if (userData !== undefined) {
-          if (userData) {
-            resolve(true)
-          }
+          resolve(true)
         }
       })
     })
@@ -118,10 +99,15 @@ function createUser() {
       })
     })
   }
+  async function get() {
+    await loaded()
+    return user
+  }
+
   return {
     subscribe,
-    get,
-    loaded
+    loaded,
+    get
   }
 }
 
@@ -140,6 +126,22 @@ function createStorage() {
     if (useEmulators) connectStorageEmulator(storage, 'http://127.0.0.1:9199')
     set(storage)
   })
+  async function loaded() {
+    let unsubscribe
+    const storageData = new Promise(resolve => {
+      unsubscribe = subscribe(storageData => {
+        if (storageData !== undefined) {
+          resolve(true)
+        }
+      })
+    })
+    return new Promise(resolve => {
+      storageData.then(result => {
+        unsubscribe()
+        resolve(result)
+      })
+    })
+  }
   async function uploadFile(file, filePath) {
     await loaded()
     const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage')
@@ -154,26 +156,9 @@ function createStorage() {
         .catch(reject)
     )
   }
-  async function loaded() {
-    let unsubscribe
-    const storageData = new Promise(resolve => {
-      unsubscribe = subscribe(storageData => {
-        if (storageData !== undefined) {
-          if (storageData) {
-            resolve(true)
-          }
-        }
-      })
-    })
-    return new Promise(resolve => {
-      storageData.then(result => {
-        unsubscribe()
-        resolve(result)
-      })
-    })
-  }
   return {
     subscribe,
+    loaded,
     uploadFile
   }
 }

@@ -4,12 +4,13 @@
   import { fade } from 'svelte/transition'
   import { user, db } from '$lib/firebase'
 
-  const asyncData = new Promise((resolve, reject) => {
+  const asyncData = new Promise(async resolve => {
     let data = {
       application: '',
       group: {}
     }
-    user.loaded().then(() => {
+    await user.loaded()
+    if ($user?.signedIn) {
       getDoc(doc($db, 'applications', $user.uid)).then(res => {
         if (res.exists()) {
           const application = res.data()
@@ -26,7 +27,7 @@
         }
         resolve(data)
       })
-    })
+    }
   })
 </script>
 

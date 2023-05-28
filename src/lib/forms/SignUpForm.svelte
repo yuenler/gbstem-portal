@@ -66,8 +66,6 @@
 
           // attempt to generate hhid
           let hhid = generateId()
-          console.log(hhid)
-          console.log('running1')
           for (let i = 0; i < 5; ++i) {
             const res = await getDoc(doc($db, 'hhids', hhid))
             if (res.exists()) {

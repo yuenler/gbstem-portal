@@ -14,11 +14,11 @@
   let values = {
     email: ''
   }
-  $: signedIn = $user === undefined ? true : $user
+  let currentUser
   onMount(async () => {
-    const userData = await user.get()
-    if (userData) {
-      fields.default.email.value = userData.email
+    currentUser = await user.get()
+    if (currentUser.signedIn) {
+      fields.default.email.value = currentUser.email
     }
   })
   function handleSubmit() {
@@ -46,8 +46,13 @@
     <Brand />
     <h1 class="mt-1 text-2xl font-bold">Reset password</h1>
     <Input type="email" bind:value={values.email} placeholder="Email" floating required />
-    <div class={classNames('mt-2 flex items-center', signedIn ? 'justify-end' : 'justify-between')}>
-      {#if !signedIn}
+    <div
+      class={classNames(
+        'mt-2 flex items-center',
+        currentUser.signedIn ? 'justify-end' : 'justify-between'
+      )}
+    >
+      {#if !currentUser.signedIn}
         <span>
           <a class="link" href="/signup">Sign up</a> or
           <a class="link" href="/signin">sign in</a>.

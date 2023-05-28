@@ -5,8 +5,8 @@ import { user } from '$lib/firebase'
 export async function load({ parent }) {
   if (browser) {
     await parent()
-    const userData = await user.get()
-    if (userData && !userData.emailVerified) {
+    const currentUser = await user.get()
+    if (currentUser.signedIn && !currentUser.emailVerified) {
       goto('/profile')
     }
   }
