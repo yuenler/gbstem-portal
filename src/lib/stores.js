@@ -9,7 +9,9 @@ function createAlert() {
   function trigger(type, message, auto = false) {
     if (type === 'error') {
       if (auto) {
-        message = `${capitalize(lowerCase(message.split('/')[1]))}.`
+        message = `${capitalize(
+          lowerCase(message.contains('/') ? message.split('/')[1] : message)
+        )}.`
       }
       alert.set({
         type,
