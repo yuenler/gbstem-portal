@@ -14,11 +14,16 @@
   export let required = false
   export let floating = false
   export let validation = []
+  export let focus = false
 
   // if file input
   export let accept = undefined
   export let maxSize = 0
-
+  $: if (self) {
+    if (focus) {
+      self.focus()
+    }
+  }
   $: {
     if (self) {
       const state = [

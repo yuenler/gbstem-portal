@@ -1,21 +1,37 @@
 <script>
   import { fade } from 'svelte/transition'
   import { classNames } from '$lib/utils'
+  import { createEventDispatcher } from 'svelte'
 
-  export let title = ''
-  export let size = 'full'
-  let open = false
-  export function setOpen(value) {
-    open = value
-  }
   let className
   export { className as class }
+
+  const dispatch = createEventDispatcher()
+  export let title = ''
+  export let size = 'full'
+  let openState = false
+  export function open() {
+    openState = true
+  }
+  export function close() {
+    openState = false
+  }
+  export function cancel() {
+    openState = false
+    dispatch('cancel', true)
+  }
+  function handleKeyDown(e) {
+    if (e.code === 'Escape') {
+      cancel()
+    }
+  }
 </script>
 
-{#if open}
+{#if openState}
   <div
-    class="fixed top-0 left-0 z-50 flex h-screen items-center first-letter:w-screen"
+    class="fixed left-0 top-0 z-50 flex h-screen items-center first-letter:w-screen"
     transition:fade={{ duration: 150 }}
+    on:keydown|stopPropagation={handleKeyDown}
   >
     <div class="relative h-full w-full">
       <div
@@ -26,13 +42,7 @@
       >
         <div class="mb-5 flex shrink-0 items-center justify-between border-b border-gray-300 py-5">
           <h1 class="text-xl uppercase">{title}</h1>
-          <button
-            class="shrink-0"
-            type="button"
-            on:click={() => {
-              open = false
-            }}
-          >
+          <button class="shrink-0" type="button" on:click={cancel}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

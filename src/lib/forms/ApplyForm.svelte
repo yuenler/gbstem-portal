@@ -115,11 +115,6 @@
     clearInterval(saveInterval)
   })
   function modifiedValues() {
-    console.log(values.timestamps)
-    console.log({
-      ...values.timestamps,
-      updated: serverTimestamp()
-    })
     return {
       ...values,
       timestamps: {

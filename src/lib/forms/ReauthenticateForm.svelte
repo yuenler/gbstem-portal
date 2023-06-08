@@ -26,7 +26,7 @@
         EmailAuthProvider.credential($user.email, values.password)
       )
         .then(() => {
-          dispatch('reauthenticated', true)
+          dispatch('reauthenticate', true)
         })
         .catch(err => {
           disabled = false
@@ -50,6 +50,7 @@
       floating
       required
       autocomplete="current-password"
+      focus
     />
     <div class="mt-2 flex items-center justify-between">
       <div class="flex flex-col gap-1">

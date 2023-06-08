@@ -22,26 +22,32 @@
     } else {
       showValidation = false
       disabled = true
-      modalEl.setOpen(true)
+      modalEl.open()
     }
   }
-  function handleReauthenticated(reauthenticated) {
-    if (reauthenticated) {
-      modalEl.setOpen(false)
-      updatePassword($user, values.newPassword)
-        .then(() => {
-          disabled = false
-          values = {
-            newPassword: '',
-            confirmPassword: ''
-          }
-          alert.trigger('success', 'Password was successfully changed.')
-        })
-        .catch(err => {
-          disabled = false
-          alert.trigger('error', err.code, true)
-        })
+  function handleCancel() {
+    disabled = false
+    values = {
+      newPassword: '',
+      confirmPassword: ''
     }
+    alert.trigger('info', 'Password change canceled.')
+  }
+  function handleReauthenticate() {
+    modalEl.close()
+    updatePassword($user, values.newPassword)
+      .then(() => {
+        disabled = false
+        values = {
+          newPassword: '',
+          confirmPassword: ''
+        }
+        alert.trigger('success', 'Password was successfully changed.')
+      })
+      .catch(err => {
+        disabled = false
+        alert.trigger('error', err.code, true)
+      })
   }
 </script>
 
@@ -78,6 +84,11 @@
   </fieldset>
 </Form>
 
-<Modal class="flex items-center justify-center" title="Reauthenticate" bind:this={modalEl}>
-  <ReauthenticateForm on:reauthenticated={handleReauthenticated} />
+<Modal
+  class="flex items-center justify-center"
+  title="Reauthenticate"
+  bind:this={modalEl}
+  on:cancel={handleCancel}
+>
+  <ReauthenticateForm on:reauthenticate={handleReauthenticate} />
 </Modal>
