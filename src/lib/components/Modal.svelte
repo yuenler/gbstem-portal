@@ -33,7 +33,8 @@
     transition:fade={{ duration: 150 }}
     on:keydown|stopPropagation={handleKeyDown}
   >
-    <div class="relative h-full w-full">
+    <div class={classNames("relative h-full w-full",
+    )}>
       <div
         class={classNames(
           'px-dynamic bg-white pb-5',
