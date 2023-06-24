@@ -6,7 +6,8 @@ export async function load({ parent }) {
   if (browser) {
     await parent()
     const currentUser = await user.get()
-    if (currentUser.signedIn && !currentUser.emailVerified) {
+    const isSignedIn = await user.isSignedIn()
+    if (isSignedIn && !currentUser.emailVerified) {
       goto('/profile')
     }
   }

@@ -75,10 +75,7 @@ function createUser() {
   const { subscribe } = derived(auth, ($auth, set) => {
     set(user)
     const unsubscribe = onAuthStateChanged($auth, userData => {
-      user = {
-        signedIn: Boolean(userData),
-        ...userData
-      }
+      user = userData
       set(user)
     })
     return unsubscribe
@@ -103,11 +100,15 @@ function createUser() {
     await loaded()
     return user
   }
-
+  async function isSignedIn() {
+    await loaded()
+    return Boolean(user)
+  }
   return {
     subscribe,
     loaded,
-    get
+    get,
+    isSignedIn
   }
 }
 

@@ -9,8 +9,8 @@
       application: '',
       group: {}
     }
-    await user.loaded()
-    if ($user?.signedIn) {
+    const isSignedIn = await user.isSignedIn()
+    if (isSignedIn) {
       getDoc(doc($db, 'applications', $user.uid)).then(res => {
         if (res.exists()) {
           const application = res.data()
