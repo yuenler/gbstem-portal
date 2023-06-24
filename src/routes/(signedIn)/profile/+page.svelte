@@ -1,6 +1,7 @@
 <script>
   import ChangeEmailForm from '$lib/forms/ChangeEmailForm.svelte'
   import ChangePasswordForm from '$lib/forms/ChangePasswordForm.svelte'
+  import DeleteAccountForm from '../../../lib/forms/DeleteAccountForm.svelte'
   import { fade } from 'svelte/transition'
   import { user, db } from '$lib/firebase'
   import { sendEmailVerification } from 'firebase/auth'
@@ -64,5 +65,6 @@
     <ChangeNameForm />
     <ChangeEmailForm />
     <ChangePasswordForm />
+    <DeleteAccountForm />
   </div>
 </div>
