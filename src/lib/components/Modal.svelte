@@ -9,20 +9,29 @@
   const dispatch = createEventDispatcher()
   export let title = ''
   export let size = 'full'
+  export let disabled = false
   let openState = false
   export function open() {
-    openState = true
+    if (!disabled) {
+      openState = true
+    }
   }
   export function close() {
-    openState = false
+    if (!disabled) {
+      openState = false
+    }
   }
   export function cancel() {
-    openState = false
-    dispatch('cancel', true)
+    if (!disabled) {
+      openState = false
+      dispatch('cancel', true)
+    }
   }
   function handleKeyDown(e) {
-    if (e.code === 'Escape') {
-      cancel()
+    if (!disabled) {
+      if (e.code === 'Escape') {
+        cancel()
+      }
     }
   }
 </script>
@@ -33,8 +42,7 @@
     transition:fade={{ duration: 150 }}
     on:keydown|stopPropagation={handleKeyDown}
   >
-    <div class={classNames("relative h-full w-full",
-    )}>
+    <div class={classNames('relative h-full w-full')}>
       <div
         class={classNames(
           'px-dynamic bg-white pb-5',
