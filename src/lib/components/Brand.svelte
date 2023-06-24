@@ -3,6 +3,6 @@
     <a class="shrink-0" href="https://hackharvard.io">
       <img class="h-8 w-8" src="/favicon.svg" alt="" />
     </a>
-    <a class="rounded-md bg-blue-200 py-1 px-2 text-lg font-bold uppercase" href="/"> Portal </a>
+    <a class="rounded-md bg-blue-200 px-2 py-1 text-lg font-bold uppercase" href="/">Portal</a>
   </div>
 </div>
