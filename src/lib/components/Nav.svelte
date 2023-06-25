@@ -35,7 +35,7 @@
     }
   ]
   function updateShadow() {
-    shadow = window.pageYOffset !== 0
+    shadow = window.scrollY !== 0
   }
 </script>
 
