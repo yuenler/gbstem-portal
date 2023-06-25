@@ -10,7 +10,8 @@
     schoolsJson,
     shirtSizeJson,
     dietaryRestrictionsJson,
-    rolesJson
+    rolesJson,
+    prolangsJson
   } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
@@ -27,9 +28,15 @@
       lastName: '',
       dateOfBirth: '',
       gender: '',
-      phoneNumber: '',
+      phoneNumber: ''
     },
-    academic: { enrolled: false, currentSchool: '', graduationYear: '', major: '', affiliated: false },
+    academic: {
+      enrolled: false,
+      currentSchool: '',
+      graduationYear: '',
+      major: '',
+      affiliated: false
+    },
     hackathon: {
       shirtSize: '',
       reason: '',
@@ -38,19 +45,25 @@
       hasTeam: false,
       teamMembers: '',
       teamHelp: false,
-      ableToMake: false,
-
-      role: [],
-      roleOpenEnded: '',
+      ableToAttend: false
+    },
+    openResponse: {
+      roles: [],
+      otherRole: '',
+      prolangs: [],
+      otherProlang: '',
       proud: '',
       interests: '',
       resume: {
         url: '',
         name: ''
-      },
+      }
+    },
+    preferences: {
       dietaryRestrictions: [],
       catering: '',
-      sleeping: false
+      sleeping: false,
+      parking: false
     },
     agreements: { codeOfConduct: false, sharing: false, mlhEmails: false, submitting: false },
     meta: {
@@ -155,7 +168,7 @@
       storage
         .uploadFile(resumeFile, `resumes/${$user.uid}.pdf`)
         .then(downloadURL => {
-          values.hackathon.resume = {
+          values.openResponse.resume = {
             url: downloadURL,
             name: resumeFile.name
           }
@@ -214,8 +227,8 @@
           {/if}
         </div>
       </Card>
-      {#if values.hackathon.resume.url !== ''}
-        <a class="mb-2" href={values.hackathon.resume.url} target="_blank" rel="noreferrer">
+      {#if values.openResponse.resume.url !== ''}
+        <a class="mb-2" href={values.openResponse.resume.url} target="_blank" rel="noreferrer">
           <Card class="flex items-center gap-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -231,7 +244,7 @@
                 d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
               />
             </svg>
-            <span>{`${values.hackathon.resume.name} (resume)`}</span>
+            <span>{`${values.openResponse.resume.name} (resume)`}</span>
           </Card>
         </a>
       {/if}
@@ -263,10 +276,11 @@
     <div class="grid gap-1">
       <span class="font-bold">Academic</span>
       <Input
-          type="checkbox"
-          bind:value={values.academic.enrolled}
-          placeholder="Will you be enrolled in a university degree program on
-          October XXXX?"
+        type="checkbox"
+        bind:value={values.academic.enrolled}
+        placeholder="Will you be enrolled in a university degree program on
+          October 2023?"
+        required
       />
       <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
         <div class="sm:col-span-2">
@@ -293,9 +307,8 @@
         type="checkbox"
         bind:value={values.academic.affiliated}
         placeholder="Are you affiliated with Harvard University? If so, make sure
-        you are registered under your Harvard email."
+        your profile uses your Harvard email."
       />
-      
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Hackathon</span>
@@ -308,19 +321,24 @@
           required
         />
       </div>
-      <div class="grid grid-cols-1">
-        <Input
-          type="checkbox"
-          bind:value={values.hackathon.firstHackathon}
-          placeholder="Will HackHarvard be your first hackathon?"
-        />
+      <Input
+        type="checkbox"
+        bind:value={values.hackathon.firstHackathon}
+        placeholder="Will HackHarvard be your first hackathon?"
+      />
+      {#if !values.hackathon.firstHackathon}
         <Input
           type="checkbox"
           bind:value={values.hackathon.previouslyParticipated}
           placeholder="Have you previously participated at a HackHarvard hackathon?"
         />
-      </div>
-      <div class="grid grid-cols-1">
+      {/if}
+      <Input
+        type="checkbox"
+        bind:value={values.hackathon.teamHelp}
+        placeholder="Do you need help finding a team?"
+      />
+      {#if !values.hackathon.teamHelp}
         <Input
           type="checkbox"
           bind:value={values.hackathon.hasTeam}
@@ -330,55 +348,85 @@
           bind:value={values.hackathon.teamMembers}
           placeholder="If so, list the members of your team."
         />
-      </div>
+      {/if}
       <Input
-          type="checkbox"
-          bind:value={values.hackathon.teamHelp}
-          placeholder="Do you need help finding a team?"
-        />
-      <Input
-          type="checkbox"
-          bind:value={values.hackathon.ableToMake}
-          placeholder="HackHarvard is an in-person event. Will you be able to be in Cambridge, MA, 
-          United States, both legally (international students) and logistically, on October XXXX?"
+        type="checkbox"
+        bind:value={values.hackathon.ableToAttend}
+        placeholder="HackHarvard is an in-person event. Will you be able to be in Cambridge, MA, 
+          United States both legally (international students) and logistically on October 2023?"
+        required
       />
     </div>
     <div class="grid gap-1">
-      <span class="font-bold">Open Response</span>
+      <span class="font-bold">Open response</span>
       <div class="grid gap-1">
-        What roles best fit your capabilities on a hackathon team?
+        <span>
+          What roles best fit your capabilities on a hackathon team?<span class="text-red-500">
+            *
+          </span>
+        </span>
         <div class="grid grid-cols-2">
           {#each rolesJson as role}
             <Input
               type="checkbox"
-              bind:value={values.hackathon.role}
+              bind:value={values.openResponse.roles}
               placeholder={role.name}
+              required
             />
           {/each}
         </div>
       </div>
       <div class="mt-2">
         <Textarea
-          bind:value={values.hackathon.roleOpenEnded}
-          placeholder="If you selected &quot;Other&quot;, what other roles could you see yourself playing?"
+          bind:value={values.openResponse.otherRole}
+          placeholder="If other, what other roles could you see yourself playing?"
+          required={values.openResponse.roles.includes('other')}
         />
       </div>
-      <!-- TODO: Ask about familiar technologies -->
+      <div class="grid gap-1">
+        <span>
+          Check up to 5 of the programming languages that you feel most comfortable in.<span
+            class="text-red-500"
+          >
+            *
+          </span>
+        </span>
+        <div class="grid grid-cols-2">
+          {#each prolangsJson as prolang}
+            <Input
+              type="checkbox"
+              bind:value={values.openResponse.prolangs}
+              placeholder={prolang.name}
+              validation={[
+                [values.openResponse.prolangs.length <= 5, 'Check up to 5 programming languages.']
+              ]}
+              required
+            />
+          {/each}
+        </div>
+      </div>
       <div class="mt-2">
         <Textarea
-          bind:value={values.hackathon.proud}
+          bind:value={values.openResponse.otherProlang}
+          placeholder="If other, what other programming languages?"
+          required={values.openResponse.prolangs.includes('other')}
+        />
+      </div>
+      <div class="mt-2">
+        <Textarea
+          bind:value={values.openResponse.proud}
           placeholder="What's a project you've been involved in that you're proud of?"
           required
         />
       </div>
       <div class="mt-2">
         <Textarea
-          bind:value={values.hackathon.interests}
+          bind:value={values.openResponse.interests}
           placeholder="What areas or projects are you eager to explore at HackHarvard?"
           required
         />
       </div>
-      {#if values.hackathon.resume.url === ''}
+      {#if values.openResponse.resume.url === ''}
         <div class="mt-2">
           <Input
             bind:value={resumeFile}
@@ -391,16 +439,15 @@
         </div>
       {/if}
     </div>
-      
     <div class="grid gap-1">
-      <span class="font-bold">Other</span>
+      <span class="font-bold">Preferences</span>
       <div class="grid gap-1">
         Dietary Restrictions
         <div class="grid grid-cols-2">
           {#each dietaryRestrictionsJson as dietaryRestriction}
             <Input
               type="checkbox"
-              bind:value={values.hackathon.dietaryRestrictions}
+              bind:value={values.preferences.dietaryRestrictions}
               placeholder={dietaryRestriction.name}
             />
           {/each}
@@ -408,21 +455,23 @@
       </div>
       <div class="mt-2">
         <Textarea
-          bind:value={values.hackathon.catering}
+          bind:value={values.preferences.catering}
           placeholder="Any catering preferences?"
         />
       </div>
       <Input
-          type="checkbox"
-          bind:value={values.hackathon.sleeping}
-          placeholder="Do you plan on sleeping overnight on-site?"
+        type="checkbox"
+        bind:value={values.preferences.sleeping}
+        placeholder="Do you plan on sleeping overnight on-site?"
       />
-      <!-- TODO: Ask about parking -->
-      *If you need any other accomodations, please email us at 
-      team@hackharvard.io
-
+      <Input
+        type="checkbox"
+        bind:value={values.preferences.parking}
+        placeholder="Do you need parking?"
+      />
+      *If you need any other accomodations, please email us at team@hackharvard.io
     </div>
-      
+
     <div class="grid gap-1">
       <span class="font-bold">Agreements</span>
       <div class="grid">
