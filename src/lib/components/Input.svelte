@@ -30,10 +30,13 @@
         [
           !(
             required &&
-            (value === '' || (self.files instanceof FileList && self.files.length === 0))
+            (value === '' ||
+              (self.files instanceof FileList && self.files.length === 0) ||
+              (type === 'checkbox' && isArray(value) && value.length === 0))
           ),
           'Please fill required fields.'
         ],
+        ...(type === 'file' ? [[!(value?.size > maxSize), 'File exceeds maximum size.']] : []),
         ...validation
       ].find(state => !state[0])
       self.setCustomValidity(isUndefined(state) ? '' : state[1])
@@ -45,9 +48,9 @@
       if (type === 'checkbox') {
         if (isArray(value)) {
           if (e.target.checked) {
-            value = [id, ...value]
+            value = [name, ...value]
           } else {
-            value = value.filter(item => item !== id)
+            value = value.filter(item => item !== name)
           }
         } else {
           value = e.target.checked
@@ -60,11 +63,6 @@
         e.target.files[0] instanceof File
       ) {
         value = e.target.files[0]
-        if (value.size > maxSize) {
-          self?.setCustomValidity('File exceeds maximum size.')
-        } else {
-          self?.setCustomValidity('')
-        }
       } else {
         value = e.target.value
       }
@@ -86,7 +84,6 @@
         on:input={handleInput}
         {id}
         {name}
-        {required}
         {...$$restProps}
       />
       <label
@@ -94,7 +91,7 @@
         class="ml-2 cursor-pointer text-gray-900 peer-disabled:cursor-default peer-disabled:text-gray-400"
       >
         <span>
-          {placeholder}<span class="text-red-500">*</span>
+          {placeholder}
         </span>
       </label>
     </div>
