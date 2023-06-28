@@ -75,7 +75,7 @@
       prolangs: string[]
       otherProlang: string
       experience: string
-      whyHH: string
+      whyHh: string
       project: string
       predictions: string
       resume: ResumeFile
@@ -142,7 +142,7 @@
       prolangs: [],
       otherProlang: '',
       experience: '',
-      whyHH: '',
+      whyHh: '',
       project: '',
       predictions: '',
       resume: {
@@ -171,7 +171,7 @@
     url: '',
     name: ''
   }
-  let saveInterval: any = undefined
+  let saveInterval: number
   onMount(async () => {
     const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
     const exists = applicationDoc.exists()
@@ -215,7 +215,7 @@
         }
       }
       disabled = false
-      saveInterval = setInterval(() => {
+      saveInterval = window.setInterval(() => {
         handleSave(false)
       }, 300000)
     }
@@ -352,10 +352,10 @@
         type="number"
         bind:value={values.personal.age}
         placeholder="How old will you be on October 20th, 2023?"
-        floating
+        min="0"
+        max="100"
         required
       />
-
       <Select
         bind:value={values.personal.gender}
         placeholder="Gender"
@@ -363,8 +363,8 @@
         floating
         required
       />
-      <div class="grid gap-1">
-        Race / ethnicity (check all that apply)
+      <div class="mt-2 grid gap-1">
+        <span>Race / ethnicity (check all that apply)</span>
         <div class="grid grid-cols-2">
           {#each raceJson as race}
             <Input type="checkbox" bind:value={values.personal.race} placeholder={race.name} />
@@ -375,19 +375,17 @@
         bind:value={values.personal.underrepresented}
         placeholder="Do you identify as part of an underrepresented group in the technology industry?"
         options={[{ name: 'Yes' }, { name: 'No' }, { name: 'Unsure' }]}
-        floating
         required
       />
-
       <Input
         type="tel"
         bind:value={values.personal.phoneNumber}
-        placeholder="Phone number (format as +1 XXX-XXX-XXXX)"
+        placeholder="Phone number"
         floating
         required
         pattern="\+1 ?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}4{'}'}"
       />
-
+      <span class="text-sm">*format as +1 XXX-XXX-XXXX</span>
       <Input
         type="text"
         bind:value={values.personal.address}
@@ -420,8 +418,8 @@
           required
         />
       </div>
-      <div class="grid gap-1">
-        Dietary Restrictions
+      <div class="mt-2 grid gap-1">
+        <span> Do you have any dietary restrictions?</span>
         <div class="grid grid-cols-2">
           {#each dietaryRestrictionsJson as dietaryRestriction}
             <Input
@@ -508,13 +506,12 @@
         bind:value={values.hackathon.reason}
         placeholder="How did you learn about HackHarvard?"
         options={reasonsJson}
-        floating
         required
       />
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Open response</span>
-      <div class="grid gap-1">
+      <div class="mt-2 grid gap-1">
         <span>
           What roles best fit your capabilities on a hackathon team?<span class="text-red-500">
             *
@@ -534,7 +531,7 @@
           rows={1}
         />
       </div>
-      <div class="grid gap-1">
+      <div class="mt-2 grid gap-1">
         <span>
           Check up to 5 of the programming languages that you feel most comfortable in.<span
             class="text-red-500"
@@ -556,7 +553,7 @@
           {/each}
         </div>
       </div>
-      <div class="mt-2">
+      <div>
         <Textarea
           bind:value={values.openResponse.otherProlang}
           placeholder="If other, what other programming languages?"
@@ -568,12 +565,11 @@
         bind:value={values.openResponse.experience}
         placeholder="How much experience do you have with computer science?"
         options={experienceJson}
-        floating
         required
       />
       <div class="mt-2">
         <Textarea
-          bind:value={values.openResponse.whyHH}
+          bind:value={values.openResponse.whyHh}
           placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve?`}
           required
         />
@@ -604,14 +600,12 @@
           />
         </div>
       {/if}
-
       <Input
         type="checkbox"
         bind:value={values.openResponse.resumeShare}
         placeholder="If you are accepted to HackHarvard 2023, would you like us to share your resume with our sponsors for potential recruitment opportunities?"
       />
     </div>
-
     <div class="grid gap-1">
       <span class="font-bold">Agreements</span>
       <div class="grid">
@@ -621,7 +615,6 @@
           placeholder="I have read and agree to the MLH Code of Conduct (https://static.mlh.io/docs/mlh-code-of-conduct.pdf)."
           required
         />
-
         <Input
           type="checkbox"
           bind:value={values.agreements.sharing}
@@ -652,13 +645,15 @@
           type="button"
           on:click={() => handleSave(true)}
           class="rounded-md bg-gray-100 px-4 py-2 text-gray-900 shadow-sm transition-colors duration-300 hover:bg-gray-200 disabled:bg-gray-200 disabled:text-gray-500"
-          >Save draft</button
         >
+          Save draft
+        </button>
         <button
           type="submit"
           class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
-          >Submit</button
         >
+          Submit
+        </button>
       {/if}
     </div>
   </fieldset>
