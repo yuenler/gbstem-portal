@@ -78,6 +78,9 @@
   }
   function handleKeyDown(e) {
     switch (e.code) {
+      case 'Escape':
+        open = false
+        break
       case 'Enter':
         e.preventDefault()
         open = false
@@ -104,7 +107,13 @@
         break
     }
   }
-  function handleClick() {
+  function handleFocusIn() {
+    selectedOptionIndex = 0
+    if (value === '') {
+      filteredOptions = options
+    } else {
+      filteredOptions = [value, ...options.filter(name => name !== value)]
+    }
     open = true
   }
 </script>
@@ -120,24 +129,24 @@
     <div class="relative">
       <input
         class={classNames(
-          'peer block h-12 w-full appearance-none rounded-md border pl-3 pr-9 pt-1 text-gray-900 transition-colors focus:outline-none disabled:bg-white disabled:text-gray-400',
+          'peer block h-12 w-full appearance-none rounded-md border border-gray-300 pl-3 pr-9 pt-1 text-gray-900 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
           className
         )}
         type="text"
         placeholder=" "
         data-1p-ignore
-        {value}
         bind:this={self}
         on:input={handleInput}
         on:keydown={handleKeyDown}
-        on:click={handleClick}
+        on:focusin={handleFocusIn}
+        {value}
         {id}
         {name}
         {required}
         {...$$restProps}
       />
       <label
-        class="absolute left-1 top-[0.65rem] z-10 origin-[0%_0%] -translate-y-4 transform cursor-text bg-white px-2 text-[0.8rem] leading-none text-gray-500 duration-150 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-base peer-focus:left-1 peer-focus:top-[0.65rem] peer-focus:-translate-y-4 peer-focus:text-[0.8rem] peer-focus:leading-none"
+        class="absolute left-1 top-[0.65rem] z-10 origin-[0%_0%] -translate-y-4 transform cursor-text bg-white px-2 text-[0.8rem] leading-none text-gray-500 duration-150 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-base peer-focus:left-1 peer-focus:top-[0.65rem] peer-focus:-translate-y-4 peer-focus:text-[0.8rem] peer-focus:leading-none peer-disabled:text-gray-400"
         for={id}
       >
         <span>
@@ -145,94 +154,161 @@
         </span>
       </label>
     </div>
+    <div class="absolute right-0 top-0 flex h-12 items-center pr-2">
+      <button
+        type="button"
+        on:click={() => {
+          open = !open
+          if (open) {
+            self.focus()
+          }
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-6 w-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+          />
+        </svg>
+      </button>
+    </div>
+    {#if open}
+      <div
+        class="absolute left-0 top-14 z-20 max-h-60 w-full overflow-hidden overflow-y-auto rounded-md border border-gray-200 bg-white py-1 shadow-sm"
+        transition:fade={{ duration: 100 }}
+      >
+        {#if filteredOptions.length === 0}
+          <div class="w-full px-6 py-2 text-left">Nothing found.</div>
+        {:else if filteredOptions.length === 1}
+          <button
+            class="w-full bg-gray-100 px-6 py-2 text-left transition-colors duration-300"
+            type="button"
+            on:click={() => {
+              value = filteredOptions[0]
+              open = false
+            }}
+          >
+            {filteredOptions[0]}
+          </button>
+        {:else}
+          {#each filteredOptions as name, index}
+            <button
+              class={classNames(
+                'w-full px-6 py-2 text-left transition-colors duration-300',
+                index === selectedOptionIndex && 'bg-gray-100'
+              )}
+              type="button"
+              on:click={() => {
+                value = name
+                open = false
+              }}
+              on:mouseenter={() => {
+                selectedOptionIndex = index
+              }}
+            >
+              {name}
+            </button>
+          {/each}
+        {/if}
+      </div>
+    {/if}
   {:else}
     <label for={id}>
       <span>
         {placeholder}<span class={classNames('text-red-500', !required && 'hidden')}>*</span>
       </span>
     </label>
-    <input
-      class={classNames(
-        'block h-12 w-full appearance-none rounded-md border border-gray-300 pl-3 pr-9 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
-        className
-      )}
-      type="text"
-      data-1p-ignore
-      {value}
-      bind:this={self}
-      on:input={handleInput}
-      on:keydown={handleKeyDown}
-      on:click={handleClick}
-      {id}
-      {name}
-      {placeholder}
-      {required}
-      {...$$restProps}
-    />
-  {/if}
-  <div class="absolute right-0 top-0 flex h-12 items-center pr-2">
-    <button
-      type="button"
-      on:click={() => {
-        open = !open
-        if (open) {
-          self.focus()
-        }
-      }}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="h-6 w-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-        />
-      </svg>
-    </button>
-  </div>
-  {#if open}
-    <div
-      class="absolute left-0 top-14 z-20 max-h-60 w-full overflow-hidden overflow-y-auto rounded-md border border-gray-200 bg-white py-1 shadow-sm"
-      transition:fade={{ duration: 100 }}
-    >
-      {#if filteredOptions.length === 0}
-        <div class="w-full px-6 py-2 text-left">Nothing found.</div>
-      {:else if filteredOptions.length === 1}
+    <div class="relative">
+      <div class="absolute right-0 top-0 flex h-12 items-center pr-2">
         <button
-          class="w-full bg-gray-100 px-6 py-2 text-left transition-colors duration-300"
           type="button"
           on:click={() => {
-            value = filteredOptions[0]
-            open = false
+            open = !open
+            if (open) {
+              self.focus()
+            }
           }}
         >
-          {filteredOptions[0]}
-        </button>
-      {:else}
-        {#each filteredOptions as name, index}
-          <button
-            class={classNames(
-              'w-full px-6 py-2 text-left transition-colors duration-300',
-              index === selectedOptionIndex && 'bg-gray-100'
-            )}
-            type="button"
-            on:click={() => {
-              value = name
-              open = false
-            }}
-            on:mouseenter={() => {
-              selectedOptionIndex = index
-            }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-6 w-6"
           >
-            {name}
-          </button>
-        {/each}
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+            />
+          </svg>
+        </button>
+      </div>
+      <input
+        class={classNames(
+          'mt-1 block h-12 w-full appearance-none rounded-md border border-gray-300 pl-3 pr-9 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+          className
+        )}
+        type="text"
+        data-1p-ignore
+        bind:this={self}
+        on:input={handleInput}
+        on:keydown={handleKeyDown}
+        on:focusin={handleFocusIn}
+        {value}
+        {id}
+        {name}
+        {required}
+        {...$$restProps}
+      />
+      {#if open}
+        <div
+          class="absolute left-0 top-14 z-20 max-h-60 w-full overflow-hidden overflow-y-auto rounded-md border border-gray-200 bg-white py-1 shadow-sm"
+          transition:fade={{ duration: 100 }}
+        >
+          {#if filteredOptions.length === 0}
+            <div class="w-full px-6 py-2 text-left">Nothing found.</div>
+          {:else if filteredOptions.length === 1}
+            <button
+              class="w-full bg-gray-100 px-6 py-2 text-left transition-colors duration-300"
+              type="button"
+              on:click={() => {
+                value = filteredOptions[0]
+                open = false
+              }}
+            >
+              {filteredOptions[0]}
+            </button>
+          {:else}
+            {#each filteredOptions as name, index}
+              <button
+                class={classNames(
+                  'w-full px-6 py-2 text-left transition-colors duration-300',
+                  index === selectedOptionIndex && 'bg-gray-100'
+                )}
+                type="button"
+                on:click={() => {
+                  value = name
+                  open = false
+                }}
+                on:mouseenter={() => {
+                  selectedOptionIndex = index
+                }}
+              >
+                {name}
+              </button>
+            {/each}
+          {/if}
+        </div>
       {/if}
     </div>
   {/if}
