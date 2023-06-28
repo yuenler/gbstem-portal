@@ -583,7 +583,7 @@
       <div class="mt-2">
         <Textarea
           bind:value={values.openResponse.whyHH}
-          placeholder={`What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve? Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience.`}
+          placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve?`}
           required
         />
       </div>
