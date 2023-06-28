@@ -147,7 +147,7 @@
   <div class="relative mt-2 grow">
     <input
       class={classNames(
-        'peer block h-12 w-full appearance-none rounded-md border px-3 pt-1 text-gray-900 transition-colors focus:outline-none disabled:bg-white disabled:text-gray-400',
+        'peer block h-12 w-full appearance-none rounded-md border border-gray-300 px-3 pt-1 text-gray-900 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
         className
       )}
       placeholder=" "
@@ -161,7 +161,7 @@
       {...$$restProps}
     />
     <label
-      class="absolute left-1 top-[0.65rem] z-10 origin-[0%_0%] -translate-y-4 transform cursor-text bg-white px-2 text-[0.8rem] leading-none text-gray-500 duration-150 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-base peer-focus:left-1 peer-focus:top-[0.65rem] peer-focus:-translate-y-4 peer-focus:text-[0.8rem] peer-focus:leading-none"
+      class="absolute left-1 top-[0.65rem] z-10 origin-[0%_0%] -translate-y-4 transform cursor-text bg-white px-2 text-[0.8rem] leading-none text-gray-500 duration-150 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-base peer-focus:left-1 peer-focus:top-[0.65rem] peer-focus:-translate-y-4 peer-focus:text-[0.8rem] peer-focus:leading-none peer-disabled:text-gray-400"
       for={id}
     >
       <span>
@@ -178,7 +178,7 @@
     </label>
     <input
       class={classNames(
-        'block h-12 w-full appearance-none rounded-md border border-gray-300 px-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+        'mt-1 block h-12 w-full appearance-none rounded-md border border-gray-300 px-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         className
       )}
       bind:this={self}
@@ -187,7 +187,6 @@
       {type}
       {id}
       {name}
-      {placeholder}
       {required}
       {...$$restProps}
     />
