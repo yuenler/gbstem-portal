@@ -363,17 +363,8 @@
         floating
         required
       />
-      <!-- <Select
-          bind:value={values.personal.race}
-          name="race"
-          autocomplete="race"
-          placeholder="Race / ethnicity"
-          options={raceJson}
-          floating
-          required
-        /> -->
       <div class="grid gap-1">
-        Race / ethnicity
+        Race / ethnicity (check all that apply)
         <div class="grid grid-cols-2">
           {#each raceJson as race}
             <Input type="checkbox" bind:value={values.personal.race} placeholder={race.name} />
