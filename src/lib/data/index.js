@@ -9,6 +9,7 @@ import rolesJson from './roles.json'
 import prolangsJson from './prolangs.json'
 import raceJson from './race.json'
 import majorJson from './major.json'
+import experienceJson from './experience.json'
 
 export {
   gendersJson,
@@ -22,4 +23,5 @@ export {
   prolangsJson,
   raceJson,
   majorJson,
+  experienceJson
 }

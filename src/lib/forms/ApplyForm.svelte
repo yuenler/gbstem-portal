@@ -24,7 +24,8 @@
     statesJson,
     worldJson,
     majorJson,
-    reasonsJson
+    reasonsJson,
+    experienceJson
   } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
@@ -44,7 +45,7 @@
       lastName: string
       age: string
       gender: string
-      race: string
+      race: string[]
       underrepresented: boolean
       phoneNumber: string
       address: string
@@ -73,6 +74,9 @@
       otherRole: string
       prolangs: string[]
       otherProlang: string
+      experience: string
+      whyHH: string
+      project: string
       predictions: string
       resume: ResumeFile
       resumeShare: boolean
@@ -108,7 +112,7 @@
       lastName: '',
       age: '',
       gender: '',
-      race: '',
+      race: [],
       underrepresented: false,
       phoneNumber: '',
       address: '',
@@ -137,6 +141,9 @@
       otherRole: '',
       prolangs: [],
       otherProlang: '',
+      experience: '',
+      whyHH: '',
+      project: '',
       predictions: '',
       resume: {
         url: '',
@@ -349,15 +356,14 @@
         required
       />
 
-      <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
-        <Select
-          bind:value={values.personal.gender}
-          placeholder="Gender"
-          options={gendersJson}
-          floating
-          required
-        />
-        <Select
+      <Select
+        bind:value={values.personal.gender}
+        placeholder="Gender"
+        options={gendersJson}
+        floating
+        required
+      />
+      <!-- <Select
           bind:value={values.personal.race}
           name="race"
           autocomplete="race"
@@ -365,13 +371,23 @@
           options={raceJson}
           floating
           required
-        />
+        /> -->
+      <div class="grid gap-1">
+        Race / ethnicity
+        <div class="grid grid-cols-2">
+          {#each raceJson as race}
+            <Input type="checkbox" bind:value={values.personal.race} placeholder={race.name} />
+          {/each}
+        </div>
       </div>
-      <Input
-        type="checkbox"
+      <Select
         bind:value={values.personal.underrepresented}
         placeholder="Do you identify as part of an underrepresented group in the technology industry?"
+        options={[{ name: 'Yes' }, { name: 'No' }, { name: 'Unsure' }]}
+        floating
+        required
       />
+
       <Input
         type="tel"
         bind:value={values.personal.phoneNumber}
@@ -557,6 +573,27 @@
           rows={1}
         />
       </div>
+      <Select
+        bind:value={values.openResponse.experience}
+        placeholder="How much experience do you have with computer science?"
+        options={experienceJson}
+        floating
+        required
+      />
+      <div class="mt-2">
+        <Textarea
+          bind:value={values.openResponse.whyHH}
+          placeholder={`What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve? Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience.`}
+          required
+        />
+      </div>
+      <div class="mt-2">
+        <Textarea
+          bind:value={values.openResponse.project}
+          placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached?`}
+          required
+        />
+      </div>
       <div class="mt-2">
         <Textarea
           bind:value={values.openResponse.predictions}
@@ -580,7 +617,7 @@
       <Input
         type="checkbox"
         bind:value={values.openResponse.resumeShare}
-        placeholder="If you are accepted to HackHarvard 2023, would you be interested in having us share your resume with our sponsors for potential recruitment opportunities?"
+        placeholder="If you are accepted to HackHarvard 2023, would you like us to share your resume with our sponsors for potential recruitment opportunities?"
       />
     </div>
 
