@@ -1,4 +1,3 @@
-import racesEthnicitiesJson from './racesEthnicities.json'
 import gendersJson from './genders.json'
 import schoolsJson from './schools.json'
 import worldJson from './world.json'
@@ -8,9 +7,10 @@ import reasonsJson from './reasons.json'
 import statesJson from './states.json'
 import rolesJson from './roles.json'
 import prolangsJson from './prolangs.json'
+import raceJson from './race.json'
+import majorJson from './major.json'
 
 export {
-  racesEthnicitiesJson,
   gendersJson,
   schoolsJson,
   worldJson,
@@ -19,5 +19,7 @@ export {
   reasonsJson,
   statesJson,
   rolesJson,
-  prolangsJson
+  prolangsJson,
+  raceJson,
+  majorJson,
 }

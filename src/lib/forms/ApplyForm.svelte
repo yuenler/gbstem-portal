@@ -1,6 +1,14 @@
-<script>
+<script lang="ts">
   import { classNames } from '$lib/utils'
-  import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore'
+  import {
+    doc,
+    getDoc,
+    setDoc,
+    addDoc,
+    collection,
+    serverTimestamp,
+    FieldValue
+  } from 'firebase/firestore'
   import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
@@ -11,7 +19,12 @@
     shirtSizeJson,
     dietaryRestrictionsJson,
     rolesJson,
-    prolangsJson
+    raceJson,
+    prolangsJson,
+    statesJson,
+    worldJson,
+    majorJson,
+    reasonsJson
   } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
@@ -19,16 +32,91 @@
   import { templates } from '$lib/mail'
   import Form from '$lib/components/Form.svelte'
 
+  type ResumeFile = {
+    url: string
+    name: string
+  }
+
+  type Application = {
+    personal: {
+      email: string
+      firstName: string
+      lastName: string
+      age: string
+      gender: string
+      race: string
+      underrepresented: boolean
+      phoneNumber: string
+      address: string
+      city: string
+      state: string
+      country: string
+      zipCode: string
+      dietaryRestrictions: string[]
+    }
+    academic: {
+      enrolled: boolean
+      currentSchool: string
+      graduationYear: string
+      major: string
+      affiliated: boolean
+    }
+    hackathon: {
+      shirtSize: string
+      firstHackathon: boolean
+      previouslyParticipated: boolean
+      ableToAttend: boolean
+      reason: string
+    }
+    openResponse: {
+      roles: string[]
+      otherRole: string
+      prolangs: string[]
+      otherProlang: string
+      predictions: string
+      resume: ResumeFile
+      resumeShare: boolean
+    }
+    agreements: {
+      codeOfConduct: boolean
+      sharing: boolean
+      mlhEmails: boolean
+      submitting: boolean
+    }
+    meta: {
+      hhid: string
+      uid: string
+      submitted: boolean
+    }
+    status: {
+      accepted: boolean
+      rejected: boolean
+      waitlisted: boolean
+    }
+    timestamps: {
+      created: FieldValue
+      updated: FieldValue
+    }
+  }
+
   let disabled = true
   let showValidation = false
-  let values = {
+  let values: Application = {
     personal: {
       email: '',
       firstName: '',
       lastName: '',
-      dateOfBirth: '',
+      age: '',
       gender: '',
-      phoneNumber: ''
+      race: '',
+      underrepresented: false,
+      phoneNumber: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      zipCode: '',
+      dietaryRestrictions: []
     },
     academic: {
       enrolled: false,
@@ -39,31 +127,22 @@
     },
     hackathon: {
       shirtSize: '',
-      reason: '',
       firstHackathon: false,
       previouslyParticipated: false,
-      hasTeam: false,
-      teamMembers: '',
-      teamHelp: false,
-      ableToAttend: false
+      ableToAttend: false,
+      reason: ''
     },
     openResponse: {
       roles: [],
       otherRole: '',
       prolangs: [],
       otherProlang: '',
-      proud: '',
-      interests: '',
+      predictions: '',
       resume: {
         url: '',
         name: ''
-      }
-    },
-    preferences: {
-      dietaryRestrictions: [],
-      catering: '',
-      sleeping: false,
-      parking: false
+      },
+      resumeShare: false
     },
     agreements: { codeOfConduct: false, sharing: false, mlhEmails: false, submitting: false },
     meta: {
@@ -81,15 +160,21 @@
       updated: serverTimestamp()
     }
   }
-  let resumeFile = {}
-  let saveInterval = undefined
+  let resumeFile: ResumeFile = {
+    url: '',
+    name: ''
+  }
+  let saveInterval: any = undefined
   onMount(async () => {
     const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
     const exists = applicationDoc.exists()
     if (exists) {
       // comment this out when changing what data the application uses
       // i.e., structure of values
-      values = applicationDoc.data()
+      values = {
+        ...values,
+        ...applicationDoc.data()
+      }
     }
     if (!values.meta.submitted) {
       const profileDoc = await getDoc(doc($db, 'users', $user.uid))
@@ -100,9 +185,11 @@
         lastName: values.personal.lastName
       }
       values.personal.email = $user.email
-      values.personal.firstName = profileDocData.firstName
-      values.personal.lastName = profileDocData.lastName
-      values.meta.hhid = profileDocData.hhid
+      if (profileDocData) {
+        values.personal.firstName = profileDocData.firstName
+        values.personal.lastName = profileDocData.lastName
+        values.meta.hhid = profileDocData.hhid
+      }
       values.meta.uid = $user.uid
       if (exists) {
         if (
@@ -115,7 +202,10 @@
       } else {
         await handleSave(false)
         const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
-        values = applicationDoc.data()
+        values = {
+          ...values,
+          ...applicationDoc.data()
+        }
       }
       disabled = false
       saveInterval = setInterval(() => {
@@ -135,7 +225,7 @@
       }
     }
   }
-  function handleSave(withDisabling) {
+  function handleSave(withDisabling: boolean): Promise<void> {
     showValidation = false
     if (withDisabling) {
       disabled = true
@@ -158,7 +248,7 @@
         })
     })
   }
-  async function handleSubmit(e) {
+  async function handleSubmit(e: CustomEvent<any>) {
     if (e.detail.error.state) {
       showValidation = true
       alert.trigger('error', e.detail.error.message)
@@ -178,7 +268,10 @@
             .then(async () => {
               alert.trigger('success', 'Your application has been submitted!')
               const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
-              values = applicationDoc.data()
+              values = {
+                ...values,
+                ...applicationDoc.data()
+              }
               window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
@@ -248,14 +341,15 @@
           </Card>
         </a>
       {/if}
+      <Input
+        type="number"
+        bind:value={values.personal.age}
+        placeholder="How old will you be on October 20th, 2023?"
+        floating
+        required
+      />
+
       <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
-        <Input
-          type="date"
-          bind:value={values.personal.dateOfBirth}
-          placeholder="Date of birth"
-          floating
-          required
-        />
         <Select
           bind:value={values.personal.gender}
           placeholder="Gender"
@@ -263,7 +357,21 @@
           floating
           required
         />
+        <Select
+          bind:value={values.personal.race}
+          name="race"
+          autocomplete="race"
+          placeholder="Race / ethnicity"
+          options={raceJson}
+          floating
+          required
+        />
       </div>
+      <Input
+        type="checkbox"
+        bind:value={values.personal.underrepresented}
+        placeholder="Do you identify as part of an underrepresented group in the technology industry?"
+      />
       <Input
         type="tel"
         bind:value={values.personal.phoneNumber}
@@ -272,14 +380,58 @@
         required
         pattern="\+1 ?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}4{'}'}"
       />
+
+      <Input
+        type="text"
+        bind:value={values.personal.address}
+        placeholder="Shipping Address"
+        floating
+        required
+      />
+      <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
+        <Input type="text" bind:value={values.personal.city} placeholder="City" floating required />
+        <Select
+          bind:value={values.personal.state}
+          placeholder="State"
+          options={statesJson}
+          floating
+        />
+      </div>
+      <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
+        <Select
+          bind:value={values.personal.country}
+          placeholder="Country"
+          options={worldJson}
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.personal.zipCode}
+          placeholder="Zip code"
+          floating
+          required
+        />
+      </div>
+      <div class="grid gap-1">
+        Dietary Restrictions
+        <div class="grid grid-cols-2">
+          {#each dietaryRestrictionsJson as dietaryRestriction}
+            <Input
+              type="checkbox"
+              bind:value={values.personal.dietaryRestrictions}
+              placeholder={dietaryRestriction.name}
+            />
+          {/each}
+        </div>
+      </div>
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Academic</span>
       <Input
         type="checkbox"
         bind:value={values.academic.enrolled}
-        placeholder="Will you be enrolled in a university degree program on
-          October 2023?"
+        placeholder="Will you be pursuing an undergraduate degree program at a university on October 20th, 2023?"
         required
       />
       <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
@@ -302,7 +454,13 @@
           required
         />
       </div>
-      <Input type="text" bind:value={values.academic.major} placeholder="Major" floating required />
+      <Select
+        bind:value={values.academic.major}
+        placeholder="Major / field of study"
+        options={majorJson}
+        floating
+        required
+      />
       <Input
         type="checkbox"
         bind:value={values.academic.affiliated}
@@ -335,25 +493,15 @@
       {/if}
       <Input
         type="checkbox"
-        bind:value={values.hackathon.teamHelp}
-        placeholder="Do you need help finding a team?"
-      />
-      {#if !values.hackathon.teamHelp}
-        <Input
-          type="checkbox"
-          bind:value={values.hackathon.hasTeam}
-          placeholder="Do you have a team for HackHarvard already?"
-        />
-        <Textarea
-          bind:value={values.hackathon.teamMembers}
-          placeholder="If so, list the members of your team."
-        />
-      {/if}
-      <Input
-        type="checkbox"
         bind:value={values.hackathon.ableToAttend}
-        placeholder="HackHarvard is an in-person event. Will you be able to be in Cambridge, MA, 
-          United States both legally (international students) and logistically on October 2023?"
+        placeholder="HackHarvard is an in-person event. Will you be able to be in Cambridge, MA, United States, considering both the legal requirements for international students and the logistical aspects, on October 20th, 2023?"
+        required
+      />
+      <Select
+        bind:value={values.hackathon.reason}
+        placeholder="How did you learn about HackHarvard?"
+        options={reasonsJson}
+        floating
         required
       />
     </div>
@@ -367,12 +515,7 @@
         </span>
         <div class="grid grid-cols-2">
           {#each rolesJson as role}
-            <Input
-              type="checkbox"
-              bind:value={values.openResponse.roles}
-              placeholder={role.name}
-              required
-            />
+            <Input type="checkbox" bind:value={values.openResponse.roles} placeholder={role.name} />
           {/each}
         </div>
       </div>
@@ -381,6 +524,7 @@
           bind:value={values.openResponse.otherRole}
           placeholder="If other, what other roles could you see yourself playing?"
           required={values.openResponse.roles.includes('other')}
+          rows={1}
         />
       </div>
       <div class="grid gap-1">
@@ -410,19 +554,13 @@
           bind:value={values.openResponse.otherProlang}
           placeholder="If other, what other programming languages?"
           required={values.openResponse.prolangs.includes('other')}
+          rows={1}
         />
       </div>
       <div class="mt-2">
         <Textarea
-          bind:value={values.openResponse.proud}
-          placeholder="What's a project you've been involved in that you're proud of?"
-          required
-        />
-      </div>
-      <div class="mt-2">
-        <Textarea
-          bind:value={values.openResponse.interests}
-          placeholder="What areas or projects are you eager to explore at HackHarvard?"
+          bind:value={values.openResponse.predictions}
+          placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us!`}
           required
         />
       </div>
@@ -438,38 +576,12 @@
           />
         </div>
       {/if}
-    </div>
-    <div class="grid gap-1">
-      <span class="font-bold">Preferences</span>
-      <div class="grid gap-1">
-        Dietary Restrictions
-        <div class="grid grid-cols-2">
-          {#each dietaryRestrictionsJson as dietaryRestriction}
-            <Input
-              type="checkbox"
-              bind:value={values.preferences.dietaryRestrictions}
-              placeholder={dietaryRestriction.name}
-            />
-          {/each}
-        </div>
-      </div>
-      <div class="mt-2">
-        <Textarea
-          bind:value={values.preferences.catering}
-          placeholder="Any catering preferences?"
-        />
-      </div>
+
       <Input
         type="checkbox"
-        bind:value={values.preferences.sleeping}
-        placeholder="Do you plan on sleeping overnight on-site?"
+        bind:value={values.openResponse.resumeShare}
+        placeholder="If you are accepted to HackHarvard 2023, would you be interested in having us share your resume with our sponsors for potential recruitment opportunities?"
       />
-      <Input
-        type="checkbox"
-        bind:value={values.preferences.parking}
-        placeholder="Do you need parking?"
-      />
-      *If you need any other accomodations, please email us at team@hackharvard.io
     </div>
 
     <div class="grid gap-1">

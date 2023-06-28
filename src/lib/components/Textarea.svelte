@@ -11,6 +11,7 @@
   export let placeholder = ''
   export let name = kebabCase(placeholder)
   export let required = false
+  export let rows = 10
 
   function handleInput(e) {
     value = e.target.value
@@ -25,7 +26,7 @@
   </label>
   <textarea
     class={classNames(
-      'mt-2 block min-h-[10rem] w-full appearance-none rounded-md border border-gray-300 p-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+      'mt-2 block w-full appearance-none rounded-md border border-gray-300 p-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
       className
     )}
     bind:this={self}
@@ -34,6 +35,7 @@
     {value}
     {name}
     {required}
+    {rows}
     {...$$restProps}
   />
 </div>
