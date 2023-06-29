@@ -529,6 +529,7 @@
           placeholder="If other, what other roles could you see yourself playing?"
           required={values.openResponse.roles.includes('other')}
           rows={1}
+          maxlength={200}
         />
       </div>
       <div class="mt-2 grid gap-1">
@@ -559,6 +560,7 @@
           placeholder="If other, what other programming languages?"
           required={values.openResponse.prolangs.includes('other')}
           rows={1}
+          maxlength={200}
         />
       </div>
       <Select
@@ -572,6 +574,7 @@
           bind:value={values.openResponse.whyHh}
           placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve?`}
           required
+          maxlength={500}
         />
       </div>
       <div class="mt-2">
@@ -579,6 +582,7 @@
           bind:value={values.openResponse.project}
           placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached?`}
           required
+          maxlength={500}
         />
       </div>
       <div class="mt-2">
@@ -586,6 +590,7 @@
           bind:value={values.openResponse.predictions}
           placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us!`}
           required
+          maxlength={500}
         />
       </div>
       {#if values.openResponse.resume.url === ''}
