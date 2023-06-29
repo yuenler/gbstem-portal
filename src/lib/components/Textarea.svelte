@@ -18,6 +18,16 @@
   function handleInput(e) {
     value = e.target.value
   }
+
+  $: (() => {
+    if (self) {
+      if (value.length > charLimit) {
+        self.setCustomValidity(`Please limit your input to ${charLimit} characters.`)
+      } else {
+        self.setCustomValidity('')
+      }
+    }
+  })(value)
 </script>
 
 <div class="mt-2">
