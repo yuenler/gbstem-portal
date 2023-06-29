@@ -12,6 +12,7 @@
   export let name = kebabCase(placeholder)
   export let required = false
   export let rows = 5
+  export let charLimit = undefined
   const calcHeight = 1.5 + 1.5 * rows
 
   function handleInput(e) {
@@ -39,4 +40,9 @@
     {required}
     {...$$restProps}
   />
+  {#if charLimit}
+    <div class="text-right text-gray-500">
+      {value?.length || 0}/{charLimit}
+    </div>
+  {/if}
 </div>
