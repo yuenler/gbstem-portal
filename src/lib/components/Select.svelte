@@ -55,7 +55,7 @@
     // validate updated value
     filterOptionsBy(value)
     if (self) {
-      if (value === '') {
+      if (value === '' && required) {
         self.setCustomValidity('Please fill required fields.')
       } else {
         if (options.includes(value)) {
