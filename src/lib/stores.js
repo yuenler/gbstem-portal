@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import { capitalize, lowerCase } from 'lodash'
+import { capitalize, lowerCase } from 'lodash-es'
 
 function createAlert() {
   const alert = writable({

@@ -4,7 +4,7 @@
 
 <script>
   import { classNames, clickOutside } from '$lib/utils'
-  import { uniqueId, debounce, kebabCase } from 'lodash'
+  import { uniqueId, debounce, kebabCase } from 'lodash-es'
   import { fade } from 'svelte/transition'
 
   let className = ''

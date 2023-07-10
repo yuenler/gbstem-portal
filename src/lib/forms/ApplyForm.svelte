@@ -1,14 +1,6 @@
 <script lang="ts">
   import { classNames } from '$lib/utils'
-  import {
-    doc,
-    getDoc,
-    setDoc,
-    addDoc,
-    collection,
-    serverTimestamp,
-    FieldValue
-  } from 'firebase/firestore'
+  import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore'
   import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'

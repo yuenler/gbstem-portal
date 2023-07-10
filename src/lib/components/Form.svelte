@@ -1,6 +1,6 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { isUndefined } from 'lodash'
+  import { isUndefined } from 'lodash-es'
   import { createEventDispatcher } from 'svelte'
 
   export let className = ''

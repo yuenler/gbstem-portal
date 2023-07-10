@@ -7,7 +7,7 @@
   import { sendPasswordResetEmail } from 'firebase/auth'
   import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
-  import Form from '$lib/component/Form.svelte'
+  import Form from '$lib/components/Form.svelte'
 
   let disabled = false
   let showValidation = false

@@ -1,6 +1,6 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { uniqueId, kebabCase, isUndefined } from 'lodash'
+  import { uniqueId, kebabCase, isUndefined } from 'lodash-es'
   import { fade } from 'svelte/transition'
 
   let className = ''
