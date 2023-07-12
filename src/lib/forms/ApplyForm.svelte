@@ -25,7 +25,8 @@
     worldJson,
     majorJson,
     reasonsJson,
-    experienceJson
+    experienceJson,
+    levelOfStudyJson
   } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
@@ -48,11 +49,12 @@
       race: string[]
       underrepresented: boolean
       phoneNumber: string
-      address: string
-      city: string
-      state: string
-      country: string
-      zipCode: string
+      countryOfResidence: string
+      shippingAddress: string
+      shippingCity: string
+      shippingState: string
+      shippingCountry: string
+      shippingZipCode: string
       dietaryRestrictions: string[]
     }
     academic: {
@@ -61,6 +63,7 @@
       graduationYear: string
       major: string
       affiliated: boolean
+      levelOfStudy: string
     }
     hackathon: {
       shirtSize: string
@@ -115,11 +118,12 @@
       race: [],
       underrepresented: false,
       phoneNumber: '',
-      address: '',
-      city: '',
-      state: '',
-      country: '',
-      zipCode: '',
+      countryOfResidence: '',
+      shippingAddress: '',
+      shippingCity: '',
+      shippingState: '',
+      shippingCountry: '',
+      shippingZipCode: '',
       dietaryRestrictions: []
     },
     academic: {
@@ -127,7 +131,8 @@
       currentSchool: '',
       graduationYear: '',
       major: '',
-      affiliated: false
+      affiliated: false,
+      levelOfStudy: ''
     },
     hackathon: {
       shirtSize: '',
@@ -386,17 +391,30 @@
         pattern="\+1 ?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}4{'}'}"
       />
       <span class="text-sm">*format as +1 XXX-XXX-XXXX</span>
+      <Select
+        bind:value={values.personal.countryOfResidence}
+        placeholder="Country of residence"
+        options={worldJson}
+        floating
+        required
+      />
       <Input
         type="text"
-        bind:value={values.personal.address}
+        bind:value={values.personal.shippingAddress}
         placeholder="Shipping Address"
         floating
         required
       />
       <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
-        <Input type="text" bind:value={values.personal.city} placeholder="City" floating required />
+        <Input
+          type="text"
+          bind:value={values.personal.shippingCity}
+          placeholder="City"
+          floating
+          required
+        />
         <Select
-          bind:value={values.personal.state}
+          bind:value={values.personal.shippingState}
           placeholder="State"
           options={statesJson}
           floating
@@ -404,7 +422,7 @@
       </div>
       <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
         <Select
-          bind:value={values.personal.country}
+          bind:value={values.personal.shippingCountry}
           placeholder="Country"
           options={worldJson}
           floating
@@ -412,7 +430,7 @@
         />
         <Input
           type="text"
-          bind:value={values.personal.zipCode}
+          bind:value={values.personal.shippingZipCode}
           placeholder="Zip code"
           floating
           required
@@ -433,6 +451,13 @@
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Academic</span>
+      <Select
+        bind:value={values.academic.levelOfStudy}
+        placeholder="What is your current education level?"
+        options={levelOfStudyJson}
+        floating
+        required
+      />
       <Input
         type="checkbox"
         bind:value={values.academic.enrolled}
