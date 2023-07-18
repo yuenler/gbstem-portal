@@ -388,9 +388,8 @@
         placeholder="Phone number"
         floating
         required
-        pattern="\+1 ?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}4{'}'}"
       />
-      <span class="text-sm">*format as +1 XXX-XXX-XXXX</span>
+      <!-- <span class="text-sm">*format as +1 XXX-XXX-XXXX</span> -->
       <Select
         bind:value={values.personal.countryOfResidence}
         placeholder="Country of residence"

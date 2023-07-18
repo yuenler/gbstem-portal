@@ -14,11 +14,12 @@
       getDoc(doc($db, 'applications', $user.uid)).then(res => {
         if (res.exists()) {
           const application = res.data()
-          if (application.status.accepted.checked) {
+
+          if (application.status.accepted) {
             data.application =
               'You have been accepted to HackHarvard 2023! We look forward to seeing you.'
           } else {
-            data.application = application.meta.submitted.checked
+            data.application = application.meta.submitted
               ? 'Submitted and in review!'
               : 'In progress.'
           }
