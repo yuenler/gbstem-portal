@@ -31,6 +31,13 @@
   })
 </script>
 
+<div class="mx-auto my-4 max-w-2xl border-2 border-blue-800 bg-blue-100 p-4 text-lg text-blue-900">
+  <p>Early applications are due on <b>September 4th, 2023</b> at 11:59 PM ET.</p>
+  <p>
+    Regular applications are due on <b>September 25th, 2023</b> at 11:59 PM ET.
+  </p>
+</div>
+
 {#await asyncData then data}
   <div class="grid grid-cols-2" transition:fade|local={{ duration: 150 }}>
     <Card>

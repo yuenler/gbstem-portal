@@ -28,11 +28,11 @@
     {
       name: 'Apply',
       href: '/apply'
-    },
-    {
-      name: 'Group',
-      href: '/group'
     }
+    // {
+    //   name: 'Group',
+    //   href: '/group'
+    // }
   ]
   function updateShadow() {
     shadow = window.scrollY !== 0
