@@ -1,6 +1,5 @@
 import { writable } from 'svelte/store'
-import pkg from 'lodash';
-const { capitalize, lowerCase } = pkg;
+import { capitalize, lowerCase } from 'lodash-es'
 function createAlert() {
   const alert = writable({
     type: '',

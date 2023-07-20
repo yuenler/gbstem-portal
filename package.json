@@ -15,6 +15,7 @@
     "@sveltejs/adapter-static": "^2.0.2",
     "@sveltejs/kit": "^1.20.0",
     "@types/lodash": "^4.14.195",
+    "@types/lodash-es": "^4.17.8",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
@@ -29,9 +30,10 @@
   },
   "type": "module",
   "dependencies": {
+    "@sveltejs/adapter-cloudflare": "^2.3.1",
     "firebase": "^9.22.1",
     "handlebars": "^4.7.7",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "nanoid": "^4.0.2"
   }
 }
