@@ -654,8 +654,7 @@
         <Input
           type="checkbox"
           bind:value={values.agreements.mlhEmails}
-          placeholder="I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or
-        Organizer Newsletters and other communications from MLH."
+          placeholder="I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements."
         />
         <Input
           type="checkbox"
