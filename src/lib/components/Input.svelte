@@ -1,7 +1,7 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { uniqueId, kebabCase, isUndefined, isArray, isBoolean } from 'lodash'
-
+  import pkg from 'lodash'
+  const { uniqueId, kebabCase, isArray, isUndefined, isBoolean } = pkg
   let className = ''
   export { className as class }
 
