@@ -1,14 +1,6 @@
 <script lang="ts">
   import { classNames } from '$lib/utils'
-  import {
-    doc,
-    getDoc,
-    setDoc,
-    addDoc,
-    collection,
-    serverTimestamp,
-    FieldValue
-  } from 'firebase/firestore'
+  import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore'
   import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
@@ -31,7 +23,7 @@
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
   import Card from '$lib/components/Card.svelte'
-  import { templates } from '$lib/mail'
+  // import { templates } from '$lib/mail'
   import Form from '$lib/components/Form.svelte'
 
   type ResumeFile = {
@@ -303,13 +295,13 @@
   }
 
   function handleEmail() {
-    return addDoc(collection($db, 'mail'), {
-      to: [values.personal.email],
-      message: templates.applicationSubmitted({
-        firstName: values.personal.firstName,
-        lastName: values.personal.lastName
-      })
-    })
+    // return addDoc(collection($db, 'mail'), {
+    //   to: [values.personal.email],
+    //   message: templates.applicationSubmitted({
+    //     firstName: values.personal.firstName,
+    //     lastName: values.personal.lastName
+    //   })
+    // })
   }
 </script>
 

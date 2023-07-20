@@ -1,11 +1,19 @@
-// import { dev } from '$app/environment'
 import { derived, readable } from 'svelte/store'
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
+import {
+  PUBLIC_FIREBASE_API_KEY,
+  PUBLIC_FIREBASE_AUTH_DOMAIN,
+  PUBLIC_FIREBASE_PROJECT_ID,
+  PUBLIC_FIREBASE_STORAGE_BUCKET,
+  PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
+  PUBLIC_FIREBASE_APP_ID,
+  PUBLIC_FIREBASE_MEASUREMENT_ID
+} from '$env/static/public'
 
-const useEmulators = (import.meta.env?.VITE_FIREBASE_API_KEY ?? '') === ''
+const useEmulators = (PUBLIC_FIREBASE_API_KEY ?? '') === ''
 let config
 if (useEmulators) {
   config = {
@@ -15,13 +23,13 @@ if (useEmulators) {
   }
 } else {
   config = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID,
-    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+    apiKey: PUBLIC_FIREBASE_API_KEY,
+    authDomain: PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
+    appId: PUBLIC_FIREBASE_APP_ID,
+    measurementId: PUBLIC_FIREBASE_MEASUREMENT_ID
   }
 }
 

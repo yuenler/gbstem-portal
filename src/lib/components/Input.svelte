@@ -1,6 +1,7 @@
 <script>
   import { classNames } from '$lib/utils'
-  import { uniqueId, kebabCase, isArray, isUndefined, isBoolean } from 'lodash-es'
+  import { uniqueId, kebabCase, isUndefined, isArray, isBoolean } from 'lodash-es'
+
   let className = ''
   export { className as class }
 
