@@ -301,6 +301,7 @@
         })
     }
   }
+
   function handleEmail() {
     return addDoc(collection($db, 'mail'), {
       to: [values.personal.email],
