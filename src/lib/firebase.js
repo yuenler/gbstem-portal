@@ -166,7 +166,7 @@ function createStorage() {
             resolve(url)
           })
         })
-        .catch(reject)
+        .catch(reject),
     )
   }
   return {

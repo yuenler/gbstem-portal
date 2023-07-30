@@ -10,7 +10,7 @@ function createAlert() {
     if (type === 'error') {
       if (auto) {
         message = `${capitalize(
-          lowerCase(message.includes('/') ? message.split('/')[1] : message)
+          lowerCase(message.includes('/') ? message.split('/')[1] : message),
         )}.`
       }
       alert.set({
