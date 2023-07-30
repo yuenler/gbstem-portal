@@ -10,7 +10,7 @@ import {
   PUBLIC_FIREBASE_STORAGE_BUCKET,
   PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
   PUBLIC_FIREBASE_APP_ID,
-  PUBLIC_FIREBASE_MEASUREMENT_ID
+  PUBLIC_FIREBASE_MEASUREMENT_ID,
 } from '$env/static/public'
 
 const useEmulators = (PUBLIC_FIREBASE_API_KEY ?? '') === ''
@@ -19,7 +19,7 @@ if (useEmulators) {
   config = {
     projectId: 'test',
     appId: 'test',
-    apiKey: 'test'
+    apiKey: 'test',
   }
 } else {
   config = {
@@ -29,7 +29,7 @@ if (useEmulators) {
     storageBucket: PUBLIC_FIREBASE_STORAGE_BUCKET,
     messagingSenderId: PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
     appId: PUBLIC_FIREBASE_APP_ID,
-    measurementId: PUBLIC_FIREBASE_MEASUREMENT_ID
+    measurementId: PUBLIC_FIREBASE_MEASUREMENT_ID,
   }
 }
 
@@ -41,14 +41,16 @@ function createAuth() {
     auth = getAuth($app)
     if (useEmulators)
       connectAuthEmulator(auth, 'http://localhost:9099', {
-        disableWarnings: true
+        disableWarnings: true,
       })
     set(auth)
   })
   async function signUp(email, password, profile) {
-    const { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } = await import(
-      'firebase/auth'
-    )
+    const {
+      createUserWithEmailAndPassword,
+      sendEmailVerification,
+      updateProfile,
+    } = await import('firebase/auth')
     const res = await createUserWithEmailAndPassword(auth, email, password)
     await updateProfile(res.user, profile)
     sendEmailVerification(res.user)
@@ -72,7 +74,7 @@ function createAuth() {
     subscribe,
     signUp,
     signIn,
-    signOut
+    signOut,
   }
 }
 
@@ -82,7 +84,7 @@ function createUser() {
   let user = undefined
   const { subscribe } = derived(auth, ($auth, set) => {
     set(user)
-    const unsubscribe = onAuthStateChanged($auth, userData => {
+    const unsubscribe = onAuthStateChanged($auth, (userData) => {
       user = userData
       set(user)
     })
@@ -90,15 +92,15 @@ function createUser() {
   })
   async function loaded() {
     let unsubscribe
-    const userData = new Promise(resolve => {
-      unsubscribe = subscribe(userData => {
+    const userData = new Promise((resolve) => {
+      unsubscribe = subscribe((userData) => {
         if (userData !== undefined) {
           resolve(true)
         }
       })
     })
-    return new Promise(resolve => {
-      userData.then(result => {
+    return new Promise((resolve) => {
+      userData.then((result) => {
         unsubscribe()
         resolve(result)
       })
@@ -116,7 +118,7 @@ function createUser() {
     subscribe,
     loaded,
     get,
-    isSignedIn
+    isSignedIn,
   }
 }
 
@@ -137,15 +139,15 @@ function createStorage() {
   })
   async function loaded() {
     let unsubscribe
-    const storageData = new Promise(resolve => {
-      unsubscribe = subscribe(storageData => {
+    const storageData = new Promise((resolve) => {
+      unsubscribe = subscribe((storageData) => {
         if (storageData !== undefined) {
           resolve(true)
         }
       })
     })
-    return new Promise(resolve => {
-      storageData.then(result => {
+    return new Promise((resolve) => {
+      storageData.then((result) => {
         unsubscribe()
         resolve(result)
       })
@@ -153,22 +155,24 @@ function createStorage() {
   }
   async function uploadFile(file, filePath) {
     await loaded()
-    const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage')
+    const { ref, uploadBytes, getDownloadURL } = await import(
+      'firebase/storage'
+    )
     const fileRef = ref(storage, filePath)
     return new Promise((resolve, reject) =>
       uploadBytes(fileRef, file)
         .then(() => {
-          getDownloadURL(fileRef).then(url => {
+          getDownloadURL(fileRef).then((url) => {
             resolve(url)
           })
         })
-        .catch(reject)
+        .catch(reject),
     )
   }
   return {
     subscribe,
     loaded,
-    uploadFile
+    uploadFile,
   }
 }
 

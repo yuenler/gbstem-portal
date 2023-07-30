@@ -4,30 +4,30 @@ import { capitalize, lowerCase } from 'lodash-es'
 function createAlert() {
   const alert = writable({
     type: '',
-    message: ''
+    message: '',
   })
   function trigger(type, message, auto = false) {
     if (type === 'error') {
       if (auto) {
         message = `${capitalize(
-          lowerCase(message.includes('/') ? message.split('/')[1] : message)
+          lowerCase(message.includes('/') ? message.split('/')[1] : message),
         )}.`
       }
       alert.set({
         type,
-        message: message
+        message: message,
       })
     } else {
       alert.set({
         type,
-        message
+        message,
       })
     }
   }
   function reset() {
     alert.set({
       type: '',
-      message: ''
+      message: '',
     })
   }
   return { subscribe: alert.subscribe, trigger, reset }

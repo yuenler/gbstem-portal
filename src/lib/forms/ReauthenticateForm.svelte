@@ -1,10 +1,13 @@
 <script>
   import Input from '$lib/components/Input.svelte'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
-  import { EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth'
+  import {
+    EmailAuthProvider,
+    reauthenticateWithCredential,
+  } from 'firebase/auth'
   import { createEventDispatcher } from 'svelte'
   import Form from '$lib/components/Form.svelte'
 
@@ -12,7 +15,7 @@
   let disabled = false
   let showValidation = false
   let values = {
-    password: ''
+    password: '',
   }
   function handleSubmit(e) {
     if (e.detail.error.state) {
@@ -28,7 +31,7 @@
         .then(() => {
           dispatch('reauthenticate', true)
         })
-        .catch(err => {
+        .catch((err) => {
           disabled = false
           alert.trigger('error', err.code, true)
         })
@@ -37,7 +40,10 @@
 </script>
 
 <Form
-  class={classNames('grid w-full max-w-lg gap-2', showValidation && 'show-validation')}
+  class={clsx(
+    'grid w-full max-w-lg gap-2',
+    showValidation && 'show-validation'
+  )}
   on:submit={handleSubmit}
 >
   <fieldset {disabled}>

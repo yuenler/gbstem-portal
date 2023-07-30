@@ -7,7 +7,10 @@
     sessionStorage.setItem('emailVerified', 'false')
   }
   onMount(async () => {
-    if (sessionStorage.getItem('emailVerified') === 'false' && $user.emailVerified) {
+    if (
+      sessionStorage.getItem('emailVerified') === 'false' &&
+      $user.emailVerified
+    ) {
       const { getIdToken } = await import('firebase/auth')
       getIdToken($user, true).then(() => {
         sessionStorage.removeItem('emailVerified')

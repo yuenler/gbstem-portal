@@ -1,6 +1,7 @@
 <script>
+  import clsx from 'clsx'
   import { fade } from 'svelte/transition'
-  import { classNames, clickOutside } from '$lib/utils'
+  import { clickOutside } from '$lib/utils'
   import { auth } from '$lib/firebase'
   import { navigating } from '$app/stores'
   import { goto } from '$app/navigation'
@@ -18,7 +19,7 @@
 </script>
 
 <div
-  class={classNames('relative md:flex md:items-center', className)}
+  class={clsx('relative md:flex md:items-center', className)}
   use:clickOutside
   on:outclick={() => {
     open = false

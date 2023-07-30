@@ -1,6 +1,6 @@
 <script>
   import { fade } from 'svelte/transition'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { createEventDispatcher } from 'svelte'
 
   let className
@@ -42,14 +42,16 @@
     transition:fade={{ duration: 150 }}
     on:keydown|stopPropagation={handleKeyDown}
   >
-    <div class={classNames('relative h-full w-full')}>
+    <div class={clsx('relative h-full w-full')}>
       <div
-        class={classNames(
+        class={clsx(
           'px-dynamic bg-white pb-5',
           size === 'full' && 'absolute top-0 flex h-screen w-screen flex-col'
         )}
       >
-        <div class="mb-5 flex shrink-0 items-center justify-between border-b border-gray-300 py-5">
+        <div
+          class="mb-5 flex shrink-0 items-center justify-between border-b border-gray-300 py-5"
+        >
           <h1 class="text-xl uppercase">{title}</h1>
           <button class="shrink-0" type="button" on:click={cancel}>
             <svg
@@ -60,11 +62,15 @@
               stroke="currentColor"
               class="h-8 w-8"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
-        <div class={classNames('h-full overflow-hidden overflow-y-auto', className)}>
+        <div class={clsx('h-full overflow-hidden overflow-y-auto', className)}>
           <slot />
         </div>
       </div>

@@ -1,8 +1,12 @@
 <script>
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { user, db, storage } from '$lib/firebase'
   import { alert } from '$lib/stores'
-  import { EmailAuthProvider, deleteUser, reauthenticateWithCredential } from 'firebase/auth'
+  import {
+    EmailAuthProvider,
+    deleteUser,
+    reauthenticateWithCredential,
+  } from 'firebase/auth'
   import Modal from '$lib/components/Modal.svelte'
   import Form from '$lib/components/Form.svelte'
   import Brand from '$lib/components/Brand.svelte'
@@ -14,7 +18,7 @@
   let showValidation = false
   let disabled = false
   let values = {
-    password: ''
+    password: '',
   }
 
   function handleSubmit(e) {
@@ -41,7 +45,7 @@
         EmailAuthProvider.credential($user.email, values.password)
       )
         .then(async () => {
-          getDoc(doc($db, 'users', $user.uid)).then(async res => {
+          getDoc(doc($db, 'users', $user.uid)).then(async (res) => {
             const profile = res.data()
             const hhid = profile.hhid
             await storage.loaded()
@@ -50,26 +54,29 @@
             deleteDoc(doc($db, 'applications', $user.uid)).catch()
             Promise.all([
               deleteDoc(doc($db, 'hhids', hhid)),
-              deleteDoc(doc($db, 'users', $user.uid))
+              deleteDoc(doc($db, 'users', $user.uid)),
             ])
               .then(() => {
                 deleteUser($user)
                   .then(() => {
-                    alert.trigger('success', 'Account was successfully deleted.')
+                    alert.trigger(
+                      'success',
+                      'Account was successfully deleted.'
+                    )
                     location.reload()
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     console.log(err)
                     disabled = false
                   })
               })
-              .catch(err => {
+              .catch((err) => {
                 console.log(err)
                 disabled = false
               })
           })
         })
-        .catch(err => {
+        .catch((err) => {
           disabled = false
           alert.trigger('error', err.code, true)
         })
@@ -77,7 +84,10 @@
   }
 </script>
 
-<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
+<Form
+  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  on:submit={handleSubmit}
+>
   <span class="font-bold">Delete account</span>
   <div class="mt-2">
     <button
@@ -97,7 +107,10 @@
   {disabled}
 >
   <Form
-    class={classNames('grid w-full max-w-lg gap-2', showValidation && 'show-validation')}
+    class={clsx(
+      'grid w-full max-w-lg gap-2',
+      showValidation && 'show-validation'
+    )}
     on:submit={handleReauthenticate}
   >
     <fieldset {disabled}>

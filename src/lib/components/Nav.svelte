@@ -1,6 +1,6 @@
 <script>
   import ProfileMenu from './ProfileMenu.svelte'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { page } from '$app/stores'
   import { onMount } from 'svelte'
   import Brand from './Brand.svelte'
@@ -23,16 +23,16 @@
   const pages = [
     {
       name: 'Dashboard',
-      href: '/dashboard'
+      href: '/dashboard',
     },
     {
       name: 'Apply',
-      href: '/apply'
+      href: '/apply',
     },
-    {
-      name: 'Group',
-      href: '/group'
-    }
+    // {
+    //   name: 'Group',
+    //   href: '/group'
+    // }
   ]
   function updateShadow() {
     shadow = window.scrollY !== 0
@@ -41,7 +41,7 @@
 
 <svelte:window on:scroll={updateShadow} />
 <nav
-  class={classNames(
+  class={clsx(
     'px-dynamic fixed left-0 top-0 z-50 flex h-20 w-full items-center justify-between border-b bg-white transition-all',
     shadow && !open ? 'shadow-b border-gray-200' : 'border-white'
   )}
@@ -52,7 +52,7 @@
       <div class="hidden items-center gap-3 md:flex">
         {#each pages as page}
           <a
-            class={classNames(
+            class={clsx(
               'rounded-md px-3 py-2 transition-colors',
               pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
             )}
@@ -85,7 +85,11 @@
           stroke="currentColor"
           class="h-8 w-8"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       {:else}
         <svg
@@ -96,7 +100,11 @@
           stroke="currentColor"
           class="h-8 w-8"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 9h16.5m-16.5 6.75h16.5"
+          />
         </svg>
       {/if}
     </button>
@@ -109,7 +117,7 @@
   >
     {#each pages as page}
       <a
-        class={classNames(
+        class={clsx(
           'rounded-md px-3 py-2 transition-colors',
           pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
         )}

@@ -1,6 +1,12 @@
 <script lang="ts">
-  import { classNames } from '$lib/utils'
-  import { doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore'
+  import clsx from 'clsx'
+  import {
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp,
+    FieldValue,
+  } from 'firebase/firestore'
   import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
@@ -17,7 +23,8 @@
     worldJson,
     majorJson,
     reasonsJson,
-    experienceJson
+    experienceJson,
+    levelOfStudyJson,
   } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
@@ -40,11 +47,12 @@
       race: string[]
       underrepresented: boolean
       phoneNumber: string
-      address: string
-      city: string
-      state: string
-      country: string
-      zipCode: string
+      countryOfResidence: string
+      shippingAddress: string
+      shippingCity: string
+      shippingState: string
+      shippingCountry: string
+      shippingZipCode: string
       dietaryRestrictions: string[]
     }
     academic: {
@@ -53,6 +61,7 @@
       graduationYear: string
       major: string
       affiliated: boolean
+      levelOfStudy: string
     }
     hackathon: {
       shirtSize: string
@@ -107,26 +116,28 @@
       race: [],
       underrepresented: false,
       phoneNumber: '',
-      address: '',
-      city: '',
-      state: '',
-      country: '',
-      zipCode: '',
-      dietaryRestrictions: []
+      countryOfResidence: '',
+      shippingAddress: '',
+      shippingCity: '',
+      shippingState: '',
+      shippingCountry: '',
+      shippingZipCode: '',
+      dietaryRestrictions: [],
     },
     academic: {
       enrolled: false,
       currentSchool: '',
       graduationYear: '',
       major: '',
-      affiliated: false
+      affiliated: false,
+      levelOfStudy: '',
     },
     hackathon: {
       shirtSize: '',
       firstHackathon: false,
       previouslyParticipated: false,
       ableToAttend: false,
-      reason: ''
+      reason: '',
     },
     openResponse: {
       roles: [],
@@ -139,29 +150,34 @@
       predictions: '',
       resume: {
         url: '',
-        name: ''
+        name: '',
       },
-      resumeShare: false
+      resumeShare: false,
     },
-    agreements: { codeOfConduct: false, sharing: false, mlhEmails: false, submitting: false },
+    agreements: {
+      codeOfConduct: false,
+      sharing: false,
+      mlhEmails: false,
+      submitting: false,
+    },
     meta: {
       hhid: '',
       uid: '',
-      submitted: false
+      submitted: false,
     },
     status: {
       accepted: false,
       rejected: false,
-      waitlisted: false
+      waitlisted: false,
     },
     timestamps: {
       created: serverTimestamp(),
-      updated: serverTimestamp()
-    }
+      updated: serverTimestamp(),
+    },
   }
   let resumeFile: ResumeFile = {
     url: '',
-    name: ''
+    name: '',
   }
   let saveInterval: number
   onMount(async () => {
@@ -172,7 +188,7 @@
       // i.e., structure of values
       values = {
         ...values,
-        ...applicationDoc.data()
+        ...applicationDoc.data(),
       }
     }
     if (!values.meta.submitted) {
@@ -181,7 +197,7 @@
       const temp = {
         email: values.personal.email,
         firstName: values.personal.firstName,
-        lastName: values.personal.lastName
+        lastName: values.personal.lastName,
       }
       values.personal.email = $user.email
       if (profileDocData) {
@@ -203,7 +219,7 @@
         const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
         values = {
           ...values,
-          ...applicationDoc.data()
+          ...applicationDoc.data(),
         }
       }
       disabled = false
@@ -220,8 +236,8 @@
       ...values,
       timestamps: {
         ...values.timestamps,
-        updated: serverTimestamp()
-      }
+        updated: serverTimestamp(),
+      },
     }
   }
   function handleSave(withDisabling: boolean): Promise<void> {
@@ -238,7 +254,7 @@
           alert.trigger('success', 'Your application was saved.')
           resolve()
         })
-        .catch(err => {
+        .catch((err) => {
           if (withDisabling) {
             disabled = false
           }
@@ -256,28 +272,30 @@
       disabled = true
       storage
         .uploadFile(resumeFile, `resumes/${$user.uid}.pdf`)
-        .then(downloadURL => {
+        .then((downloadURL) => {
           values.openResponse.resume = {
             url: downloadURL,
-            name: resumeFile.name
+            name: resumeFile.name,
           }
           clearInterval(saveInterval)
           values.meta.submitted = true
           setDoc(doc($db, 'applications', $user.uid), modifiedValues())
             .then(async () => {
               alert.trigger('success', 'Your application has been submitted!')
-              const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
+              const applicationDoc = await getDoc(
+                doc($db, 'applications', $user.uid)
+              )
               values = {
                 ...values,
-                ...applicationDoc.data()
+                ...applicationDoc.data(),
               }
               window.scrollTo({
                 top: 0,
-                behavior: 'smooth'
+                behavior: 'smooth',
               })
               handleEmail()
             })
-            .catch(err => {
+            .catch((err) => {
               disabled = false
               alert.trigger('error', err.code, true)
             })
@@ -288,6 +306,7 @@
         })
     }
   }
+
   function handleEmail() {
     // return addDoc(collection($db, 'mail'), {
     //   to: [values.personal.email],
@@ -299,7 +318,10 @@
   }
 </script>
 
-<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
+<Form
+  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  on:submit={handleSubmit}
+>
   <fieldset class="grid gap-6" {disabled}>
     <div class="grid gap-1">
       <span class="font-bold">Personal</span>
@@ -314,13 +336,19 @@
           {#if values.meta.submitted}
             The above name and email was the copy submitted on your application.
           {:else}
-            Wrong name or email? Go to your <a class="link" href="/profile">profile</a> to update your
-            information.
+            Wrong name or email? Go to your <a class="link" href="/profile"
+              >profile</a
+            > to update your information.
           {/if}
         </div>
       </Card>
       {#if values.openResponse.resume.url !== ''}
-        <a class="mb-2" href={values.openResponse.resume.url} target="_blank" rel="noreferrer">
+        <a
+          class="mb-2"
+          href={values.openResponse.resume.url}
+          target="_blank"
+          rel="noreferrer"
+        >
           <Card class="flex items-center gap-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -359,7 +387,11 @@
         <span>Race / ethnicity (check all that apply)</span>
         <div class="grid grid-cols-2">
           {#each raceJson as race}
-            <Input type="checkbox" bind:value={values.personal.race} placeholder={race.name} />
+            <Input
+              type="checkbox"
+              bind:value={values.personal.race}
+              placeholder={race.name}
+            />
           {/each}
         </div>
       </div>
@@ -375,20 +407,32 @@
         placeholder="Phone number"
         floating
         required
-        pattern="\+1 ?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}3{'}'}(-| )?[0-9]{'{'}4{'}'}"
       />
-      <span class="text-sm">*format as +1 XXX-XXX-XXXX</span>
+      <!-- <span class="text-sm">*format as +1 XXX-XXX-XXXX</span> -->
+      <Select
+        bind:value={values.personal.countryOfResidence}
+        placeholder="Country of residence"
+        options={worldJson}
+        floating
+        required
+      />
       <Input
         type="text"
-        bind:value={values.personal.address}
+        bind:value={values.personal.shippingAddress}
         placeholder="Shipping Address"
         floating
         required
       />
       <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
-        <Input type="text" bind:value={values.personal.city} placeholder="City" floating required />
+        <Input
+          type="text"
+          bind:value={values.personal.shippingCity}
+          placeholder="City"
+          floating
+          required
+        />
         <Select
-          bind:value={values.personal.state}
+          bind:value={values.personal.shippingState}
           placeholder="State"
           options={statesJson}
           floating
@@ -396,7 +440,7 @@
       </div>
       <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
         <Select
-          bind:value={values.personal.country}
+          bind:value={values.personal.shippingCountry}
           placeholder="Country"
           options={worldJson}
           floating
@@ -404,7 +448,7 @@
         />
         <Input
           type="text"
-          bind:value={values.personal.zipCode}
+          bind:value={values.personal.shippingZipCode}
           placeholder="Zip code"
           floating
           required
@@ -425,6 +469,13 @@
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Academic</span>
+      <Select
+        bind:value={values.academic.levelOfStudy}
+        placeholder="What is your current education level?"
+        options={levelOfStudyJson}
+        floating
+        required
+      />
       <Input
         type="checkbox"
         bind:value={values.academic.enrolled}
@@ -505,13 +556,19 @@
       <span class="font-bold">Open response</span>
       <div class="mt-2 grid gap-1">
         <span>
-          What roles best fit your capabilities on a hackathon team?<span class="text-red-500">
+          What roles best fit your capabilities on a hackathon team?<span
+            class="text-red-500"
+          >
             *
           </span>
         </span>
         <div class="grid grid-cols-2">
           {#each rolesJson as role}
-            <Input type="checkbox" bind:value={values.openResponse.roles} placeholder={role.name} />
+            <Input
+              type="checkbox"
+              bind:value={values.openResponse.roles}
+              placeholder={role.name}
+            />
           {/each}
         </div>
       </div>
@@ -526,11 +583,8 @@
       </div>
       <div class="mt-2 grid gap-1">
         <span>
-          Check up to 5 of the programming languages that you feel most comfortable in.<span
-            class="text-red-500"
-          >
-            *
-          </span>
+          Check up to 5 of the programming languages that you feel most
+          comfortable in.<span class="text-red-500"> * </span>
         </span>
         <div class="grid grid-cols-2">
           {#each prolangsJson as prolang}
@@ -539,7 +593,10 @@
               bind:value={values.openResponse.prolangs}
               placeholder={prolang.name}
               validation={[
-                [values.openResponse.prolangs.length <= 5, 'Check up to 5 programming languages.']
+                [
+                  values.openResponse.prolangs.length <= 5,
+                  'Check up to 5 programming languages.',
+                ],
               ]}
               required
             />
@@ -621,8 +678,7 @@
         <Input
           type="checkbox"
           bind:value={values.agreements.mlhEmails}
-          placeholder="I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or
-        Organizer Newsletters and other communications from MLH."
+          placeholder="I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements."
         />
         <Input
           type="checkbox"
@@ -632,9 +688,11 @@
         />
       </div>
     </div>
-    <div class={classNames('grid gap-3', !values.meta.submitted && 'grid-cols-2')}>
+    <div class={clsx('grid gap-3', !values.meta.submitted && 'grid-cols-2')}>
       {#if values.meta.submitted}
-        <div class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm">
+        <div
+          class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
+        >
           Application submitted and in review!
         </div>
       {:else}

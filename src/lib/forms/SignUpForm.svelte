@@ -1,6 +1,6 @@
 <script>
   import Input from '$lib/components/Input.svelte'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { auth, user, db } from '$lib/firebase'
   import { goto } from '$app/navigation'
   import Brand from '$lib/components/Brand.svelte'
@@ -17,7 +17,7 @@
     lastName: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   }
   function generateId() {
     const alphabet = '0123456789'
@@ -42,7 +42,7 @@
         'dseum@college.harvard.edu',
         'vcainamisir@college.harvard.edu',
         'kharvey@college.harvard.edu',
-        'hzhang1@college.harvard.edu'
+        'hzhang1@college.harvard.edu',
       ]
       if (!validEmails.includes(values.email)) {
         alert.trigger(
@@ -59,7 +59,7 @@
       const lastName = values.lastName.trim()
       auth
         .signUp(values.email, values.password, {
-          displayName: `${firstName} ${lastName}`
+          displayName: `${firstName} ${lastName}`,
         })
         .then(async () => {
           await user.loaded()
@@ -90,15 +90,15 @@
                   hhid,
                   role: 'applicant',
                   firstName,
-                  lastName
+                  lastName,
                 }).then(() => {
                   goto('/')
                 })
               })
-              .catch(err => console.log(err))
+              .catch((err) => console.log(err))
           }
         })
-        .catch(err => {
+        .catch((err) => {
           disabled = false
           alert.trigger('error', err.code, true)
         })
@@ -106,15 +106,36 @@
   }
 </script>
 
-<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
+<Form
+  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  on:submit={handleSubmit}
+>
   <fieldset class="grid gap-2" {disabled}>
     <Brand />
     <h1 class="mt-1 text-2xl font-bold">Sign up</h1>
     <div class="grid gap-2 sm:grid-cols-2 sm:gap-4">
-      <Input type="text" bind:value={values.firstName} placeholder="First name" floating required />
-      <Input type="text" bind:value={values.lastName} placeholder="Last name" floating required />
+      <Input
+        type="text"
+        bind:value={values.firstName}
+        placeholder="First name"
+        floating
+        required
+      />
+      <Input
+        type="text"
+        bind:value={values.lastName}
+        placeholder="Last name"
+        floating
+        required
+      />
     </div>
-    <Input type="email" bind:value={values.email} placeholder="Email" floating required />
+    <Input
+      type="email"
+      bind:value={values.email}
+      placeholder="Email"
+      floating
+      required
+    />
     <Input
       type="password"
       bind:value={values.password}
@@ -122,7 +143,9 @@
       floating
       required
       autocomplete="new-password"
-      validation={[[values.password === values.confirmPassword, 'Passwords do not match.']]}
+      validation={[
+        [values.password === values.confirmPassword, 'Passwords do not match.'],
+      ]}
     />
     <Input
       type="password"
@@ -131,7 +154,9 @@
       floating
       required
       autocomplete="new-password"
-      validation={[[values.password === values.confirmPassword, 'Passwords do not match.']]}
+      validation={[
+        [values.password === values.confirmPassword, 'Passwords do not match.'],
+      ]}
     />
     <div class="mt-2 flex items-center justify-between">
       <div>

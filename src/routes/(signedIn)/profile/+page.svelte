@@ -14,7 +14,7 @@
   let hhid = ''
   $: emailVerified = $user?.emailVerified ?? true
   onMount(async () => {
-    getDoc(doc($db, 'users', $user.uid)).then(res => {
+    getDoc(doc($db, 'users', $user.uid)).then((res) => {
       const profile = res.data()
       hhid = profile.hhid
     })
@@ -49,9 +49,11 @@
           />
         </svg>
         <div class="grow">
-          Email is not verified. Please check your email and verify to use the portal. Can't find
-          it? <button class="link" type="button" on:click={handleVerificationEmail}
-            >Send it again.</button
+          Email is not verified. Please check your email and verify to use the
+          portal. Can't find it? <button
+            class="link"
+            type="button"
+            on:click={handleVerificationEmail}>Send it again.</button
           >
         </div>
       </div>
@@ -60,7 +62,9 @@
       <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
         {`HHID: ${hhid}`}
       </div>
-      <div class="text-sm">Any problems with changing your profile? Contact us.</div>
+      <div class="text-sm">
+        Any problems with changing your profile? Contact us.
+      </div>
     </Card>
     <ChangeNameForm />
     <ChangeEmailForm />

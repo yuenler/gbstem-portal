@@ -1,6 +1,6 @@
 <script>
   import Input from '$lib/components/Input.svelte'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { auth, user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
@@ -11,7 +11,7 @@
   let showValidation = false
   let values = {
     email: '',
-    password: ''
+    password: '',
   }
 
   function handleSubmit(e) {
@@ -27,7 +27,7 @@
           await user.loaded()
           goto('/')
         })
-        .catch(err => {
+        .catch((err) => {
           disabled = false
           alert.trigger('error', err.code, true)
         })
@@ -35,11 +35,20 @@
   }
 </script>
 
-<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
+<Form
+  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  on:submit={handleSubmit}
+>
   <fieldset class="grid gap-2" {disabled}>
     <Brand />
     <h1 class="mt-1 text-2xl font-bold">Sign in</h1>
-    <Input type="email" bind:value={values.email} placeholder="Email" floating required />
+    <Input
+      type="email"
+      bind:value={values.email}
+      placeholder="Email"
+      floating
+      required
+    />
     <Input
       type="password"
       bind:value={values.password}

@@ -1,8 +1,5 @@
-export function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
 export function clickOutside(node) {
-  const handleClick = event => {
+  const handleClick = (event) => {
     if (!node.contains(event.target)) {
       node.dispatchEvent(new CustomEvent('outclick'))
     }
@@ -11,6 +8,6 @@ export function clickOutside(node) {
   return {
     destroy() {
       document.removeEventListener('click', handleClick, true)
-    }
+    },
   }
 }
