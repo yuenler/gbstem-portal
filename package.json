@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.1.0",
-    "@sveltejs/adapter-cloudflare": "^2.3.0",
+    "@sveltejs/adapter-cloudflare": "^2.3.1",
     "@sveltejs/adapter-static": "^2.0.2",
     "@sveltejs/kit": "^1.20.0",
     "@types/lodash-es": "^4.17.8",
@@ -30,7 +30,6 @@
   },
   "type": "module",
   "dependencies": {
-    "@sveltejs/adapter-cloudflare": "^2.3.1",
     "firebase": "^9.22.1",
     "lodash-es": "^4.17.21",
     "nanoid": "^4.0.2"
