@@ -1,6 +1,7 @@
 <script>
+  import clsx from 'clsx'
   import { fade } from 'svelte/transition'
-  import { classNames, clickOutside } from '$lib/utils'
+  import { clickOutside } from '$lib/utils'
   import { auth } from '$lib/firebase'
   import { navigating } from '$app/stores'
   import { goto } from '$app/navigation'

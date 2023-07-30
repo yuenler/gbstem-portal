@@ -3,7 +3,8 @@
 </script>
 
 <script>
-  import { classNames, clickOutside } from '$lib/utils'
+  import clsx from 'clsx'
+  import { clickOutside } from '$lib/utils'
   import { uniqueId, debounce, kebabCase } from 'lodash-es'
   import { fade } from 'svelte/transition'
 
