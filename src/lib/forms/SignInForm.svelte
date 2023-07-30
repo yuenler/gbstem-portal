@@ -1,11 +1,13 @@
-<script>
+<script lang="ts">
   import Input from '$lib/components/Input.svelte'
   import clsx from 'clsx'
-  import { auth, user } from '$lib/firebase'
+  import { auth } from '$lib/client/firebase'
+  import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
   import { goto } from '$app/navigation'
   import Form from '$lib/components/Form.svelte'
+  import { signInWithEmailAndPassword } from 'firebase/auth'
 
   let disabled = false
   let showValidation = false
@@ -21,8 +23,7 @@
     } else {
       showValidation = false
       disabled = true
-      auth
-        .signIn(values.email, values.password)
+      signInWithEmailAndPassword(auth, values.email, values.password)
         .then(async () => {
           await user.loaded()
           goto('/')

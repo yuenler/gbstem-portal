@@ -47,7 +47,7 @@
       if (!validEmails.includes(values.email)) {
         alert.trigger(
           'error',
-          'Account creation temporarily restricted to HackHarvard board members.'
+          'Account creation temporarily restricted to HackHarvard board members.',
         )
         return
       }
@@ -80,7 +80,7 @@
           if (hhid === '') {
             alert.trigger(
               'error',
-              'HHID could not be generated. Contact admin and create a new account.'
+              'HHID could not be generated. Contact admin and create a new account.',
             )
             deleteUser($user)
           } else {

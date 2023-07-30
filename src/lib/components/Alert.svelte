@@ -50,7 +50,7 @@
     <div
       class={clsx(
         'mx-3 mb-3 flex w-full max-w-lg items-center gap-2 rounded-md p-3 shadow',
-        bgColor
+        bgColor,
       )}
     >
       {#if $alert.type === 'success'}

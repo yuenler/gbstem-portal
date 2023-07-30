@@ -26,7 +26,7 @@
       disabled = true
       reauthenticateWithCredential(
         $user,
-        EmailAuthProvider.credential($user.email, values.password)
+        EmailAuthProvider.credential($user.email, values.password),
       )
         .then(() => {
           dispatch('reauthenticate', true)
@@ -42,7 +42,7 @@
 <Form
   class={clsx(
     'grid w-full max-w-lg gap-2',
-    showValidation && 'show-validation'
+    showValidation && 'show-validation',
   )}
   on:submit={handleSubmit}
 >

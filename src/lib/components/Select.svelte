@@ -32,7 +32,7 @@
     } else {
       const lowerCaseValue = givenValue.toLowerCase()
       filteredOptions = options.filter(
-        (name) => name.toLowerCase().indexOf(lowerCaseValue) !== -1
+        (name) => name.toLowerCase().indexOf(lowerCaseValue) !== -1,
       )
     }
   }, 150)
@@ -133,7 +133,7 @@
       <input
         class={clsx(
           'peer block h-12 w-full appearance-none rounded-md border border-gray-300 pl-3 pr-9 pt-1 text-gray-900 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
-          className
+          className,
         )}
         type="text"
         placeholder=" "
@@ -206,7 +206,7 @@
             <button
               class={clsx(
                 'w-full px-6 py-2 text-left transition-colors duration-300',
-                index === selectedOptionIndex && 'bg-gray-100'
+                index === selectedOptionIndex && 'bg-gray-100',
               )}
               type="button"
               on:click={() => {
@@ -261,7 +261,7 @@
       <input
         class={clsx(
           'mt-1 block h-12 w-full appearance-none rounded-md border border-gray-300 pl-3 pr-9 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
-          className
+          className,
         )}
         type="text"
         data-1p-ignore
@@ -298,7 +298,7 @@
               <button
                 class={clsx(
                   'w-full px-6 py-2 text-left transition-colors duration-300',
-                  index === selectedOptionIndex && 'bg-gray-100'
+                  index === selectedOptionIndex && 'bg-gray-100',
                 )}
                 type="button"
                 on:click={() => {

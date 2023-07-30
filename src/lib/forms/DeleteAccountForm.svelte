@@ -42,7 +42,7 @@
       disabled = true
       reauthenticateWithCredential(
         $user,
-        EmailAuthProvider.credential($user.email, values.password)
+        EmailAuthProvider.credential($user.email, values.password),
       )
         .then(async () => {
           getDoc(doc($db, 'users', $user.uid)).then(async (res) => {
@@ -61,7 +61,7 @@
                   .then(() => {
                     alert.trigger(
                       'success',
-                      'Account was successfully deleted.'
+                      'Account was successfully deleted.',
                     )
                     location.reload()
                   })
@@ -109,7 +109,7 @@
   <Form
     class={clsx(
       'grid w-full max-w-lg gap-2',
-      showValidation && 'show-validation'
+      showValidation && 'show-validation',
     )}
     on:submit={handleReauthenticate}
   >

@@ -46,7 +46,7 @@
       <div
         class={clsx(
           'px-dynamic bg-white pb-5',
-          size === 'full' && 'absolute top-0 flex h-screen w-screen flex-col'
+          size === 'full' && 'absolute top-0 flex h-screen w-screen flex-col',
         )}
       >
         <div

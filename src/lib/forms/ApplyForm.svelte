@@ -283,7 +283,7 @@
             .then(async () => {
               alert.trigger('success', 'Your application has been submitted!')
               const applicationDoc = await getDoc(
-                doc($db, 'applications', $user.uid)
+                doc($db, 'applications', $user.uid),
               )
               values = {
                 ...values,

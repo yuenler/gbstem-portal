@@ -40,7 +40,7 @@
           }).then(() => {
             disabled = false
             alert.trigger('success', 'Name successfully updated.')
-          })
+          }),
         )
         .catch((err) => {
           disabled = false

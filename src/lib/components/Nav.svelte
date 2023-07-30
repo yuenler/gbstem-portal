@@ -43,7 +43,7 @@
 <nav
   class={clsx(
     'px-dynamic fixed left-0 top-0 z-50 flex h-20 w-full items-center justify-between border-b bg-white transition-all',
-    shadow && !open ? 'shadow-b border-gray-200' : 'border-white'
+    shadow && !open ? 'shadow-b border-gray-200' : 'border-white',
   )}
 >
   <div class="flex items-center gap-8">
@@ -54,7 +54,7 @@
           <a
             class={clsx(
               'rounded-md px-3 py-2 transition-colors',
-              pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
+              pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
             )}
             href={page.href}
           >
@@ -119,7 +119,7 @@
       <a
         class={clsx(
           'rounded-md px-3 py-2 transition-colors',
-          pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
+          pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
         )}
         href={page.href}
       >

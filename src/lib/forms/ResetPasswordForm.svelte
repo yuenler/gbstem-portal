@@ -34,7 +34,7 @@
         .then(() => {
           alert.trigger(
             'info',
-            'Password reset email was sent. Please check your inbox.'
+            'Password reset email was sent. Please check your inbox.',
           )
           goto('/signin')
         })
@@ -63,7 +63,7 @@
     <div
       class={clsx(
         'mt-2 flex items-center',
-        isSignedIn ? 'justify-end' : 'justify-between'
+        isSignedIn ? 'justify-end' : 'justify-between',
       )}
     >
       {#if !isSignedIn}
