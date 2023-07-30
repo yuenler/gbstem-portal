@@ -1,6 +1,12 @@
 <script lang="ts">
   import clsx from 'clsx'
-  import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
+  import {
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp,
+    FieldValue,
+  } from 'firebase/firestore'
   import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
