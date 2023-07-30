@@ -1,4 +1,7 @@
+/** @type {import("prettier").Options} */
 module.exports = {
-  tailwindConfig: './tailwind.config.cjs',
-  plugins: [require('prettier-plugin-tailwindcss')]
+  semi: false,
+  singleQuote: true,
+  plugins: ['prettier-plugin-tailwindcss'],
+  tailwindFunctions: ['clsx'],
 }

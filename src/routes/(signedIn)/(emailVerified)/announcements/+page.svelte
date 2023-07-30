@@ -9,7 +9,7 @@
   // Function to fetch announcements from Firestore
   async function fetchAnnouncements() {
     const snapshot = await getDocs(collection($db, 'announcements'))
-    announcements = snapshot.docs.map(doc => doc.data())
+    announcements = snapshot.docs.map((doc) => doc.data())
   }
 
   // Fetch announcements on component mount

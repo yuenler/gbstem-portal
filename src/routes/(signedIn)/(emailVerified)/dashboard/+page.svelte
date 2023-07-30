@@ -4,14 +4,14 @@
   import { fade } from 'svelte/transition'
   import { user, db } from '$lib/firebase'
 
-  const asyncData = new Promise(async resolve => {
+  const asyncData = new Promise(async (resolve) => {
     let data = {
       application: '',
-      group: {}
+      group: {},
     }
     const isSignedIn = await user.isSignedIn()
     if (isSignedIn) {
-      getDoc(doc($db, 'applications', $user.uid)).then(res => {
+      getDoc(doc($db, 'applications', $user.uid)).then((res) => {
         if (res.exists()) {
           const application = res.data()
 
@@ -32,8 +32,12 @@
   })
 </script>
 
-<div class="mx-auto my-4 max-w-2xl border-2 border-blue-800 bg-blue-100 p-4 text-lg text-blue-900">
-  <p>Early applications are due on <b>September 4th, 2023</b> at 11:59 PM ET.</p>
+<div
+  class="mx-auto my-4 max-w-2xl border-2 border-blue-800 bg-blue-100 p-4 text-lg text-blue-900"
+>
+  <p>
+    Early applications are due on <b>September 4th, 2023</b> at 11:59 PM ET.
+  </p>
   <p>
     Regular applications are due on <b>September 25th, 2023</b> at 11:59 PM ET.
   </p>

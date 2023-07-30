@@ -18,7 +18,7 @@
 </script>
 
 <div
-  class={classNames('relative md:flex md:items-center', className)}
+  class={clsx('relative md:flex md:items-center', className)}
   use:clickOutside
   on:outclick={() => {
     open = false

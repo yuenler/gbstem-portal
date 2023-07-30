@@ -1,5 +1,5 @@
 <script>
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { isUndefined } from 'lodash-es'
   import { createEventDispatcher } from 'svelte'
 
@@ -12,25 +12,25 @@
   function handleSubmit(e) {
     const state = [
       ...Array.from(self.querySelectorAll('input')),
-      ...Array.from(self.querySelectorAll('textarea'))
-    ].find(el => !el.checkValidity())
+      ...Array.from(self.querySelectorAll('textarea')),
+    ].find((el) => !el.checkValidity())
     dispatch('submit', {
       submit: e,
       error: isUndefined(state)
         ? {
             state: false,
-            message: ''
+            message: '',
           }
         : {
             state: true,
-            message: state.validationMessage
-          }
+            message: state.validationMessage,
+          },
     })
   }
 </script>
 
 <form
-  class={classNames('w-full', className)}
+  class={clsx('w-full', className)}
   novalidate
   bind:this={self}
   on:submit|preventDefault={handleSubmit}

@@ -3,7 +3,7 @@ import { capitalize, lowerCase } from 'lodash-es'
 function createAlert() {
   const alert = writable({
     type: '',
-    message: ''
+    message: '',
   })
   function trigger(type, message, auto = false) {
     if (type === 'error') {
@@ -14,19 +14,19 @@ function createAlert() {
       }
       alert.set({
         type,
-        message: message
+        message: message,
       })
     } else {
       alert.set({
         type,
-        message
+        message,
       })
     }
   }
   function reset() {
     alert.set({
       type: '',
-      message: ''
+      message: '',
     })
   }
   return { subscribe: alert.subscribe, trigger, reset }

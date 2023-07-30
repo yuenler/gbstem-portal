@@ -1,6 +1,6 @@
 <script>
   import { alert } from '$lib/stores'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
 
@@ -11,7 +11,7 @@
       : {
           success: 'bg-green-200',
           info: 'bg-gray-200',
-          error: 'bg-red-200'
+          error: 'bg-red-200',
         }[$alert.type]
   $: if ($navigating && timer) {
     closeAlert()
@@ -48,7 +48,7 @@
     on:keydown={handleKeyDown}
   >
     <div
-      class={classNames(
+      class={clsx(
         'mx-3 mb-3 flex w-full max-w-lg items-center gap-2 rounded-md p-3 shadow',
         bgColor
       )}

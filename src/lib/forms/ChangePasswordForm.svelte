@@ -1,6 +1,6 @@
 <script>
   import Input from '$lib/components/Input.svelte'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import { updatePassword } from 'firebase/auth'
@@ -13,7 +13,7 @@
   let showValidation = false
   let values = {
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   }
   function handleSubmit(e) {
     if (e.detail.error.state) {
@@ -29,7 +29,7 @@
     disabled = false
     values = {
       newPassword: '',
-      confirmPassword: ''
+      confirmPassword: '',
     }
     alert.trigger('info', 'Password change canceled.')
   }
@@ -40,18 +40,21 @@
         disabled = false
         values = {
           newPassword: '',
-          confirmPassword: ''
+          confirmPassword: '',
         }
         alert.trigger('success', 'Password was successfully changed.')
       })
-      .catch(err => {
+      .catch((err) => {
         disabled = false
         alert.trigger('error', err.code, true)
       })
   }
 </script>
 
-<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
+<Form
+  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  on:submit={handleSubmit}
+>
   <fieldset {disabled}>
     <span class="font-bold">Change password</span>
     <Input
@@ -60,7 +63,12 @@
       placeholder="New password"
       floating
       required
-      validation={[[values.newPassword === values.confirmPassword, 'Passwords do not match.']]}
+      validation={[
+        [
+          values.newPassword === values.confirmPassword,
+          'Passwords do not match.',
+        ],
+      ]}
     />
     <div class="relative">
       <Input
@@ -70,7 +78,12 @@
         placeholder="Confirm password"
         floating
         required
-        validation={[[values.newPassword === values.confirmPassword, 'Passwords do not match.']]}
+        validation={[
+          [
+            values.newPassword === values.confirmPassword,
+            'Passwords do not match.',
+          ],
+        ]}
       />
       <div class="absolute right-2 top-0 flex h-12 items-center">
         <button

@@ -25,5 +25,5 @@ export {
   raceJson,
   majorJson,
   experienceJson,
-  levelOfStudyJson
+  levelOfStudyJson,
 }

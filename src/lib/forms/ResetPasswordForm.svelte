@@ -1,6 +1,6 @@
 <script>
   import Input from '$lib/components/Input.svelte'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { auth, user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
@@ -12,7 +12,7 @@
   let disabled = false
   let showValidation = false
   let values = {
-    email: ''
+    email: '',
   }
   let currentUser
   let isSignedIn
@@ -32,10 +32,13 @@
       disabled = true
       sendPasswordResetEmail($auth, values.email)
         .then(() => {
-          alert.trigger('info', 'Password reset email was sent. Please check your inbox.')
+          alert.trigger(
+            'info',
+            'Password reset email was sent. Please check your inbox.'
+          )
           goto('/signin')
         })
-        .catch(err => {
+        .catch((err) => {
           disabled = false
           alert.trigger('error', err.code, true)
         })
@@ -43,13 +46,25 @@
   }
 </script>
 
-<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
+<Form
+  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  on:submit={handleSubmit}
+>
   <fieldset {disabled}>
     <Brand />
     <h1 class="mt-1 text-2xl font-bold">Reset password</h1>
-    <Input type="email" bind:value={values.email} placeholder="Email" floating required />
+    <Input
+      type="email"
+      bind:value={values.email}
+      placeholder="Email"
+      floating
+      required
+    />
     <div
-      class={classNames('mt-2 flex items-center', isSignedIn ? 'justify-end' : 'justify-between')}
+      class={clsx(
+        'mt-2 flex items-center',
+        isSignedIn ? 'justify-end' : 'justify-between'
+      )}
     >
       {#if !isSignedIn}
         <span>
