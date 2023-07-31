@@ -35,7 +35,7 @@ export type UserProfile = {
   role: 'applicant' | 'admin'
 }
 
-export type UserPeek = UserProfile & {
+export type UserPeek = {
   emailVerified: boolean
 }
 
@@ -80,26 +80,3 @@ function userStore() {
 }
 
 export const user = userStore()
-// export const user = {
-//   get: () =>
-//     new Promise<UserData | null>((resolve) => {
-//       let unsubscribe: Unsubscribe
-//       new Promise<User | null>((userResolve) => {
-//         unsubscribe = onAuthStateChanged(auth, (userObject) => {
-//           userResolve(userObject)
-//         })
-//       }).then((userObject) => {
-//         unsubscribe()
-//         if (userObject) {
-//           getDoc(doc(db, 'users', userObject.uid)).then(async (res) => {
-//             const userProfile = res.data()
-//             resolve({
-//               object: userObject,
-//               profile: userProfile as UserProfile,
-//             })
-//           })
-//         }
-//         resolve(null)
-//       })
-//     }),
-// }

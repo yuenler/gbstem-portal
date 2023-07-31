@@ -6,6 +6,7 @@
   import Brand from '$lib/components/Brand.svelte'
   import Form from '$lib/components/Form.svelte'
   import { signInWithEmailAndPassword } from 'firebase/auth'
+  import { goto } from '$app/navigation'
 
   let disabled = false
   let showValidation = false
@@ -27,7 +28,11 @@
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({ idToken }),
-            }).catch((err) => console.log('Sign In Error:', err))
+            })
+              .then(() => {
+                goto('/profile')
+              })
+              .catch((err) => console.log('Sign In Error:', err))
           })
         })
         .catch((err) => {

@@ -3,7 +3,6 @@
   import clsx from 'clsx'
   import { user } from '$lib/client/firebase'
   import { alert } from '$lib/stores'
-  import Brand from '$lib/components/Brand.svelte'
   import {
     EmailAuthProvider,
     reauthenticateWithCredential,
@@ -52,7 +51,6 @@
   on:submit={handleSubmit}
 >
   <fieldset {disabled}>
-    <Brand />
     <h1 class="mt-1 text-2xl font-bold">Reauthenticate</h1>
     <Input
       type="password"

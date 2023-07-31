@@ -8,7 +8,6 @@
   } from 'firebase/auth'
   import Modal from '$lib/components/Modal.svelte'
   import Form from '$lib/components/Form.svelte'
-  import Brand from '$lib/components/Brand.svelte'
   import Input from '$lib/components/Input.svelte'
   import { doc, deleteDoc } from 'firebase/firestore'
   import { ref, deleteObject } from 'firebase/storage'
@@ -124,7 +123,6 @@
     on:submit={handleReauthenticate}
   >
     <fieldset {disabled}>
-      <Brand />
       <h1 class="mt-1 text-2xl font-bold">Delete account</h1>
       <Input
         type="password"

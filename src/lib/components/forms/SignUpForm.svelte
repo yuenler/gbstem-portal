@@ -102,9 +102,13 @@
                                 'Content-Type': 'application/json',
                               },
                               body: JSON.stringify({ idToken }),
-                            }).catch((err) =>
-                              console.log('Sign In Error:', err),
-                            )
+                            })
+                              .then(() => {
+                                goto('/profile')
+                              })
+                              .catch((err) =>
+                                console.log('Sign In Error:', err),
+                              )
                           })
                         })
                         .catch((err) =>

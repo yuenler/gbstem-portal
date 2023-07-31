@@ -5,6 +5,7 @@
   import { navigating } from '$app/stores'
   import { signOut } from 'firebase/auth'
   import { auth } from '$lib/client/firebase'
+  import { goto } from '$app/navigation'
 
   let className = ''
   export { className as class }
@@ -19,6 +20,7 @@
     })
       .then(() => {
         signOut(auth)
+        goto('/signin')
       })
       .catch((err) => console.log('Sign Out Error:', err))
   }

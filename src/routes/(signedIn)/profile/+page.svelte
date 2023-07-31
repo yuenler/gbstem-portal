@@ -25,12 +25,12 @@
   <title>Profile</title>
 </svelte:head>
 
-<div class="grid md:grid-cols-2">
+<div class="grid md:grid-cols-3">
   <h1 class="mb-8 text-5xl font-bold md:text-6xl">Profile</h1>
-  <div class="flex flex-col items-center gap-6 max-w-2xl">
+  <div class="flex flex-col items-center gap-6 max-w-2xl md:col-span-2">
     {#if !data.user.emailVerified}
       <div
-        class="mt-2 flex w-full max-w-lg items-center gap-2 rounded-md bg-red-200 p-3 shadow"
+        class="mt-2 flex w-full items-center gap-4 rounded-md bg-red-200 px-5 py-4 shadow"
         transition:fade
       >
         <svg
@@ -48,8 +48,8 @@
           />
         </svg>
         <div class="grow">
-          Email is not verified. Please check your email and verify to use the
-          portal. Can't find it? <button
+          Email is not verified. Try reloading or check your inbox to verify
+          your account. Can't find the email? <button
             class="link"
             type="button"
             on:click={handleVerificationEmail}>Send it again.</button
@@ -59,7 +59,7 @@
     {/if}
     <Card class="grid gap-3">
       <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
-        {`HHID: ${data.user.hhid}`}
+        {`HHID: ${$user ? $user.profile.hhid : ''}`}
       </div>
       <div class="text-sm">
         Any problems with changing your profile? Contact us.
