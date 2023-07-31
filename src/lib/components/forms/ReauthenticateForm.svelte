@@ -1,10 +1,12 @@
-<script>
+<script lang="ts">
   import Input from '$lib/components/Input.svelte'
-  import { classNames } from '$lib/utils'
-  import { user } from '$lib/firebase'
+  import clsx from 'clsx'
+  import { user } from '$lib/client/firebase'
   import { alert } from '$lib/stores'
-  import Brand from '$lib/components/Brand.svelte'
-  import { EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth'
+  import {
+    EmailAuthProvider,
+    reauthenticateWithCredential,
+  } from 'firebase/auth'
   import { createEventDispatcher } from 'svelte'
   import Form from '$lib/components/Form.svelte'
 
@@ -12,36 +14,43 @@
   let disabled = false
   let showValidation = false
   let values = {
-    password: ''
+    password: '',
   }
-  function handleSubmit(e) {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
-      showValidation = false
-      disabled = true
-      reauthenticateWithCredential(
-        $user,
-        EmailAuthProvider.credential($user.email, values.password)
-      )
-        .then(() => {
-          dispatch('reauthenticate', true)
-        })
-        .catch(err => {
-          disabled = false
-          alert.trigger('error', err.code, true)
-        })
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if ($user) {
+      if (e.detail.error === null) {
+        showValidation = false
+        disabled = true
+        reauthenticateWithCredential(
+          $user.object,
+          EmailAuthProvider.credential(
+            $user.object.email as string,
+            values.password,
+          ),
+        )
+          .then(() => {
+            dispatch('reauthenticate', true)
+          })
+          .catch((err) => {
+            disabled = false
+            alert.trigger('error', err.code, true)
+          })
+      } else {
+        showValidation = true
+        alert.trigger('error', e.detail.error)
+      }
     }
   }
 </script>
 
 <Form
-  class={classNames('grid w-full max-w-lg gap-2', showValidation && 'show-validation')}
+  class={clsx(
+    'grid w-full max-w-lg gap-2',
+    showValidation && 'show-validation',
+  )}
   on:submit={handleSubmit}
 >
   <fieldset {disabled}>
-    <Brand />
     <h1 class="mt-1 text-2xl font-bold">Reauthenticate</h1>
     <Input
       type="password"

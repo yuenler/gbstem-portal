@@ -3,7 +3,8 @@
 </script>
 
 <script>
-  import { classNames, clickOutside } from '$lib/utils'
+  import clsx from 'clsx'
+  import { clickOutside } from '$lib/utils'
   import { uniqueId, debounce, kebabCase } from 'lodash-es'
   import { fade } from 'svelte/transition'
 
@@ -23,14 +24,16 @@
   let open = false
   let selectedOptionIndex = 0
 
-  const options = optionsJson.map(item => item.name)
+  const options = optionsJson.map((item) => item.name)
   let filteredOptions = []
-  const filterOptionsBy = debounce(givenValue => {
+  const filterOptionsBy = debounce((givenValue) => {
     if (givenValue === '') {
       filteredOptions = options
     } else {
       const lowerCaseValue = givenValue.toLowerCase()
-      filteredOptions = options.filter(name => name.toLowerCase().indexOf(lowerCaseValue) !== -1)
+      filteredOptions = options.filter(
+        (name) => name.toLowerCase().indexOf(lowerCaseValue) !== -1,
+      )
     }
   }, 150)
 
@@ -41,9 +44,9 @@
     }
     current = {
       id,
-      setOpen: value => {
+      setOpen: (value) => {
         open = value
-      }
+      },
     }
   } else {
     // validate value before close
@@ -112,14 +115,14 @@
     if (value === '') {
       filteredOptions = options
     } else {
-      filteredOptions = [value, ...options.filter(name => name !== value)]
+      filteredOptions = [value, ...options.filter((name) => name !== value)]
     }
     open = true
   }
 </script>
 
 <div
-  class={classNames('relative mt-2', className)}
+  class={clsx('relative mt-2', className)}
   use:clickOutside
   on:outclick={() => {
     open = false
@@ -128,9 +131,9 @@
   {#if floating}
     <div class="relative">
       <input
-        class={classNames(
-          'peer block h-12 w-full appearance-none rounded-md border border-gray-300 pl-3 pr-9 pt-1 text-gray-900 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
-          className
+        class={clsx(
+          'peer block h-12 w-full appearance-none rounded-md border border-gray-400 pl-3 pr-9 pt-1 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
+          className,
         )}
         type="text"
         placeholder=" "
@@ -201,9 +204,9 @@
         {:else}
           {#each filteredOptions as name, index}
             <button
-              class={classNames(
+              class={clsx(
                 'w-full px-6 py-2 text-left transition-colors duration-300',
-                index === selectedOptionIndex && 'bg-gray-100'
+                index === selectedOptionIndex && 'bg-gray-100',
               )}
               type="button"
               on:click={() => {
@@ -223,7 +226,9 @@
   {:else}
     <label for={id}>
       <span>
-        {placeholder}<span class={classNames('text-red-500', !required && 'hidden')}>*</span>
+        {placeholder}<span class={clsx('text-red-500', !required && 'hidden')}
+          >*</span
+        >
       </span>
     </label>
     <div class="relative">
@@ -254,9 +259,9 @@
         </button>
       </div>
       <input
-        class={classNames(
-          'mt-1 block h-12 w-full appearance-none rounded-md border border-gray-300 pl-3 pr-9 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
-          className
+        class={clsx(
+          'mt-1 block h-12 w-full appearance-none rounded-md border border-gray-400 pl-3 pr-9 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+          className,
         )}
         type="text"
         data-1p-ignore
@@ -291,9 +296,9 @@
           {:else}
             {#each filteredOptions as name, index}
               <button
-                class={classNames(
+                class={clsx(
                   'w-full px-6 py-2 text-left transition-colors duration-300',
-                  index === selectedOptionIndex && 'bg-gray-100'
+                  index === selectedOptionIndex && 'bg-gray-100',
                 )}
                 type="button"
                 on:click={() => {

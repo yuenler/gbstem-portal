@@ -1,6 +1,6 @@
 <script>
-  import { classNames } from '$lib/utils'
-  import { uniqueId, kebabCase, isUndefined } from 'lodash-es'
+  import clsx from 'clsx'
+  import { uniqueId, kebabCase } from 'lodash-es'
   import { fade } from 'svelte/transition'
 
   let className = ''
@@ -35,13 +35,15 @@
 <div class="relative mt-2">
   <label for={id}>
     <span>
-      {placeholder}<span class={classNames('text-red-500', !required && 'hidden')}>*</span>
+      {placeholder}<span class={clsx('text-red-500', !required && 'hidden')}
+        >*</span
+      >
     </span>
   </label>
   <textarea
-    class={classNames(
-      'mt-2 block h-min w-full appearance-none rounded-md border border-gray-300 p-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
-      className
+    class={clsx(
+      'mt-2 block h-min w-full appearance-none rounded-md border border-gray-400 p-3 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+      className,
     )}
     style={`min-height:${calcHeight}rem;height:${calcHeight}rem`}
     bind:this={self}

@@ -1,59 +1,67 @@
-<script>
+<script lang="ts">
   import Input from '$lib/components/Input.svelte'
-  import { classNames } from '$lib/utils'
-  import { user } from '$lib/firebase'
+  import clsx from 'clsx'
   import { alert } from '$lib/stores'
   import { verifyBeforeUpdateEmail } from 'firebase/auth'
   import Modal from '$lib/components/Modal.svelte'
-  import ReauthenticateForm from '$lib/forms/ReauthenticateForm.svelte'
+  import ReauthenticateForm from '$lib/components/forms/ReauthenticateForm.svelte'
   import Form from '$lib/components/Form.svelte'
+  import { user } from '$lib/client/firebase'
 
-  let modalEl
+  let className = ''
+  export { className as class }
+
+  let modalEl: Modal
   let disabled = false
   let showValidation = false
   let values = {
-    newEmail: ''
+    newEmail: '',
   }
-  function handleSubmit(e) {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if (e.detail.error === null) {
       showValidation = false
       disabled = true
       modalEl.open()
+    } else {
+      showValidation = true
+      alert.trigger('error', e.detail.error)
     }
   }
   function handleCancel() {
     disabled = false
     values = {
-      newEmail: ''
+      newEmail: '',
     }
     alert.trigger('info', 'Email change canceled.')
   }
   function handleReauthenticate() {
-    modalEl.close()
-    verifyBeforeUpdateEmail($user, values.newEmail)
-      .then(() => {
-        disabled = false
-        values = {
-          newEmail: ''
-        }
-        alert.trigger('info', 'A verification email was sent.')
-      })
-      .catch(err => {
-        disabled = false
-        alert.trigger('error', err.code, true)
-      })
+    if ($user) {
+      modalEl.close()
+      verifyBeforeUpdateEmail($user.object, values.newEmail)
+        .then(() => {
+          disabled = false
+          values = {
+            newEmail: '',
+          }
+          alert.trigger('info', 'A verification email was sent.')
+        })
+        .catch((err) => {
+          disabled = false
+          alert.trigger('error', err.code, true)
+        })
+    }
   }
 </script>
 
-<Form class={classNames('max-w-lg', showValidation && 'show-validation')} on:submit={handleSubmit}>
+<Form
+  class={clsx(showValidation && 'show-validation', className)}
+  on:submit={handleSubmit}
+>
   <fieldset {disabled}>
     <span class="font-bold">Change email</span>
     <Input
       type="email"
-      value={$user ? $user.email : ''}
+      value={$user && $user.object.email ? $user.object.email : ''}
       placeholder="Current email"
       floating
       readonly

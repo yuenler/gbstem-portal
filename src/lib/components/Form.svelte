@@ -1,36 +1,29 @@
-<script>
-  import { classNames } from '$lib/utils'
-  import { isUndefined } from 'lodash-es'
+<script lang="ts">
+  import clsx from 'clsx'
   import { createEventDispatcher } from 'svelte'
 
-  export let className = ''
+  export let className: string
   export { className as class }
 
-  const dispatch = createEventDispatcher()
-  let self
+  const dispatch = createEventDispatcher<{
+    submit: SubmitData
+  }>()
+  let self: HTMLFormElement
 
-  function handleSubmit(e) {
+  function handleSubmit(e: SubmitEvent) {
     const state = [
       ...Array.from(self.querySelectorAll('input')),
-      ...Array.from(self.querySelectorAll('textarea'))
-    ].find(el => !el.checkValidity())
+      ...Array.from(self.querySelectorAll('textarea')),
+    ].find((el) => !el.checkValidity())
     dispatch('submit', {
-      submit: e,
-      error: isUndefined(state)
-        ? {
-            state: false,
-            message: ''
-          }
-        : {
-            state: true,
-            message: state.validationMessage
-          }
+      event: e,
+      error: state === undefined ? null : state.validationMessage,
     })
   }
 </script>
 
 <form
-  class={classNames('w-full', className)}
+  class={clsx('w-full', className)}
   novalidate
   bind:this={self}
   on:submit|preventDefault={handleSubmit}

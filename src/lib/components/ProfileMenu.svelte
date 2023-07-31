@@ -1,24 +1,33 @@
-<script>
+<script lang="ts">
+  import clsx from 'clsx'
   import { fade } from 'svelte/transition'
-  import { classNames, clickOutside } from '$lib/utils'
-  import { auth } from '$lib/firebase'
+  import { clickOutside } from '$lib/utils'
   import { navigating } from '$app/stores'
+  import { signOut } from 'firebase/auth'
+  import { auth } from '$lib/client/firebase'
   import { goto } from '$app/navigation'
 
-  let open = false
   let className = ''
   export { className as class }
+
+  let open = false
   $: if ($navigating) {
     open = false
   }
-  async function handleSignOut() {
-    await auth.signOut()
-    goto('/signin')
+  function handleSignOut() {
+    fetch('/api/auth', {
+      method: 'DELETE',
+    })
+      .then(() => {
+        signOut(auth)
+        goto('/signin')
+      })
+      .catch((err) => console.log('Sign Out Error:', err))
   }
 </script>
 
 <div
-  class={classNames('relative md:flex md:items-center', className)}
+  class={clsx('relative md:flex md:items-center', className)}
   use:clickOutside
   on:outclick={() => {
     open = false

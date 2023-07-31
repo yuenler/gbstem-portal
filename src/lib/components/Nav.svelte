@@ -1,38 +1,34 @@
-<script>
+<script lang="ts">
   import ProfileMenu from './ProfileMenu.svelte'
-  import { classNames } from '$lib/utils'
+  import clsx from 'clsx'
   import { page } from '$app/stores'
   import { onMount } from 'svelte'
   import Brand from './Brand.svelte'
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
-  import { user } from '$lib/firebase'
   import AnnouncementsBell from './AnnouncementsBell.svelte'
+  import type { UserPeek } from '$lib/client/firebase'
+
+  export let user: UserPeek
 
   onMount(() => {
     updateShadow()
   })
-
   let shadow = false
   let open = false
   $: pathname = $page.url.pathname
   $: if ($navigating) {
     open = false
   }
-  $: emailVerified = $user?.emailVerified
   const pages = [
     {
       name: 'Dashboard',
-      href: '/dashboard'
+      href: '/dashboard',
     },
     {
       name: 'Apply',
-      href: '/apply'
+      href: '/apply',
     },
-    {
-      name: 'Group',
-      href: '/group'
-    }
   ]
   function updateShadow() {
     shadow = window.scrollY !== 0
@@ -41,20 +37,20 @@
 
 <svelte:window on:scroll={updateShadow} />
 <nav
-  class={classNames(
-    'px-dynamic fixed left-0 top-0 z-50 flex h-20 w-full items-center justify-between border-b bg-white transition-all',
-    shadow && !open ? 'shadow-b border-gray-200' : 'border-white'
+  class={clsx(
+    'px-d fixed left-0 top-0 z-50 flex h-20 w-full items-center justify-between border-b bg-white transition-all',
+    shadow && !open ? 'shadow-b border-gray-200' : 'border-white',
   )}
 >
   <div class="flex items-center gap-8">
     <Brand />
-    {#if emailVerified}
+    {#if user.emailVerified}
       <div class="hidden items-center gap-3 md:flex">
         {#each pages as page}
           <a
-            class={classNames(
-              'rounded-md px-3 py-2 transition-colors',
-              pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
+            class={clsx(
+              'rounded-md px-4 py-2 transition-colors',
+              pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
             )}
             href={page.href}
           >
@@ -65,7 +61,7 @@
     {/if}
   </div>
   <div class="flex items-center gap-2">
-    {#if emailVerified}
+    {#if user.emailVerified}
       <AnnouncementsBell />
     {/if}
     <ProfileMenu class="hidden sm:block" />
@@ -85,7 +81,11 @@
           stroke="currentColor"
           class="h-8 w-8"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       {:else}
         <svg
@@ -96,7 +96,11 @@
           stroke="currentColor"
           class="h-8 w-8"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 9h16.5m-16.5 6.75h16.5"
+          />
         </svg>
       {/if}
     </button>
@@ -104,21 +108,21 @@
 </nav>
 {#if open}
   <div
-    class="p-dynamic fixed left-0 top-20 z-50 flex h-[calc(100vh-5rem)] w-screen flex-col gap-2 bg-white sm:hidden"
+    class="p-d fixed left-0 top-20 z-50 flex h-[calc(100vh-5rem)] w-screen flex-col gap-2 bg-white sm:hidden"
     transition:fade
   >
     {#each pages as page}
       <a
-        class={classNames(
+        class={clsx(
           'rounded-md px-3 py-2 transition-colors',
-          pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100'
+          pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
         )}
         href={page.href}
       >
         {page.name}
       </a>
     {/each}
-    <div class="mt-dynamic">
+    <div class="mt-d">
       <ProfileMenu />
     </div>
   </div>

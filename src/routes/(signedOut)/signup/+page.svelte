@@ -1,5 +1,9 @@
 <script>
-  import SignUpForm from '$lib/forms/SignUpForm.svelte'
+  import SignUpForm from '$lib/components/forms/SignUpForm.svelte'
 </script>
+
+<svelte:head>
+  <title>Sign up</title>
+</svelte:head>
 
 <div class="flex justify-center"><SignUpForm /></div>
