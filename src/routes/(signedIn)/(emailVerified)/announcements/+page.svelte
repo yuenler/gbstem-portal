@@ -19,6 +19,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Announcements</title>
+</svelte:head>
+
 <div class="rounded-lg bg-white p-4 shadow">
   <h2 class="mb-4 text-xl font-semibold">Announcements</h2>
   {#each announcements as announcement}

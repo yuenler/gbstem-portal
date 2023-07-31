@@ -21,6 +21,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Profile</title>
+</svelte:head>
+
 <div class="grid md:grid-cols-2">
   <h1 class="mb-8 text-5xl font-bold md:text-6xl">Profile</h1>
   <div class="flex flex-col items-center gap-6 max-w-2xl">

@@ -31,6 +31,10 @@
   })
 </script>
 
+<svelte:head>
+  <title>Dashboard</title>
+</svelte:head>
+
 <div
   class="mx-auto my-4 max-w-2xl border-2 border-blue-800 bg-blue-100 p-4 text-lg text-blue-900"
 >
