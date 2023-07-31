@@ -21,7 +21,6 @@
       signInWithEmailAndPassword(auth, values.email, values.password)
         .then((credential) => {
           credential.user.getIdToken().then((idToken) => {
-            console.log(idToken)
             fetch('/api/auth', {
               method: 'POST',
               headers: {
