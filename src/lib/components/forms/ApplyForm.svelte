@@ -5,7 +5,7 @@
     getDoc,
     setDoc,
     serverTimestamp,
-    FieldValue,
+    type FieldValue,
   } from 'firebase/firestore'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'

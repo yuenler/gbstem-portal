@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getDocs, collection, Timestamp } from 'firebase/firestore'
+  import { getDocs, collection, type Timestamp } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import { format } from 'date-fns'
   import { db } from '$lib/client/firebase'
