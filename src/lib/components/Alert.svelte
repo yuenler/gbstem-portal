@@ -14,7 +14,7 @@
   }
   onMount(() => {
     return alert.subscribe((alert) => {
-      if (alert !== null) {
+      if (alert.type !== null) {
         if (visible) {
           clearTimeout(timer)
         } else {
@@ -30,6 +30,7 @@
     }, 3000)
   }
   function close() {
+    visible = false
     clearTimeout(timer)
     timer = undefined
     alert.clear()
@@ -47,9 +48,7 @@
     type="button"
     class="h-min-content fixed bottom-3 left-1/2 -translate-x-1/2 z-50 max-w-xl w-full mx-3"
     on:click={close}
-    transition:fade={{
-      duration: 5000,
-    }}
+    transition:fade
   >
     <div
       class={clsx(
