@@ -8,6 +8,7 @@ import {
 import firebase from 'firebase-admin'
 
 try {
+  console.log(FIREBASE_PRIVATE_KEY)
   firebase.initializeApp({
     credential: firebase.credential.cert({
       projectId: FIREBASE_PROJECT_ID,
