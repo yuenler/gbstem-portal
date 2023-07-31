@@ -30,27 +30,27 @@
       alert.trigger('error', e.detail.error.message)
     } else {
       // remove later
-      const validEmails = [
-        'yuenlerchow@college.harvard.edu',
-        'lerchow@gmail.com',
-        'dseum@college.harvard.edu',
-        'dseum@gmail.com',
-        'jooeunjunelee@college.harvard.edu',
-        'nathanli@college.harvard.edu',
-        'edwardkang@college.harvard.edu',
-        'testing@hackharvard.io',
-        'dseum@college.harvard.edu',
-        'vcainamisir@college.harvard.edu',
-        'kharvey@college.harvard.edu',
-        'hzhang1@college.harvard.edu'
-      ]
-      if (!validEmails.includes(values.email)) {
-        alert.trigger(
-          'error',
-          'Account creation temporarily restricted to HackHarvard board members.'
-        )
-        return
-      }
+      // const validEmails = [
+      //   'yuenlerchow@college.harvard.edu',
+      //   'lerchow@gmail.com',
+      //   'dseum@college.harvard.edu',
+      //   'dseum@gmail.com',
+      //   'jooeunjunelee@college.harvard.edu',
+      //   'nathanli@college.harvard.edu',
+      //   'edwardkang@college.harvard.edu',
+      //   'testing@hackharvard.io',
+      //   'dseum@college.harvard.edu',
+      //   'vcainamisir@college.harvard.edu',
+      //   'kharvey@college.harvard.edu',
+      //   'hzhang1@college.harvard.edu'
+      // ]
+      // if (!validEmails.includes(values.email)) {
+      //   alert.trigger(
+      //     'error',
+      //     'Account creation temporarily restricted to HackHarvard board members.'
+      //   )
+      //   return
+      // }
 
       // actual
       showValidation = false
