@@ -74,7 +74,7 @@
     <div class="mt-2 flex">
       <input
         class={clsx(
-          'peer mt-0.5 h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-gray-300 checked:border-gray-600 checked:bg-gray-600 focus:border-gray-600 focus:outline-none disabled:cursor-default disabled:checked:border-gray-400 disabled:checked:bg-gray-400',
+          'peer mt-0.5 h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-gray-400 checked:border-gray-600 checked:bg-gray-600 focus:border-gray-600 focus:outline-none disabled:cursor-default disabled:checked:border-gray-400 disabled:checked:bg-gray-400',
           className,
         )}
         type="checkbox"
@@ -87,7 +87,7 @@
       />
       <label
         for={id}
-        class="ml-2 cursor-pointer text-gray-900 peer-disabled:cursor-default peer-disabled:text-gray-400"
+        class="ml-2 cursor-pointer peer-disabled:cursor-default peer-disabled:text-gray-400"
       >
         <span>
           {placeholder}
@@ -98,7 +98,7 @@
     <div class="mt-2 flex">
       <input
         class={clsx(
-          'peer mt-0.5 h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-gray-300 checked:border-gray-600 checked:bg-gray-600 focus:border-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-600 focus:ring-offset-1 disabled:cursor-default disabled:checked:border-gray-400 disabled:checked:bg-gray-400',
+          'peer mt-0.5 h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-gray-400 checked:border-gray-600 checked:bg-gray-600 focus:border-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-600 focus:ring-offset-1 disabled:cursor-default disabled:checked:border-gray-400 disabled:checked:bg-gray-400',
           className,
         )}
         type="checkbox"
@@ -112,7 +112,7 @@
       />
       <label
         for={id}
-        class="ml-2 cursor-pointer text-gray-900 peer-disabled:cursor-default peer-disabled:text-gray-400"
+        class="ml-2 cursor-pointer peer-disabled:cursor-default peer-disabled:text-gray-400"
       >
         <span>
           {placeholder}<span class="text-red-500">*</span>
@@ -129,7 +129,7 @@
     </label>
     <input
       class={clsx(
-        'mt-2 block h-12 w-full cursor-pointer appearance-none rounded-md border border-gray-300 text-gray-900 transition-colors file:mr-4 file:h-full file:cursor-pointer file:border-none file:bg-gray-700 file:px-4 file:text-white placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+        'mt-2 block h-12 w-full cursor-pointer appearance-none rounded-md border border-gray-400 transition-colors file:mr-4 file:h-full file:cursor-pointer file:border-none file:bg-gray-700 file:px-4 file:text-white placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         className,
       )}
       type="file"
@@ -146,7 +146,7 @@
   <div class="relative mt-2 grow">
     <input
       class={clsx(
-        'peer block h-12 w-full appearance-none rounded-md border border-gray-300 px-3 pt-1 text-gray-900 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
+        'peer block h-12 w-full appearance-none rounded-md border border-gray-400 px-3 pt-1 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
         className,
       )}
       placeholder=" "
@@ -179,7 +179,7 @@
     </label>
     <input
       class={clsx(
-        'mt-1 block h-12 w-full appearance-none rounded-md border border-gray-300 px-3 text-gray-900 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
+        'mt-1 block h-12 w-full appearance-none rounded-md border border-gray-400 px-3 transition-colors placeholder:text-gray-500 focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400 disabled:placeholder:text-gray-400',
         className,
       )}
       bind:this={self}

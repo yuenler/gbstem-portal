@@ -329,10 +329,10 @@
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-  <fieldset class="grid gap-6" {disabled}>
-    <div class="grid gap-1">
-      <span class="font-bold">Personal</span>
-      <Card class="my-2 grid gap-3">
+  <fieldset class="grid gap-14" {disabled}>
+    <div class="grid gap-4">
+      <span class="font-bold text-2xl">Personal</span>
+      <Card class="grid gap-3">
         <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
           {`Name: ${values.personal.firstName} ${values.personal.lastName}`}
         </div>
@@ -376,6 +376,7 @@
         </a>
       {/if}
       <Input
+        class="w-24"
         type="number"
         bind:value={values.personal.age}
         placeholder="How old will you be on October 20th, 2023?"
@@ -390,7 +391,7 @@
         floating
         required
       />
-      <div class="mt-2 grid gap-1">
+      <div class="grid gap-1">
         <span>Race / ethnicity (check all that apply)</span>
         <div class="grid grid-cols-2">
           {#each raceJson as race}
@@ -474,8 +475,8 @@
         </div>
       </div>
     </div>
-    <div class="grid gap-1">
-      <span class="font-bold">Academic</span>
+    <div class="grid gap-4">
+      <span class="font-bold text-2xl">Academic</span>
       <Select
         bind:value={values.academic.levelOfStudy}
         placeholder="What is your current education level?"
@@ -523,8 +524,8 @@
         your profile uses your Harvard email."
       />
     </div>
-    <div class="grid gap-1">
-      <span class="font-bold">Hackathon</span>
+    <div class="grid gap-4">
+      <span class="font-bold text-2xl">Hackathon</span>
       <div class="grid grid-cols-2 sm:grid-cols-3">
         <Select
           bind:value={values.hackathon.shirtSize}
@@ -559,9 +560,9 @@
         required
       />
     </div>
-    <div class="grid gap-1">
-      <span class="font-bold">Open response</span>
-      <div class="mt-2 grid gap-1">
+    <div class="grid gap-4">
+      <span class="font-bold text-2xl">Open response</span>
+      <div class="grid gap-1">
         <span>
           What roles best fit your capabilities on a hackathon team?<span
             class="text-red-500"
@@ -569,7 +570,7 @@
             *
           </span>
         </span>
-        <div class="grid grid-cols-2">
+        <div class="grid grid-cols-2 gap-2">
           {#each rolesJson as role}
             <Input
               type="checkbox"
@@ -579,21 +580,19 @@
           {/each}
         </div>
       </div>
-      <div class="mt-2">
-        <Textarea
-          bind:value={values.openResponse.otherRole}
-          placeholder="If other, what other roles could you see yourself playing?"
-          required={values.openResponse.roles.includes('other')}
-          rows={1}
-          maxlength={200}
-        />
-      </div>
-      <div class="mt-2 grid gap-1">
+      <Textarea
+        bind:value={values.openResponse.otherRole}
+        placeholder="If other, what other roles could you see yourself playing?"
+        required={values.openResponse.roles.includes('other')}
+        rows={1}
+        maxlength={200}
+      />
+      <div class="grid gap-1">
         <span>
           Check up to 5 of the programming languages that you feel most
           comfortable in.<span class="text-red-500"> * </span>
         </span>
-        <div class="grid grid-cols-2">
+        <div class="grid grid-cols-2 gap-2">
           {#each prolangsJson as prolang}
             <Input
               type="checkbox"
@@ -609,15 +608,15 @@
             />
           {/each}
         </div>
-      </div>
-      <div>
-        <Textarea
-          bind:value={values.openResponse.otherProlang}
-          placeholder="If other, what other programming languages?"
-          required={values.openResponse.prolangs.includes('other')}
-          rows={1}
-          maxlength={200}
-        />
+        {#if values.openResponse.prolangs.includes('other')}
+          <Textarea
+            bind:value={values.openResponse.otherProlang}
+            placeholder="If other, what other programming languages?"
+            required
+            rows={1}
+            maxlength={200}
+          />
+        {/if}
       </div>
       <Select
         bind:value={values.openResponse.experience}
@@ -625,30 +624,24 @@
         options={experienceJson}
         required
       />
-      <div class="mt-2">
-        <Textarea
-          bind:value={values.openResponse.whyHh}
-          placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve?`}
-          required
-          maxlength={500}
-        />
-      </div>
-      <div class="mt-2">
-        <Textarea
-          bind:value={values.openResponse.project}
-          placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached?`}
-          required
-          maxlength={500}
-        />
-      </div>
-      <div class="mt-2">
-        <Textarea
-          bind:value={values.openResponse.predictions}
-          placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us!`}
-          required
-          maxlength={500}
-        />
-      </div>
+      <Textarea
+        bind:value={values.openResponse.whyHh}
+        placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve?`}
+        required
+        maxlength={500}
+      />
+      <Textarea
+        bind:value={values.openResponse.project}
+        placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached?`}
+        required
+        maxlength={500}
+      />
+      <Textarea
+        bind:value={values.openResponse.predictions}
+        placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us!`}
+        required
+        maxlength={500}
+      />
       {#if values.openResponse.resume.url === ''}
         <div class="mt-2">
           <Input
@@ -667,33 +660,31 @@
         placeholder="If you are accepted to HackHarvard 2023, would you like us to share your resume with our sponsors for potential recruitment opportunities?"
       />
     </div>
-    <div class="grid gap-1">
-      <span class="font-bold">Agreements</span>
-      <div class="grid">
-        <Input
-          type="checkbox"
-          bind:value={values.agreements.codeOfConduct}
-          placeholder="I have read and agree to the MLH Code of Conduct (https://static.mlh.io/docs/mlh-code-of-conduct.pdf)."
-          required
-        />
-        <Input
-          type="checkbox"
-          bind:value={values.agreements.sharing}
-          placeholder="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy (https://mlh.io/privacy). I further agree to the terms of both the MLH Contest Terms and Conditions (https://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy)"
-          required
-        />
-        <Input
-          type="checkbox"
-          bind:value={values.agreements.mlhEmails}
-          placeholder="I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements."
-        />
-        <Input
-          type="checkbox"
-          bind:value={values.agreements.submitting}
-          placeholder="I understand submitting means I can no longer make changes to my application. Don't check this box until you are sure that you are ready to submit."
-          required
-        />
-      </div>
+    <div class="grid gap-4">
+      <span class="font-bold text-2xl">Agreements</span>
+      <Input
+        type="checkbox"
+        bind:value={values.agreements.codeOfConduct}
+        placeholder="I have read and agree to the MLH Code of Conduct (https://static.mlh.io/docs/mlh-code-of-conduct.pdf)."
+        required
+      />
+      <Input
+        type="checkbox"
+        bind:value={values.agreements.sharing}
+        placeholder="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy (https://mlh.io/privacy). I further agree to the terms of both the MLH Contest Terms and Conditions (https://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy)"
+        required
+      />
+      <Input
+        type="checkbox"
+        bind:value={values.agreements.mlhEmails}
+        placeholder="I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements."
+      />
+      <Input
+        type="checkbox"
+        bind:value={values.agreements.submitting}
+        placeholder="I understand submitting means I can no longer make changes to my application. Don't check this box until you are sure that you are ready to submit."
+        required
+      />
     </div>
     <div class={clsx('grid gap-3', !values.meta.submitted && 'grid-cols-2')}>
       {#if values.meta.submitted}
@@ -706,7 +697,7 @@
         <button
           type="button"
           on:click={() => handleSave(true)}
-          class="rounded-md bg-gray-100 px-4 py-2 text-gray-900 shadow-sm transition-colors duration-300 hover:bg-gray-200 disabled:bg-gray-200 disabled:text-gray-500"
+          class="rounded-md bg-gray-100 px-4 py-2 shadow-sm transition-colors duration-300 hover:bg-gray-200 disabled:bg-gray-200 disabled:text-gray-500"
         >
           Save draft
         </button>

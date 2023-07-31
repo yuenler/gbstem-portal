@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply scroll-smooth bg-white font-sans antialiased;
+    @apply scroll-smooth bg-white font-sans text-black antialiased;
   }
 }
 

@@ -45,7 +45,7 @@
 {#if visible}
   <button
     type="button"
-    class="h-min-content fixed bottom-3 left-1/2 -translate-x-1/2 z-50 max-w-lg w-full mx-3"
+    class="h-min-content fixed bottom-3 left-1/2 -translate-x-1/2 z-50 max-w-xl w-full mx-3"
     transition:fade
     on:click={close}
   >

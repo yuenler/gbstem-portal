@@ -49,7 +49,7 @@
         {#each pages as page}
           <a
             class={clsx(
-              'rounded-md px-3 py-2 transition-colors',
+              'rounded-md px-4 py-2 transition-colors',
               pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
             )}
             href={page.href}
