@@ -17,10 +17,6 @@ npm run dev -- --open
 git checkout -B branch_name
 ```
 
-The `branch_name` should be concise but descriptive. E.g., if making a page for profile settings, a branch name can be `profile_settings`.
+The `branch_name` should be concise but descriptive. E.g., if making a page for profile settings, a possible branch name is `profile_settings`.
 
-After completing the objective of the branch, create a pull request on GitHub. Never commit directly to the main branch. Also, no need to merge unless you are used to working on a team with various branches and have merged with complex conflicts before.
-
-## Ignore
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+After finishing a feature, create a pull request. Never commit directly to the main branch.
