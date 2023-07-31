@@ -7,7 +7,6 @@
     serverTimestamp,
     FieldValue,
   } from 'firebase/firestore'
-  import { db, user, storage } from '$lib/firebase'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import Textarea from '$lib/components/Textarea.svelte'
@@ -29,15 +28,16 @@
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
   import Card from '$lib/components/Card.svelte'
-  // import { templates } from '$lib/mail'
   import Form from '$lib/components/Form.svelte'
+  import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+  import { db, storage, user } from '$lib/client/firebase'
 
-  type ResumeFile = {
+  type ResumeData = {
     url: string
     name: string
   }
 
-  type Application = {
+  type ApplicationData = {
     personal: {
       email: string
       firstName: string
@@ -79,7 +79,7 @@
       whyHh: string
       project: string
       predictions: string
-      resume: ResumeFile
+      resume: ResumeData
       resumeShare: boolean
     }
     agreements: {
@@ -106,7 +106,7 @@
 
   let disabled = true
   let showValidation = false
-  let values: Application = {
+  let values: ApplicationData = {
     personal: {
       email: '',
       firstName: '',
@@ -175,59 +175,47 @@
       updated: serverTimestamp(),
     },
   }
-  let resumeFile: ResumeFile = {
-    url: '',
-    name: '',
-  }
+  let resumeFile: File
   let saveInterval: number
-  onMount(async () => {
-    const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
-    const exists = applicationDoc.exists()
-    if (exists) {
-      // comment this out when changing what data the application uses
-      // i.e., structure of values
-      values = {
-        ...values,
-        ...applicationDoc.data(),
+  onMount(() => {
+    return user.subscribe((user) => {
+      if (user) {
+        getDoc(doc(db, 'applications', user.object.uid)).then(
+          async (applicationDoc) => {
+            const applicationExists = applicationDoc.exists()
+            if (applicationExists) {
+              const applicationData = applicationDoc.data() as ApplicationData
+              values = applicationData
+              if (
+                !values.meta.submitted &&
+                (values.personal.email !== user.object.email ||
+                  values.personal.firstName !== user.profile.firstName ||
+                  values.personal.lastName !== user.profile.lastName)
+              ) {
+                values.personal.email = user.object.email as string
+                values.personal.firstName = user.profile.firstName
+                values.personal.lastName = user.profile.lastName
+              }
+            } else {
+              values.meta.uid = user.object.uid
+              values.meta.hhid = user.profile.hhid
+              values.personal.email = user.object.email as string
+              values.personal.firstName = user.profile.firstName
+              values.personal.lastName = user.profile.lastName
+              handleSave()
+            }
+            if (!values.meta.submitted) {
+              disabled = false
+              saveInterval = window.setInterval(() => {
+                handleSave()
+              }, 300000)
+            }
+          },
+        )
       }
-    }
-    if (!values.meta.submitted) {
-      const profileDoc = await getDoc(doc($db, 'users', $user.uid))
-      const profileDocData = profileDoc.data()
-      const temp = {
-        email: values.personal.email,
-        firstName: values.personal.firstName,
-        lastName: values.personal.lastName,
-      }
-      values.personal.email = $user.email
-      if (profileDocData) {
-        values.personal.firstName = profileDocData.firstName
-        values.personal.lastName = profileDocData.lastName
-        values.meta.hhid = profileDocData.hhid
-      }
-      values.meta.uid = $user.uid
-      if (exists) {
-        if (
-          temp.email !== values.personal.email ||
-          temp.firstName !== values.personal.firstName ||
-          temp.lastName !== values.personal.lastName
-        ) {
-          handleSave(false)
-        }
-      } else {
-        await handleSave(false)
-        const applicationDoc = await getDoc(doc($db, 'applications', $user.uid))
-        values = {
-          ...values,
-          ...applicationDoc.data(),
-        }
-      }
-      disabled = false
-      saveInterval = window.setInterval(() => {
-        handleSave(false)
-      }, 300000)
-    }
+    })
   })
+
   onDestroy(() => {
     clearInterval(saveInterval)
   })
@@ -240,75 +228,94 @@
       },
     }
   }
-  function handleSave(withDisabling: boolean): Promise<void> {
+  function handleSave(disable: boolean = false) {
     showValidation = false
-    if (withDisabling) {
+    if (disable) {
       disabled = true
     }
-    return new Promise((resolve, reject) => {
-      setDoc(doc($db, 'applications', $user.uid), modifiedValues())
-        .then(() => {
-          if (withDisabling) {
-            disabled = false
-          }
-          alert.trigger('success', 'Your application was saved.')
-          resolve()
-        })
-        .catch((err) => {
-          if (withDisabling) {
-            disabled = false
-          }
-          alert.trigger('error', err.code, true)
-          reject()
-        })
+    return new Promise<void>((resolve, reject) => {
+      if ($user) {
+        setDoc(doc(db, 'applications', $user.object.uid), modifiedValues())
+          .then(() => {
+            if (disable) {
+              disabled = false
+            }
+            alert.trigger('success', 'Your application was saved.')
+            resolve()
+          })
+          .catch((err) => {
+            if (disable) {
+              disabled = false
+            }
+            alert.trigger('error', err.code, true)
+            reject()
+          })
+      }
     })
   }
-  async function handleSubmit(e: CustomEvent<any>) {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
-      showValidation = false
-      disabled = true
-      storage
-        .uploadFile(resumeFile, `resumes/${$user.uid}.pdf`)
-        .then((downloadURL) => {
-          values.openResponse.resume = {
-            url: downloadURL,
-            name: resumeFile.name,
-          }
-          clearInterval(saveInterval)
-          values.meta.submitted = true
-          setDoc(doc($db, 'applications', $user.uid), modifiedValues())
-            .then(async () => {
-              alert.trigger('success', 'Your application has been submitted!')
-              const applicationDoc = await getDoc(
-                doc($db, 'applications', $user.uid),
-              )
-              values = {
-                ...values,
-                ...applicationDoc.data(),
-              }
-              window.scrollTo({
-                top: 0,
-                behavior: 'smooth',
+  function uploadFile(file: File, filePath: string) {
+    const fileRef = ref(storage, filePath)
+    return new Promise((resolve, reject) =>
+      uploadBytes(fileRef, file)
+        .then(() => {
+          getDownloadURL(fileRef).then((url) => {
+            resolve(url)
+          })
+        })
+        .catch(reject),
+    )
+  }
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if ($user) {
+      const frozenUser = $user
+      if (e.detail.error === null) {
+        showValidation = false
+        disabled = true
+        uploadFile(resumeFile, `resumes/${frozenUser.object.uid}.pdf`)
+          .then((downloadURL) => {
+            values.openResponse.resume = {
+              url: downloadURL as string,
+              name: resumeFile.name,
+            }
+            clearInterval(saveInterval)
+            values.meta.submitted = true
+            setDoc(
+              doc(db, 'applications', frozenUser.object.uid),
+              modifiedValues(),
+            )
+              .then(() => {
+                alert.trigger('success', 'Your application has been submitted!')
+                getDoc(doc(db, 'applications', frozenUser.object.uid)).then(
+                  (applicationDoc) => {
+                    values = {
+                      ...values,
+                      ...applicationDoc.data(),
+                    }
+                    window.scrollTo({
+                      top: 0,
+                      behavior: 'smooth',
+                    })
+                    handleEmail()
+                  },
+                )
               })
-              handleEmail()
-            })
-            .catch((err) => {
-              disabled = false
-              alert.trigger('error', err.code, true)
-            })
-        })
-        .catch(() => {
-          disabled = false
-          alert.trigger('error', 'Error uploading resume. Please try again.')
-        })
+              .catch((err) => {
+                disabled = false
+                alert.trigger('error', err.code, true)
+              })
+          })
+          .catch(() => {
+            disabled = false
+            alert.trigger('error', 'Error uploading resume. Please try again.')
+          })
+      } else {
+        showValidation = true
+        alert.trigger('error', e.detail.error)
+      }
     }
   }
-
   function handleEmail() {
-    // return addDoc(collection($db, 'mail'), {
+    // return addDoc(collection(db, 'mail'), {
     //   to: [values.personal.email],
     //   message: templates.applicationSubmitted({
     //     firstName: values.personal.firstName,
@@ -319,7 +326,7 @@
 </script>
 
 <Form
-  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
   <fieldset class="grid gap-6" {disabled}>
@@ -592,10 +599,10 @@
               type="checkbox"
               bind:value={values.openResponse.prolangs}
               placeholder={prolang.name}
-              validation={[
+              validations={[
                 [
-                  values.openResponse.prolangs.length <= 5,
-                  'Check up to 5 programming languages.',
+                  values.openResponse.prolangs.length > 5,
+                  'Check up to 5 programming languages only.',
                 ],
               ]}
               required

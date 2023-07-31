@@ -1,36 +1,35 @@
-<script>
+<script lang="ts">
   import Input from '$lib/components/Input.svelte'
   import clsx from 'clsx'
-  import { auth, user } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
   import { sendPasswordResetEmail } from 'firebase/auth'
-  import { onMount } from 'svelte'
   import { goto } from '$app/navigation'
   import Form from '$lib/components/Form.svelte'
+  import { auth, user } from '$lib/client/firebase'
+  import { onMount } from 'svelte'
 
   let disabled = false
   let showValidation = false
   let values = {
     email: '',
   }
-  let currentUser
-  let isSignedIn
-  onMount(async () => {
-    currentUser = await user.get()
-    isSignedIn = await user.isSignedIn()
-    if (isSignedIn) {
-      fields.default.email.value = currentUser.email
-    }
+  let signedIn: boolean
+  onMount(() => {
+    return user.subscribe((user) => {
+      if (user) {
+        signedIn = true
+        values.email = user.object.email as string
+      } else if ($user === null) {
+        signedIn = false
+      }
+    })
   })
-  function handleSubmit() {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if (e.detail.error === null) {
       showValidation = false
       disabled = true
-      sendPasswordResetEmail($auth, values.email)
+      sendPasswordResetEmail(auth, values.email)
         .then(() => {
           alert.trigger(
             'info',
@@ -42,6 +41,9 @@
           disabled = false
           alert.trigger('error', err.code, true)
         })
+    } else {
+      showValidation = true
+      alert.trigger('error', e.detail.error)
     }
   }
 </script>
@@ -63,10 +65,10 @@
     <div
       class={clsx(
         'mt-2 flex items-center',
-        isSignedIn ? 'justify-end' : 'justify-between',
+        signedIn ? 'justify-end' : 'justify-between',
       )}
     >
-      {#if !isSignedIn}
+      {#if !signedIn}
         <span>
           <a class="link" href="/signup">Sign up</a> or
           <a class="link" href="/signin">sign in</a>.

@@ -1,56 +1,60 @@
-<script>
+<script lang="ts">
   import { alert } from '$lib/stores'
   import clsx from 'clsx'
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
+  import { onMount } from 'svelte'
 
-  let timer
-  $: bgColor =
-    $alert.type === ''
-      ? ''
-      : {
-          success: 'bg-green-200',
-          info: 'bg-gray-200',
-          error: 'bg-red-200',
-        }[$alert.type]
-  $: if ($navigating && timer) {
-    closeAlert()
-  }
-  $: if ($alert.type !== '' && !timer) {
-    timer = window.setTimeout(() => {
-      closeAlert()
-    }, 3000)
-  }
-  function closeAlert() {
-    clearTimeout(timer)
-    timer = undefined
-    alert.reset()
-  }
-  function handleClick() {
-    if (timer) {
-      closeAlert()
+  let timer: number | undefined
+  let visible = false
+  $: if ($navigating) {
+    if (visible) {
+      close()
     }
   }
-  function handleKeyDown(e) {
-    if (timer && e.code === 'Escape') {
-      closeAlert()
+  onMount(() => {
+    return alert.subscribe((alert) => {
+      if (alert !== null) {
+        if (visible) {
+          clearTimeout(timer)
+        } else {
+          visible = true
+        }
+        setCloseTimeout()
+      }
+    })
+  })
+  function setCloseTimeout() {
+    timer = window.setTimeout(() => {
+      close()
+    }, 3000)
+  }
+  function close() {
+    clearTimeout(timer)
+    timer = undefined
+    alert.clear()
+  }
+  function handleEscape(e: KeyboardEvent) {
+    if (e.code === 'Escape') {
+      close()
     }
   }
 </script>
 
-<svelte:body on:keydown={handleKeyDown} />
-
-{#if $alert.type !== ''}
-  <div
-    class="h-min-content fixed bottom-0 left-0 z-50 flex w-screen justify-center"
+<svelte:document on:keydown={visible ? handleEscape : undefined} />
+{#if visible}
+  <button
+    type="button"
+    class="h-min-content fixed bottom-3 left-1/2 -translate-x-1/2 z-50 max-w-lg w-full mx-3"
     transition:fade
-    on:click={handleClick}
-    on:keydown={handleKeyDown}
+    on:click={close}
   >
     <div
       class={clsx(
-        'mx-3 mb-3 flex w-full max-w-lg items-center gap-2 rounded-md p-3 shadow',
-        bgColor,
+        'flex w-full items-center gap-2 rounded-md p-3 shadow',
+        $alert.type === 'success' && 'bg-green-200',
+        $alert.type === 'info' && 'bg-gray-200',
+        $alert.type === 'error' && 'bg-red-200',
       )}
     >
       {#if $alert.type === 'success'}
@@ -99,7 +103,7 @@
           />
         </svg>
       {/if}
-      <div class="grow">{$alert.message}</div>
+      <div class="grow text-left">{$alert.message}</div>
     </div>
-  </div>
+  </button>
 {/if}

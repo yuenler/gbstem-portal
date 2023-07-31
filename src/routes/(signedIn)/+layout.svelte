@@ -1,23 +1,9 @@
-<script>
+<script lang="ts">
   import Nav from '$lib/components/Nav.svelte'
-  import { user } from '$lib/firebase'
-  import { onMount } from 'svelte'
+  import type { LayoutData } from './$types'
 
-  $: if (!($user?.emailVerified ?? true)) {
-    sessionStorage.setItem('emailVerified', 'false')
-  }
-  onMount(async () => {
-    if (
-      sessionStorage.getItem('emailVerified') === 'false' &&
-      $user.emailVerified
-    ) {
-      const { getIdToken } = await import('firebase/auth')
-      getIdToken($user, true).then(() => {
-        sessionStorage.removeItem('emailVerified')
-      })
-    }
-  })
+  export let data: LayoutData
 </script>
 
-<Nav />
+<Nav user={data.user} />
 <slot />

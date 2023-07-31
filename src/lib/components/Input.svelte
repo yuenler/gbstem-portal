@@ -1,57 +1,48 @@
-<script>
+<script lang="ts">
   import clsx from 'clsx'
-  import {
-    uniqueId,
-    kebabCase,
-    isUndefined,
-    isArray,
-    isBoolean,
-  } from 'lodash-es'
+  import { uniqueId, kebabCase, isArray, isBoolean } from 'lodash-es'
 
   let className = ''
   export { className as class }
 
-  export let self = undefined
+  export let self: HTMLInputElement | undefined = undefined
   export let id = uniqueId('input-')
   export let type = 'text'
-  export let value
+  export let value: string | number | boolean | Array<string> | File
   export let placeholder = ''
   export let name = kebabCase(placeholder)
   export let required = false
   export let floating = false
-  export let validation = []
+  export let validations: Array<Validation> = []
   export let focus = false
 
   // if file input
-  export let accept = undefined
+  export let accept: Array<string> | undefined = undefined
   export let maxSize = 0
-  $: if (self) {
-    if (focus) {
-      self.focus()
-    }
+  $: if (self && focus) {
+    self.focus()
   }
   $: {
     if (self) {
-      const state = [
+      const state = (
         [
-          !(
+          [
             required &&
-            (value === '' ||
-              (self.files instanceof FileList && self.files.length === 0) ||
-              (type === 'checkbox' && isArray(value) && value.length === 0))
-          ),
-          'Please fill required fields.',
-        ],
-        ...(type === 'file'
-          ? [[!(value?.size > maxSize), 'File exceeds maximum size.']]
-          : []),
-        ...validation,
-      ].find((state) => !state[0])
-      self.setCustomValidity(isUndefined(state) ? '' : state[1])
+              (value === '' ||
+                (self.files instanceof FileList && self.files.length === 0) ||
+                (type === 'checkbox' && isArray(value) && value.length === 0)),
+            'Please fill required fields.',
+          ],
+          ...(type === 'file' && value !== undefined
+            ? [[(value as File).size > maxSize, 'File exceeds maximum size.']]
+            : []),
+          ...validations,
+        ] as Array<Validation>
+      ).find((validation) => validation[0])
+      self.setCustomValidity(state === undefined ? '' : state[1])
     }
   }
-
-  function handleInput(e) {
+  function handleInput(e: any) {
     if (e.target instanceof HTMLInputElement) {
       if (type === 'checkbox') {
         if (isArray(value)) {
@@ -142,7 +133,7 @@
         className,
       )}
       type="file"
-      accept={isUndefined(accept) ? '' : accept.join(',')}
+      accept={accept === undefined ? undefined : accept.join(',')}
       bind:this={self}
       on:input={handleInput}
       {id}

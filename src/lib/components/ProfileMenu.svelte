@@ -1,20 +1,26 @@
-<script>
+<script lang="ts">
   import clsx from 'clsx'
   import { fade } from 'svelte/transition'
   import { clickOutside } from '$lib/utils'
-  import { auth } from '$lib/firebase'
   import { navigating } from '$app/stores'
-  import { goto } from '$app/navigation'
+  import { signOut } from 'firebase/auth'
+  import { auth } from '$lib/client/firebase'
 
-  let open = false
   let className = ''
   export { className as class }
+
+  let open = false
   $: if ($navigating) {
     open = false
   }
-  async function handleSignOut() {
-    await auth.signOut()
-    goto('/signin')
+  function handleSignOut() {
+    fetch('/api/auth', {
+      method: 'DELETE',
+    })
+      .then(() => {
+        signOut(auth)
+      })
+      .catch((err) => console.log('Sign Out Error:', err))
   }
 </script>
 

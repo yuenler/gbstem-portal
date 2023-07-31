@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
   import Input from '$lib/components/Input.svelte'
   import clsx from 'clsx'
-  import { user } from '$lib/firebase'
+  import { user } from '$lib/client/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
   import {
@@ -17,24 +17,29 @@
   let values = {
     password: '',
   }
-  function handleSubmit(e) {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
-      showValidation = false
-      disabled = true
-      reauthenticateWithCredential(
-        $user,
-        EmailAuthProvider.credential($user.email, values.password),
-      )
-        .then(() => {
-          dispatch('reauthenticate', true)
-        })
-        .catch((err) => {
-          disabled = false
-          alert.trigger('error', err.code, true)
-        })
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if ($user) {
+      if (e.detail.error === null) {
+        showValidation = false
+        disabled = true
+        reauthenticateWithCredential(
+          $user.object,
+          EmailAuthProvider.credential(
+            $user.object.email as string,
+            values.password,
+          ),
+        )
+          .then(() => {
+            dispatch('reauthenticate', true)
+          })
+          .catch((err) => {
+            disabled = false
+            alert.trigger('error', err.code, true)
+          })
+      } else {
+        showValidation = true
+        alert.trigger('error', e.detail.error)
+      }
     }
   }
 </script>

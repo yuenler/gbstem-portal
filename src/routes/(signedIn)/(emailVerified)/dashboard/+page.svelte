@@ -1,17 +1,16 @@
-<script>
+<script lang="ts">
+  import { db, user } from '$lib/client/firebase'
   import Card from '$lib/components/Card.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
-  import { user, db } from '$lib/firebase'
 
   const asyncData = new Promise(async (resolve) => {
     let data = {
       application: '',
       group: {},
     }
-    const isSignedIn = await user.isSignedIn()
-    if (isSignedIn) {
-      getDoc(doc($db, 'applications', $user.uid)).then((res) => {
+    if ($user) {
+      getDoc(doc(db, 'applications', $user.object.uid)).then((res) => {
         if (res.exists()) {
           const application = res.data()
 

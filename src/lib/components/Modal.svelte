@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
   import { fade } from 'svelte/transition'
   import clsx from 'clsx'
   import { createEventDispatcher } from 'svelte'
 
-  let className
+  let className = ''
   export { className as class }
 
   const dispatch = createEventDispatcher()
@@ -27,8 +27,8 @@
       dispatch('cancel', true)
     }
   }
-  function handleKeyDown(e) {
-    if (!disabled) {
+  function handleEscape(e: KeyboardEvent) {
+    if (openState && !disabled) {
       if (e.code === 'Escape') {
         cancel()
       }
@@ -36,16 +36,18 @@
   }
 </script>
 
+<svelte:body on:keydown|stopPropagation={handleEscape} />
+
 {#if openState}
   <div
     class="fixed left-0 top-0 z-50 flex h-screen items-center first-letter:w-screen"
     transition:fade={{ duration: 150 }}
-    on:keydown|stopPropagation={handleKeyDown}
+    role="dialog"
   >
     <div class={clsx('relative h-full w-full')}>
       <div
         class={clsx(
-          'px-dynamic bg-white pb-5',
+          'px-d bg-white pb-5',
           size === 'full' && 'absolute top-0 flex h-screen w-screen flex-col',
         )}
       >

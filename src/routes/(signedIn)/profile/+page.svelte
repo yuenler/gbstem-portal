@@ -1,35 +1,30 @@
-<script>
-  import ChangeEmailForm from '$lib/forms/ChangeEmailForm.svelte'
-  import ChangePasswordForm from '$lib/forms/ChangePasswordForm.svelte'
-  import DeleteAccountForm from '../../../lib/forms/DeleteAccountForm.svelte'
+<script lang="ts">
+  import ChangeEmailForm from '$lib/components/forms/ChangeEmailForm.svelte'
+  import ChangePasswordForm from '$lib/components/forms/ChangePasswordForm.svelte'
+  import DeleteAccountForm from '$lib/components/forms/DeleteAccountForm.svelte'
   import { fade } from 'svelte/transition'
-  import { user, db } from '$lib/firebase'
   import { sendEmailVerification } from 'firebase/auth'
   import { alert } from '$lib/stores'
-  import ChangeNameForm from '$lib/forms/ChangeNameForm.svelte'
-  import { onMount } from 'svelte'
-  import { getDoc, doc } from 'firebase/firestore'
+  import ChangeNameForm from '$lib/components/forms/ChangeNameForm.svelte'
   import Card from '$lib/components/Card.svelte'
+  import type { PageData } from './$types'
+  import { user } from '$lib/client/firebase'
 
-  let hhid = ''
-  $: emailVerified = $user?.emailVerified ?? true
-  onMount(async () => {
-    getDoc(doc($db, 'users', $user.uid)).then((res) => {
-      const profile = res.data()
-      hhid = profile.hhid
-    })
-  })
-  function handleVerificationEmail() {
-    sendEmailVerification($user).then(() => {
-      alert.trigger('info', 'Verification email was sent.')
-    })
+  export let data: PageData
+
+  async function handleVerificationEmail() {
+    if ($user) {
+      sendEmailVerification($user.object).then(() => {
+        alert.trigger('info', 'Verification email was sent.')
+      })
+    }
   }
 </script>
 
 <div class="grid md:grid-cols-2">
   <h1 class="mb-8 text-5xl font-bold md:text-6xl">Profile</h1>
-  <div class="flex flex-col items-center gap-6">
-    {#if !emailVerified}
+  <div class="flex flex-col items-center gap-6 max-w-2xl">
+    {#if !data.user.emailVerified}
       <div
         class="mt-2 flex w-full max-w-lg items-center gap-2 rounded-md bg-red-200 p-3 shadow"
         transition:fade
@@ -58,9 +53,9 @@
         </div>
       </div>
     {/if}
-    <Card class="grid max-w-lg gap-3">
+    <Card class="grid gap-3">
       <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
-        {`HHID: ${hhid}`}
+        {`HHID: ${data.user.hhid}`}
       </div>
       <div class="text-sm">
         Any problems with changing your profile? Contact us.

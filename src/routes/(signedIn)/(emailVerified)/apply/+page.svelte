@@ -1,5 +1,5 @@
 <script>
-  import ApplyForm from '$lib/forms/ApplyForm.svelte'
+  import ApplyForm from '$lib/components/forms/ApplyForm.svelte'
 </script>
 
 <div class="grid md:grid-cols-3">

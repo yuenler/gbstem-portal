@@ -1,6 +1,5 @@
-<script>
+<script lang="ts">
   import clsx from 'clsx'
-  import { user, db, storage } from '$lib/firebase'
   import { alert } from '$lib/stores'
   import {
     EmailAuthProvider,
@@ -11,59 +10,67 @@
   import Form from '$lib/components/Form.svelte'
   import Brand from '$lib/components/Brand.svelte'
   import Input from '$lib/components/Input.svelte'
-  import { doc, deleteDoc, getDoc } from 'firebase/firestore'
+  import { doc, deleteDoc } from 'firebase/firestore'
   import { ref, deleteObject } from 'firebase/storage'
+  import { db, storage, user } from '$lib/client/firebase'
 
-  let modalEl
+  let className = ''
+  export { className as class }
+
+  let modalEl: Modal
   let showValidation = false
   let disabled = false
   let values = {
     password: '',
   }
 
-  function handleSubmit(e) {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if (e.detail.error === null) {
       showValidation = false
       modalEl.open()
+    } else {
+      showValidation = true
+      alert.trigger('error', e.detail.error)
     }
   }
   function handleCancel() {
     alert.trigger('info', 'Account deletion canceled.')
   }
-  async function handleReauthenticate(e) {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
-      showValidation = false
-      disabled = true
-      reauthenticateWithCredential(
-        $user,
-        EmailAuthProvider.credential($user.email, values.password),
-      )
-        .then(async () => {
-          getDoc(doc($db, 'users', $user.uid)).then(async (res) => {
-            const profile = res.data()
-            const hhid = profile.hhid
-            await storage.loaded()
-            const resumeRef = ref($storage, `resumes/${$user.uid}.pdf`)
+  async function handleReauthenticate(e: CustomEvent<SubmitData>) {
+    if ($user) {
+      const frozenUser = $user
+      if (e.detail.error === null) {
+        showValidation = false
+        disabled = true
+        reauthenticateWithCredential(
+          frozenUser.object,
+          EmailAuthProvider.credential(
+            frozenUser.object.email as string,
+            values.password,
+          ),
+        )
+          .then(async () => {
+            const hhid = frozenUser.profile.hhid
+            const resumeRef = ref(
+              storage,
+              `resumes/${frozenUser.object.uid}.pdf`,
+            )
             deleteObject(resumeRef).catch()
-            deleteDoc(doc($db, 'applications', $user.uid)).catch()
+            deleteDoc(doc(db, 'applications', frozenUser.object.uid)).catch()
             Promise.all([
-              deleteDoc(doc($db, 'hhids', hhid)),
-              deleteDoc(doc($db, 'users', $user.uid)),
+              deleteDoc(doc(db, 'hhids', hhid)),
+              deleteDoc(doc(db, 'frozenUsers', frozenUser.object.uid)),
             ])
               .then(() => {
-                deleteUser($user)
+                deleteUser(frozenUser.object)
                   .then(() => {
                     alert.trigger(
                       'success',
                       'Account was successfully deleted.',
                     )
-                    location.reload()
+                    window.setTimeout(() => {
+                      location.reload()
+                    }, 3000)
                   })
                   .catch((err) => {
                     console.log(err)
@@ -75,17 +82,20 @@
                 disabled = false
               })
           })
-        })
-        .catch((err) => {
-          disabled = false
-          alert.trigger('error', err.code, true)
-        })
+          .catch((err) => {
+            disabled = false
+            alert.trigger('error', err.code, true)
+          })
+      } else {
+        showValidation = true
+        alert.trigger('error', e.detail.error)
+      }
     }
   }
 </script>
 
 <Form
-  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  class={clsx(showValidation && 'show-validation', className)}
   on:submit={handleSubmit}
 >
   <span class="font-bold">Delete account</span>

@@ -1,12 +1,15 @@
-<script>
+<script lang="ts">
   import Input from '$lib/components/Input.svelte'
   import clsx from 'clsx'
-  import { user, db } from '$lib/firebase'
   import { alert } from '$lib/stores'
-  import { onMount } from 'svelte'
-  import { getDoc, doc, updateDoc } from 'firebase/firestore'
+  import { doc, updateDoc } from 'firebase/firestore'
   import { updateProfile } from 'firebase/auth'
   import Form from '$lib/components/Form.svelte'
+  import { db, user } from '$lib/client/firebase'
+  import { onMount } from 'svelte'
+
+  let className = ''
+  export { className as class }
 
   let disabled = true
   let showValidation = false
@@ -14,44 +17,49 @@
     firstName: '',
     lastName: '',
   }
-  onMount(async () => {
-    const userDoc = await getDoc(doc($db, 'users', $user.uid))
-    const userDocData = userDoc.data()
-    values.firstName = userDocData.firstName
-    values.lastName = userDocData.lastName
-    disabled = false
+  onMount(() => {
+    return user.subscribe((user) => {
+      if (user) {
+        values.firstName = user.profile.firstName
+        values.lastName = user.profile.lastName
+        disabled = false
+      }
+    })
   })
-  function handleSubmit(e) {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
-      showValidation = false
-      disabled = true
-      const firstName = values.firstName.trim()
-      const lastName = values.lastName.trim()
-      updateDoc(doc($db, 'users', $user.uid), {
-        firstName,
-        lastName,
-      })
-        .then(() =>
-          updateProfile($user, {
-            displayName: `${firstName} ${lastName}`,
-          }).then(() => {
-            disabled = false
-            alert.trigger('success', 'Name successfully updated.')
-          }),
-        )
-        .catch((err) => {
-          disabled = false
-          alert.trigger('error', err.code, true)
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if ($user) {
+      const frozenUser = $user
+      if (e.detail.error === null) {
+        showValidation = false
+        disabled = true
+        const firstName = values.firstName.trim()
+        const lastName = values.lastName.trim()
+        updateDoc(doc(db, 'users', frozenUser.object.uid), {
+          firstName,
+          lastName,
         })
+          .then(() =>
+            updateProfile(frozenUser.object, {
+              displayName: `${firstName} ${lastName}`,
+            }).then(() => {
+              disabled = false
+              alert.trigger('success', 'Name successfully updated.')
+            }),
+          )
+          .catch((err) => {
+            disabled = false
+            alert.trigger('error', err.code, true)
+          })
+      } else {
+        showValidation = true
+        alert.trigger('error', e.detail.error)
+      }
     }
   }
 </script>
 
 <Form
-  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  class={clsx(showValidation && 'show-validation', className)}
   on:submit={handleSubmit}
 >
   <fieldset {disabled}>

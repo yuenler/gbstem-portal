@@ -1,14 +1,19 @@
-<script>
+<script lang="ts">
   import Input from '$lib/components/Input.svelte'
   import clsx from 'clsx'
-  import { auth, user, db } from '$lib/firebase'
   import { goto } from '$app/navigation'
   import Brand from '$lib/components/Brand.svelte'
   import { alert } from '$lib/stores'
   import { doc, getDoc, setDoc } from 'firebase/firestore'
   import { customAlphabet } from 'nanoid'
   import Form from '$lib/components/Form.svelte'
-  import { deleteUser } from 'firebase/auth'
+  import {
+    createUserWithEmailAndPassword,
+    deleteUser,
+    sendEmailVerification,
+    updateProfile,
+  } from 'firebase/auth'
+  import { auth, db } from '$lib/client/firebase'
 
   let disabled = false
   let showValidation = false
@@ -24,11 +29,8 @@
     const nanoid = customAlphabet(alphabet, 7)
     return 'HH-' + nanoid()
   }
-  function handleSubmit(e) {
-    if (e.detail.error.state) {
-      showValidation = true
-      alert.trigger('error', e.detail.error.message)
-    } else {
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if (e.detail.error === null) {
       // remove later
       const validEmails = [
         'yuenlerchow@college.harvard.edu',
@@ -57,51 +59,74 @@
       disabled = true
       const firstName = values.firstName.trim()
       const lastName = values.lastName.trim()
-      auth
-        .signUp(values.email, values.password, {
-          displayName: `${firstName} ${lastName}`,
-        })
-        .then(async () => {
-          await user.loaded()
-
-          // attempt to generate hhid
-          let hhid = generateId()
-          for (let i = 0; i < 5; ++i) {
-            const res = await getDoc(doc($db, 'hhids', hhid))
-            if (res.exists()) {
-              hhid = generateId()
-              if (i == 4) {
-                hhid = ''
+      createUserWithEmailAndPassword(auth, values.email, values.password)
+        .then(({ user }) => {
+          updateProfile(user, {
+            displayName: `${firstName} ${lastName}`,
+          })
+            .then(async () => {
+              // attempt to generate hhid
+              let hhid = generateId()
+              for (let i = 0; i < 5; ++i) {
+                const res = await getDoc(doc(db, 'hhids', hhid))
+                if (res.exists()) {
+                  hhid = generateId()
+                  if (i == 4) {
+                    hhid = ''
+                  }
+                } else {
+                  break
+                }
               }
-            } else {
-              break
-            }
-          }
-          if (hhid === '') {
-            alert.trigger(
-              'error',
-              'HHID could not be generated. Contact admin and create a new account.',
-            )
-            deleteUser($user)
-          } else {
-            setDoc(doc($db, 'hhids', hhid), {})
-              .then(() => {
-                setDoc(doc($db, 'users', $user.uid), {
-                  hhid,
-                  role: 'applicant',
-                  firstName,
-                  lastName,
-                }).then(() => {
-                  goto('/')
-                })
-              })
-              .catch((err) => console.log(err))
-          }
+              if (hhid === '') {
+                alert.trigger(
+                  'error',
+                  'HHID could not be generated. Contact admin and create a new account.',
+                )
+                deleteUser(user)
+              } else {
+                setDoc(doc(db, 'hhids', hhid), {})
+                  .then(() => {
+                    setDoc(doc(db, 'users', user.uid), {
+                      hhid,
+                      role: 'applicant',
+                      firstName,
+                      lastName,
+                    }).then(() => {
+                      sendEmailVerification(user)
+                        .then(() => {
+                          user.getIdToken().then((idToken) => {
+                            fetch('/api/auth', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({ idToken }),
+                            }).catch((err) =>
+                              console.log('Sign In Error:', err),
+                            )
+                          })
+                        })
+                        .catch((err) =>
+                          alert.trigger(
+                            'error',
+                            'Please manually verify email through your profile.',
+                          ),
+                        )
+                    })
+                  })
+                  .catch((err) => console.log(err))
+              }
+            })
+            .catch((err) => console.log(err))
         })
         .catch((err) => {
           disabled = false
           alert.trigger('error', err.code, true)
         })
+    } else {
+      showValidation = true
+      alert.trigger('error', e.detail.error)
     }
   }
 </script>
@@ -139,13 +164,10 @@
     <Input
       type="password"
       bind:value={values.password}
-      placeholder="New password"
+      placeholder="Password"
       floating
       required
       autocomplete="new-password"
-      validation={[
-        [values.password === values.confirmPassword, 'Passwords do not match.'],
-      ]}
     />
     <Input
       type="password"
@@ -154,8 +176,8 @@
       floating
       required
       autocomplete="new-password"
-      validation={[
-        [values.password === values.confirmPassword, 'Passwords do not match.'],
+      validations={[
+        [values.password !== values.confirmPassword, 'Passwords do not match.'],
       ]}
     />
     <div class="mt-2 flex items-center justify-between">
