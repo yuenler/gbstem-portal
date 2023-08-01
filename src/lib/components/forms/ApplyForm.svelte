@@ -258,9 +258,8 @@
     return addDoc(collection(db, 'mail'), {
       to: [values.personal.email],
       message: {
-        subject: 'Hello from Firebase!',
-        text: 'This is the plaintext section of the email body.',
-        html: 'This is the <code>HTML</code> section of the email body.',
+        subject: 'HackHarvard Application Submitted!',
+        html: 'Congratulations! Stay updated through on the <a href="https://portal.hackharvard.io/dashboard">dashboard</a>. Our decisions will be released soon.',
       },
     })
   }
