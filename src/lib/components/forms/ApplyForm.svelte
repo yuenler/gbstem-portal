@@ -31,7 +31,8 @@
   import Form from '$lib/components/Form.svelte'
   import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
   import { db, storage, user } from '$lib/client/firebase'
-  import Disclosure from '../Disclosure.svelte'
+  import { cloneDeep, isEqual } from 'lodash-es'
+  import Disclosure from '$lib/components/Disclosure.svelte'
 
   type ResumeData = {
     url: string
@@ -107,6 +108,7 @@
 
   let disabled = true
   let showValidation = false
+  let dbValues: ApplicationData
   let values: ApplicationData = {
     personal: {
       email: '',
@@ -186,7 +188,8 @@
             const applicationExists = applicationDoc.exists()
             if (applicationExists) {
               const applicationData = applicationDoc.data() as ApplicationData
-              values = applicationData
+              values = cloneDeep(applicationData)
+              dbValues = cloneDeep(applicationData)
               if (
                 !values.meta.submitted &&
                 (values.personal.email !== user.object.email ||
@@ -290,8 +293,11 @@
                 alert.trigger('success', 'Your application has been submitted!')
                 getDoc(doc(db, 'applications', frozenUser.object.uid)).then(
                   (applicationDoc) => {
+                    const applicationData =
+                      applicationDoc.data() as ApplicationData
                     clearInterval(saveInterval)
-                    values = applicationDoc.data() as ApplicationData
+                    values = cloneDeep(applicationData)
+                    dbValues = cloneDeep(applicationData)
                     window.scrollTo({
                       top: 0,
                       behavior: 'smooth',
@@ -324,27 +330,31 @@
     //   })
     // })
   }
-
+  function handleUnload(e: BeforeUnloadEvent) {
+    if (!isEqual(dbValues, values)) {
+      e.preventDefault()
+      e.returnValue = 'Save changes before leaving?'
+      return 'Save changes before leaving?'
+    }
+  }
 </script>
 
-
+<svelte:window on:beforeunload={handleUnload} />
 
 <Form
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-  
   <fieldset class="grid gap-14" {disabled}>
-  
     <Disclosure>
       <svelte:fragment slot="title">Am I eligible to apply?</svelte:fragment>
       <svelte:fragment slot="content">
-        As long as you are a student at any accredited college or university in the world, are
-        18 or older, and are currently pursuing an undergraduate degree, you are invited to
-        apply to HackHarvard!
+        As long as you are a student at any accredited college or university in
+        the world, are 18 or older, and are currently pursuing an undergraduate
+        degree, you are invited to apply to HackHarvard!
       </svelte:fragment>
     </Disclosure>
-    
+
     <div class="grid gap-4">
       <span class="font-bold text-2xl">Personal</span>
       <Card class="grid gap-3">
@@ -431,7 +441,6 @@
         floating
         required
       />
-      <!-- <span class="text-sm">*format as +1 XXX-XXX-XXXX</span> -->
       <Select
         bind:value={values.personal.countryOfResidence}
         placeholder="Country of residence"
