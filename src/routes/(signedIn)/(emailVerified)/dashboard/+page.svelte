@@ -51,6 +51,7 @@
     <Card>
       <svelte:fragment slot="title">Application</svelte:fragment>
       <div class="text-xl">{data.application}</div>
+      <a href="/apply" class="link">View Application</a>
     </Card>
   </div>
 {:catch}
