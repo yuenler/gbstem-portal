@@ -54,8 +54,12 @@
               storage,
               `resumes/${frozenUser.object.uid}.pdf`,
             )
-            await deleteObject(resumeRef)
-            await deleteDoc(doc(db, 'applications', frozenUser.object.uid))
+            await Promise.all(
+              [
+                deleteObject(resumeRef),
+                deleteDoc(doc(db, 'applications', frozenUser.object.uid)),
+              ].map((p) => p.catch((e) => e)),
+            )
             Promise.all([
               deleteDoc(doc(db, 'hhids', hhid)),
               deleteDoc(doc(db, 'users', frozenUser.object.uid)),
@@ -69,7 +73,7 @@
                     )
                     window.setTimeout(() => {
                       location.reload()
-                    }, 3000)
+                    }, 2000)
                   })
                   .catch((err) => {
                     console.log(err)

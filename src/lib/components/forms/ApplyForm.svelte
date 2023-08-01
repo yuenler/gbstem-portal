@@ -185,6 +185,7 @@
               if (disable) {
                 disabled = false
               }
+              console.log(err)
               alert.trigger('error', err.code, true)
               reject()
             })

@@ -121,18 +121,20 @@
       duration: 200,
     }}
   >
-    {#each pages as page}
-      <a
-        class={clsx(
-          'rounded-md px-3 py-2 transition-colors',
-          pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
-        )}
-        href={page.href}
-      >
-        {page.name}
-      </a>
-    {/each}
-    <div class="mt-d">
+    {#if user.emailVerified}
+      {#each pages as page}
+        <a
+          class={clsx(
+            'rounded-md px-3 py-2 transition-colors',
+            pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
+          )}
+          href={page.href}
+        >
+          {page.name}
+        </a>
+      {/each}
+    {/if}
+    <div class={clsx(user.emailVerified && 'mt-d')}>
       <ProfileMenu />
     </div>
   </div>
