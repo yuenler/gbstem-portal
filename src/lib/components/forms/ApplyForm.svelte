@@ -181,7 +181,7 @@
     return user.subscribe((user) => {
       if (user) {
         getDoc(doc(db, 'applications', user.object.uid)).then(
-          async (applicationDoc) => {
+          (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
             if (applicationExists) {
               const applicationData = applicationDoc.data() as ApplicationData
@@ -195,6 +195,7 @@
                 values.personal.email = user.object.email as string
                 values.personal.firstName = user.profile.firstName
                 values.personal.lastName = user.profile.lastName
+                handleSave()
               }
             } else {
               values.meta.uid = user.object.uid
@@ -229,29 +230,31 @@
     }
   }
   function handleSave(disable: boolean = false) {
-    showValidation = false
-    if (disable) {
-      disabled = true
-    }
-    return new Promise<void>((resolve, reject) => {
-      if ($user) {
-        setDoc(doc(db, 'applications', $user.object.uid), modifiedValues())
-          .then(() => {
-            if (disable) {
-              disabled = false
-            }
-            alert.trigger('success', 'Your application was saved.')
-            resolve()
-          })
-          .catch((err) => {
-            if (disable) {
-              disabled = false
-            }
-            alert.trigger('error', err.code, true)
-            reject()
-          })
+    if (!disabled) {
+      showValidation = false
+      if (disable) {
+        disabled = true
       }
-    })
+      return new Promise<void>((resolve, reject) => {
+        if ($user) {
+          setDoc(doc(db, 'applications', $user.object.uid), modifiedValues())
+            .then(() => {
+              if (disable) {
+                disabled = false
+              }
+              alert.trigger('success', 'Your application was saved.')
+              resolve()
+            })
+            .catch((err) => {
+              if (disable) {
+                disabled = false
+              }
+              alert.trigger('error', err.code, true)
+              reject()
+            })
+        }
+      })
+    }
   }
   function uploadFile(file: File, filePath: string) {
     const fileRef = ref(storage, filePath)
@@ -277,7 +280,6 @@
               url: downloadURL as string,
               name: resumeFile.name,
             }
-            clearInterval(saveInterval)
             values.meta.submitted = true
             setDoc(
               doc(db, 'applications', frozenUser.object.uid),
@@ -287,10 +289,8 @@
                 alert.trigger('success', 'Your application has been submitted!')
                 getDoc(doc(db, 'applications', frozenUser.object.uid)).then(
                   (applicationDoc) => {
-                    values = {
-                      ...values,
-                      ...applicationDoc.data(),
-                    }
+                    clearInterval(saveInterval)
+                    values = applicationDoc.data() as ApplicationData
                     window.scrollTo({
                       top: 0,
                       behavior: 'smooth',
@@ -579,14 +579,16 @@
             />
           {/each}
         </div>
+        {#if values.openResponse.roles.includes('other')}
+          <Textarea
+            bind:value={values.openResponse.otherRole}
+            placeholder="If other, what other roles could you see yourself playing? (200 char limit)"
+            required
+            rows={1}
+            maxlength={200}
+          />
+        {/if}
       </div>
-      <Textarea
-        bind:value={values.openResponse.otherRole}
-        placeholder="If other, what other roles could you see yourself playing? (200 char limit)"
-        required={values.openResponse.roles.includes('other')}
-        rows={1}
-        maxlength={200}
-      />
       <div class="grid gap-1">
         <span>
           Check up to 5 of the programming languages that you feel most
