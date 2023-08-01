@@ -15,7 +15,6 @@
   }
   onMount(() => {
     return alert.subscribe((alert) => {
-      console.log(alert)
       if (alert.type !== null) {
         if (visible) {
           clearTimeout(timer)
