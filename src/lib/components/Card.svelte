@@ -1,16 +1,14 @@
-<script>
+<script lang="ts">
   import clsx from 'clsx'
   let className = ''
   export { className as class }
 </script>
 
 <div
-  class={clsx('w-full rounded-md border border-gray-200 p-4 shadow', className)}
+  class={clsx(
+    'w-full rounded-md border border-gray-200 p-4 md:p-6 shadow bg-white',
+    className,
+  )}
 >
-  {#if $$slots.title}
-    <h2 class="text-2xl font-bold">
-      <slot name="title" />
-    </h2>
-  {/if}
   <slot />
 </div>

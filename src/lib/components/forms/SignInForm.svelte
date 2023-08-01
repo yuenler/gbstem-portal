@@ -7,6 +7,7 @@
   import Form from '$lib/components/Form.svelte'
   import { signInWithEmailAndPassword } from 'firebase/auth'
   import { goto } from '$app/navigation'
+  import Link from '../Link.svelte'
 
   let disabled = false
   let showValidation = false
@@ -50,9 +51,9 @@
   class={clsx('max-w-lg', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-  <fieldset class="grid gap-2" {disabled}>
+  <fieldset class="space-y-4" {disabled}>
     <Brand />
-    <h1 class="mt-1 text-2xl font-bold">Sign in</h1>
+    <h1 class="text-2xl font-bold">Sign in</h1>
     <Input
       type="email"
       bind:value={values.email}
@@ -68,10 +69,10 @@
       required
       autocomplete="current-password"
     />
-    <div class="mt-2 flex items-center justify-between">
+    <div class="flex items-center justify-between">
       <div class="flex flex-col gap-1">
-        <a class="link" href="/reset-password">Forgot password?</a>
-        <a class="link" href="/signup">Need to sign up?</a>
+        <Link href="/reset-password">Forgot password?</Link>
+        <Link href="/signup">Need to sign up?</Link>
       </div>
       <button
         class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"

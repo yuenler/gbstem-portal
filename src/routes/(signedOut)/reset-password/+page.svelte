@@ -6,4 +6,4 @@
   <title>Reset password</title>
 </svelte:head>
 
-<div class="flex justify-center"><ResetPasswordForm /></div>
+<ResetPasswordForm />

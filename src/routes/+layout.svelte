@@ -19,9 +19,9 @@
 </script>
 
 <div class="flex min-h-screen flex-col overflow-y-auto">
-  <main class="px-d mt-20 grow py-8">
+  <div class="grow flex flex-col">
     <slot />
-  </main>
+  </div>
   <Footer />
 </div>
 <Alert />

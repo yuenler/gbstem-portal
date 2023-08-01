@@ -8,25 +8,16 @@ import {
   PUBLIC_FIREBASE_MEASUREMENT_ID,
 } from '$env/static/public'
 import { initializeApp } from 'firebase/app'
-import { type User, getAuth, onAuthStateChanged } from 'firebase/auth'
-import { doc, getDoc, getFirestore } from 'firebase/firestore'
+import { getAuth, onAuthStateChanged, type User } from 'firebase/auth'
+import {
+  FieldValue,
+  Timestamp,
+  doc,
+  getDoc,
+  getFirestore,
+} from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 import { readable } from 'svelte/store'
-
-const config = {
-  apiKey: PUBLIC_FIREBASE_API_KEY,
-  authDomain: PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
-  appId: PUBLIC_FIREBASE_APP_ID,
-  measurementId: PUBLIC_FIREBASE_MEASUREMENT_ID,
-}
-
-initializeApp(config)
-export const auth = getAuth()
-export const db = getFirestore()
-export const storage = getStorage()
 
 export type UserProfile = {
   firstName: string
@@ -43,6 +34,99 @@ export type UserData = {
   object: User
   profile: UserProfile
 }
+
+export type ResumeData = {
+  url: string
+  name: string
+}
+
+export type ApplicationData = {
+  personal: {
+    email: string
+    firstName: string
+    lastName: string
+    age: string
+    gender: string
+    race: string[]
+    underrepresented: boolean
+    phoneNumber: string
+    countryOfResidence: string
+    shippingAddress: string
+    shippingCity: string
+    shippingState: string
+    shippingCountry: string
+    shippingZipCode: string
+    dietaryRestrictions: string[]
+  }
+  academic: {
+    enrolled: boolean
+    currentSchool: string
+    graduationYear: string
+    major: string
+    affiliated: boolean
+    levelOfStudy: string
+  }
+  hackathon: {
+    shirtSize: string
+    firstHackathon: boolean
+    previouslyParticipated: boolean
+    ableToAttend: boolean
+    reason: string
+  }
+  openResponse: {
+    roles: string[]
+    otherRole: string
+    prolangs: string[]
+    otherProlang: string
+    experience: string
+    whyHh: string
+    project: string
+    predictions: string
+    resume: ResumeData
+    resumeShare: boolean
+  }
+  agreements: {
+    codeOfConduct: boolean
+    sharing: boolean
+    mlhEmails: boolean
+    submitting: boolean
+  }
+  meta: {
+    hhid: string
+    uid: string
+    submitted: boolean
+  }
+  status: {
+    accepted: boolean
+    rejected: boolean
+    waitlisted: boolean
+  }
+  timestamps: {
+    created: FieldValue
+    updated: FieldValue
+  }
+}
+
+export type AnnouncementData = {
+  title: string
+  content: string
+  timestamp: Timestamp
+}
+
+const config = {
+  apiKey: PUBLIC_FIREBASE_API_KEY,
+  authDomain: PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
+  appId: PUBLIC_FIREBASE_APP_ID,
+  measurementId: PUBLIC_FIREBASE_MEASUREMENT_ID,
+}
+
+initializeApp(config)
+export const auth = getAuth()
+export const db = getFirestore()
+export const storage = getStorage()
 
 function userStore() {
   const { subscribe } = readable<UserData | null | undefined>(

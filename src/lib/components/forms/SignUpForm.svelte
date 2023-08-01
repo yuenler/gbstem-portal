@@ -14,6 +14,7 @@
     updateProfile,
   } from 'firebase/auth'
   import { auth, db } from '$lib/client/firebase'
+  import Link from '../Link.svelte'
 
   let disabled = false
   let showValidation = false
@@ -31,30 +32,6 @@
   }
   function handleSubmit(e: CustomEvent<SubmitData>) {
     if (e.detail.error === null) {
-      // remove later
-      // const validEmails = [
-      //   'yuenlerchow@college.harvard.edu',
-      //   'lerchow@gmail.com',
-      //   'dseum@college.harvard.edu',
-      //   'dseum@gmail.com',
-      //   'jooeunjunelee@college.harvard.edu',
-      //   'nathanli@college.harvard.edu',
-      //   'edwardkang@college.harvard.edu',
-      //   'testing@hackharvard.io',
-      //   'dseum@college.harvard.edu',
-      //   'vcainamisir@college.harvard.edu',
-      //   'kharvey@college.harvard.edu',
-      //   'hzhang1@college.harvard.edu',
-      // ]
-      // if (!validEmails.includes(values.email)) {
-      //   alert.trigger(
-      //     'error',
-      //     'Account creation temporarily restricted to HackHarvard board members.',
-      //   )
-      //   return
-      // }
-
-      // actual
       showValidation = false
       disabled = true
       const firstName = values.firstName.trim()
@@ -111,7 +88,7 @@
                               )
                           })
                         })
-                        .catch((err) =>
+                        .catch(() =>
                           alert.trigger(
                             'error',
                             'Please manually verify email through your profile.',
@@ -139,9 +116,9 @@
   class={clsx('max-w-lg', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-  <fieldset class="grid gap-2" {disabled}>
+  <fieldset class="space-y-4" {disabled}>
     <Brand />
-    <h1 class="mt-1 text-2xl font-bold">Sign up</h1>
+    <h1 class="text-2xl font-bold">Sign up</h1>
     <div class="grid gap-2 sm:grid-cols-2 sm:gap-4">
       <Input
         type="text"
@@ -186,7 +163,7 @@
     />
     <div class="mt-2 flex items-center justify-between">
       <div>
-        <a class="link" href="/signin">Need to sign in?</a>
+        <Link href="/signin">Need to sign in?</Link>
       </div>
       <button
         class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"

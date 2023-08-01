@@ -5,7 +5,8 @@
     getDoc,
     setDoc,
     serverTimestamp,
-    type FieldValue,
+    addDoc,
+    collection,
   } from 'firebase/firestore'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
@@ -30,81 +31,9 @@
   import Card from '$lib/components/Card.svelte'
   import Form from '$lib/components/Form.svelte'
   import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-  import { db, storage, user } from '$lib/client/firebase'
+  import { db, storage, user, type ApplicationData } from '$lib/client/firebase'
   import { cloneDeep, isEqual } from 'lodash-es'
-  import Disclosure from '$lib/components/Disclosure.svelte'
-
-  type ResumeData = {
-    url: string
-    name: string
-  }
-
-  type ApplicationData = {
-    personal: {
-      email: string
-      firstName: string
-      lastName: string
-      age: string
-      gender: string
-      race: string[]
-      underrepresented: boolean
-      phoneNumber: string
-      countryOfResidence: string
-      shippingAddress: string
-      shippingCity: string
-      shippingState: string
-      shippingCountry: string
-      shippingZipCode: string
-      dietaryRestrictions: string[]
-    }
-    academic: {
-      enrolled: boolean
-      currentSchool: string
-      graduationYear: string
-      major: string
-      affiliated: boolean
-      levelOfStudy: string
-    }
-    hackathon: {
-      shirtSize: string
-      firstHackathon: boolean
-      previouslyParticipated: boolean
-      ableToAttend: boolean
-      reason: string
-    }
-    openResponse: {
-      roles: string[]
-      otherRole: string
-      prolangs: string[]
-      otherProlang: string
-      experience: string
-      whyHh: string
-      project: string
-      predictions: string
-      resume: ResumeData
-      resumeShare: boolean
-    }
-    agreements: {
-      codeOfConduct: boolean
-      sharing: boolean
-      mlhEmails: boolean
-      submitting: boolean
-    }
-    meta: {
-      hhid: string
-      uid: string
-      submitted: boolean
-    }
-    status: {
-      accepted: boolean
-      rejected: boolean
-      waitlisted: boolean
-    }
-    timestamps: {
-      created: FieldValue
-      updated: FieldValue
-    }
-  }
+  import Field from '$lib/components/Field.svelte'
 
   let disabled = true
   let showValidation = false
@@ -237,10 +166,6 @@
     }
   }
   function handleSave(disable: boolean = false) {
-    // // to prevent saving when app is not mounted
-    // if (modifiedValues().personal.firstName === ''){
-    //   return
-    // }
     if (!disabled) {
       showValidation = false
       if (disable) {
@@ -330,13 +255,14 @@
     }
   }
   function handleEmail() {
-    // return addDoc(collection(db, 'mail'), {
-    //   to: [values.personal.email],
-    //   message: templates.applicationSubmitted({
-    //     firstName: values.personal.firstName,
-    //     lastName: values.personal.lastName
-    //   })
-    // })
+    return addDoc(collection(db, 'mail'), {
+      to: ['team@hackharvard.io'],
+      message: {
+        subject: 'Hello from Firebase!',
+        text: 'This is the plaintext section of the email body.',
+        html: 'This is the <code>HTML</code> section of the email body.',
+      },
+    })
   }
   function handleUnload(e: BeforeUnloadEvent) {
     if (!isEqual(dbValues, values)) {
@@ -348,37 +274,26 @@
 </script>
 
 <svelte:window on:beforeunload={handleUnload} />
-
 <Form
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-  <fieldset class="grid gap-14" {disabled}>
-    <Disclosure>
-      <svelte:fragment slot="title">Am I eligible to apply?</svelte:fragment>
-      <svelte:fragment slot="content">
-        As long as you are a student at any accredited college or university in
-        the world, are 18 or older, and are currently pursuing an undergraduate
-        degree, you are invited to apply to HackHarvard!
-      </svelte:fragment>
-    </Disclosure>
-
-    <div class="grid gap-4">
+  <fieldset class="space-y-14" {disabled}>
+    <div class="space-y-4">
       <span class="font-bold text-2xl">Personal</span>
-      <Card class="grid gap-3">
-        <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
+      <Card class="space-y-3">
+        <Field>
           {`Name: ${values.personal.firstName} ${values.personal.lastName}`}
-        </div>
-        <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
-          {`Email: ${values.personal.email}`}
-        </div>
+        </Field>
+        <Field>{`Email: ${values.personal.email}`}</Field>
         <div class="text-sm">
           {#if values.meta.submitted}
             The above name and email was the copy submitted on your application.
           {:else}
             Wrong name or email? Go to your <a class="link" href="/profile"
               >profile</a
-            > to update your information.
+            > to update your information. Once you submit, updates on your profile
+            won't be reflected on your application.
           {/if}
         </div>
       </Card>
@@ -594,7 +509,7 @@
       />
     </div>
     <div class="grid gap-4">
-      <span class="font-bold text-2xl">Open response</span>
+      <span class="font-bold text-2xl">Open Response</span>
       <div class="grid gap-1">
         <span>
           What roles best fit your capabilities on a hackathon team?<span

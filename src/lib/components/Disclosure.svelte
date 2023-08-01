@@ -1,12 +1,17 @@
-<script context="module">
-  const elements = new Set()
+<script context="module" lang="ts">
+  type DisclosureData = {
+    id: string
+    close: () => void
+  }
+  const elements = new Set<DisclosureData>()
 </script>
 
-<script>
+<script lang="ts">
   import clsx from 'clsx'
   import { onMount } from 'svelte'
   import { uniqueId } from 'lodash-es'
   import { slide } from 'svelte/transition'
+  import { quintOut } from 'svelte/easing'
 
   let className = ''
   export { className as class }
@@ -15,21 +20,21 @@
   const id = uniqueId('disclosure-')
 
   onMount(() => {
-    const tmp = {
+    const data: DisclosureData = {
       id,
       close: () => {
         openState = false
       },
     }
-    elements.add(tmp)
-    return () => elements.delete(tmp)
+    elements.add(data)
+    return () => elements.delete(data)
   })
 </script>
 
 <div>
   <button
     class={clsx(
-      'flex w-full items-center justify-between rounded-md border border-gray-200 p-3 shadow',
+      'flex w-full items-center rounded-md border border-gray-200 p-4 shadow',
       className,
     )}
     type="button"
@@ -42,11 +47,14 @@
       openState = !openState
     }}
   >
-    <div class="text-lg font-bold md:text-xl">
+    <div class="font-bold text-left grow">
       <slot name="title" />
     </div>
     <svg
-      class={clsx('h-6 w-6 transition-all', openState && 'rotate-180')}
+      class={clsx(
+        'h-6 w-6 transition-transform shrink-0 ml-3',
+        openState && 'rotate-180',
+      )}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -62,10 +70,7 @@
   </button>
 
   {#if openState}
-    <div
-      class="p-3 text-lg md:text-xl"
-      transition:slide={{ x: 0, y: -100, duration: 300 }}
-    >
+    <div class="p-4" transition:slide={{ axis: 'y', easing: quintOut }}>
       <slot name="content" />
     </div>
   {/if}

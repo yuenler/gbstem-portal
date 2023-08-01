@@ -8,6 +8,7 @@
   import { fade } from 'svelte/transition'
   import AnnouncementsBell from './AnnouncementsBell.svelte'
   import type { UserPeek } from '$lib/client/firebase'
+  import { cubicInOut } from 'svelte/easing'
 
   export let user: UserPeek
 
@@ -28,6 +29,10 @@
     {
       name: 'Apply',
       href: '/apply',
+    },
+    {
+      name: 'FAQ',
+      href: '/faq',
     },
   ]
   function updateShadow() {
@@ -60,13 +65,13 @@
       </div>
     {/if}
   </div>
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-1 sm:gap-3 md:gap-4">
     {#if user.emailVerified}
       <AnnouncementsBell />
     {/if}
     <ProfileMenu class="hidden sm:block" />
     <button
-      class="sm:hidden"
+      class="sm:hidden hover:bg-gray-200 rounded-full h-10 w-10 flex items-center justify-center transition-colors"
       type="button"
       on:click={() => {
         open = !open
@@ -109,7 +114,10 @@
 {#if open}
   <div
     class="p-d fixed left-0 top-20 z-50 flex h-[calc(100vh-5rem)] w-screen flex-col gap-2 bg-white sm:hidden"
-    transition:fade
+    transition:fade={{
+      easing: cubicInOut,
+      duration: 200,
+    }}
   >
     {#each pages as page}
       <a
@@ -127,3 +135,9 @@
     </div>
   </div>
 {/if}
+
+<style>
+  .shadow-b {
+    box-shadow: 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+</style>

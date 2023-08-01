@@ -6,4 +6,4 @@
   <title>Sign in</title>
 </svelte:head>
 
-<div class="flex justify-center"><SignInForm /></div>
+<SignInForm />
