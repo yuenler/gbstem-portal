@@ -179,7 +179,7 @@
     },
   }
   let resumeFile: File
-  let saveInterval: number
+  let saveInterval: number | undefined = undefined
   onMount(() => {
     return user.subscribe((user) => {
       if (user) {
@@ -212,9 +212,11 @@
             }
             if (!values.meta.submitted) {
               disabled = false
-              saveInterval = window.setInterval(() => {
-                handleSave()
-              }, 300000)
+              if (saveInterval === undefined) {
+                saveInterval = window.setInterval(() => {
+                  handleSave()
+                }, 300000)
+              }
             }
           },
         )
@@ -224,6 +226,7 @@
 
   onDestroy(() => {
     clearInterval(saveInterval)
+    saveInterval = undefined
   })
   function modifiedValues() {
     return {
@@ -301,6 +304,7 @@
                     const applicationData =
                       applicationDoc.data() as ApplicationData
                     clearInterval(saveInterval)
+                    saveInterval = undefined
                     values = cloneDeep(applicationData)
                     dbValues = cloneDeep(applicationData)
                     window.scrollTo({
