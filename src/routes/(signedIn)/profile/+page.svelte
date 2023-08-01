@@ -63,7 +63,7 @@
           {`HHID: ${$user ? $user.profile.hhid : ''}`}
         </div>
         <div class="text-sm">
-          Any problems with changing your profile? <a href="mailto:team@hackharvard.io">Contact us.</a>
+          Any problems with changing your profile? <a href="mailto:team@hackharvard.io" class="link">Contact us.</a>
         </div>
       </Card>
       <ChangeNameForm />
