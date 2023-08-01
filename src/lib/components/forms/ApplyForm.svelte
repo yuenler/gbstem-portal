@@ -186,6 +186,7 @@
         getDoc(doc(db, 'applications', user.object.uid)).then(
           (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
+            console.log('application exists', applicationExists)
             if (applicationExists) {
               const applicationData = applicationDoc.data() as ApplicationData
               values = cloneDeep(applicationData)
@@ -234,6 +235,10 @@
     }
   }
   function handleSave(disable: boolean = false) {
+    // // to prevent saving when app is not mounted
+    // if (modifiedValues().personal.firstName === ''){
+    //   return
+    // }
     if (!disabled) {
       showValidation = false
       if (disable) {
@@ -440,6 +445,7 @@
         placeholder="Phone number"
         floating
         required
+        pattern="[\d\s\-\+]+"
       />
       <Select
         bind:value={values.personal.countryOfResidence}
