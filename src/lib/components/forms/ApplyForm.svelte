@@ -582,7 +582,7 @@
       </div>
       <Textarea
         bind:value={values.openResponse.otherRole}
-        placeholder="If other, what other roles could you see yourself playing?"
+        placeholder="If other, what other roles could you see yourself playing? (200 char limit)"
         required={values.openResponse.roles.includes('other')}
         rows={1}
         maxlength={200}
@@ -611,7 +611,7 @@
         {#if values.openResponse.prolangs.includes('other')}
           <Textarea
             bind:value={values.openResponse.otherProlang}
-            placeholder="If other, what other programming languages?"
+            placeholder="If other, what other programming languages? (200 char limit)"
             required
             rows={1}
             maxlength={200}
@@ -626,19 +626,19 @@
       />
       <Textarea
         bind:value={values.openResponse.whyHh}
-        placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve?`}
+        placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve? (500 char limit)`}
         required
         maxlength={500}
       />
       <Textarea
         bind:value={values.openResponse.project}
-        placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached?`}
+        placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached? (500 char limit)`}
         required
         maxlength={500}
       />
       <Textarea
         bind:value={values.openResponse.predictions}
-        placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us!`}
+        placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us! (500 char limit)`}
         required
         maxlength={500}
       />
