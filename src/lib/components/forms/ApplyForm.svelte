@@ -31,6 +31,8 @@
   import Form from '$lib/components/Form.svelte'
   import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
   import { db, storage, user } from '$lib/client/firebase'
+  import { cloneDeep, isEqual } from 'lodash-es'
+  import Disclosure from '$lib/components/Disclosure.svelte'
 
   type ResumeData = {
     url: string
@@ -106,6 +108,7 @@
 
   let disabled = true
   let showValidation = false
+  let dbValues: ApplicationData
   let values: ApplicationData = {
     personal: {
       email: '',
@@ -176,16 +179,17 @@
     },
   }
   let resumeFile: File
-  let saveInterval: number
+  let saveInterval: number | undefined = undefined
   onMount(() => {
     return user.subscribe((user) => {
       if (user) {
         getDoc(doc(db, 'applications', user.object.uid)).then(
-          async (applicationDoc) => {
+          (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
             if (applicationExists) {
               const applicationData = applicationDoc.data() as ApplicationData
-              values = applicationData
+              values = cloneDeep(applicationData)
+              dbValues = cloneDeep(applicationData)
               if (
                 !values.meta.submitted &&
                 (values.personal.email !== user.object.email ||
@@ -195,6 +199,7 @@
                 values.personal.email = user.object.email as string
                 values.personal.firstName = user.profile.firstName
                 values.personal.lastName = user.profile.lastName
+                handleSave()
               }
             } else {
               values.meta.uid = user.object.uid
@@ -206,9 +211,11 @@
             }
             if (!values.meta.submitted) {
               disabled = false
-              saveInterval = window.setInterval(() => {
-                handleSave()
-              }, 300000)
+              if (saveInterval === undefined) {
+                saveInterval = window.setInterval(() => {
+                  handleSave()
+                }, 300000)
+              }
             }
           },
         )
@@ -218,6 +225,7 @@
 
   onDestroy(() => {
     clearInterval(saveInterval)
+    saveInterval = undefined
   })
   function modifiedValues() {
     return {
@@ -229,29 +237,35 @@
     }
   }
   function handleSave(disable: boolean = false) {
-    showValidation = false
-    if (disable) {
-      disabled = true
-    }
-    return new Promise<void>((resolve, reject) => {
-      if ($user) {
-        setDoc(doc(db, 'applications', $user.object.uid), modifiedValues())
-          .then(() => {
-            if (disable) {
-              disabled = false
-            }
-            alert.trigger('success', 'Your application was saved.')
-            resolve()
-          })
-          .catch((err) => {
-            if (disable) {
-              disabled = false
-            }
-            alert.trigger('error', err.code, true)
-            reject()
-          })
+    // // to prevent saving when app is not mounted
+    // if (modifiedValues().personal.firstName === ''){
+    //   return
+    // }
+    if (!disabled) {
+      showValidation = false
+      if (disable) {
+        disabled = true
       }
-    })
+      return new Promise<void>((resolve, reject) => {
+        if ($user) {
+          setDoc(doc(db, 'applications', $user.object.uid), modifiedValues())
+            .then(() => {
+              if (disable) {
+                disabled = false
+              }
+              alert.trigger('success', 'Your application was saved.')
+              resolve()
+            })
+            .catch((err) => {
+              if (disable) {
+                disabled = false
+              }
+              alert.trigger('error', err.code, true)
+              reject()
+            })
+        }
+      })
+    }
   }
   function uploadFile(file: File, filePath: string) {
     const fileRef = ref(storage, filePath)
@@ -277,7 +291,6 @@
               url: downloadURL as string,
               name: resumeFile.name,
             }
-            clearInterval(saveInterval)
             values.meta.submitted = true
             setDoc(
               doc(db, 'applications', frozenUser.object.uid),
@@ -287,10 +300,12 @@
                 alert.trigger('success', 'Your application has been submitted!')
                 getDoc(doc(db, 'applications', frozenUser.object.uid)).then(
                   (applicationDoc) => {
-                    values = {
-                      ...values,
-                      ...applicationDoc.data(),
-                    }
+                    const applicationData =
+                      applicationDoc.data() as ApplicationData
+                    clearInterval(saveInterval)
+                    saveInterval = undefined
+                    values = cloneDeep(applicationData)
+                    dbValues = cloneDeep(applicationData)
                     window.scrollTo({
                       top: 0,
                       behavior: 'smooth',
@@ -323,13 +338,31 @@
     //   })
     // })
   }
+  function handleUnload(e: BeforeUnloadEvent) {
+    if (!isEqual(dbValues, values)) {
+      e.preventDefault()
+      e.returnValue = 'Save changes before leaving?'
+      return 'Save changes before leaving?'
+    }
+  }
 </script>
+
+<svelte:window on:beforeunload={handleUnload} />
 
 <Form
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
   <fieldset class="grid gap-14" {disabled}>
+    <Disclosure>
+      <svelte:fragment slot="title">Am I eligible to apply?</svelte:fragment>
+      <svelte:fragment slot="content">
+        As long as you are a student at any accredited college or university in
+        the world, are 18 or older, and are currently pursuing an undergraduate
+        degree, you are invited to apply to HackHarvard!
+      </svelte:fragment>
+    </Disclosure>
+
     <div class="grid gap-4">
       <span class="font-bold text-2xl">Personal</span>
       <Card class="grid gap-3">
@@ -415,8 +448,8 @@
         placeholder="Phone number"
         floating
         required
+        pattern="[\d\s\-\+]+"
       />
-      <!-- <span class="text-sm">*format as +1 XXX-XXX-XXXX</span> -->
       <Select
         bind:value={values.personal.countryOfResidence}
         placeholder="Country of residence"
@@ -579,14 +612,16 @@
             />
           {/each}
         </div>
+        {#if values.openResponse.roles.includes('other')}
+          <Textarea
+            bind:value={values.openResponse.otherRole}
+            placeholder="If other, what other roles could you see yourself playing? (200 char limit)"
+            required
+            rows={1}
+            maxlength={200}
+          />
+        {/if}
       </div>
-      <Textarea
-        bind:value={values.openResponse.otherRole}
-        placeholder="If other, what other roles could you see yourself playing?"
-        required={values.openResponse.roles.includes('other')}
-        rows={1}
-        maxlength={200}
-      />
       <div class="grid gap-1">
         <span>
           Check up to 5 of the programming languages that you feel most
@@ -611,7 +646,7 @@
         {#if values.openResponse.prolangs.includes('other')}
           <Textarea
             bind:value={values.openResponse.otherProlang}
-            placeholder="If other, what other programming languages?"
+            placeholder="If other, what other programming languages? (200 char limit)"
             required
             rows={1}
             maxlength={200}
@@ -626,19 +661,19 @@
       />
       <Textarea
         bind:value={values.openResponse.whyHh}
-        placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve?`}
+        placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve? (500 char limit)`}
         required
         maxlength={500}
       />
       <Textarea
         bind:value={values.openResponse.project}
-        placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached?`}
+        placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached? (500 char limit)`}
         required
         maxlength={500}
       />
       <Textarea
         bind:value={values.openResponse.predictions}
-        placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us!`}
+        placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us! (500 char limit)`}
         required
         maxlength={500}
       />

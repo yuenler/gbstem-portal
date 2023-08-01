@@ -45,7 +45,7 @@
   <div class="flex items-center gap-8">
     <Brand />
     {#if user.emailVerified}
-      <div class="hidden items-center gap-3 md:flex">
+      <div class="hidden items-center gap-3 sm:flex">
         {#each pages as page}
           <a
             class={clsx(
