@@ -54,11 +54,11 @@
               storage,
               `resumes/${frozenUser.object.uid}.pdf`,
             )
-            deleteObject(resumeRef).catch()
-            deleteDoc(doc(db, 'applications', frozenUser.object.uid)).catch()
+            await deleteObject(resumeRef)
+            await deleteDoc(doc(db, 'applications', frozenUser.object.uid))
             Promise.all([
               deleteDoc(doc(db, 'hhids', hhid)),
-              deleteDoc(doc(db, 'frozenUsers', frozenUser.object.uid)),
+              deleteDoc(doc(db, 'users', frozenUser.object.uid)),
             ])
               .then(() => {
                 deleteUser(frozenUser.object)
