@@ -31,6 +31,7 @@
   import Form from '$lib/components/Form.svelte'
   import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
   import { db, storage, user } from '$lib/client/firebase'
+  import Disclosure from '../Disclosure.svelte'
 
   type ResumeData = {
     url: string
@@ -324,18 +325,6 @@
     // })
   }
 
-  let popupVisible = false;
-
-  // Function to show the popup on hover
-  function handleHover() {
-    popupVisible = true;
-  }
-
-  // Function to hide the popup when not hovering
-  function handleHoverEnd() {
-    popupVisible = false;
-  }
-
 </script>
 
 
@@ -344,21 +333,18 @@
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-<div
-  class="relative mb-3"
-  on:mouseenter={handleHover}
-  on:mouseleave={handleHoverEnd}
->
-  <a class="cursor-pointer link" href="#">
-    Are you eligible to apply?
-  </a>
-  {#if popupVisible}
-    <div class="popup absolute bg-white border border-gray-300 p-2 rounded shadow-md z-10">
-      <p>As long as you are a student at any accredited college or university in the world, are 18 or older, and are currently pursuing an undergraduate degree, you are invited to apply to HackHarvard!</p>
-    </div>
-  {/if}
-</div>
+  
   <fieldset class="grid gap-14" {disabled}>
+  
+    <Disclosure>
+      <svelte:fragment slot="title">Am I eligible to apply?</svelte:fragment>
+      <svelte:fragment slot="content">
+        As long as you are a student at any accredited college or university in the world, are
+        18 or older, and are currently pursuing an undergraduate degree, you are invited to
+        apply to HackHarvard!
+      </svelte:fragment>
+    </Disclosure>
+    
     <div class="grid gap-4">
       <span class="font-bold text-2xl">Personal</span>
       <Card class="grid gap-3">
