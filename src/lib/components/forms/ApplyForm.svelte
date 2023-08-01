@@ -256,7 +256,7 @@
   }
   function handleEmail() {
     return addDoc(collection(db, 'mail'), {
-      to: ['team@hackharvard.io'],
+      to: [values.personal.email],
       message: {
         subject: 'Hello from Firebase!',
         text: 'This is the plaintext section of the email body.',
