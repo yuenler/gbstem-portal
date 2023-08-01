@@ -12,15 +12,17 @@
 
   export let user: UserPeek
 
-  onMount(() => {
-    updateShadow()
-  })
   let shadow = false
   let open = false
+  onMount(() => {
+    updateShadow()
+    return navigating.subscribe((navigating) => {
+      if (navigating) {
+        open = false
+      }
+    })
+  })
   $: pathname = $page.url.pathname
-  $: if ($navigating) {
-    open = false
-  }
   const pages = [
     {
       name: 'Dashboard',

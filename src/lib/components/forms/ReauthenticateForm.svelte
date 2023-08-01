@@ -44,14 +44,11 @@
 </script>
 
 <Form
-  class={clsx(
-    'grid w-full max-w-lg gap-2',
-    showValidation && 'show-validation',
-  )}
+  class={clsx(' max-w-lg', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-  <fieldset {disabled}>
-    <h1 class="mt-1 text-2xl font-bold">Reauthenticate</h1>
+  <fieldset class="space-y-4" {disabled}>
+    <h1 class="text-2xl font-bold">Reauthenticate</h1>
     <Input
       type="password"
       bind:value={values.password}
@@ -61,10 +58,7 @@
       autocomplete="current-password"
       focus
     />
-    <div class="mt-2 flex items-center justify-between">
-      <div class="flex flex-col gap-1">
-        <a class="link" href="/reset-password">Forgot password?</a>
-      </div>
+    <div class="flex items-center justify-end">
       <button
         class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200"
         type="submit"

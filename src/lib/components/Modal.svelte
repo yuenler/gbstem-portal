@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition'
   import clsx from 'clsx'
   import { createEventDispatcher } from 'svelte'
+  import { browser } from '$app/environment'
 
   let className = ''
   export { className as class }
@@ -11,6 +11,17 @@
   export let size = 'full'
   export let disabled = false
   let openState = false
+  $: {
+    if (browser) {
+      if (openState) {
+        document.body.style.position = 'fixed'
+        document.body.style.top = `-${window.scrollY}px`
+      } else {
+        document.body.style.position = ''
+        document.body.style.top = ''
+      }
+    }
+  }
   export function open() {
     if (!disabled) {
       openState = true
@@ -40,8 +51,7 @@
 
 {#if openState}
   <div
-    class="fixed left-0 top-0 z-50 flex h-screen items-center first-letter:w-screen"
-    transition:fade={{ duration: 150 }}
+    class="fixed inset-0 z-50 flex h-screen items-center first-letter:w-screen"
     role="dialog"
   >
     <div class={clsx('relative h-full w-full')}>
@@ -52,7 +62,7 @@
         )}
       >
         <div
-          class="mb-5 flex shrink-0 items-center justify-between border-b border-gray-300 py-5"
+          class="mb-5 flex shrink-0 items-center justify-between border border-black rounded-md p-5 mt-5"
         >
           <h1 class="text-xl uppercase">{title}</h1>
           <button class="shrink-0" type="button" on:click={cancel}>

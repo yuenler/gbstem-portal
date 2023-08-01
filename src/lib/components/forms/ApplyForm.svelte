@@ -278,7 +278,7 @@
   on:submit={handleSubmit}
 >
   <fieldset class="space-y-14" {disabled}>
-    <div class="space-y-4">
+    <div class="grid gap-4">
       <span class="font-bold text-2xl">Personal</span>
       <Card class="space-y-3">
         <Field>
@@ -298,7 +298,6 @@
       </Card>
       {#if values.openResponse.resume.url !== ''}
         <a
-          class="mb-2"
           href={values.openResponse.resume.url}
           target="_blank"
           rel="noreferrer"
@@ -310,7 +309,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="h-6 w-6"
+              class="h-5 w-5"
             >
               <path
                 stroke-linecap="round"
@@ -470,6 +469,13 @@
         bind:value={values.academic.affiliated}
         placeholder="Are you affiliated with Harvard University? If so, make sure
         your profile uses your Harvard email."
+        validations={[
+          [
+            values.academic.affiliated &&
+              !values.personal.email.includes('harvard'),
+            'If you are affiliated, please go to your profile to change to a Harvard email.',
+          ],
+        ]}
       />
     </div>
     <div class="grid gap-4">

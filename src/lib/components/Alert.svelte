@@ -4,16 +4,18 @@
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
   import { onMount } from 'svelte'
+  import { browser } from '$app/environment'
 
   let timer: number | undefined
   let visible = false
-  $: if ($navigating) {
+  $: if (browser && $navigating) {
     if (visible) {
       close()
     }
   }
   onMount(() => {
     return alert.subscribe((alert) => {
+      console.log(alert)
       if (alert.type !== null) {
         if (visible) {
           clearTimeout(timer)
@@ -44,7 +46,9 @@
 
 <svelte:document on:keydown={visible ? handleEscape : undefined} />
 {#if visible}
-  <div class="fixed left-1/2 -translate-x-1/2 w-full max-w-xl bottom-3 px-3">
+  <div
+    class="fixed left-1/2 -translate-x-1/2 w-full max-w-xl bottom-3 px-3 z-50"
+  >
     <button class="w-full" type="button" on:click={close} transition:fade>
       <div
         class={clsx(

@@ -116,14 +116,11 @@
   {disabled}
 >
   <Form
-    class={clsx(
-      'grid w-full max-w-lg gap-2',
-      showValidation && 'show-validation',
-    )}
+    class={clsx('max-w-lg', showValidation && 'show-validation')}
     on:submit={handleReauthenticate}
   >
-    <fieldset {disabled}>
-      <h1 class="mt-1 text-2xl font-bold">Delete account</h1>
+    <fieldset class="space-y-4" {disabled}>
+      <h1 class="text-2xl font-bold">Delete account</h1>
       <Input
         type="password"
         bind:value={values.password}
@@ -133,10 +130,8 @@
         autocomplete="current-password"
         focus
       />
-      <div class="mt-2 flex items-center justify-between">
-        <div class="flex flex-col gap-1">
-          <a class="link" href="/reset-password">Forgot password?</a>
-        </div>
+      <div class="flex items-center justify-between">
+        <span class="font-bold">Warning! This is irreversible.</span>
         <button
           class="rounded-md bg-red-100 px-4 py-2 text-red-900 shadow-sm transition-colors duration-300 hover:bg-red-200"
           type="submit"
