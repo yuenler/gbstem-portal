@@ -186,7 +186,6 @@
         getDoc(doc(db, 'applications', user.object.uid)).then(
           (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
-            console.log('application exists', applicationExists)
             if (applicationExists) {
               const applicationData = applicationDoc.data() as ApplicationData
               values = cloneDeep(applicationData)
