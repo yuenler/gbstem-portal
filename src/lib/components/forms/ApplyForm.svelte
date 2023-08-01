@@ -391,6 +391,7 @@
           placeholder="State"
           options={statesJson}
           floating
+          required
         />
       </div>
       <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
