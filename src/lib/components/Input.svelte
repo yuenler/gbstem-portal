@@ -68,10 +68,10 @@
     }
   }
 
-  let isPasswordVisible = false;
+  let isPasswordVisible = false
 
   function togglePasswordView() {
-    isPasswordVisible = !isPasswordVisible;
+    isPasswordVisible = !isPasswordVisible
   }
 </script>
 
@@ -149,38 +149,40 @@
     />
   </div>
 {:else if floating}
-
-<div class="relative mt-2 grow">
-  <input
-    class={clsx(
-      'peer block h-12 w-full appearance-none rounded-md border border-gray-400 px-3 pt-1 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
-      className,
-    )}
-    type={isPasswordVisible ? 'text' : type}
-    placeholder=" "
-    bind:this={self}
-    on:input={handleInput}
-    {value}
-    {id}
-    {name}
-    {required}
-    {...$$restProps}
-  />
-  <label
-    class="absolute left-1 top-[0.65rem] z-10 origin-[0%_0%] -translate-y-4 transform cursor-text bg-white px-2 text-[0.8rem] leading-none text-gray-500 duration-150 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-base peer-focus:left-1 peer-focus:top-[0.65rem] peer-focus:-translate-y-4 peer-focus:text-[0.8rem] peer-focus:leading-none peer-disabled:text-gray-400"
-    for={id}
-  >
-    <span>
-      {placeholder}<span class="text-red-500">*</span>
-    </span>
-  </label>
-  {#if type=="password"} 
-  <button type="button" on:click={togglePasswordView} class="absolute right-2 top-[0.65rem] px-2 text-gray-500 focus:outline-none">
-    {isPasswordVisible ? 'Hide' : 'Show'}
-  </button>
-  {/if}
-</div>
-
+  <div class="relative mt-2 grow">
+    <input
+      class={clsx(
+        'peer block h-12 w-full appearance-none rounded-md border border-gray-400 px-3 pt-1 transition-colors focus:border-gray-600 focus:outline-none disabled:bg-white disabled:text-gray-400',
+        className,
+      )}
+      type={isPasswordVisible ? 'text' : type}
+      placeholder=" "
+      bind:this={self}
+      on:input={handleInput}
+      {value}
+      {id}
+      {name}
+      {required}
+      {...$$restProps}
+    />
+    <label
+      class="absolute left-1 top-[0.65rem] z-10 origin-[0%_0%] -translate-y-4 transform cursor-text bg-white px-2 text-[0.8rem] leading-none text-gray-500 duration-150 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-base peer-focus:left-1 peer-focus:top-[0.65rem] peer-focus:-translate-y-4 peer-focus:text-[0.8rem] peer-focus:leading-none peer-disabled:text-gray-400"
+      for={id}
+    >
+      <span>
+        {placeholder}<span class="text-red-500">*</span>
+      </span>
+    </label>
+    {#if type == 'password'}
+      <button
+        type="button"
+        on:click={togglePasswordView}
+        class="absolute right-2 top-[0.65rem] px-2 text-gray-500 focus:outline-none"
+      >
+        {isPasswordVisible ? 'Hide' : 'Show'}
+      </button>
+    {/if}
+  </div>
 {:else}
   <div class="mt-2">
     <label for={id}>

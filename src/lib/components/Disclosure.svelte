@@ -8,7 +8,7 @@
   import { uniqueId } from 'lodash-es'
   import { slide } from 'svelte/transition'
 
-  let className=''
+  let className = ''
   export { className as class }
 
   let openState = false
@@ -19,7 +19,7 @@
       id,
       close: () => {
         openState = false
-      }
+      },
     }
     elements.add(tmp)
     return () => elements.delete(tmp)
@@ -30,12 +30,12 @@
   <button
     class={clsx(
       'flex w-full items-center justify-between rounded-md border border-gray-200 p-3 shadow',
-      className
+      className,
     )}
     type="button"
     on:click={() => {
       if (!openState) {
-        elements.forEach(element => {
+        elements.forEach((element) => {
           element.close()
         })
       }
@@ -53,12 +53,19 @@
       stroke-width="1.5"
       stroke="currentColor"
     >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+      />
     </svg>
   </button>
 
   {#if openState}
-    <div class="p-3 text-lg md:text-xl" transition:slide={{ x: 0, y: -100, duration: 300 }}>
+    <div
+      class="p-3 text-lg md:text-xl"
+      transition:slide={{ x: 0, y: -100, duration: 300 }}
+    >
       <slot name="content" />
     </div>
   {/if}
