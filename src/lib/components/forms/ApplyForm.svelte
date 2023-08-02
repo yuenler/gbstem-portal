@@ -173,13 +173,24 @@
       }
       return new Promise<void>((resolve, reject) => {
         if ($user) {
-          setDoc(doc(db, 'applications', $user.object.uid), modifiedValues())
+          const frozenUser = $user
+          setDoc(
+            doc(db, 'applications', frozenUser.object.uid),
+            modifiedValues(),
+          )
             .then(() => {
-              if (disable) {
-                disabled = false
-              }
-              alert.trigger('success', 'Your application was saved.')
-              resolve()
+              getDoc(doc(db, 'applications', frozenUser.object.uid)).then(
+                (applicationDoc) => {
+                  const applicationData =
+                    applicationDoc.data() as ApplicationData
+                  dbValues = cloneDeep(applicationData)
+                  if (disable) {
+                    disabled = false
+                  }
+                  alert.trigger('success', 'Your application was saved.')
+                  resolve()
+                },
+              )
             })
             .catch((err) => {
               if (disable) {
