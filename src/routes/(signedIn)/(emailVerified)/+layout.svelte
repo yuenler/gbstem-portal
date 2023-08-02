@@ -5,6 +5,7 @@
   onMount(() =>
     user.subscribe((user) => {
       if (user) {
+        console.log(user.object.emailVerified)
         if (!user.object.emailVerified) {
           user.object.getIdToken(true)
         }
