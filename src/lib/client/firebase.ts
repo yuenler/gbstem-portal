@@ -133,7 +133,6 @@ function userStore() {
     undefined,
     (set) => {
       return onIdTokenChanged(auth, (userObject) => {
-        console.log(userObject)
         if (userObject) {
           getDoc(doc(db, 'users', userObject.uid)).then(async (res) => {
             const userProfile = res.data()
