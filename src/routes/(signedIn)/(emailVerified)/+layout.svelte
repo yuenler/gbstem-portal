@@ -6,12 +6,11 @@
   onMount(() =>
     user.subscribe((user) => {
       if (user) {
-        console.log(user.object.emailVerified)
+        console.log(user)
+        console.log('i ran?')
+        getIdToken(user.object, true)
         if (!user.object.emailVerified) {
-          console.log('i ran?')
-          user.object.reload().then(() => {
-            getIdToken(user.object, true)
-          })
+          user.object.reload().then(() => {})
         }
       }
     }),
