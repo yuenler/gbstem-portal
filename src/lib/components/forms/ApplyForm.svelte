@@ -183,6 +183,7 @@
                 (applicationDoc) => {
                   const applicationData =
                     applicationDoc.data() as ApplicationData
+                  values = cloneDeep(applicationData)
                   dbValues = cloneDeep(applicationData)
                   if (disable) {
                     disabled = false
