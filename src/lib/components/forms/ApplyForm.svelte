@@ -173,7 +173,6 @@
       }
       return new Promise<void>((resolve, reject) => {
         if ($user) {
-          console.log($user)
           setDoc(doc(db, 'applications', $user.object.uid), modifiedValues())
             .then(() => {
               if (disable) {
