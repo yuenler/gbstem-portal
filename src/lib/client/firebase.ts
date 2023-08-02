@@ -8,7 +8,7 @@ import {
   PUBLIC_FIREBASE_MEASUREMENT_ID,
 } from '$env/static/public'
 import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged, type User } from 'firebase/auth'
+import { getAuth, onIdTokenChanged, type User } from 'firebase/auth'
 import {
   FieldValue,
   Timestamp,
@@ -132,7 +132,7 @@ function userStore() {
   const { subscribe } = readable<UserData | null | undefined>(
     undefined,
     (set) => {
-      return onAuthStateChanged(auth, (userObject) => {
+      return onIdTokenChanged(auth, (userObject) => {
         if (userObject) {
           getDoc(doc(db, 'users', userObject.uid)).then(async (res) => {
             const userProfile = res.data()
