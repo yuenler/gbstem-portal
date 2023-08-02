@@ -134,6 +134,7 @@ function userStore() {
     (set) => {
       return onIdTokenChanged(auth, (userObject) => {
         if (userObject) {
+          console.log(userObject.emailVerified)
           getDoc(doc(db, 'users', userObject.uid)).then(async (res) => {
             const userProfile = res.data()
             set({
