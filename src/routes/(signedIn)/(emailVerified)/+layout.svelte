@@ -6,6 +6,7 @@
     user.subscribe((user) => {
       if (user) {
         if (localStorage.getItem('emailVerified') === 'false') {
+          console.log('i ran')
           user.object.reload().then(() => {
             user.object.getIdToken(true)
           })
