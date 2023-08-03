@@ -5,7 +5,7 @@
   import { uniqueId } from 'lodash-es'
   import { dialog } from '$lib/stores'
   import { fade } from 'svelte/transition'
-  import { clickOutside } from '$lib/utils'
+  import { clickOutside, trapFocus } from '$lib/utils'
 
   type Size = 'min' | 'full'
 
@@ -68,11 +68,12 @@
     >
       <div
         class={clsx(
-          'p-4 sm:p-8 bg-white grid gap-3 sm:gap-6 w-aut w-full',
+          'p-4 sm:p-8 bg-white grid gap-3 sm:gap-6 w-full',
           size === 'full' && 'h-full',
           size === 'min' && 'rounded-lg max-w-2xl',
         )}
         role="dialog"
+        use:trapFocus
         use:clickOutside
         on:outclick={() => {
           if (!alert) {
