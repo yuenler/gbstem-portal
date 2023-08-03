@@ -7,6 +7,7 @@
   import Form from '$lib/components/Form.svelte'
   import { db, user } from '$lib/client/firebase'
   import { onMount } from 'svelte'
+  import Button from '../Button.svelte'
 
   let className = ''
   export { className as class }
@@ -80,8 +81,10 @@
           floating
           required
         />
-        <button
-          class="mt-2 flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-blue-100 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
+        <Button
+          class="mt-2 flex h-12 w-12 shrink-0 items-center justify-center"
+          padding={false}
+          color="blue"
           type="submit"
         >
           <svg
@@ -101,7 +104,7 @@
             /><polyline points="17 21 17 13 7 13 7 21" />
             <polyline points="7 3 7 8 15 8" />
           </svg>
-        </button>
+        </Button>
       </div>
     </div>
   </fieldset>
