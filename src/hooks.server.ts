@@ -8,7 +8,6 @@ export const handle = (async ({ event, resolve }) => {
       sessionCookie!,
       true,
     )
-    console.log(decodedClaims)
     const userRecord = await adminAuth.getUser(decodedClaims.uid)
     event.locals.user = {
       emailVerified: userRecord.emailVerified,
