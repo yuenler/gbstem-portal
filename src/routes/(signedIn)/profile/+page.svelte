@@ -11,6 +11,7 @@
   import { user } from '$lib/client/firebase'
   import PageLayout from '$lib/components/PageLayout.svelte'
   import Field from '$lib/components/Field.svelte'
+  import Popup from '$lib/components/Popup.svelte'
 
   export let data: PageData
 
@@ -26,6 +27,12 @@
 <svelte:head>
   <title>Profile</title>
 </svelte:head>
+
+<Popup
+  title="Please verify your email"
+  content="Your email is not verified. Please check your inbox and spam folder for the verification email."
+  show={!data.user.emailVerified}
+/>
 
 <PageLayout>
   <svelte:fragment slot="title">Profile</svelte:fragment>
