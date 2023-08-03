@@ -12,7 +12,6 @@
   import PageLayout from '$lib/components/PageLayout.svelte'
   import Field from '$lib/components/Field.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
-  import { onMount } from 'svelte'
   import Button from '$lib/components/Button.svelte'
   import DialogActions from '$lib/components/DialogActions.svelte'
 
