@@ -623,7 +623,7 @@
         maxlength={500}
       />
       {#if values.openResponse.resume.url === ''}
-        <div class="mt-2">
+        <div>
           <Input
             bind:value={resumeFile}
             type="file"
@@ -632,6 +632,11 @@
             accept={['application/pdf']}
             required
           />
+          <div class="text-sm mt-1">
+            Only upload when you are ready to submit. The draft does <span
+              class="font-bold">not</span
+            > save your resume.
+          </div>
         </div>
       {/if}
       <Input
