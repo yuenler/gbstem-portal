@@ -7,6 +7,7 @@
   import Form from '$lib/components/Form.svelte'
   import { auth } from '$lib/client/firebase'
   import Link from '$lib/components/Link.svelte'
+  import Button from '../Button.svelte'
 
   let disabled = false
   let showValidation = false
@@ -54,12 +55,7 @@
         <Link href="/signup">Sign up</Link> or
         <Link href="/signin">sign in</Link>.
       </span>
-      <button
-        class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200"
-        type="submit"
-      >
-        Send email
-      </button>
+      <Button color="blue" type="submit">Send email</Button>
     </div>
   </fieldset>
 </Form>

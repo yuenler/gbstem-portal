@@ -8,6 +8,7 @@
   import { signInWithEmailAndPassword } from 'firebase/auth'
   import { goto } from '$app/navigation'
   import Link from '../Link.svelte'
+  import Button from '../Button.svelte'
 
   let disabled = false
   let showValidation = false
@@ -74,12 +75,7 @@
         <Link href="/reset-password">Forgot password?</Link>
         <Link href="/signup">Need to sign up?</Link>
       </div>
-      <button
-        class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
-        type="submit"
-      >
-        Sign in
-      </button>
+      <Button color="blue" type="submit">Sign in</Button>
     </div>
   </fieldset>
 </Form>

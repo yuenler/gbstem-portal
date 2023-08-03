@@ -15,6 +15,7 @@
   } from 'firebase/auth'
   import { auth, db } from '$lib/client/firebase'
   import Link from '../Link.svelte'
+  import Button from '../Button.svelte'
 
   let disabled = false
   let showValidation = false
@@ -165,12 +166,7 @@
       <div>
         <Link href="/signin">Need to sign in?</Link>
       </div>
-      <button
-        class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
-        type="submit"
-      >
-        Sign up
-      </button>
+      <Button color="blue" type="submit">Sign up</Button>
     </div>
   </fieldset>
 </Form>
