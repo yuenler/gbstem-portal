@@ -18,7 +18,7 @@
   })
 </script>
 
-<div class="flex min-h-screen flex-col overflow-y-auto">
+<div class="flex min-h-screen flex-col">
   <div class="grow flex flex-col">
     <slot />
   </div>

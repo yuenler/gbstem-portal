@@ -11,8 +11,14 @@
   import { user } from '$lib/client/firebase'
   import PageLayout from '$lib/components/PageLayout.svelte'
   import Field from '$lib/components/Field.svelte'
+  import Dialog from '$lib/components/Dialog.svelte'
+  import { onMount } from 'svelte'
+  import Button from '$lib/components/Button.svelte'
+  import DialogActions from '$lib/components/DialogActions.svelte'
 
   export let data: PageData
+
+  let dialogEl: Dialog
 
   async function handleVerificationEmail() {
     if ($user) {
@@ -26,6 +32,20 @@
 <svelte:head>
   <title>Profile</title>
 </svelte:head>
+
+<Dialog bind:this={dialogEl} initial={!data.user.emailVerified} size="min">
+  <svelte:fragment slot="title">Please verify your email</svelte:fragment>
+  <div slot="description" class="space-y-4">
+    <p>
+      Your email is not verified. Please check your inbox and spam folder for
+      the verification email. If you want to use another email, please change
+      your email through the profile.
+    </p>
+    <DialogActions>
+      <Button on:click={dialogEl.cancel}>Close</Button>
+    </DialogActions>
+  </div>
+</Dialog>
 
 <PageLayout>
   <svelte:fragment slot="title">Profile</svelte:fragment>
@@ -52,7 +72,7 @@
         <div class="grow">
           Email is not verified. Try reloading or check your inbox to verify
           your account. Can't find the email? <button
-            class="link"
+            class="inline-block border-b border-black text-black transition-colors duration-300 hover:border-gray-600 hover:text-gray-600"
             type="button"
             on:click={handleVerificationEmail}>Send it again.</button
           >

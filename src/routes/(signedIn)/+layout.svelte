@@ -5,8 +5,8 @@
   export let data: LayoutData
 </script>
 
+<Nav user={data.user} />
 <div class="grow">
-  <Nav user={data.user} />
   <main class="mt-20 py-8 px-d">
     <slot />
   </main>

@@ -3,15 +3,17 @@
   import clsx from 'clsx'
   import { alert } from '$lib/stores'
   import { updatePassword } from 'firebase/auth'
-  import Modal from '$lib/components/Modal.svelte'
+  import Dialog from '$lib/components/Dialog.svelte'
   import ReauthenticateForm from '$lib/components/forms/ReauthenticateForm.svelte'
   import Form from '$lib/components/Form.svelte'
   import { user } from '$lib/client/firebase'
+  import DialogActions from '../DialogActions.svelte'
+  import Button from '../Button.svelte'
 
   let className = ''
   export { className as class }
 
-  let modalEl: Modal
+  let dialogEl: Dialog
   let disabled = false
   let showValidation = false
   let values = {
@@ -22,7 +24,7 @@
     if (e.detail.error === null) {
       showValidation = false
       disabled = true
-      modalEl.open()
+      dialogEl.open()
     } else {
       showValidation = true
       alert.trigger('error', e.detail.error)
@@ -38,7 +40,6 @@
   }
   function handleReauthenticate() {
     if ($user) {
-      modalEl.close()
       updatePassword($user.object, values.newPassword)
         .then(() => {
           disabled = false
@@ -46,10 +47,16 @@
             newPassword: '',
             confirmPassword: '',
           }
+          dialogEl.close()
           alert.trigger('success', 'Password was successfully changed.')
         })
         .catch((err) => {
           disabled = false
+          values = {
+            newPassword: '',
+            confirmPassword: '',
+          }
+          dialogEl.close()
           alert.trigger('error', err.code, true)
         })
     }
@@ -85,22 +92,20 @@
         ]}
       />
       <div class="absolute right-2 top-0 flex h-12 items-center">
-        <button
-          class="rounded-md bg-blue-100 px-2 py-1 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200"
-          type="submit"
-        >
-          Update
-        </button>
+        <Button color="blue" padding="px-2 py-1" type="submit">Update</Button>
       </div>
     </div>
   </fieldset>
 </Form>
 
-<Modal
-  class="flex items-center justify-center"
-  title="Reauthenticate"
-  bind:this={modalEl}
-  on:cancel={handleCancel}
->
-  <ReauthenticateForm on:reauthenticate={handleReauthenticate} />
-</Modal>
+<Dialog bind:this={dialogEl} on:cancel={handleCancel}>
+  <svelte:fragment slot="title">Reauthenticate</svelte:fragment>
+  <svelte:fragment slot="description">
+    <ReauthenticateForm on:reauthenticate={handleReauthenticate}>
+      <DialogActions>
+        <Button on:click={dialogEl.cancel}>Cancel</Button>
+        <Button type="submit" color="blue">Reauthenticate</Button>
+      </DialogActions>
+    </ReauthenticateForm>
+  </svelte:fragment>
+</Dialog>

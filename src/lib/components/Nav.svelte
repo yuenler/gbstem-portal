@@ -45,7 +45,7 @@
 <svelte:window on:scroll={updateShadow} />
 <nav
   class={clsx(
-    'px-d fixed left-0 top-0 z-50 flex h-20 w-full items-center justify-between border-b bg-white transition-all',
+    'px-d fixed left-0 top-0 z-40 flex h-20 w-full items-center justify-between border-b bg-white transition-all',
     shadow && !open ? 'shadow-b border-gray-200' : 'border-white',
   )}
 >

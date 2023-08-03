@@ -34,6 +34,7 @@
   import { db, storage, user, type ApplicationData } from '$lib/client/firebase'
   import { cloneDeep, isEqual } from 'lodash-es'
   import Field from '$lib/components/Field.svelte'
+  import Button from '../Button.svelte'
 
   let disabled = true
   let showValidation = false
@@ -248,6 +249,10 @@
                       top: 0,
                       behavior: 'smooth',
                     })
+                    alert.trigger(
+                      'success',
+                      'Your application has been submitted!',
+                    )
                     handleEmail()
                   },
                 )
@@ -270,9 +275,8 @@
   function handleEmail() {
     return addDoc(collection(db, 'mail'), {
       to: [values.personal.email],
-      message: {
-        subject: 'HackHarvard Application Submitted!',
-        html: 'Congratulations! Stay updated through on the <a href="https://portal.hackharvard.io/dashboard">dashboard</a>. Our decisions will be released soon.',
+      template: {
+        name: 'application',
       },
     })
   }
@@ -291,6 +295,13 @@
   on:submit={handleSubmit}
 >
   <fieldset class="space-y-14" {disabled}>
+    {#if values.meta.submitted}
+      <div
+        class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
+      >
+        Application submitted and in review!
+      </div>
+    {/if}
     <div class="grid gap-4">
       <span class="font-bold text-2xl">Personal</span>
       <Card class="space-y-3">
@@ -656,26 +667,9 @@
       />
     </div>
     <div class={clsx('grid gap-3', !values.meta.submitted && 'grid-cols-2')}>
-      {#if values.meta.submitted}
-        <div
-          class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
-        >
-          Application submitted and in review!
-        </div>
-      {:else}
-        <button
-          type="button"
-          on:click={() => handleSave(true)}
-          class="rounded-md bg-gray-100 px-4 py-2 shadow-sm transition-colors duration-300 hover:bg-gray-200 disabled:bg-gray-200 disabled:text-gray-500"
-        >
-          Save draft
-        </button>
-        <button
-          type="submit"
-          class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
-        >
-          Submit
-        </button>
+      {#if !values.meta.submitted}
+        <Button on:click={() => handleSave(true)}>Save draft</Button>
+        <Button color="blue" type="submit">Submit</Button>
       {/if}
     </div>
   </fieldset>

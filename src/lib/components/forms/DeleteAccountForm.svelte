@@ -6,17 +6,19 @@
     deleteUser,
     reauthenticateWithCredential,
   } from 'firebase/auth'
-  import Modal from '$lib/components/Modal.svelte'
+  import Dialog from '$lib/components/Dialog.svelte'
   import Form from '$lib/components/Form.svelte'
   import Input from '$lib/components/Input.svelte'
   import { doc, deleteDoc } from 'firebase/firestore'
   import { ref, deleteObject } from 'firebase/storage'
   import { db, storage, user } from '$lib/client/firebase'
+  import Button from '../Button.svelte'
+  import DialogActions from '../DialogActions.svelte'
 
   let className = ''
   export { className as class }
 
-  let modalEl: Modal
+  let dialogEl: Dialog
   let showValidation = false
   let disabled = false
   let values = {
@@ -26,7 +28,7 @@
   function handleSubmit(e: CustomEvent<SubmitData>) {
     if (e.detail.error === null) {
       showValidation = false
-      modalEl.open()
+      dialogEl.open()
     } else {
       showValidation = true
       alert.trigger('error', e.detail.error)
@@ -103,46 +105,37 @@
 >
   <span class="font-bold">Delete account</span>
   <div class="mt-2">
-    <button
-      class="rounded-md bg-red-100 px-4 py-2 text-red-900 shadow-sm transition-colors duration-300 hover:bg-red-200 disabled:bg-red-200 disabled:text-red-500"
-      type="submit"
-    >
-      Delete account
-    </button>
+    <Button color="red" type="submit">Delete account</Button>
   </div>
 </Form>
 
-<Modal
-  class="flex items-center justify-center"
-  title="Delete account"
-  bind:this={modalEl}
-  on:cancel={handleCancel}
-  {disabled}
->
-  <Form
-    class={clsx('max-w-lg', showValidation && 'show-validation')}
-    on:submit={handleReauthenticate}
-  >
-    <fieldset class="space-y-4" {disabled}>
-      <h1 class="text-2xl font-bold">Delete account</h1>
-      <Input
-        type="password"
-        bind:value={values.password}
-        placeholder="Password"
-        floating
-        required
-        autocomplete="current-password"
-        focus
-      />
-      <div class="flex items-center justify-between">
-        <span class="font-bold">Warning! This is irreversible.</span>
-        <button
-          class="rounded-md bg-red-100 px-4 py-2 text-red-900 shadow-sm transition-colors duration-300 hover:bg-red-200"
-          type="submit"
-        >
-          Delete
-        </button>
-      </div>
-    </fieldset>
-  </Form>
-</Modal>
+<Dialog bind:this={dialogEl} on:cancel={handleCancel} {disabled} alert>
+  <svelte:fragment slot="title">Delete account</svelte:fragment>
+  <div slot="description" class="flex justify-center">
+    <Form
+      class={clsx(showValidation && 'show-validation')}
+      on:submit={handleReauthenticate}
+    >
+      <fieldset class="space-y-4" {disabled}>
+        <div class="flex justify-center">
+          <div class="space-y-4 max-w-lg w-full">
+            <Input
+              type="password"
+              bind:value={values.password}
+              placeholder="Password"
+              floating
+              required
+              autocomplete="current-password"
+              focus
+            />
+            <div class="font-bold">Warning! This is irreversible.</div>
+          </div>
+        </div>
+        <DialogActions>
+          <Button on:click={dialogEl.cancel}>Cancel</Button>
+          <Button color="red" type="submit">Delete</Button>
+        </DialogActions>
+      </fieldset>
+    </Form>
+  </div>
+</Dialog>

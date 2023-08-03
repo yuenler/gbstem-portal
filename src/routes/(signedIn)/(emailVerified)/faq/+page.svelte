@@ -24,7 +24,7 @@
         >I've verified my email but my application doesn't save or submit!</svelte:fragment
       >
       <svelte:fragment slot="content">
-        Please stores your application responses in a separate document. Then,
+        Please store your application responses in a separate document. Then,
         sign out and sign back in.
       </svelte:fragment>
     </Disclosure>
