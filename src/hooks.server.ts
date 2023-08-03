@@ -4,7 +4,11 @@ import type { Handle } from '@sveltejs/kit'
 export const handle = (async ({ event, resolve }) => {
   const sessionCookie = event.cookies.get('__session')
   try {
-    const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie!)
+    const decodedClaims = await adminAuth.verifySessionCookie(
+      sessionCookie!,
+      true,
+    )
+    console.log(decodedClaims)
     const userRecord = await adminAuth.getUser(decodedClaims.uid)
     event.locals.user = {
       emailVerified: userRecord.emailVerified,
