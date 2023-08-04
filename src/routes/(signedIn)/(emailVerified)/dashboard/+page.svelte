@@ -37,12 +37,8 @@
               const applicationExists = applicationDoc.exists()
               if (applicationExists) {
                 const applicationData = applicationDoc.data() as ApplicationData
-                if (applicationData.status.accepted) {
-                  data.application.status = 'accepted'
-                } else if (applicationData.status.waitlisted) {
-                  data.application.status = 'waitlisted'
-                } else if (applicationData.status.rejected) {
-                  data.application.status = 'rejected'
+                if (applicationData.meta.decision !== null) {
+                  data.application.status = applicationData.meta.decision
                 } else if (applicationData.meta.submitted) {
                   data.application.status = 'submitted'
                 } else {

@@ -1,8 +1,12 @@
-<script context="module">
-  let current
+<script context="module" lang="ts">
+  type SelectData = {
+    id: string
+    setOpen: (newState: boolean) => void
+  }
+  let current: SelectData
 </script>
 
-<script>
+<script lang="ts">
   import clsx from 'clsx'
   import { clickOutside } from '$lib/utils'
   import { uniqueId, debounce, kebabCase } from 'lodash-es'
@@ -11,21 +15,27 @@
   let className = ''
   export { className as class }
 
-  export let self = undefined
+  export let self: HTMLInputElement | undefined = undefined
   export let id = uniqueId('select-')
-  export let value
+  export let value: string
   export let placeholder = ''
   export let name = kebabCase(placeholder)
   export let floating = false
   export let required = false
-  let optionsJson = []
+  type SelectOption = string
+  type SelectOptionJson = {
+    name: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any
+  }
+  let optionsJson: Array<SelectOptionJson> = []
   export { optionsJson as options }
 
   let open = false
   let selectedOptionIndex = 0
 
   const options = optionsJson.map((item) => item.name)
-  let filteredOptions = []
+  let filteredOptions: Array<SelectOption> = []
   const filterOptionsBy = debounce((givenValue) => {
     if (givenValue === '') {
       filteredOptions = options
@@ -54,7 +64,8 @@
       value = ''
     }
   }
-  $: (() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  $: ((_) => {
     // validate updated value
     filterOptionsBy(value)
     if (self) {
@@ -72,14 +83,16 @@
 
   filterOptionsBy(value)
 
-  function handleInput(e) {
+  function handleInput(
+    e: Event & { currentTarget: EventTarget & HTMLInputElement },
+  ) {
     if (!open) {
       open = true
     }
     selectedOptionIndex = 0
-    value = e.target.value
+    value = (e.target as HTMLInputElement).value
   }
-  function handleKeyDown(e) {
+  function handleKeyDown(e: KeyboardEvent) {
     switch (e.code) {
       case 'Escape':
         open = false
@@ -162,7 +175,7 @@
         type="button"
         on:click={() => {
           open = !open
-          if (open) {
+          if (open && self) {
             self.focus()
           }
         }}
@@ -237,7 +250,7 @@
           type="button"
           on:click={() => {
             open = !open
-            if (open) {
+            if (open && self) {
               self.focus()
             }
           }}

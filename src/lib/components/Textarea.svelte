@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
   import clsx from 'clsx'
   import { uniqueId, kebabCase } from 'lodash-es'
+  import { onDestroy } from 'svelte'
   import { fade } from 'svelte/transition'
 
   let className = ''
@@ -8,25 +9,30 @@
 
   export let self = undefined
   export let id = uniqueId('textarea-')
-  export let value
+  export let value: string
   export let placeholder = ''
   export let name = kebabCase(placeholder)
   export let required = false
   export let rows = 5
   const calcHeight = 1.5 + 1.5 * rows
 
-  let timer
+  let timer: number | undefined
   let visible = false
-  function handleInput(e) {
+  onDestroy(() => {
+    clearTimeout(timer)
+  })
+  function handleInput(
+    e: Event & { currentTarget: EventTarget & HTMLTextAreaElement },
+  ) {
     clearTimeout(timer)
     if (!visible) {
       visible = true
     }
-    value = e.target.value
+    value = (e.target as HTMLTextAreaElement).value
   }
   function handleKeyUp() {
     clearTimeout(timer)
-    timer = setTimeout(() => {
+    timer = window.setTimeout(() => {
       visible = false
     }, 750)
   }

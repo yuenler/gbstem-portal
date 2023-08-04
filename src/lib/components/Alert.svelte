@@ -3,7 +3,7 @@
   import clsx from 'clsx'
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { browser } from '$app/environment'
 
   let timer: number | undefined
@@ -24,6 +24,9 @@
         setCloseTimeout()
       }
     })
+  })
+  onDestroy(() => {
+    clearTimeout(timer)
   })
   function setCloseTimeout() {
     timer = window.setTimeout(() => {

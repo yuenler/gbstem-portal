@@ -48,7 +48,7 @@ export type ApplicationData = {
     age: string
     gender: string
     race: string[]
-    underrepresented: boolean
+    underrepresented: string
     phoneNumber: string
     countryOfResidence: string
     shippingAddress: string
@@ -95,11 +95,7 @@ export type ApplicationData = {
     hhid: string
     uid: string
     submitted: boolean
-  }
-  status: {
-    accepted: boolean
-    rejected: boolean
-    waitlisted: boolean
+    decision: 'accepted' | 'waitlisted' | 'rejected' | null
   }
   timestamps: {
     created: FieldValue

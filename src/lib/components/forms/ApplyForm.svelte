@@ -47,7 +47,7 @@
       age: '',
       gender: '',
       race: [],
-      underrepresented: false,
+      underrepresented: '',
       phoneNumber: '',
       countryOfResidence: '',
       shippingAddress: '',
@@ -97,11 +97,7 @@
       hhid: '',
       uid: '',
       submitted: false,
-    },
-    status: {
-      accepted: false,
-      rejected: false,
-      waitlisted: false,
+      decision: null,
     },
     timestamps: {
       created: serverTimestamp(),
