@@ -35,6 +35,7 @@
   import { cloneDeep, isEqual } from 'lodash-es'
   import Field from '$lib/components/Field.svelte'
   import Button from '../Button.svelte'
+  import Link from '../Link.svelte'
 
   let disabled = true
   let showValidation = false
@@ -297,6 +298,11 @@
       >
         Application submitted and in review!
       </div>
+    {:else}
+      <Card>
+        Please refer to the <Link href="/faq">FAQ</Link> for information on eligibility
+        before you begin the application.
+      </Card>
     {/if}
     <div class="grid gap-4">
       <span class="font-bold text-2xl">Personal</span>
@@ -667,11 +673,11 @@
         required
       />
     </div>
-    <div class={clsx('grid gap-3', !values.meta.submitted && 'grid-cols-2')}>
-      {#if !values.meta.submitted}
+    {#if !values.meta.submitted}
+      <div class="grid gap-3 grid-cols-2">
         <Button on:click={() => handleSave(true)}>Save draft</Button>
         <Button color="blue" type="submit">Submit</Button>
-      {/if}
-    </div>
+      </div>
+    {/if}
   </fieldset>
 </Form>
