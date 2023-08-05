@@ -46,14 +46,18 @@
               // attempt to generate hhid
               let hhid = generateId()
               for (let i = 0; i < 5; ++i) {
-                const res = await getDoc(doc(db, 'hhids', hhid))
-                if (res.exists()) {
-                  hhid = generateId()
-                  if (i == 4) {
-                    hhid = ''
+                try {
+                  const res = await getDoc(doc(db, 'hhids', hhid))
+                  if (res.exists()) {
+                    hhid = generateId()
+                    if (i == 4) {
+                      hhid = ''
+                    }
+                  } else {
+                    break
                   }
-                } else {
-                  break
+                } catch (err) {
+                  hhid = ''
                 }
               }
               if (hhid === '') {
