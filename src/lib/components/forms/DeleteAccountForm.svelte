@@ -83,7 +83,7 @@
                   })
               })
               .catch((err) => {
-                console.log(err)
+                console.log('HHID/User Object Deletion:', err)
                 disabled = false
               })
           })
