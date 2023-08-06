@@ -18,11 +18,28 @@
   export let data: PageData
 
   let dialogEl: Dialog
+  let disabled = false
 
   async function handleVerificationEmail() {
     if ($user) {
-      sendEmailVerification($user.object).then(() => {
-        alert.trigger('info', 'Verification email was sent.')
+      disabled = true
+      fetch('/api/action', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'verifyEmail',
+        }),
+      }).then(async (res) => {
+        if (res.ok) {
+          alert.trigger('info', 'Verification email was sent.')
+        } else {
+          const { message } = await res.json()
+          console.log(message)
+          alert.trigger('error', message)
+        }
+        disabled = false
       })
     }
   }
@@ -71,9 +88,10 @@
         <div class="grow">
           Email is not verified. Try reloading or check your inbox to verify
           your account. Can't find the email? <button
-            class="inline-block border-b border-black text-black transition-colors duration-300 hover:border-gray-600 hover:text-gray-600"
+            class="inline-block border-b border-black text-black transition-colors duration-300 hover:border-gray-600 hover:text-gray-600 disabled:border-gray-600 disabled:text-gray-600"
             type="button"
-            on:click={handleVerificationEmail}>Send it again.</button
+            on:click={handleVerificationEmail}
+            {disabled}>Send it again.</button
           >
         </div>
       </div>

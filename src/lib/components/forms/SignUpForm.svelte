@@ -10,7 +10,6 @@
   import {
     createUserWithEmailAndPassword,
     deleteUser,
-    sendEmailVerification,
     updateProfile,
   } from 'firebase/auth'
   import { auth, db } from '$lib/client/firebase'
@@ -75,30 +74,33 @@
                       firstName,
                       lastName,
                     }).then(() => {
-                      sendEmailVerification(user)
-                        .then(() => {
-                          user.getIdToken().then((idToken) => {
-                            fetch('/api/auth', {
+                      user.getIdToken().then((idToken) => {
+                        fetch('/api/auth', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ idToken }),
+                        })
+                          .then(() => {
+                            fetch('/api/action', {
                               method: 'POST',
                               headers: {
                                 'Content-Type': 'application/json',
                               },
-                              body: JSON.stringify({ idToken }),
+                              body: JSON.stringify({
+                                type: 'verifyEmail',
+                              }),
+                            }).then(async (res) => {
+                              if (!res.ok) {
+                                const { message } = await res.json()
+                                console.log(message)
+                              }
+                              goto('/profile')
                             })
-                              .then(() => {
-                                goto('/profile')
-                              })
-                              .catch((err) =>
-                                console.log('Sign In Error:', err),
-                              )
                           })
-                        })
-                        .catch(() =>
-                          alert.trigger(
-                            'error',
-                            'Please manually verify email through your profile.',
-                          ),
-                        )
+                          .catch((err) => console.log('Sign In Error:', err))
+                      })
                     })
                   })
                   .catch((err) => console.log(err))

@@ -27,6 +27,8 @@ export type UserProfile = {
 }
 
 export type UserPeek = {
+  uid: string
+  email: string
   emailVerified: boolean
 }
 
