@@ -97,8 +97,12 @@
     {/if}
     <Card class="space-y-3">
       <div class="relative">
-        <Field>
-          {`HHID: ${$user ? $user.profile.hhid : ''}`}
+        <Field class="pr-9">
+          <div class="relative h-6 overflow-x-auto">
+            <div class="absolute top-0 left-0 whitespace-nowrap">
+              {`HHID: ${$user ? $user.profile.hhid : ''}`}
+            </div>
+          </div>
         </Field>
         <div class="absolute top-2.5 right-2">
           <button
