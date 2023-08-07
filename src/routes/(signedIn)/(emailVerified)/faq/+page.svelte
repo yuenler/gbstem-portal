@@ -1,5 +1,6 @@
 <script lang="ts">
   import Disclosure from '$lib/components/Disclosure.svelte'
+  import Link from '$lib/components/Link.svelte'
   import PageLayout from '$lib/components/PageLayout.svelte'
   import { format } from 'date-fns'
 </script>
@@ -20,22 +21,32 @@
       </svelte:fragment>
     </Disclosure>
     <Disclosure>
-      <svelte:fragment slot="title"
-        >I've verified my email but my application doesn't save or submit!</svelte:fragment
-      >
+      <svelte:fragment slot="title">
+        I've verified my email but my application doesn't save or submit!
+      </svelte:fragment>
       <svelte:fragment slot="content">
         Please store your application responses in a separate document. Then,
         sign out and sign back in.
       </svelte:fragment>
     </Disclosure>
     <Disclosure>
+      <svelte:fragment slot="title"
+        >My school is not listed on the application.</svelte:fragment
+      >
+      <svelte:fragment slot="content"
+        >Please email us at <Link href="mailto:team@hackharvard.io"
+          >team@hackharvard.io</Link
+        > with information about your school and possibly a link to your school's
+        website.</svelte:fragment
+      >
+    </Disclosure>
+    <Disclosure>
       <svelte:fragment slot="title">
         I keep encountering an error and can't submit!
       </svelte:fragment>
       <svelte:fragment slot="content">
-        Please contact us immediately at <a
-          href="mailto:team@hackharvard.io"
-          class="link">team@hackharvard.io</a
+        Please contact us immediately at <Link href="mailto:team@hackharvard.io"
+          >team@hackharvard.io</Link
         >
         with the following content.
         <ol class="list-disc list-inside">
