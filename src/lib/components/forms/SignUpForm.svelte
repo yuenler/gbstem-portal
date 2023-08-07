@@ -15,6 +15,7 @@
   import { auth, db } from '$lib/client/firebase'
   import Link from '../Link.svelte'
   import Button from '../Button.svelte'
+  import Loading from '../Loading.svelte'
 
   let disabled = false
   let showValidation = false
@@ -96,21 +97,31 @@
                                 const { message } = await res.json()
                                 console.log(message)
                               }
+                              disabled = false
                               goto('/profile')
                             })
                           })
-                          .catch((err) => console.log('Sign In Error:', err))
+                          .catch((err) => {
+                            console.log('Sign In Error:', err)
+                            disabled = false
+                          })
                       })
                     })
                   })
-                  .catch((err) => console.log(err))
+                  .catch((err) => {
+                    console.log(err)
+                    disabled = false
+                  })
               }
             })
-            .catch((err) => console.log(err))
+            .catch((err) => {
+              console.log(err)
+              disabled = false
+            })
         })
         .catch((err) => {
-          disabled = false
           alert.trigger('error', err.code, true)
+          disabled = false
         })
     } else {
       showValidation = true
@@ -126,48 +137,56 @@
   <fieldset class="space-y-4" {disabled}>
     <Brand />
     <h1 class="text-2xl font-bold">Sign up</h1>
-    <div class="grid gap-2 sm:grid-cols-2 sm:gap-4">
+    <div class="relative space-y-4">
+      <div class="grid gap-2 sm:grid-cols-2 sm:gap-4">
+        <Input
+          type="text"
+          bind:value={values.firstName}
+          placeholder="First name"
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.lastName}
+          placeholder="Last name"
+          floating
+          required
+        />
+      </div>
       <Input
-        type="text"
-        bind:value={values.firstName}
-        placeholder="First name"
+        type="email"
+        bind:value={values.email}
+        placeholder="Email"
         floating
         required
       />
       <Input
-        type="text"
-        bind:value={values.lastName}
-        placeholder="Last name"
+        type="password"
+        bind:value={values.password}
+        placeholder="Password"
         floating
         required
+        autocomplete="new-password"
       />
+      <Input
+        type="password"
+        bind:value={values.confirmPassword}
+        placeholder="Confirm password"
+        floating
+        required
+        autocomplete="new-password"
+        validations={[
+          [
+            values.password !== values.confirmPassword,
+            'Passwords do not match.',
+          ],
+        ]}
+      />
+      {#if disabled}
+        <Loading class="absolute -inset-2 -top-4 z-50" />
+      {/if}
     </div>
-    <Input
-      type="email"
-      bind:value={values.email}
-      placeholder="Email"
-      floating
-      required
-    />
-    <Input
-      type="password"
-      bind:value={values.password}
-      placeholder="Password"
-      floating
-      required
-      autocomplete="new-password"
-    />
-    <Input
-      type="password"
-      bind:value={values.confirmPassword}
-      placeholder="Confirm password"
-      floating
-      required
-      autocomplete="new-password"
-      validations={[
-        [values.password !== values.confirmPassword, 'Passwords do not match.'],
-      ]}
-    />
     <div class="mt-2 flex items-center justify-between">
       <div>
         <Link href="/signin">Need to sign in?</Link>
