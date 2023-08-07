@@ -3,7 +3,6 @@
   import ChangePasswordForm from '$lib/components/forms/ChangePasswordForm.svelte'
   import DeleteAccountForm from '$lib/components/forms/DeleteAccountForm.svelte'
   import { fade } from 'svelte/transition'
-  import { sendEmailVerification } from 'firebase/auth'
   import { alert } from '$lib/stores'
   import ChangeNameForm from '$lib/components/forms/ChangeNameForm.svelte'
   import Card from '$lib/components/Card.svelte'
