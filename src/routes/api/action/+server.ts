@@ -104,7 +104,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
               codePrefix: 'auth'
             }
         if ('errorInfo' in typedErr) {
-          topError = error(400, 'Please wait a few minute before trying again.')
+          topError = error(
+            400,
+            'Please wait a few minutes before trying again.',
+          )
         } else if ('message' in typedErr) {
           topError = error(400, typedErr.message)
         } else {
