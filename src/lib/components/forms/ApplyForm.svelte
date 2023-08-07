@@ -236,21 +236,28 @@
                 alert.trigger('success', 'Your application has been submitted!')
                 getDoc(doc(db, 'applications', frozenUser.object.uid)).then(
                   (applicationDoc) => {
-                    const applicationData =
-                      applicationDoc.data() as ApplicationData
-                    clearInterval(saveInterval)
-                    saveInterval = undefined
-                    values = cloneDeep(applicationData)
-                    dbValues = cloneDeep(applicationData)
-                    window.scrollTo({
-                      top: 0,
-                      behavior: 'smooth',
+                    fetch('/api/application', {
+                      method: 'POST',
+                    }).then(async (res) => {
+                      if (!res.ok) {
+                        const { message } = await res.json()
+                        console.log(message)
+                      }
+                      const applicationData =
+                        applicationDoc.data() as ApplicationData
+                      clearInterval(saveInterval)
+                      saveInterval = undefined
+                      values = cloneDeep(applicationData)
+                      dbValues = cloneDeep(applicationData)
+                      window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth',
+                      })
+                      alert.trigger(
+                        'success',
+                        'Your application has been submitted!',
+                      )
                     })
-                    alert.trigger(
-                      'success',
-                      'Your application has been submitted!',
-                    )
-                    handleEmail()
                   },
                 )
               })
@@ -268,14 +275,6 @@
         alert.trigger('error', e.detail.error)
       }
     }
-  }
-  function handleEmail() {
-    return addDoc(collection(db, 'mail'), {
-      to: [values.personal.email],
-      template: {
-        name: 'application',
-      },
-    })
   }
   function handleUnload(e: BeforeUnloadEvent) {
     if (!isEqual(dbValues, values)) {
