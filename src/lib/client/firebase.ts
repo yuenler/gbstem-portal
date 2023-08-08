@@ -97,11 +97,10 @@ export type ApplicationData = {
     hhid: string
     uid: string
     submitted: boolean
-    decision: 'accepted' | 'waitlisted' | 'rejected' | null
   }
   timestamps: {
-    created: FieldValue
-    updated: FieldValue
+    created: Timestamp
+    updated: Timestamp
   }
 }
 

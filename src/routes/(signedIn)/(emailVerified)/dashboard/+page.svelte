@@ -38,9 +38,7 @@
               const applicationExists = applicationDoc.exists()
               if (applicationExists) {
                 const applicationData = applicationDoc.data() as ApplicationData
-                if (applicationData.meta.decision !== null) {
-                  data.application.status = applicationData.meta.decision
-                } else if (applicationData.meta.submitted) {
+                if (applicationData.meta.submitted) {
                   data.application.status = 'submitted'
                 } else {
                   data.application.status = null
