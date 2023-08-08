@@ -5,8 +5,6 @@
     getDoc,
     setDoc,
     serverTimestamp,
-    addDoc,
-    collection,
     Timestamp,
   } from 'firebase/firestore'
   import Input from '$lib/components/Input.svelte'
@@ -350,14 +348,14 @@
         class="w-24"
         type="number"
         bind:value={values.personal.age}
-        label="How old will you be on October 20th, 2023?"
+        placeholder="How old will you be on October 20th, 2023?"
         min="0"
         max="100"
         required
       />
       <Select
         bind:value={values.personal.gender}
-        label="Gender"
+        placeholder="Gender"
         options={gendersJson}
         floating
         required
@@ -369,28 +367,28 @@
             <Input
               type="checkbox"
               bind:value={values.personal.race}
-              label={race.name}
+              placeholder={race.name}
             />
           {/each}
         </div>
       </div>
       <Select
         bind:value={values.personal.underrepresented}
-        label="Do you identify as part of an underrepresented group in the technology industry?"
+        placeholder="Do you identify as part of an underrepresented group in the technology industry?"
         options={[{ name: 'Yes' }, { name: 'No' }, { name: 'Unsure' }]}
         required
       />
       <Input
         type="tel"
         bind:value={values.personal.phoneNumber}
-        label="Phone number"
+        placeholder="Phone number"
         floating
         required
         pattern="[\d\s\-\+]+"
       />
       <Select
         bind:value={values.personal.countryOfResidence}
-        label="Country of residence"
+        placeholder="Country of residence"
         options={worldJson}
         floating
         required
@@ -398,7 +396,7 @@
       <Input
         type="text"
         bind:value={values.personal.shippingAddress}
-        label="Shipping Address"
+        placeholder="Shipping Address"
         floating
         required
       />
@@ -406,13 +404,13 @@
         <Input
           type="text"
           bind:value={values.personal.shippingCity}
-          label="City"
+          placeholder="City"
           floating
           required
         />
         <Select
           bind:value={values.personal.shippingState}
-          label="State"
+          placeholder="State"
           options={statesJson}
           floating
           required
@@ -421,7 +419,7 @@
       <div class="grid gap-1 sm:grid-cols-2 sm:gap-3">
         <Select
           bind:value={values.personal.shippingCountry}
-          label="Country"
+          placeholder="Country"
           options={worldJson}
           floating
           required
@@ -429,7 +427,7 @@
         <Input
           type="text"
           bind:value={values.personal.shippingZipCode}
-          label="Zip code"
+          placeholder="Zip code"
           floating
           required
         />
@@ -441,7 +439,7 @@
             <Input
               type="checkbox"
               bind:value={values.personal.dietaryRestrictions}
-              label={dietaryRestriction.name}
+              placeholder={dietaryRestriction.name}
             />
           {/each}
         </div>
@@ -451,7 +449,7 @@
       <span class="font-bold text-2xl">Academic</span>
       <Select
         bind:value={values.academic.levelOfStudy}
-        label="What is your current education level?"
+        placeholder="What is your current education level?"
         options={levelOfStudyJson}
         floating
         required
@@ -459,14 +457,14 @@
       <Input
         type="checkbox"
         bind:value={values.academic.enrolled}
-        label="Will you be pursuing an undergraduate degree program at a university on October 20th, 2023?"
+        placeholder="Will you be pursuing an undergraduate degree program at a university on October 20th, 2023?"
         required
       />
       <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
         <div class="sm:col-span-2">
           <Select
             bind:value={values.academic.currentSchool}
-            label="Current school"
+            placeholder="Current school"
             options={schoolsJson}
             floating
             required
@@ -475,7 +473,7 @@
         <Input
           type="number"
           bind:value={values.academic.graduationYear}
-          label="Graduation year"
+          placeholder="Graduation year"
           min={new Date().getFullYear()}
           max={new Date().getFullYear() + 20}
           floating
@@ -484,7 +482,7 @@
       </div>
       <Select
         bind:value={values.academic.major}
-        label="Major / field of study"
+        placeholder="Major / field of study"
         options={majorJson}
         floating
         required
@@ -492,7 +490,7 @@
       <Input
         type="checkbox"
         bind:value={values.academic.affiliated}
-        label="Are you affiliated with Harvard University? If so, make sure
+        placeholder="Are you affiliated with Harvard University? If so, make sure
         your profile uses your Harvard email."
         validations={[
           [
@@ -508,7 +506,7 @@
       <div class="grid grid-cols-2 sm:grid-cols-3">
         <Select
           bind:value={values.hackathon.shirtSize}
-          label="Shirt size"
+          placeholder="Shirt size"
           options={shirtSizeJson}
           floating
           required
@@ -517,24 +515,24 @@
       <Input
         type="checkbox"
         bind:value={values.hackathon.firstHackathon}
-        label="Will HackHarvard be your first hackathon?"
+        placeholder="Will HackHarvard be your first hackathon?"
       />
       {#if !values.hackathon.firstHackathon}
         <Input
           type="checkbox"
           bind:value={values.hackathon.previouslyParticipated}
-          label="Have you previously participated at a HackHarvard hackathon?"
+          placeholder="Have you previously participated at a HackHarvard hackathon?"
         />
       {/if}
       <Input
         type="checkbox"
         bind:value={values.hackathon.ableToAttend}
-        label="HackHarvard is an in-person event. Will you be able to be in Cambridge, MA, United States, considering both the legal requirements for international students and the logistical aspects, on October 20th, 2023?"
+        placeholder="HackHarvard is an in-person event. Will you be able to be in Cambridge, MA, United States, considering both the legal requirements for international students and the logistical aspects, on October 20th, 2023?"
         required
       />
       <Select
         bind:value={values.hackathon.reason}
-        label="How did you learn about HackHarvard?"
+        placeholder="How did you learn about HackHarvard?"
         options={reasonsJson}
         required
       />
@@ -554,14 +552,14 @@
             <Input
               type="checkbox"
               bind:value={values.openResponse.roles}
-              label={role.name}
+              placeholder={role.name}
             />
           {/each}
         </div>
         {#if values.openResponse.roles.includes('other')}
           <Textarea
             bind:value={values.openResponse.otherRole}
-            label="If other, what other roles could you see yourself playing? (200 char limit)"
+            placeholder="If other, what other roles could you see yourself playing? (200 char limit)"
             required
             rows={1}
             maxlength={200}
@@ -578,7 +576,7 @@
             <Input
               type="checkbox"
               bind:value={values.openResponse.prolangs}
-              label={prolang.name}
+              placeholder={prolang.name}
               validations={[
                 [
                   values.openResponse.prolangs.length > 5,
@@ -592,7 +590,7 @@
         {#if values.openResponse.prolangs.includes('other')}
           <Textarea
             bind:value={values.openResponse.otherProlang}
-            label="If other, what other programming languages? (200 char limit)"
+            placeholder="If other, what other programming languages? (200 char limit)"
             required
             rows={1}
             maxlength={200}
@@ -601,25 +599,25 @@
       </div>
       <Select
         bind:value={values.openResponse.experience}
-        label="How much experience do you have with computer science?"
+        placeholder="How much experience do you have with computer science?"
         options={experienceJson}
         required
       />
       <Textarea
         bind:value={values.openResponse.whyHh}
-        label={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve? (500 char limit)`}
+        placeholder={`Share your goals and aspirations for this event and how you plan to make the most of your HackHarvard experience. What specific areas are you eager to learn more about, and what skills or technologies are you excited to acquire or improve? (500 char limit)`}
         required
         maxlength={500}
       />
       <Textarea
         bind:value={values.openResponse.project}
-        label={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached? (500 char limit)`}
+        placeholder={`HackHarvard is all about sparking creativity and making a positive difference through innovative projects. We'd love to hear about a project you've been part of that embodies this spirit. How did your project bring a touch of magic or create a lasting impact, whether big or small, on the people or community it reached? (500 char limit)`}
         required
         maxlength={500}
       />
       <Textarea
         bind:value={values.openResponse.predictions}
-        label={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us! (500 char limit)`}
+        placeholder={`In line with the theme "Hack to the Future" for HackHarvard 2023, we invite you to unleash your creativity and envision three predictions for the year 2073. Let your imagination soar as you consider how the world may have transformed. Did OpenAI create AGI? Is Taylor Swift’s granddaughter allergic to tree nuts? Does the iPhone 55 have a headphone jack? Are cat videos still funny? Share your captivating predictions with us! (500 char limit)`}
         required
         maxlength={500}
       />
@@ -628,7 +626,7 @@
           <Input
             bind:value={resumeFile}
             type="file"
-            label="Upload your resume (max 1 MB; 1 page PDF)"
+            placeholder="Upload your resume (max 1 MB; 1 page PDF)"
             maxSize={1 * 1024 * 1024}
             accept={['application/pdf']}
             required
@@ -643,7 +641,7 @@
       <Input
         type="checkbox"
         bind:value={values.openResponse.resumeShare}
-        label="If you are accepted to HackHarvard 2023, would you like us to share your resume with our sponsors for potential recruitment opportunities?"
+        placeholder="If you are accepted to HackHarvard 2023, would you like us to share your resume with our sponsors for potential recruitment opportunities?"
       />
     </div>
     <div class="grid gap-4">
@@ -651,24 +649,24 @@
       <Input
         type="checkbox"
         bind:value={values.agreements.codeOfConduct}
-        label="I have read and agree to the MLH Code of Conduct (https://static.mlh.io/docs/mlh-code-of-conduct.pdf)."
+        placeholder="I have read and agree to the MLH Code of Conduct (https://static.mlh.io/docs/mlh-code-of-conduct.pdf)."
         required
       />
       <Input
         type="checkbox"
         bind:value={values.agreements.sharing}
-        label="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy (https://mlh.io/privacy). I further agree to the terms of both the MLH Contest Terms and Conditions (https://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy)"
+        placeholder="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy (https://mlh.io/privacy). I further agree to the terms of both the MLH Contest Terms and Conditions (https://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy)"
         required
       />
       <Input
         type="checkbox"
         bind:value={values.agreements.mlhEmails}
-        label="I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements."
+        placeholder="I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements."
       />
       <Input
         type="checkbox"
         bind:value={values.agreements.submitting}
-        label="I understand submitting means I can no longer make changes to my application. Don't check this box until you are sure that you are ready to submit."
+        placeholder="I understand submitting means I can no longer make changes to my application. Don't check this box until you are sure that you are ready to submit."
         required
       />
     </div>

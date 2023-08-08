@@ -9,13 +9,7 @@ import {
 } from '$env/static/public'
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged, type User } from 'firebase/auth'
-import {
-  FieldValue,
-  Timestamp,
-  doc,
-  getDoc,
-  getFirestore,
-} from 'firebase/firestore'
+import { Timestamp, doc, getDoc, getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 import { readable } from 'svelte/store'
 
