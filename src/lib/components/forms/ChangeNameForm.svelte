@@ -69,7 +69,7 @@
       <Input
         type="text"
         bind:value={values.firstName}
-        placeholder="First name"
+        label="First name"
         floating
         required
       />
@@ -77,13 +77,12 @@
         <Input
           type="text"
           bind:value={values.lastName}
-          placeholder="Last name"
+          label="Last name"
           floating
           required
         />
         <Button
-          class="mt-2 flex h-12 w-12 shrink-0 items-center justify-center"
-          padding={false}
+          class="mt-2 flex h-12 w-12 shrink-0 items-center justify-center p-0"
           color="blue"
           type="submit"
         >

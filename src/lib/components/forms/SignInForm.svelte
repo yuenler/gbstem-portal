@@ -58,14 +58,14 @@
     <Input
       type="email"
       bind:value={values.email}
-      placeholder="Email"
+      label="Email"
       floating
       required
     />
     <Input
       type="password"
       bind:value={values.password}
-      placeholder="Password"
+      label="Password"
       floating
       required
       autocomplete="current-password"
