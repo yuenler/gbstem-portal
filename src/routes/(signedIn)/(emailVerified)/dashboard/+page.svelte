@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { db, user, type ApplicationData } from '$lib/client/firebase'
+  import { db, user } from '$lib/client/firebase'
   import Card from '$lib/components/Card.svelte'
   import Link from '$lib/components/Link.svelte'
   import Loading from '$lib/components/Loading.svelte'
@@ -37,7 +37,8 @@
             (applicationDoc) => {
               const applicationExists = applicationDoc.exists()
               if (applicationExists) {
-                const applicationData = applicationDoc.data() as ApplicationData
+                const applicationData =
+                  applicationDoc.data() as Data.Application<'client'>
                 if (applicationData.meta.submitted) {
                   data.application.status = 'submitted'
                 } else {

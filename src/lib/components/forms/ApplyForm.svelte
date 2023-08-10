@@ -30,7 +30,7 @@
   import Card from '$lib/components/Card.svelte'
   import Form from '$lib/components/Form.svelte'
   import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-  import { db, storage, user, type ApplicationData } from '$lib/client/firebase'
+  import { db, storage, user } from '$lib/client/firebase'
   import { cloneDeep, isEqual } from 'lodash-es'
   import Field from '$lib/components/Field.svelte'
   import Button from '../Button.svelte'
@@ -38,8 +38,8 @@
 
   let disabled = true
   let showValidation = false
-  let dbValues: ApplicationData
-  let values: ApplicationData = {
+  let dbValues: Data.Application<'client'>
+  let values: Data.Application<'client'> = {
     personal: {
       email: '',
       firstName: '',
@@ -97,6 +97,7 @@
       hhid: '',
       uid: '',
       submitted: false,
+      decision: null,
     },
     timestamps: {
       created: serverTimestamp() as Timestamp,
@@ -112,7 +113,8 @@
           (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
             if (applicationExists) {
-              const applicationData = applicationDoc.data() as ApplicationData
+              const applicationData =
+                applicationDoc.data() as Data.Application<'client'>
               values = cloneDeep(applicationData)
               dbValues = cloneDeep(applicationData)
               if (
@@ -178,7 +180,7 @@
               getDoc(doc(db, 'applications', frozenUser.object.uid)).then(
                 (applicationDoc) => {
                   const applicationData =
-                    applicationDoc.data() as ApplicationData
+                    applicationDoc.data() as Data.Application<'client'>
                   values = cloneDeep(applicationData)
                   dbValues = cloneDeep(applicationData)
                   if (disable) {
@@ -242,7 +244,7 @@
                         console.log(message)
                       }
                       const applicationData =
-                        applicationDoc.data() as ApplicationData
+                        applicationDoc.data() as Data.Application<'client'>
                       clearInterval(saveInterval)
                       saveInterval = undefined
                       values = cloneDeep(applicationData)

@@ -7,10 +7,9 @@
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
   import AnnouncementsBell from './AnnouncementsBell.svelte'
-  import type { UserPeek } from '$lib/client/firebase'
   import { cubicInOut } from 'svelte/easing'
 
-  export let user: UserPeek
+  export let user: Data.User.Peek
 
   let shadow = false
   let open = false
