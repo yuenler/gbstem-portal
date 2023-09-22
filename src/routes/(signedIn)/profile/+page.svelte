@@ -13,11 +13,22 @@
   import Dialog from '$lib/components/Dialog.svelte'
   import Button from '$lib/components/Button.svelte'
   import DialogActions from '$lib/components/DialogActions.svelte'
-
+  import QRious from 'qrious'
+    import { onMount } from 'svelte'
   export let data: PageData
 
   let dialogEl: Dialog
   let disabled = false
+  
+  onMount(() => {
+    (function() {
+        var qr = new QRious({
+          element: document.getElementById('qr'),
+          value: `https://admin.hackharvard.io/user/${$user ? $user.profile.hhid : ''}`,
+          size: 200
+        });
+      })();
+  });
 
   async function handleVerificationEmail() {
     if ($user) {
@@ -128,6 +139,11 @@
           </button>
         </div>
       </div>
+      
+      <div class="flex justify-center">
+        <canvas id="qr"></canvas>
+      </div>
+
       <div class="text-sm">
         Any problems with changing your profile? Contact us at <a
           href="mailto:team@hackharvard.io"
