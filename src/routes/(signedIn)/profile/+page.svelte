@@ -14,21 +14,20 @@
   import Button from '$lib/components/Button.svelte'
   import DialogActions from '$lib/components/DialogActions.svelte'
   import QRious from 'qrious'
-    import { onMount } from 'svelte'
+  import { onMount } from 'svelte'
+
   export let data: PageData
 
   let dialogEl: Dialog
   let disabled = false
   
   onMount(() => {
-    (function() {
-        var qr = new QRious({
+    var qr = new QRious({
           element: document.getElementById('qr'),
           value: `https://admin.hackharvard.io/user/${$user ? $user.profile.hhid : ''}`,
           size: 200
-        });
-      })();
-  });
+     })
+  })
 
   async function handleVerificationEmail() {
     if ($user) {
