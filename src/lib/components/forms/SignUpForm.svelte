@@ -84,22 +84,7 @@
                           body: JSON.stringify({ idToken }),
                         })
                           .then(() => {
-                            fetch('/api/action', {
-                              method: 'POST',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify({
-                                type: 'verifyEmail',
-                              }),
-                            }).then(async (res) => {
-                              if (!res.ok) {
-                                const { message } = await res.json()
-                                console.log(message)
-                              }
-                              disabled = false
-                              goto('/profile')
-                            })
+                            goto('/profile')
                           })
                           .catch((err) => {
                             console.log('Sign In Error:', err)
