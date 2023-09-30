@@ -91,6 +91,7 @@
                               },
                               body: JSON.stringify({
                                 type: 'verifyEmail',
+                                email: values.email,
                               }),
                             }).then(async (res) => {
                               if (!res.ok) {

@@ -12,13 +12,18 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     try {
       switch (body.type) {
         case 'verifyEmail': {
-          if (locals.user === null) {
-            throw 'User not signed in.'
+          let email: string
+          if (locals && 'user' in locals) {
+            if (locals.user === null) {
+              throw 'User not signed in.'
+            } else {
+              email = locals.user.email
+            }
+          } else {
+            email = body.email
           }
-          const link = await adminAuth.generateEmailVerificationLink(
-            locals.user.email,
-          )
-          to = locals.user.email
+          const link = await adminAuth.generateEmailVerificationLink(email)
+          to = email
           data = {
             subject: 'Verify Email for HackHarvard Account',
             action: {
