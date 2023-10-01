@@ -1,11 +1,10 @@
 <script lang="ts">
-  import clsx from 'clsx'
   import { createEventDispatcher } from 'svelte'
   import { browser } from '$app/environment'
   import { uniqueId } from 'lodash-es'
   import { dialog } from '$lib/stores'
   import { fade } from 'svelte/transition'
-  import { clickOutside, trapFocus } from '$lib/utils'
+  import { clickOutside, cn, trapFocus } from '$lib/utils'
 
   type Size = 'min' | 'full'
 
@@ -66,11 +65,11 @@
     transition:fade={{ duration: 200 }}
   >
     <div
-      class="relative flex items-end sm:items-center justify-center min-h-screen py-d px-d/2"
+      class="relative flex min-h-screen items-end justify-center px-d/2 py-d sm:items-center"
     >
       <div
-        class={clsx(
-          'p-4 sm:p-8 bg-white grid gap-3 sm:gap-6 w-full rounded-lg',
+        class={cn(
+          'grid w-full gap-3 rounded-lg bg-white p-4 sm:gap-6 sm:p-8',
           size === 'full' && 'h-full',
           size === 'min' && 'max-w-2xl',
         )}
@@ -84,7 +83,7 @@
         }}
       >
         <h1
-          class="text-xl uppercase bg-gray-200 px-4 py-3 rounded-md font-bold"
+          class="rounded-md bg-gray-200 px-4 py-3 text-xl font-bold uppercase"
         >
           <slot name="title" />
         </h1>

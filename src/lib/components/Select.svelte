@@ -25,7 +25,6 @@
   type SelectOption = string
   type SelectOptionJson = {
     name: string
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any
   }
   let optionsJson: Array<SelectOptionJson> = []
@@ -64,7 +63,6 @@
       value = ''
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   $: ((_) => {
     // validate updated value
     filterOptionsBy(value)

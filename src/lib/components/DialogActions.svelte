@@ -1,13 +1,13 @@
 <script lang="ts">
-  import clsx from 'clsx'
+  import { cn } from '$lib/utils'
 
   let className = ''
   export { className as class }
 </script>
 
 <div
-  class={clsx(
-    'flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4',
+  class={cn(
+    'flex flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:gap-4',
     className,
   )}
 >

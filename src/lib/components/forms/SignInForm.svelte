@@ -1,6 +1,5 @@
 <script lang="ts">
   import Input from '$lib/components/Input.svelte'
-  import clsx from 'clsx'
   import { auth } from '$lib/client/firebase'
   import { alert } from '$lib/stores'
   import Brand from '$lib/components/Brand.svelte'
@@ -9,6 +8,7 @@
   import { goto } from '$app/navigation'
   import Link from '../Link.svelte'
   import Button from '../Button.svelte'
+  import { cn } from '$lib/utils'
 
   let disabled = false
   let showValidation = false
@@ -49,7 +49,7 @@
 </script>
 
 <Form
-  class={clsx('max-w-lg', showValidation && 'show-validation')}
+  class={cn('max-w-lg', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
   <fieldset class="space-y-4" {disabled}>

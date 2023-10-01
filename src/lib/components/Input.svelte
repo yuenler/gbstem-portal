@@ -204,7 +204,7 @@
       </span>
     </label>
     {#if type == 'password'}
-      <div class="absolute right-3 top-0 bottom-0 flex items-center">
+      <div class="absolute bottom-0 right-3 top-0 flex items-center">
         <button
           class="text-gray-500"
           type="button"
@@ -219,7 +219,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6"
+              class="h-6 w-6"
             >
               <path
                 stroke-linecap="round"
@@ -234,7 +234,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6"
+              class="h-6 w-6"
             >
               <path
                 stroke-linecap="round"

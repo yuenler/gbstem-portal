@@ -1,6 +1,5 @@
 <script lang="ts">
   import ProfileMenu from './ProfileMenu.svelte'
-  import clsx from 'clsx'
   import { page } from '$app/stores'
   import { onMount } from 'svelte'
   import Brand from './Brand.svelte'
@@ -8,6 +7,7 @@
   import { fade } from 'svelte/transition'
   import AnnouncementsBell from './AnnouncementsBell.svelte'
   import { cubicInOut } from 'svelte/easing'
+  import { cn } from '$lib/utils'
 
   export let user: Data.User.Peek
 
@@ -43,8 +43,8 @@
 
 <svelte:window on:scroll={updateShadow} />
 <nav
-  class={clsx(
-    'px-d fixed left-0 top-0 z-40 flex h-20 w-full items-center justify-between border-b bg-white transition-all',
+  class={cn(
+    'fixed left-0 top-0 z-40 flex h-20 w-full items-center justify-between border-b bg-white px-d transition-all',
     shadow && !open ? 'shadow-b border-gray-200' : 'border-white',
   )}
 >
@@ -54,7 +54,7 @@
       <div class="hidden items-center gap-3 sm:flex">
         {#each pages as page}
           <a
-            class={clsx(
+            class={cn(
               'rounded-md px-4 py-2 transition-colors',
               pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
             )}
@@ -72,7 +72,7 @@
     {/if}
     <ProfileMenu class="hidden sm:block" />
     <button
-      class="sm:hidden hover:bg-gray-200 rounded-full h-10 w-10 flex items-center justify-center transition-colors"
+      class="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-200 sm:hidden"
       type="button"
       on:click={() => {
         open = !open
@@ -114,7 +114,7 @@
 </nav>
 {#if open}
   <div
-    class="p-d fixed left-0 top-20 z-50 flex h-[calc(100vh-5rem)] w-screen flex-col gap-2 bg-white sm:hidden"
+    class="fixed left-0 top-20 z-50 flex h-[calc(100vh-5rem)] w-screen flex-col gap-2 bg-white p-d sm:hidden"
     transition:fade={{
       easing: cubicInOut,
       duration: 200,
@@ -123,7 +123,7 @@
     {#if user.emailVerified}
       {#each pages as page}
         <a
-          class={clsx(
+          class={cn(
             'rounded-md px-3 py-2 transition-colors',
             pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
           )}
@@ -133,7 +133,7 @@
         </a>
       {/each}
     {/if}
-    <div class={clsx(user.emailVerified && 'mt-d')}>
+    <div class={cn(user.emailVerified && 'mt-d')}>
       <ProfileMenu />
     </div>
   </div>

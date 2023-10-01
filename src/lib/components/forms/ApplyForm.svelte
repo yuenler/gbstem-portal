@@ -1,5 +1,4 @@
 <script lang="ts">
-  import clsx from 'clsx'
   import {
     doc,
     getDoc,
@@ -35,6 +34,7 @@
   import Field from '$lib/components/Field.svelte'
   import Button from '../Button.svelte'
   import Link from '../Link.svelte'
+  import { cn } from '$lib/utils'
 
   let disabled = true
   let showValidation = false
@@ -287,7 +287,7 @@
 
 <svelte:window on:beforeunload={handleUnload} />
 <Form
-  class={clsx('max-w-2xl', showValidation && 'show-validation')}
+  class={cn('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
   <fieldset class="space-y-14" {disabled}>
@@ -304,7 +304,7 @@
       </Card>
     {/if}
     <div class="grid gap-4">
-      <span class="font-bold text-2xl">Personal</span>
+      <span class="text-2xl font-bold">Personal</span>
       <Card class="space-y-3">
         <Field>
           {`Name: ${values.personal.firstName} ${values.personal.lastName}`}
@@ -448,7 +448,7 @@
       </div>
     </div>
     <div class="grid gap-4">
-      <span class="font-bold text-2xl">Academic</span>
+      <span class="text-2xl font-bold">Academic</span>
       <Select
         bind:value={values.academic.levelOfStudy}
         label="What is your current education level?"
@@ -504,7 +504,7 @@
       />
     </div>
     <div class="grid gap-4">
-      <span class="font-bold text-2xl">Hackathon</span>
+      <span class="text-2xl font-bold">Hackathon</span>
       <div class="grid grid-cols-2 sm:grid-cols-3">
         <Select
           bind:value={values.hackathon.shirtSize}
@@ -540,7 +540,7 @@
       />
     </div>
     <div class="grid gap-4">
-      <span class="font-bold text-2xl">Open Response</span>
+      <span class="text-2xl font-bold">Open Response</span>
       <div class="grid gap-1">
         <span>
           What roles best fit your capabilities on a hackathon team?<span
@@ -633,7 +633,7 @@
             accept={['application/pdf']}
             required
           />
-          <div class="text-sm mt-1">
+          <div class="mt-1 text-sm">
             Only upload when you are ready to submit. The draft does <span
               class="font-bold">not</span
             > save your resume.
@@ -647,7 +647,7 @@
       />
     </div>
     <div class="grid gap-4">
-      <span class="font-bold text-2xl">Agreements</span>
+      <span class="text-2xl font-bold">Agreements</span>
       <Input
         type="checkbox"
         bind:value={values.agreements.codeOfConduct}
@@ -673,7 +673,7 @@
       />
     </div>
     {#if !values.meta.submitted}
-      <div class="grid gap-3 grid-cols-2">
+      <div class="grid grid-cols-2 gap-3">
         <Button on:click={() => handleSave(true)}>Save draft</Button>
         <Button color="blue" type="submit">Submit</Button>
       </div>

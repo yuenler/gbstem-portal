@@ -1,5 +1,4 @@
 <script lang="ts">
-  import clsx from 'clsx'
   import { alert } from '$lib/stores'
   import {
     EmailAuthProvider,
@@ -14,6 +13,7 @@
   import { db, storage, user } from '$lib/client/firebase'
   import Button from '../Button.svelte'
   import DialogActions from '../DialogActions.svelte'
+  import { cn } from '$lib/utils'
 
   let className = ''
   export { className as class }
@@ -60,6 +60,7 @@
               [
                 deleteObject(resumeRef),
                 deleteDoc(doc(db, 'applications', frozenUser.object.uid)),
+                deleteDoc(doc(db, 'decisions', frozenUser.object.uid)),
               ].map((p) => p.catch((e) => e)),
             )
             Promise.all([
@@ -100,7 +101,7 @@
 </script>
 
 <Form
-  class={clsx(showValidation && 'show-validation', className)}
+  class={cn(showValidation && 'show-validation', className)}
   on:submit={handleSubmit}
 >
   <span class="font-bold">Delete account</span>
@@ -113,12 +114,12 @@
   <svelte:fragment slot="title">Delete account</svelte:fragment>
   <div slot="description" class="flex justify-center">
     <Form
-      class={clsx(showValidation && 'show-validation')}
+      class={cn(showValidation && 'show-validation')}
       on:submit={handleReauthenticate}
     >
       <fieldset class="space-y-4" {disabled}>
         <div class="flex justify-center">
-          <div class="space-y-4 max-w-lg w-full">
+          <div class="w-full max-w-lg space-y-4">
             <Input
               type="password"
               bind:value={values.password}
