@@ -70,12 +70,7 @@
       your email through the profile.
     </p>
     <DialogActions>
-      <Button
-        on:click={async () => {
-          await handleVerificationEmail()
-          dialogEl.close()
-        }}>Send verification email</Button
-      >
+      <Button on:click={dialogEl.cancel}>Close</Button>
     </DialogActions>
   </div>
 </Dialog>
