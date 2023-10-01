@@ -16,6 +16,7 @@
     confirmed: '',
     travelPlans: '',
     waiver: false,
+    photoRelease: false,
     submitting: false,
   }
   let attending: boolean | null = null
@@ -37,6 +38,7 @@
               confirmed: string
               travelPlans: string
               waiver: boolean
+              photoRelease: boolean
               submitting: boolean
             }
             attending = data.confirmed === confirmedOptions[0].name
@@ -119,6 +121,12 @@
       type="checkbox"
       bind:value={values.waiver}
       label="Yes, I have read the waiver and agree to the conditions."
+      required
+    />
+    <Input
+      type="checkbox"
+      bind:value={values.photoRelease}
+      label="I grant permission for my photograph, video, or likeness to be captured at HackHarvard and used by HackHarvard for event-related promotional and marketing purposes, including online and offline materials. I understand that I won’t receive compensation for this use, and my participation is voluntary. I agree to these terms by checking this box."
       required
     />
     <Input
