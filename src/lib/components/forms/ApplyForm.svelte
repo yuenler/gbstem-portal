@@ -295,7 +295,7 @@
       <div
         class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
       >
-        Application submitted and in review!
+        Application submitted!
       </div>
     {:else}
       <Card>
