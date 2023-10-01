@@ -13,11 +13,24 @@
   import Dialog from '$lib/components/Dialog.svelte'
   import Button from '$lib/components/Button.svelte'
   import DialogActions from '$lib/components/DialogActions.svelte'
+  import QRious from 'qrious'
+  import { onMount } from 'svelte'
+  import Link from '$lib/components/Link.svelte'
 
   export let data: PageData
 
   let dialogEl: Dialog
   let disabled = false
+
+  onMount(() => {
+    var qr = new QRious({
+      element: document.getElementById('qr'),
+      value: `https://admin.hackharvard.io/user/${
+        $user ? $user.profile.hhid : ''
+      }`,
+      size: 200,
+    })
+  })
 
   async function handleVerificationEmail() {
     if ($user) {
@@ -69,7 +82,7 @@
 
 <PageLayout>
   <svelte:fragment slot="title">Profile</svelte:fragment>
-  <div class="max-w-2xl grid gap-6 w-full">
+  <div class="grid w-full max-w-2xl gap-6">
     {#if !data.user.emailVerified}
       <div
         class="mt-2 flex w-full items-center gap-4 rounded-md bg-red-200 px-5 py-4 shadow"
@@ -104,14 +117,14 @@
       <div class="relative">
         <Field class="pr-9">
           <div class="relative h-6 overflow-x-auto">
-            <div class="absolute top-0 left-0 whitespace-nowrap">
+            <div class="absolute left-0 top-0 whitespace-nowrap">
               {`HHID: ${$user ? $user.profile.hhid : ''}`}
             </div>
           </div>
         </Field>
-        <div class="absolute top-2.5 right-2">
+        <div class="absolute right-2 top-2.5">
           <button
-            class="text-black hover:text-gray-700 transition-colors duration-300"
+            class="text-black transition-colors duration-300 hover:text-gray-700"
             type="button"
             on:click={() => {
               if ($user) {
@@ -120,7 +133,7 @@
             }}
           >
             <svg
-              class="w-5 h-5"
+              class="h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"
               width="32"
               height="32"
@@ -133,10 +146,14 @@
           </button>
         </div>
       </div>
+
+      <div class="flex justify-center">
+        <canvas id="qr"></canvas>
+      </div>
+
       <div class="text-sm">
-        Any problems with changing your profile? Contact us at <a
-          href="mailto:team@hackharvard.io"
-          class="link">team@hackharvard.io</a
+        Any problems with changing your profile? Contact us at <Link
+          href="mailto:team@hackharvard.io">team@hackharvard.io</Link
         >.
       </div>
     </Card>

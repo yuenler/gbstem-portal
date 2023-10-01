@@ -4,22 +4,21 @@
   import Footer from '$lib/components/Footer.svelte'
   import { navigating } from '$app/stores'
   import { onMount } from 'svelte'
-  import NProgress from 'nprogress'
+  import progress from '$lib/client/progress'
 
   onMount(() => {
-    NProgress.configure({ showSpinner: false })
     return navigating.subscribe((navigating) => {
       if (navigating) {
-        NProgress.start()
+        progress.start()
       } else {
-        NProgress.done()
+        progress.done()
       }
     })
   })
 </script>
 
 <div class="flex min-h-screen flex-col">
-  <div class="grow flex flex-col">
+  <div class="flex grow flex-col">
     <slot />
   </div>
   <Footer />

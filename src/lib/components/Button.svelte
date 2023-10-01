@@ -19,7 +19,7 @@
 
 <button
   class={cn(
-    'rounded-md shadow-sm transition-colors duration-300 px-4 py-2',
+    'rounded-md px-4 py-2 shadow-sm transition-colors duration-300',
     color === 'red' &&
       'bg-red-100 text-red-900 hover:bg-red-200 disabled:bg-red-200 disabled:text-red-700',
     color === 'blue' &&

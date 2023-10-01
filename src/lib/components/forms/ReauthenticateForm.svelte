@@ -1,6 +1,5 @@
 <script lang="ts">
   import Input from '$lib/components/Input.svelte'
-  import clsx from 'clsx'
   import { user } from '$lib/client/firebase'
   import { alert } from '$lib/stores'
   import {
@@ -9,6 +8,7 @@
   } from 'firebase/auth'
   import { createEventDispatcher } from 'svelte'
   import Form from '$lib/components/Form.svelte'
+  import { cn } from '$lib/utils'
 
   const dispatch = createEventDispatcher()
   let disabled = false
@@ -43,10 +43,7 @@
   }
 </script>
 
-<Form
-  class={clsx(showValidation && 'show-validation')}
-  on:submit={handleSubmit}
->
+<Form class={cn(showValidation && 'show-validation')} on:submit={handleSubmit}>
   <fieldset class="space-y-4" {disabled}>
     <Input
       type="password"

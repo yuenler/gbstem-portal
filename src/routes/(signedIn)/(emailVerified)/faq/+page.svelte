@@ -11,7 +11,7 @@
 
 <PageLayout>
   <svelte:fragment slot="title">FAQ</svelte:fragment>
-  <div class="max-w-2xl w-full space-y-4">
+  <div class="w-full max-w-2xl space-y-4">
     <Disclosure>
       <svelte:fragment slot="title">Am I eligible to apply?</svelte:fragment>
       <svelte:fragment slot="content">
@@ -49,7 +49,7 @@
           >team@hackharvard.io</Link
         >
         with the following content.
-        <ol class="list-disc list-inside">
+        <ol class="list-inside list-disc">
           <li>
             Title should be "[Bug] Portal @ {format(new Date(), 'yyyy.MM.dd')}."
           </li>

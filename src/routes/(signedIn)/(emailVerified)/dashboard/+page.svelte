@@ -4,15 +4,11 @@
   import Link from '$lib/components/Link.svelte'
   import Loading from '$lib/components/Loading.svelte'
   import PageLayout from '$lib/components/PageLayout.svelte'
+  import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
 
-  type ApplicationStatus =
-    | 'accepted'
-    | 'waitlisted'
-    | 'rejected'
-    | 'submitted'
-    | null
+  type ApplicationStatus = Data.Decision | 'submitted' | null
   type DashboardData = {
     application: {
       status: ApplicationStatus
@@ -33,21 +29,28 @@
           timer = window.setTimeout(resolve, 400)
         }),
         new Promise<void>((resolve) => {
-          getDoc(doc(db, 'applications', user.object.uid)).then(
-            (applicationDoc) => {
-              const applicationExists = applicationDoc.exists()
-              if (applicationExists) {
-                const applicationData =
-                  applicationDoc.data() as Data.Application<'client'>
-                if (applicationData.meta.submitted) {
-                  data.application.status = 'submitted'
-                } else {
-                  data.application.status = null
-                }
+          getDoc(doc(db, 'applications', user.object.uid)).then((snapshot) => {
+            if (snapshot.exists()) {
+              const applicationData =
+                snapshot.data() as Data.Application<'client'>
+              if (applicationData.meta.submitted) {
+                data.application.status = 'submitted'
+                getDoc(doc(db, 'decisions', user.object.uid)).then(
+                  (snapshot) => {
+                    if (snapshot.exists()) {
+                      data.application.status = snapshot.data()
+                        .type as Data.Decision
+                    }
+                    resolve()
+                  },
+                )
+              } else {
+                resolve()
               }
+            } else {
               resolve()
-            },
-          )
+            }
+          })
         }),
       ]).then(() => {
         loading = false
@@ -66,7 +69,7 @@
   <div class="relative w-full">
     {#if loading}
       <Loading
-        class="absolute top-0 left-0 right-0 h-[calc(100vh-216px-80px)] md:h-[calc(100vh-216px)]"
+        class="absolute left-0 right-0 top-0 h-[calc(100vh-216px-80px)] md:h-[calc(100vh-216px)]"
       />
     {:else}
       <div
@@ -75,8 +78,8 @@
           duration: 500,
         }}
       >
-        <Card class="space-y-2">
-          <h2 class="text-xl font-bold">Application</h2>
+        <Card class="space-y-4">
+          <h2 class="text-xl font-bold">Application Status</h2>
           {#if data.application.status === null}
             <div class="space-y-1">
               <p>
@@ -88,7 +91,7 @@
               </p>
             </div>
           {/if}
-          <div class="space-y-1">
+          <div class="space-y-4">
             <p>
               {#if data.application.status === 'accepted'}
                 You have been accepted to HackHarvard 2023! We look forward to
@@ -109,6 +112,11 @@
             <Link href="/apply">View application</Link>
           </div>
         </Card>
+        {#if data.application.status === 'accepted'}
+          <Card class="space-y-4">
+            <ConfirmationForm />
+          </Card>
+        {/if}
       </div>
     {/if}
   </div>
