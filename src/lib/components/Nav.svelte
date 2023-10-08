@@ -35,6 +35,7 @@
       name: 'FAQ',
       href: '/faq',
     },
+    
   ]
   function updateShadow() {
     shadow = window.scrollY !== 0

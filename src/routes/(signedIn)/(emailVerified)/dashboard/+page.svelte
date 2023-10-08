@@ -1,12 +1,15 @@
 <script lang="ts">
   import { db, user } from '$lib/client/firebase'
   import Card from '$lib/components/Card.svelte'
+  import Dialog from '$lib/components/Dialog.svelte'
+  import DialogActions from '$lib/components/DialogActions.svelte'
   import Link from '$lib/components/Link.svelte'
   import Loading from '$lib/components/Loading.svelte'
   import PageLayout from '$lib/components/PageLayout.svelte'
   import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
+  import Button from '$lib/components/Button.svelte'
 
   type ApplicationStatus = Data.Decision | 'submitted' | null
   type DashboardData = {
@@ -14,7 +17,7 @@
       status: ApplicationStatus
     }
   }
-
+  let dialogEl: Dialog
   let loading = true
   let data: DashboardData = {
     application: {
@@ -64,6 +67,18 @@
   <title>Dashboard</title>
 </svelte:head>
 
+<Dialog bind:this={dialogEl} size="full">
+  <svelte:fragment slot="title">Hacker Guide</svelte:fragment>
+  <div slot="description" class="space-y-4">
+    <iframe 
+    class= "w-full h-[calc(100vh-300px)]"
+    src="https://docs.google.com/document/d/e/2PACX-1vSG9CCzX3-K99gWP7SjdzaxQ9APRbbhXi2pwlWiFig2q9sbFh3TDjkFY7BQZj3dZXRgf-Ed6VKIqBRc/pub?embedded=true"></iframe>
+    <DialogActions>
+      <Button on:click={dialogEl.cancel}>Close</Button>
+    </DialogActions>
+  </div>
+</Dialog>
+
 <PageLayout cols={2}>
   <svelte:fragment slot="title">Dashboard</svelte:fragment>
   <div class="relative w-full">
@@ -110,6 +125,12 @@
               {/if}
             </p>
             <Link href="/apply">View application</Link>
+            {#if data.application.status === 'accepted'}
+              <div>
+              <button on:click={dialogEl.open} class="inline-block border-b border-black text-black transition-colors duration-300 hover:border-gray-600 hover:text-gray-600">Hacker Guide</button>
+            </div>
+            {/if}
+            
           </div>
         </Card>
         {#if data.application.status === 'accepted'}
