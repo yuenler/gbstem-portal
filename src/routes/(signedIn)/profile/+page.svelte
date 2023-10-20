@@ -23,12 +23,14 @@
   let disabled = false
 
   onMount(() => {
-    var qr = new QRious({
-      element: document.getElementById('qr'),
-      value: `https://admin.hackharvard.io/user/${
-        $user ? $user.profile.hhid : ''
-      }`,
-      size: 200,
+    return user.subscribe((user) => {
+      new QRious({
+        element: document.getElementById('qr'),
+        value: `https://admin.hackharvard.io/user/${
+          $user ? $user.profile.hhid : ''
+        }`,
+        size: 200,
+      })
     })
   })
 
