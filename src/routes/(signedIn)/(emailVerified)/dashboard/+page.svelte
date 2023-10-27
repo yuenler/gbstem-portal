@@ -51,7 +51,9 @@
       const headers = rows[0].split(',')
       const fullNameIndex = headers.indexOf('team member')
       const fullNameRow = rows.find(
-        (row) => row.split(',')[fullNameIndex] === fullName,
+        (row) =>
+          row.split(',')[fullNameIndex].toLowerCase() ===
+          fullName.toLowerCase(),
       )
       if (fullNameRow) {
         const fullNameRowNumber = rows.indexOf(fullNameRow)
