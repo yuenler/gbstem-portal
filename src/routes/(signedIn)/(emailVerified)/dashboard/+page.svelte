@@ -63,7 +63,8 @@
   async function downloadCertificate() {
     if (pdfUrl) {
       const pdfjs = await import('pdfjs-dist')
-      pdfjs.GlobalWorkerOptions.workerSrc = 'src/pdf.worker.js'
+      pdfjs.GlobalWorkerOptions.workerSrc =
+        'https://raw.githubusercontent.com/hackharvard/portal/main/src/pdf.worker.js'
 
       const pdf = await pdfjs.getDocument(pdfUrl).promise
       const page = await pdf.getPage(pageNumber)
