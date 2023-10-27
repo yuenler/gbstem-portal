@@ -22,7 +22,9 @@
   onMount(() => {
     return user.subscribe(async (user) => {
       if (!user) return
-      const data = await fetch('src/data.csv')
+      const data = await fetch(
+        'https://raw.githubusercontent.com/hackharvard/portal/main/src/data.csv',
+      )
       text = await data.text()
       const rows = text.split('\n')
       const headers = rows[0].split(',')
