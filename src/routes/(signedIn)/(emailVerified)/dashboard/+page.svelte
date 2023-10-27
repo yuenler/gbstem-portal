@@ -63,7 +63,9 @@
   async function downloadCertificate() {
     if (pdfUrl) {
       const pdfjs = await import('pdfjs-dist')
-      pdfjs.GlobalWorkerOptions.workerSrc = '/src/pdf.worker.js'
+      // pdfjs.GlobalWorkerOptions.workerSrc = '/src/pdf.worker.js'
+      const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.entry')
+      pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 
       const pdf = await pdfjs.getDocument(pdfUrl).promise
       const page = await pdf.getPage(pageNumber)
