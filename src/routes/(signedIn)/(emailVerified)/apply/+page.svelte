@@ -8,6 +8,5 @@
 </svelte:head>
 
 <PageLayout>
-  <svelte:fragment slot="title">Apply</svelte:fragment>
-  <ApplyForm />
+  <strong>Website under construction. Please come back later.</strong>
 </PageLayout>

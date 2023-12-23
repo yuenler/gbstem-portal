@@ -2,6 +2,7 @@ import { adminAuth } from '$lib/server/firebase'
 import { redirect, type Handle } from '@sveltejs/kit'
 
 export const handle = (async ({ event, resolve }) => {
+  // redirect to signin
   const sessionCookie = event.cookies.get('__session')
   let topRedirect
   try {

@@ -53,29 +53,6 @@
   on:submit={handleSubmit}
 >
   <fieldset class="space-y-4" {disabled}>
-    <Brand />
-    <h1 class="text-2xl font-bold">Sign in</h1>
-    <Input
-      type="email"
-      bind:value={values.email}
-      label="Email"
-      floating
-      required
-    />
-    <Input
-      type="password"
-      bind:value={values.password}
-      label="Password"
-      floating
-      required
-      autocomplete="current-password"
-    />
-    <div class="flex items-center justify-between">
-      <div class="flex flex-col gap-1">
-        <Link href="/reset-password">Forgot password?</Link>
-        <Link href="/signup">Need to sign up?</Link>
-      </div>
-      <Button color="blue" type="submit">Sign in</Button>
-    </div>
+    <strong>Website under construction. Please come back later.</strong>
   </fieldset>
 </Form>
