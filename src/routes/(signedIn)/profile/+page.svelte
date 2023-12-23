@@ -64,5 +64,5 @@
 </svelte:head>
 
 <PageLayout>
-  <strong>Website under construction. Please come back later.</strong>
+  <strong>Website under construction. Please come back later. Thanks!</strong>
 </PageLayout>
