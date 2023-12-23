@@ -17,7 +17,7 @@
       <svelte:fragment slot="content">
         As long as you are a student at any accredited college or university in
         the world, are 18 or older, and are currently pursuing an undergraduate
-        degree, you are invited to apply to HackHarvard!
+        degree, you are invited to apply to gbSTEM!
       </svelte:fragment>
     </Disclosure>
     <Disclosure>
@@ -34,8 +34,8 @@
         >My school is not listed on the application.</svelte:fragment
       >
       <svelte:fragment slot="content"
-        >Please email us at <Link href="mailto:team@hackharvard.io"
-          >team@hackharvard.io</Link
+        >Please email us at <Link href="mailto:team@gbstem.org"
+          >team@gbstem.org</Link
         > with information about your school and possibly a link to your school's
         website.</svelte:fragment
       >
@@ -45,8 +45,8 @@
         I keep encountering an error and can't submit!
       </svelte:fragment>
       <svelte:fragment slot="content">
-        Please contact us immediately at <Link href="mailto:team@hackharvard.io"
-          >team@hackharvard.io</Link
+        Please contact us immediately at <Link href="mailto:team@gbstem.org"
+          >team@gbstem.org</Link
         >
         with the following content.
         <ol class="list-inside list-disc">

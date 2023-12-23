@@ -197,8 +197,8 @@
           <div class="space-y-4">
             <p>
               {#if data.application.status === 'accepted'}
-                You have been accepted to HackHarvard 2023! We look forward to
-                seeing you.
+                You have been accepted to gbSTEM 2023! We look forward to seeing
+                you.
               {:else if data.application.status === 'waitlisted'}
                 You have been waitlisted. We will follow up with more
                 information!
@@ -228,7 +228,7 @@
                 To get your certificate, please enter your name just as you
                 filled it out on the presubmission form below. If no result
                 appears below, please contact us at <a
-                  href="mailto:team@hackharvard.io">team@hackharvard.io</a
+                  href="mailto:team@gbstem.org">team@gbstem.org</a
                 >.
               </p>
               <input

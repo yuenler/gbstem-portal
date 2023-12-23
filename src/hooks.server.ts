@@ -21,7 +21,7 @@ export const handle = (async ({ event, resolve }) => {
         }
       } else {
         event.locals.user = null
-        topRedirect = redirect(301, 'https://admin.hackharvard.io')
+        topRedirect = redirect(301, 'https://admin.gbstem.org')
       }
     } else {
       await adminAuth.setCustomUserClaims(userRecord.uid, { role: 'applicant' })

@@ -26,7 +26,7 @@
     return user.subscribe((user) => {
       new QRious({
         element: document.getElementById('qr'),
-        value: `https://admin.hackharvard.io/user/${
+        value: `https://admin.gbstem.org/user/${
           $user ? $user.profile.hhid : ''
         }`,
         size: 200,
@@ -150,7 +150,7 @@
 
       <div class="text-sm">
         Any problems with changing your profile? Contact us at <Link
-          href="mailto:team@hackharvard.io">team@hackharvard.io</Link
+          href="mailto:team@gbstem.org">team@gbstem.org</Link
         >.
       </div>
     </Card>

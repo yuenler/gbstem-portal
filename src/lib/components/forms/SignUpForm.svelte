@@ -16,10 +16,12 @@
   import Button from '../Button.svelte'
   import Loading from '../Loading.svelte'
   import { cn } from '$lib/utils'
+  import Select from '../Select.svelte'
 
   let disabled = false
   let showValidation = false
   let values = {
+    role: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -139,6 +141,30 @@
     <Brand />
     <h1 class="text-2xl font-bold">Sign up</h1>
     <div class="relative space-y-4">
+      <Select
+        bind:value={values.role}
+        label="I am a..."
+        required
+        floating
+        options={[
+          { name: 'High school/college student applying to be an instructor' },
+          { name: 'Parent registering my child for classes' },
+        ]}
+      />
+
+      {#if values.role === 'Parent registering my child for classes'}
+        <div
+          class="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
+          role="alert"
+        >
+          <strong class="font-bold"
+            >Note: These fields are asking for the name and email of the PARENT,
+            not the student. If you have more than one child, you do NOT need to
+            create a separate account for each child.
+          </strong>
+        </div>
+      {/if}
+
       <div class="grid gap-2 sm:grid-cols-2 sm:gap-4">
         <Input
           type="text"

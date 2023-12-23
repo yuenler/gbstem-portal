@@ -22,7 +22,7 @@
   let attending: boolean | null = null
   const confirmedOptions = [
     {
-      name: 'Yes, I can attend all 3 days of HackHarvard.',
+      name: 'Yes, I can attend all 3 days of gbSTEM.',
     },
     {
       name: 'No, unfortuantely I cannot.',
@@ -81,19 +81,19 @@
       {/if}
     </h2>
     {#if attending === null}
-      <p>Congratulations for being accepted into HackHarvard!</p>
+      <p>Congratulations for being accepted into gbSTEM!</p>
       <p>
         Please only fill this form if you are <span class="font-bold"
           >completely certain</span
         >
-        that you can attend all 3 days of HackHarvard, which is October 20 - 22,
-        2023. If you have any questions, please contact us at
-        <Link href="mailto:team@hackharvard.io">team@hackharvard.io</Link>.
+        that you can attend all 3 days of gbSTEM, which is October 20 - 22, 2023.
+        If you have any questions, please contact us at
+        <Link href="mailto:team@gbstem.org">team@gbstem.org</Link>.
       </p>
     {/if}
     <Select
       bind:value={values.confirmed}
-      label="Can you confirm that you can attend all 3 days of HackHarvard?"
+      label="Can you confirm that you can attend all 3 days of gbSTEM?"
       options={confirmedOptions}
       required
     />
@@ -126,13 +126,13 @@
     <Input
       type="checkbox"
       bind:value={values.photoRelease}
-      label="I grant permission for my photograph, video, or likeness to be captured at HackHarvard and used by HackHarvard for event-related promotional and marketing purposes, including online and offline materials. I understand that I won’t receive compensation for this use, and my participation is voluntary. I agree to these terms by checking this box."
+      label="I grant permission for my photograph, video, or likeness to be captured at gbSTEM and used by gbSTEM for event-related promotional and marketing purposes, including online and offline materials. I understand that I won’t receive compensation for this use, and my participation is voluntary. I agree to these terms by checking this box."
       required
     />
     <Input
       type="checkbox"
       bind:value={values.submitting}
-      label="I understand submitting confirms my decision to attend HackHarvard and that I can no longer make further changes."
+      label="I understand submitting confirms my decision to attend gbSTEM and that I can no longer make further changes."
       required
     />
     {#if attending === null}
