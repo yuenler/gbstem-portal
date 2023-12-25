@@ -94,7 +94,7 @@
       submitting: false,
     },
     meta: {
-      hhid: '',
+      id: '',
       uid: '',
       submitted: false,
       decision: null,
@@ -130,7 +130,7 @@
               }
             } else {
               values.meta.uid = user.object.uid
-              values.meta.hhid = user.profile.hhid
+              values.meta.id = user.profile.id
               values.personal.email = user.object.email as string
               values.personal.firstName = user.profile.firstName
               values.personal.lastName = user.profile.lastName

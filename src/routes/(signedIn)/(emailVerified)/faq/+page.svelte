@@ -54,7 +54,7 @@
             Title should be "[Bug] Portal @ {format(new Date(), 'yyyy.MM.dd')}."
           </li>
           <li>
-            In the body of the email, please include your email and HHID, which
+            In the body of the email, please include your email and id, which
             can both be found on your <a href="/profile">profile</a>. Then,
             describe your issue as best as you can; screenshots of the issue as
             well as a copy of your console found in your browser's developer

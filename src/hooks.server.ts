@@ -12,7 +12,7 @@ export const handle = (async ({ event, resolve }) => {
     const userRecord = await adminAuth.getUser(decodedClaims.uid)
     if (userRecord.customClaims && 'role' in userRecord.customClaims) {
       const { role } = userRecord.customClaims as { role: Data.Role }
-      if (role === 'applicant') {
+      if (role === 'student' || role === 'instructor') {
         event.locals.user = {
           uid: userRecord.uid,
           email: userRecord.email as string,
@@ -24,7 +24,7 @@ export const handle = (async ({ event, resolve }) => {
         topRedirect = redirect(301, 'https://admin.gbstem.org')
       }
     } else {
-      await adminAuth.setCustomUserClaims(userRecord.uid, { role: 'applicant' })
+      await adminAuth.setCustomUserClaims(userRecord.uid, { role: 'student' })
     }
   } catch (err) {
     event.locals.user = null

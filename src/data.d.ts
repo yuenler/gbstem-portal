@@ -10,15 +10,15 @@ import type { User as ClientUser } from 'firebase/auth'
 
 declare global {
   declare namespace Data {
-    type Role = 'admin' | 'reviewer' | 'applicant'
+    type Role = 'admin' | 'reviewer' | 'instructor' | 'student'
 
     type Token<T extends 'client' | 'server' | 'pojo'> = {
       role: Role
       expires: T extends 'client'
-        ? ClientTimestamp
-        : T extends 'server'
-        ? ServerTimestamp
-        : Date
+      ? ClientTimestamp
+      : T extends 'server'
+      ? ServerTimestamp
+      : Date
       consumable: boolean
       consumers: Array<string>
     }
@@ -33,7 +33,7 @@ declare global {
       type Profile = {
         firstName: string
         lastName: string
-        hhid: `HH-${number}`
+        id: number
       }
       type Store = {
         object: ClientUser
@@ -100,28 +100,28 @@ declare global {
         submitting: boolean
       }
       meta: {
-        hhid: string
+        id: string
         uid: string
         submitted: boolean
         decision:
-          | (T extends 'client'
-              ? ClientDocumentReference
-              : T extends 'server'
-              ? ServerDocumentReference
-              : Decision)
-          | null
+        | (T extends 'client'
+          ? ClientDocumentReference
+          : T extends 'server'
+          ? ServerDocumentReference
+          : Decision)
+        | null
       }
       timestamps: {
         created: T extends 'client'
-          ? ClientTimestamp
-          : T extends 'server'
-          ? ServerTimestamp
-          : Date
+        ? ClientTimestamp
+        : T extends 'server'
+        ? ServerTimestamp
+        : Date
         updated: T extends 'client'
-          ? ClientTimestamp
-          : T extends 'server'
-          ? ServerTimestamp
-          : Date
+        ? ClientTimestamp
+        : T extends 'server'
+        ? ServerTimestamp
+        : Date
       }
     }
 
@@ -129,10 +129,10 @@ declare global {
       title: string
       content: string
       timestamp: T extends 'client'
-        ? ClientTimestamp
-        : T extends 'server'
-        ? ServerTimestamp
-        : Date
+      ? ClientTimestamp
+      : T extends 'server'
+      ? ServerTimestamp
+      : Date
     }
   }
 }

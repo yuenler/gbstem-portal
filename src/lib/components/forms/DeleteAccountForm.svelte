@@ -51,7 +51,7 @@
           ),
         )
           .then(async () => {
-            const hhid = frozenUser.profile.hhid
+            const id = frozenUser.profile.id
             const resumeRef = ref(
               storage,
               `resumes/${frozenUser.object.uid}.pdf`,
@@ -64,7 +64,7 @@
               ].map((p) => p.catch((e) => e)),
             )
             Promise.all([
-              deleteDoc(doc(db, 'hhids', hhid)),
+              deleteDoc(doc(db, 'ids', id)),
               deleteDoc(doc(db, 'users', frozenUser.object.uid)),
             ])
               .then(() => {
@@ -84,7 +84,7 @@
                   })
               })
               .catch((err) => {
-                console.log('HHID/User Object Deletion:', err)
+                console.log('id/User Object Deletion:', err)
                 disabled = false
               })
           })

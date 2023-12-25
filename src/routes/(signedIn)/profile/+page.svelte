@@ -26,9 +26,7 @@
     return user.subscribe((user) => {
       new QRious({
         element: document.getElementById('qr'),
-        value: `https://admin.gbstem.org/user/${
-          $user ? $user.profile.hhid : ''
-        }`,
+        value: `https://admin.gbstem.org/user/${$user ? $user.profile.id : ''}`,
         size: 200,
       })
     })
@@ -115,7 +113,7 @@
         <Field class="pr-9">
           <div class="relative h-6 overflow-x-auto">
             <div class="absolute left-0 top-0 whitespace-nowrap">
-              {`HHID: ${$user ? $user.profile.hhid : ''}`}
+              {`id: ${$user ? $user.profile.id : ''}`}
             </div>
           </div>
         </Field>
@@ -125,7 +123,7 @@
             type="button"
             on:click={() => {
               if ($user) {
-                navigator.clipboard.writeText($user.profile.hhid)
+                navigator.clipboard.writeText($user.profile.id)
               }
             }}
           >

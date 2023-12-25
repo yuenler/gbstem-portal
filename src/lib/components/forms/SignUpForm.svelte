@@ -31,7 +31,7 @@
   function generateId() {
     const alphabet = '0123456789'
     const nanoid = customAlphabet(alphabet, 7)
-    return 'HH-' + nanoid()
+    return nanoid()
   }
   function handleSubmit(e: CustomEvent<SubmitData>) {
     if (e.detail.error === null) {
@@ -39,41 +39,46 @@
       disabled = true
       const firstName = values.firstName.trim()
       const lastName = values.lastName.trim()
+
       createUserWithEmailAndPassword(auth, values.email, values.password)
         .then(({ user }) => {
           updateProfile(user, {
             displayName: `${firstName} ${lastName}`,
           })
             .then(async () => {
-              // attempt to generate hhid
-              let hhid = generateId()
+              // attempt to generate id
+              let id = generateId()
               for (let i = 0; i < 5; ++i) {
                 try {
-                  const res = await getDoc(doc(db, 'hhids', hhid))
+                  const res = await getDoc(doc(db, 'ids', id))
                   if (res.exists()) {
-                    hhid = generateId()
+                    id = generateId()
                     if (i == 4) {
-                      hhid = ''
+                      id = ''
                     }
                   } else {
                     break
                   }
                 } catch (err) {
-                  hhid = ''
+                  id = ''
                 }
               }
-              if (hhid === '') {
+              if (id === '') {
                 alert.trigger(
                   'error',
-                  'HHID could not be generated. Contact admin and create a new account.',
+                  'id could not be generated. Contact admin and create a new account.',
                 )
                 deleteUser(user)
               } else {
-                setDoc(doc(db, 'hhids', hhid), {})
+                setDoc(doc(db, 'ids', id), {})
                   .then(() => {
                     setDoc(doc(db, 'users', user.uid), {
-                      hhid,
-                      role: 'applicant',
+                      id,
+                      role:
+                        values.role ===
+                        'High school/college student applying to be an instructor'
+                          ? 'instructor'
+                          : 'student',
                       firstName,
                       lastName,
                     }).then(() => {
