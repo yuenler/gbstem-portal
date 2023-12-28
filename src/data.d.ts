@@ -95,8 +95,16 @@ declare global {
       }
     }
 
+    type EmailData = {
+      Subject: string,
+      From: string,
+      To: string,
+      HTMLBody: string,
+      ReplyTo: string,
+      MessageStream: 'outbound'
+    }
 
-    export type Application = {
+    type Application = {
       personal: {
         email: string
         firstName: string

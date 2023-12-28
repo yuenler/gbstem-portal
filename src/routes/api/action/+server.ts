@@ -7,15 +7,6 @@ import {
   POSTMARK_API_TOKEN,
 } from '$env/static/private'
 
-type EmailData = {
-  Subject: string,
-  From: string,
-  To: string,
-  HTMLBody: string,
-  ReplyTo: string,
-  MessageStream: 'outbound'
-}
-
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   let topError
@@ -121,7 +112,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 
 
-      const emailData: EmailData = {
+      const emailData: Data.EmailData = {
         From: 'donotreply@gbstem.org',
         To: to,
         Subject: String(template.data.subject),

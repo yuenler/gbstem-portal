@@ -407,7 +407,7 @@
             getDoc(
               doc(db, 'registrationsSpring24', frozenUser.object.uid),
             ).then((applicationDoc) => {
-              fetch('/api/application', {
+              fetch('/api/registration', {
                 method: 'POST',
               }).then(async (res) => {
                 if (!res.ok) {
