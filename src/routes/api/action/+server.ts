@@ -5,7 +5,7 @@ import type { FirebaseError } from 'firebase-admin'
 import postmark from 'postmark'
 import {
   POSTMARK_API_TOKEN,
-} from '$env/static/public'
+} from '$env/static/private'
 
 type EmailData = {
   Subject: string,
