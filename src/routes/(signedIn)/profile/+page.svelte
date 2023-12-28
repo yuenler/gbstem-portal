@@ -148,7 +148,7 @@
 
       <div class="text-sm">
         Any problems with changing your profile? Contact us at <Link
-          href="mailto:team@gbstem.org">team@gbstem.org</Link
+          href="mailto:contact@gbstem.org">contact@gbstem.org</Link
         >.
       </div>
     </Card>

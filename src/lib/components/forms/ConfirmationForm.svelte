@@ -88,7 +88,7 @@
         >
         that you can attend all 3 days of gbSTEM, which is October 20 - 22, 2023.
         If you have any questions, please contact us at
-        <Link href="mailto:team@gbstem.org">team@gbstem.org</Link>.
+        <Link href="mailto:contact@gbstem.org">contact@gbstem.org</Link>.
       </p>
     {/if}
     <Select

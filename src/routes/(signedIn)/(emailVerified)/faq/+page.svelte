@@ -13,14 +13,6 @@
   <svelte:fragment slot="title">FAQ</svelte:fragment>
   <div class="w-full max-w-2xl space-y-4">
     <Disclosure>
-      <svelte:fragment slot="title">Am I eligible to apply?</svelte:fragment>
-      <svelte:fragment slot="content">
-        As long as you are a student at any accredited college or university in
-        the world, are 18 or older, and are currently pursuing an undergraduate
-        degree, you are invited to apply to gbSTEM!
-      </svelte:fragment>
-    </Disclosure>
-    <Disclosure>
       <svelte:fragment slot="title">
         I've verified my email but my application doesn't save or submit!
       </svelte:fragment>
@@ -29,24 +21,24 @@
         sign out and sign back in.
       </svelte:fragment>
     </Disclosure>
-    <Disclosure>
+    <!-- <Disclosure>
       <svelte:fragment slot="title"
         >My school is not listed on the application.</svelte:fragment
       >
       <svelte:fragment slot="content"
-        >Please email us at <Link href="mailto:team@gbstem.org"
-          >team@gbstem.org</Link
+        >Please email us at <Link href="mailto:contact@gbstem.org"
+          >contact@gbstem.org</Link
         > with information about your school and possibly a link to your school's
         website.</svelte:fragment
       >
-    </Disclosure>
+    </Disclosure> -->
     <Disclosure>
       <svelte:fragment slot="title">
         I keep encountering an error and can't submit!
       </svelte:fragment>
       <svelte:fragment slot="content">
-        Please contact us immediately at <Link href="mailto:team@gbstem.org"
-          >team@gbstem.org</Link
+        Please contact us immediately at <Link href="mailto:contact@gbstem.org"
+          >contact@gbstem.org</Link
         >
         with the following content.
         <ol class="list-inside list-disc">

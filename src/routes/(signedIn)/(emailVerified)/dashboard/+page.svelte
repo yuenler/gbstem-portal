@@ -228,7 +228,7 @@
                 To get your certificate, please enter your name just as you
                 filled it out on the presubmission form below. If no result
                 appears below, please contact us at <a
-                  href="mailto:team@gbstem.org">team@gbstem.org</a
+                  href="mailto:contact@gbstem.org">contact@gbstem.org</a
                 >.
               </p>
               <input
