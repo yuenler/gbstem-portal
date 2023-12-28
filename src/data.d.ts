@@ -33,7 +33,8 @@ declare global {
       type Profile = {
         firstName: string
         lastName: string
-        id: number
+        id: string
+        role: Role
       }
       type Store = {
         object: ClientUser
@@ -48,7 +49,146 @@ declare global {
 
     type Decision = 'accepted' | 'waitlisted' | 'rejected'
 
-    type Application<T extends 'client' | 'server' | 'pojo'> = {
+
+    export type ApplicationData = {
+      personal: {
+        email: string
+        firstName: string
+        lastName: string
+        dateOfBirth: string
+        gender: string
+        race: string[]
+        phoneNumber: string
+      }
+      academic: {
+        school: string
+        graduationYear: string
+      }
+      program: {
+        courses: string[]
+        preferences: string
+        numClasses: string
+        timeSlots: string[]
+        notAvailable: string
+        inPerson: boolean
+        reason: string
+      }
+      essay: {
+        taughtBefore: boolean
+        academicBackground: string
+        teachingScenario: string
+        why: string
+      }
+      agreements: {
+        entireProgram: boolean
+        timeCommitment: boolean
+        submitting: boolean
+      }
+      meta: {
+        id: string
+        uid: string
+        submitted: boolean
+      }
+      timestamps: {
+        created: Timestamp
+        updated: Timestamp
+      }
+    }
+
+
+    export type Application = {
+      personal: {
+        email: string
+        firstName: string
+        lastName: string
+        dateOfBirth: string
+        gender: string
+        race: string[]
+        phoneNumber: string
+      }
+      academic: {
+        school: string
+        graduationYear: string
+      }
+      program: {
+        courses: string[]
+        preferences: string
+        numClasses: string
+        timeSlots: string[]
+        notAvailable: string
+        inPerson: boolean
+        reason: string
+      }
+      essay: {
+        taughtBefore: boolean
+        academicBackground: string
+        teachingScenario: string
+        why: string
+      }
+      agreements: {
+        entireProgram: boolean
+        timeCommitment: boolean
+        submitting: boolean
+      }
+      meta: {
+        id: string
+        uid: string
+        submitted: boolean
+      }
+      timestamps: {
+        created: Timestamp
+        updated: Timestamp
+      }
+    }
+
+
+
+
+    type Registration = {
+      personal: {
+        email: string
+        studentFirstName: string
+        studentLastName: string
+        parentFirstName: string
+        parentLastName: string
+        secondaryEmail: string
+        dateOfBirth: string
+        gender: string
+        race: string[]
+        phoneNumber: string
+        frlp: string
+        parentEducation: string
+      }
+      academic: {
+        school: string
+        grade: string
+      }
+      program: {
+        csCourse: string
+        mathCourse: string
+        engineeringCourse: string
+        scienceCourse: string
+        timeSlots: string[]
+        reason: string
+        inPerson: boolean
+      }
+      agreements: {
+        entireProgram: boolean
+        timeCommitment: boolean
+        submitting: boolean
+      }
+      meta: {
+        id: string
+        uid: string
+        submitted: boolean
+      }
+      timestamps: {
+        created: Timestamp
+        updated: Timestamp
+      }
+    }
+
+    type ApplicationHackHarvard<T extends 'client' | 'server' | 'pojo'> = {
       personal: {
         email: string
         firstName: string

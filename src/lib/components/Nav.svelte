@@ -28,14 +28,13 @@
       href: '/dashboard',
     },
     {
-      name: 'Apply',
+      name: 'Apply / Register',
       href: '/apply',
     },
     {
       name: 'FAQ',
       href: '/faq',
     },
-    
   ]
   function updateShadow() {
     shadow = window.scrollY !== 0
