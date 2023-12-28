@@ -125,7 +125,7 @@
                 snapshot.data() as Data.Application<'client'>
               if (applicationData.meta.submitted) {
                 data.application.status = 'submitted'
-                getDoc(doc(db, 'decisions', user.object.uid)).then(
+                getDoc(doc(db, 'decisionsSpring24', user.object.uid)).then(
                   (snapshot) => {
                     if (snapshot.exists()) {
                       data.application.status = snapshot.data()

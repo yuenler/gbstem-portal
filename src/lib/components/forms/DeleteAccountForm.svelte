@@ -60,7 +60,7 @@
               [
                 deleteObject(resumeRef),
                 deleteDoc(doc(db, 'applications', frozenUser.object.uid)),
-                deleteDoc(doc(db, 'decisions', frozenUser.object.uid)),
+                deleteDoc(doc(db, 'decisionsSpring24', frozenUser.object.uid)),
               ].map((p) => p.catch((e) => e)),
             )
             Promise.all([
