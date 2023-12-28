@@ -263,12 +263,12 @@
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-  <div
+  <!-- <div
     class="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
     role="alert"
   >
     <strong class="font-bold">Applications for fall 2023 are closed!</strong>
-  </div>
+  </div> -->
   <fieldset class="space-y-14" {disabled}>
     <div class="grid gap-1">
       <span class="font-bold">Personal</span>
