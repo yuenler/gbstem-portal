@@ -37,8 +37,6 @@
   let showValidation = false
   let dbValues: Data.Registration
 
-  let username = ''
-
   let values: Data.Registration = {
     personal: {
       email: '',
@@ -99,7 +97,7 @@
                 (values.personal.studentFirstName !== user.profile.firstName ||
                   values.personal.studentLastName !== user.profile.lastName)
               ) {
-                username = (user.object.email as string).split('@')[0]
+                values.personal.email = user.object.email as string
                 values.personal.studentFirstName = user.profile.firstName
                 values.personal.studentLastName = user.profile.lastName
                 handleSave()
@@ -107,7 +105,7 @@
             } else {
               values.meta.uid = user.object.uid
               values.meta.id = user.profile.id
-              username = (user.object.email as string).split('@')[0]
+              values.personal.email = user.object.email as string
               values.personal.studentFirstName = user.profile.firstName
               values.personal.studentLastName = user.profile.lastName
               handleSave()
@@ -468,7 +466,7 @@
           {`Name: ${values.personal.studentFirstName} ${values.personal.studentLastName}`}
         </div>
         <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
-          {`Username: ${username}`}
+          {`Email: ${values.personal.email}`}
         </div>
         <div class="text-sm">
           Wrong name or email? Go to your <a class="link" href="/profile"
