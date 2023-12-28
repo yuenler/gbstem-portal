@@ -11,9 +11,9 @@ export const POST: RequestHandler = async ({ locals }) => {
     throw error(400, 'User not signed in.')
   } else {
     const template = {
-      name: 'applicationSubmitted',
+      name: 'registrationSubmitted',
       data: {
-        subject: 'Next steps for your gbSTEM application',
+        subject: 'Next steps for your gbSTEM registration',
         app: {
           name: 'Portal',
           link: 'https://portal.gbstem.org',
