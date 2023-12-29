@@ -94,20 +94,20 @@
               dbValues = cloneDeep(applicationData)
               if (
                 !values.meta.submitted &&
-                (values.personal.studentFirstName !== user.profile.firstName ||
-                  values.personal.studentLastName !== user.profile.lastName)
+                (values.personal.parentFirstName !== user.profile.firstName ||
+                  values.personal.parentLastName !== user.profile.lastName)
               ) {
                 values.personal.email = user.object.email as string
-                values.personal.studentFirstName = user.profile.firstName
-                values.personal.studentLastName = user.profile.lastName
+                values.personal.parentFirstName = user.profile.firstName
+                values.personal.parentLastName = user.profile.lastName
                 handleSave()
               }
             } else {
               values.meta.uid = user.object.uid
               values.meta.id = user.profile.id
               values.personal.email = user.object.email as string
-              values.personal.studentFirstName = user.profile.firstName
-              values.personal.studentLastName = user.profile.lastName
+              values.personal.parentFirstName = user.profile.firstName
+              values.personal.parentLastName = user.profile.lastName
               handleSave()
             }
             if (!values.meta.submitted) {
@@ -463,7 +463,7 @@
       <span class="font-bold">Personal</span>
       <Card class="my-2 grid gap-3">
         <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
-          {`Name: ${values.personal.studentFirstName} ${values.personal.studentLastName}`}
+          {`Parent Name: ${values.personal.parentFirstName} ${values.personal.parentLastName}`}
         </div>
         <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
           {`Email: ${values.personal.email}`}
@@ -477,16 +477,16 @@
 
       <Input
         type="text"
-        bind:value={values.personal.parentFirstName}
-        label="Parent first name"
+        bind:value={values.personal.studentFirstName}
+        label="Student first name"
         floating
         required
       />
 
       <Input
         type="text"
-        bind:value={values.personal.parentLastName}
-        label="Parent last name"
+        bind:value={values.personal.studentLastName}
+        label="Student last name"
         floating
         required
       />
