@@ -33,9 +33,55 @@
   import Button from '../Button.svelte'
   import Link from '../Link.svelte'
 
+  export let childUid: string = ''
+
   let disabled = true
   let showValidation = false
   let dbValues: Data.Registration
+
+  const emptyValues: Data.Registration = {
+    personal: {
+      email: '',
+      studentFirstName: '',
+      studentLastName: '',
+      parentFirstName: '',
+      parentLastName: '',
+      gender: '',
+      race: [],
+      phoneNumber: '',
+      dateOfBirth: '',
+      frlp: '',
+      parentEducation: '',
+      secondaryEmail: '',
+    },
+    academic: {
+      school: '',
+      grade: '',
+    },
+    program: {
+      csCourse: '',
+      engineeringCourse: '',
+      mathCourse: '',
+      scienceCourse: '',
+      timeSlots: [],
+      inPerson: false,
+      reason: '',
+    },
+    agreements: {
+      entireProgram: false,
+      timeCommitment: false,
+      submitting: false,
+    },
+    meta: {
+      id: '',
+      uid: '',
+      submitted: false,
+    },
+    timestamps: {
+      created: serverTimestamp() as Timestamp,
+      updated: serverTimestamp() as Timestamp,
+    },
+  }
 
   let values: Data.Registration = {
     personal: {
@@ -82,10 +128,11 @@
   }
 
   let saveInterval: number | undefined = undefined
-  onMount(() => {
+
+  const initializeForm = () => {
     return user.subscribe((user) => {
       if (user) {
-        getDoc(doc(db, 'registrationsSpring24', user.object.uid)).then(
+        getDoc(doc(db, 'registrationsSpring24', childUid)).then(
           (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
             if (applicationExists) {
@@ -103,7 +150,8 @@
                 handleSave()
               }
             } else {
-              values.meta.uid = user.object.uid
+              values = cloneDeep(emptyValues)
+              values.meta.uid = childUid
               values.meta.id = user.profile.id
               values.personal.email = user.object.email as string
               values.personal.parentFirstName = user.profile.firstName
@@ -122,7 +170,12 @@
         )
       }
     })
-  })
+  }
+
+  onMount(() => initializeForm())
+  $: if (childUid) {
+    initializeForm()
+  }
 
   onDestroy(() => {
     clearInterval(saveInterval)
@@ -145,25 +198,21 @@
       }
       return new Promise<void>((resolve, reject) => {
         if ($user) {
-          const frozenUser = $user
-          setDoc(
-            doc(db, 'registrationsSpring24', frozenUser.object.uid),
-            modifiedValues(),
-          )
+          setDoc(doc(db, 'registrationsSpring24', childUid), modifiedValues())
             .then(() => {
-              getDoc(
-                doc(db, 'registrationsSpring24', frozenUser.object.uid),
-              ).then((applicationDoc) => {
-                const applicationData =
-                  applicationDoc.data() as Data.Registration
-                values = cloneDeep(applicationData)
-                dbValues = cloneDeep(applicationData)
-                if (disable) {
-                  disabled = false
-                }
-                alert.trigger('success', 'Your application was saved.')
-                resolve()
-              })
+              getDoc(doc(db, 'registrationsSpring24', childUid)).then(
+                (applicationDoc) => {
+                  const applicationData =
+                    applicationDoc.data() as Data.Registration
+                  values = cloneDeep(applicationData)
+                  dbValues = cloneDeep(applicationData)
+                  if (disable) {
+                    disabled = false
+                  }
+                  alert.trigger('success', 'Your application was saved.')
+                  resolve()
+                },
+              )
             })
             .catch((err) => {
               if (disable) {
@@ -398,35 +447,35 @@
         showValidation = false
         disabled = true
         values.meta.submitted = true
-        setDoc(
-          doc(db, 'registrationsSpring24', frozenUser.object.uid),
-          modifiedValues(),
-        )
+        setDoc(doc(db, 'registrationsSpring24', childUid), modifiedValues())
           .then(() => {
             alert.trigger('success', 'Your application has been submitted!')
-            getDoc(
-              doc(db, 'registrationsSpring24', frozenUser.object.uid),
-            ).then((applicationDoc) => {
-              fetch('/api/registration', {
-                method: 'POST',
-              }).then(async (res) => {
-                if (!res.ok) {
-                  const { message } = await res.json()
-                  console.log(message)
-                }
-                const applicationData =
-                  applicationDoc.data() as Data.Registration
-                clearInterval(saveInterval)
-                saveInterval = undefined
-                values = cloneDeep(applicationData)
-                dbValues = cloneDeep(applicationData)
-                window.scrollTo({
-                  top: 0,
-                  behavior: 'smooth',
+            getDoc(doc(db, 'registrationsSpring24', childUid)).then(
+              (applicationDoc) => {
+                fetch('/api/registration', {
+                  method: 'POST',
+                }).then(async (res) => {
+                  if (!res.ok) {
+                    const { message } = await res.json()
+                    console.log(message)
+                  }
+                  const applicationData =
+                    applicationDoc.data() as Data.Registration
+                  clearInterval(saveInterval)
+                  saveInterval = undefined
+                  values = cloneDeep(applicationData)
+                  dbValues = cloneDeep(applicationData)
+                  window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                  })
+                  alert.trigger(
+                    'success',
+                    'Your application has been submitted!',
+                  )
                 })
-                alert.trigger('success', 'Your application has been submitted!')
-              })
-            })
+              },
+            )
           })
           .catch((err) => {
             disabled = false
