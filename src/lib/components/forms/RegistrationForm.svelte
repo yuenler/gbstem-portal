@@ -649,22 +649,24 @@
         level. For example, we offer Math 1a in the Fall and Math 1b in the
         Spring.
 
+        <p class="font-bold">Students from Fall 2023:</p>
+        <p>
+          If you took a math class in the fall 2023 semester, it's advisable to opt for the
+          “b” version of the course. For example, if you completed
+          Math 2a in the fall, you should proceed to Math 2b.
+        </p>
+
         <p class="font-bold">Students from Spring 2023:</p>
 
         <p>
-          If you took a math class in Spring 2023, it's advisable to opt for the
-          “a” version of the next level course. For example, if you completed
-          Math 1b in the spring, you should proceed to Math 2a.
-        </p>
-
-        <p class="font-bold">Students from Fall 2022:</p>
-        <p>
-          If your most recent math class was in Fall 2022 (and did not take any
-          math class Spring 2023), you should continue with the “b” version of
-          the course you were enrolled in. Since we don't offer the "b" version
-          of math courses in the fall, we recommend waiting until the Spring to
+          If your most recent math class was in the spring semester of 2023 (and you did not take any
+          math class in the fall 2023 semester), you should continue with the “a” semester of
+          the next level course you were enrolled in. For example, if you completed Math 3b in the spring, you would proceed to Math 4a. Unfortunately, we don't offer the "a" section
+          of math courses in the spring, so we recommend waiting until next fall to
           enroll in a math course.
         </p>
+
+        
       </span>
       <div class="mb-2">
         <Select
