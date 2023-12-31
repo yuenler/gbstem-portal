@@ -111,6 +111,8 @@ declare global {
       interviewer: string,
       interviewerEmail:string,
       link: string,
+      status: string,
+      interviewee: string,
     }
 
     type Application = {
@@ -160,6 +162,7 @@ declare global {
         interviewer: string,
         interviewerEmail:string,
         link: string,
+        status: string,
       }
       timestamps: {
         created: Timestamp

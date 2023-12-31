@@ -159,7 +159,7 @@
           {#if data.application.status === 'scheduled'}
           <Card>
             <h2 class="text-xl font-bold">Your Interview Has Been Scheduled</h2>
-            <div class="space-y-1">Thanks for signing up! You should receive details soon.</div>
+            <Link href="/interview">View Details</Link>
           </Card>
           {/if}
         </div>

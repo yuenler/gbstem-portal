@@ -1,5 +1,5 @@
 <script lang="ts">
-import { collection, query, getDocs, deleteDoc, doc, getDoc, setDoc, serverTimestamp,
+import { collection, query, getDocs, updateDoc, doc, getDoc, setDoc, serverTimestamp,
     Timestamp} from "firebase/firestore";
 import { onDestroy, onMount } from 'svelte';
 import { db, storage, user } from '$lib/client/firebase';
@@ -62,6 +62,7 @@ let values: Data.Application = {
       interviewer: '',
       interviewerEmail:'',
       link: '',
+      status:'',
     },
     timestamps: {
       created: serverTimestamp() as Timestamp,
@@ -98,8 +99,11 @@ function handleSubmit() {
             console.log(interview["id"])
             if(interview.id === interviewerId) {
                 console.log("FOUND")
+                interview.status = 'pending';
                 values.interview = interview;
                 values.meta.scheduled = true;
+                interview.interviewee = values.personal.firstName + " " + values.personal.lastName;
+                updateDoc(doc(db, 'instructorInterviewTimes', interview.id), {status: interview.status, interviewee:interview.interviewee});
                 setDoc(
           doc(db, 'applicationsSpring24', values.meta.uid),
           modifiedValues(),
@@ -133,7 +137,6 @@ function handleSubmit() {
                     behavior: 'smooth',
                   })
                   })})
-            deleteData();
         })
         }})
      
@@ -143,10 +146,6 @@ function handleSubmit() {
         )
 
     }
-}
-
-async function deleteData() {
-    await deleteDoc(doc(db, "instructorInterviewTimes", selectedId[0]));
 }
 
 function modifiedValues() {
@@ -165,15 +164,19 @@ async function getData() {
   querySnapshot.forEach((doc) => {
     const json = doc.data();
     const id = doc.id;
-    const date = json["Date"];
+    const date = json["date"];
     const interviewDate = new Date(date["seconds"] * 1000).toLocaleString();
-    valuesJson.push({
+    if(json["status"] === 'available') {
+        valuesJson.push({
         date: interviewDate,
         id: id,
-        interviewer:json["Interviewer"],
-        interviewerEmail:json["Interviewer Email"],
-        link: json["Link"],
+        interviewer:json["interviewer"],
+        interviewerEmail:json["interviewerEmail"],
+        link: json["link"],
+        status: json["status"],
+        interviewee:" ",
     });
+    }
     })
     return valuesJson;
 }
@@ -185,10 +188,17 @@ let data = getData();
 {:then value}
 <Card class="my-2 grid gap-3">
 {#if values.meta.scheduled}
+  {#if values.interview.status === "pending"}
     <div
     class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm">
-        Interview scheduled! 
+        Your interview will be on {values.interview.date}.
     </div>
+  {:else}
+    <div
+    class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm">
+        Your interview was on {values.interview.date}. Thank you for applying to gbSTEM!
+    </div>
+  {/if}
 {:else}
 {#if values.meta.interview}
 <h2 class="font-bold">Available Interview Slots</h2>
