@@ -4,6 +4,7 @@
   import Link from '$lib/components/Link.svelte'
   import Loading from '$lib/components/Loading.svelte'
   import PageLayout from '$lib/components/PageLayout.svelte'
+  import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
     import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
@@ -142,6 +143,11 @@
             <Link href="/apply">View application</Link>
           </div>
         </Card>
+        {#if data.application.status === 'accepted'}
+          <Card class="space-y-4">
+            <ConfirmationForm />
+          </Card>
+        {/if}
         <div>
           {#if data.application.status === 'interview'}
             <Card>
