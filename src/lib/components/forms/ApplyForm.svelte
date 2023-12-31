@@ -74,6 +74,13 @@
       interview: false,
       scheduled: false,
     },
+    interview:{
+      date: '',
+      id: '',
+      interviewer: '',
+      interviewerEmail:'',
+      link: '',
+    },
     timestamps: {
       created: serverTimestamp() as Timestamp,
       updated: serverTimestamp() as Timestamp,

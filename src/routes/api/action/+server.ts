@@ -115,6 +115,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       const emailData: Data.EmailData = {
         From: 'donotreply@gbstem.org',
         To: to,
+        Cc: '',
         Subject: String(template.data.subject),
         HTMLBody: htmlBody,
         ReplyTo: 'contact@gbstem.org',

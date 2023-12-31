@@ -40,6 +40,7 @@ export const POST: RequestHandler = async ({ locals }) => {
     const emailData: Data.EmailData = {
       From: 'donotreply@gbstem.org',
       To: locals.user.email,
+      Cc: '',
       Subject: String(template.data.subject),
       HTMLBody: htmlBody,
       ReplyTo: 'contact@gbstem.org',

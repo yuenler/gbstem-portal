@@ -99,6 +99,7 @@ declare global {
       Subject: string,
       From: string,
       To: string,
+      Cc: string,
       HTMLBody: string,
       ReplyTo: string,
       MessageStream: 'outbound'
@@ -152,6 +153,13 @@ declare global {
         submitted: boolean
         interview: boolean
         scheduled: boolean
+      }
+      interview:{
+        date: string,
+        id: string,
+        interviewer: string,
+        interviewerEmail:string,
+        link: string,
       }
       timestamps: {
         created: Timestamp

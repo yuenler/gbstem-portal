@@ -13,7 +13,6 @@ import Card from "../Card.svelte";
 
 let showValidation = false
 let valuesJson:Data.Interview[] = [];
-export let interviewJson = {};
 let selectedId:string[] = []
 
 let values: Data.Application = {
@@ -57,6 +56,13 @@ let values: Data.Application = {
       interview: false,
       scheduled: false,
     },
+    interview:{
+      date: '',
+      id: '',
+      interviewer: '',
+      interviewerEmail:'',
+      link: '',
+    },
     timestamps: {
       created: serverTimestamp() as Timestamp,
       updated: serverTimestamp() as Timestamp,
@@ -92,7 +98,7 @@ function handleSubmit() {
             console.log(interview["id"])
             if(interview.id === interviewerId) {
                 console.log("FOUND")
-                interviewJson = interview;
+                values.interview = interview;
                 values.meta.scheduled = true;
                 setDoc(
           doc(db, 'applicationsSpring24', values.meta.uid),
@@ -102,8 +108,18 @@ function handleSubmit() {
             alert.trigger('success', 'Your interview has been scheduled!')
             getDoc(doc(db, 'applicationsSpring24', values.meta.uid)).then(
               (applicationDoc) => {
+                console.log("sending email");
                 fetch('/api/interview', {
                   method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    email: interview.interviewerEmail,
+                    date: interview.date,
+                    link: interview.link,
+                    interviewer: interview.interviewer,
+                  }),
                 }).then(async (res) => {
                   if (!res.ok) {
                     const { message } = await res.json()
@@ -112,7 +128,6 @@ function handleSubmit() {
                   const applicationData =
                     applicationDoc.data() as Data.Application
                   values = cloneDeep(applicationData)
-                  console.log
                   window.scrollTo({
                     top: 0,
                     behavior: 'smooth',
