@@ -71,6 +71,7 @@
       id: '',
       uid: '',
       submitted: false,
+      interview: false,
       scheduled: false,
     },
     timestamps: {

@@ -150,6 +150,7 @@ declare global {
         id: string
         uid: string
         submitted: boolean
+        interview: boolean
         scheduled: boolean
       }
       timestamps: {

@@ -54,6 +54,7 @@ let values: Data.Application = {
       id: '',
       uid: '',
       submitted: false,
+      interview: false,
       scheduled: false,
     },
     timestamps: {
@@ -174,6 +175,7 @@ let data = getData();
         Interview scheduled! 
     </div>
 {:else}
+{#if values.meta.interview}
 <h2 class="font-bold">Available Interview Slots</h2>
 <div>Please sign up for one. If there are no slots available for you, please email contact@gbstem.org and we will try to find a time that works for you.</div>
 <Form class={clsx('max-w-2xl', showValidation && 'show-validation')}
@@ -194,6 +196,7 @@ on:submit={handleSubmit}>
 </div>
 <button type="submit"class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500">Submit</button>
 </Form>
+{/if}
 {/if}
 </Card>
 {/await}

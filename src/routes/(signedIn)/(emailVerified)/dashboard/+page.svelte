@@ -13,6 +13,7 @@
     | 'waitlisted'
     | 'rejected'
     | 'submitted'
+    | 'interview'
     | 'scheduled'
     | null
 
@@ -46,12 +47,15 @@
                     applicationDoc.data() as Data.Application
                   if (applicationData.meta.submitted) {
                     data.application.status = 'submitted'
-                  } 
-                  if(applicationData.meta.scheduled) {
-                    data.application.status = 'scheduled'
                   } else {
                     data.application.status = null
                   }
+                  if(applicationData.meta.interview) {
+                    data.application.status = 'interview'
+                  }
+                  if(applicationData.meta.scheduled) {
+                    data.application.status = 'scheduled'
+                  } 
                 }
                 resolve()
               },
@@ -128,7 +132,7 @@
                 Unfortunately, instructor applications were extremely
                 competitive, and we were not able to accept you as an instructor
                 for gbSTEM.
-              {:else if data.application.status === 'submitted' || data.application.status === 'scheduled'}
+              {:else if data.application.status === 'submitted' || data.application.status === 'scheduled' || data.application.status === 'interview'}
                 Your application is submitted and in review!
               {:else}
                 Your application is in progress. Make sure to submit by the
@@ -139,7 +143,7 @@
           </div>
         </Card>
         <div>
-          {#if data.application.status === 'submitted'}
+          {#if data.application.status === 'interview'}
             <Card>
               <h2 class="text-xl font-bold">Schedule Your Interview</h2>
               <div class="space-y-1">Thanks for filling out the application! Please sign up for an interview here.</div>
