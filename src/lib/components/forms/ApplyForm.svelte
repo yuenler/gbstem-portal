@@ -71,6 +71,7 @@
       id: '',
       uid: '',
       submitted: false,
+      scheduled: false,
     },
     timestamps: {
       created: serverTimestamp() as Timestamp,
@@ -206,6 +207,7 @@
         showValidation = false
         disabled = true
         values.meta.submitted = true
+        values.meta.scheduled = false
         setDoc(
           doc(db, 'applicationsSpring24', frozenUser.object.uid),
           modifiedValues(),
@@ -256,6 +258,7 @@
       return 'Save changes before leaving?'
     }
   }
+
 </script>
 
 <svelte:window on:beforeunload={handleUnload} />

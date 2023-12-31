@@ -4,6 +4,7 @@
   import Link from '$lib/components/Link.svelte'
   import Loading from '$lib/components/Loading.svelte'
   import PageLayout from '$lib/components/PageLayout.svelte'
+    import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
 
@@ -12,19 +13,22 @@
     | 'waitlisted'
     | 'rejected'
     | 'submitted'
+    | 'scheduled'
     | null
+
   type DashboardData = {
     application: {
       status: ApplicationStatus
     }
   }
-
+ 
   let loading = true
   let data: DashboardData = {
     application: {
       status: null,
     },
   }
+
   user.subscribe((user) => {
     if (user) {
       let timer: number
@@ -42,6 +46,9 @@
                     applicationDoc.data() as Data.Application
                   if (applicationData.meta.submitted) {
                     data.application.status = 'submitted'
+                  } 
+                  if(applicationData.meta.scheduled) {
+                    data.application.status = 'scheduled'
                   } else {
                     data.application.status = null
                   }
@@ -121,7 +128,7 @@
                 Unfortunately, instructor applications were extremely
                 competitive, and we were not able to accept you as an instructor
                 for gbSTEM.
-              {:else if data.application.status === 'submitted'}
+              {:else if data.application.status === 'submitted' || data.application.status === 'scheduled'}
                 Your application is submitted and in review!
               {:else}
                 Your application is in progress. Make sure to submit by the
@@ -131,6 +138,21 @@
             <Link href="/apply">View application</Link>
           </div>
         </Card>
+        <div>
+          {#if data.application.status === 'submitted'}
+            <Card>
+              <h2 class="text-xl font-bold">Schedule Your Interview</h2>
+              <div class="space-y-1">Thanks for filling out the application! Please sign up for an interview here.</div>
+              <Link href="/interview">View Interview Slots</Link>
+            </Card>
+          {/if}
+          {#if data.application.status === 'scheduled'}
+          <Card>
+            <h2 class="text-xl font-bold">Your Interview Has Been Scheduled</h2>
+            <div class="space-y-1">Thanks for signing up! You should receive details soon.</div>
+          </Card>
+          {/if}
+        </div>
       </div>
     {/if}
   </div>

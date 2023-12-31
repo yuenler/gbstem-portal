@@ -104,6 +104,14 @@ declare global {
       MessageStream: 'outbound'
     }
 
+    type Interview = {
+      date: string,
+      id: string,
+      interviewer: string,
+      interviewerEmail:string,
+      link: string,
+    }
+
     type Application = {
       personal: {
         email: string
@@ -142,6 +150,7 @@ declare global {
         id: string
         uid: string
         submitted: boolean
+        scheduled: boolean
       }
       timestamps: {
         created: Timestamp

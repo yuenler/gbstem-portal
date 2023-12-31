@@ -33,5 +33,5 @@ export {
   parentEducationJson,
   timeSlotsJson,
   coursesJson,
-  classesPerWeekJson
+  classesPerWeekJson,
 }
