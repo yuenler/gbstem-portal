@@ -4,7 +4,7 @@
   import Link from '$lib/components/Link.svelte'
   import Loading from '$lib/components/Loading.svelte'
   import PageLayout from '$lib/components/PageLayout.svelte'
-  import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
+  import ClassDetailsForm from '$lib/components/forms/ClassDetailsForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
 
@@ -43,6 +43,15 @@
                     applicationDoc.data() as Data.Application
                   if (applicationData.meta.submitted) {
                     data.application.status = 'submitted'
+                    getDoc(doc(db, 'decisionsSpring24', user.object.uid)).then(
+                      (snapshot) => {
+                        if (snapshot.exists()) {
+                          data.application.status = snapshot.data()
+                            .type as Data.Decision
+                        }
+                        resolve()
+                      },
+                    )
                   } else {
                     data.application.status = null
                   }
@@ -134,7 +143,7 @@
         </Card>
         {#if data.application.status === 'accepted'}
           <Card class="space-y-4">
-            <ConfirmationForm />
+            <ClassDetailsForm />
           </Card>
         {/if}
       </div>

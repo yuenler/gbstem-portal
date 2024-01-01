@@ -1,0 +1,159 @@
+<script lang="ts">
+  import { db, user } from '$lib/client/firebase'
+  import { alert } from '$lib/stores'
+  import Form from '$lib/components/Form.svelte'
+  import Button from '../Button.svelte'
+  import Select from '$lib/components/Select.svelte'
+  import Input from '$lib/components/Input.svelte'
+  import { cn } from '$lib/utils'
+  import { doc, getDoc, setDoc } from 'firebase/firestore'
+  import { onMount } from 'svelte'
+  import Link from '$lib/components/Link.svelte'
+  import { coursesJson, daysOfWeekJson } from '$lib/data'
+
+  let disabled = false
+  let showValidation = false
+  let values = {
+    classDay1: '',
+    classTime1: '',
+    classDay2: '',
+    classTime2: '',
+    meetingLink: '',
+    course: '',
+    submitting: false,
+  }
+  const confirmedOptions = [
+    {
+      name: 'Yes, I can attend all 3 days of gbSTEM.',
+    },
+    {
+      name: 'No, unfortuantely I cannot.',
+    },
+  ]
+  onMount(() => {
+    return user.subscribe((user) => {
+      if (user) {
+        getDoc(doc(db, 'classesSpring24', user.object.uid)).then((snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.data()
+            values = data as {
+              classDay1: string
+              classTime1: string
+              classDay2: string
+              classTime2: string
+              meetingLink: string
+              course: string
+              submitting: boolean
+            }
+            disabled = true
+          }
+        })
+      }
+    })
+  })
+
+  function handleSubmit(e: CustomEvent<SubmitData>) {
+    if (e.detail.error === null) {
+      showValidation = false
+      disabled = true
+      if ($user) {
+        const frozenUser = $user
+        setDoc(doc(db, 'classesSpring24', frozenUser.object.uid), values)
+          .then(() => {
+            disabled = false
+            alert.trigger('success', 'Class details saved!')
+          })
+          .catch((err) => {
+            disabled = false
+            alert.trigger('error', err.code, true)
+          })
+      }
+    } else {
+      showValidation = true
+      alert.trigger('error', e.detail.error)
+    }
+  }
+</script>
+
+<Form class={cn(showValidation && 'show-validation')} on:submit={handleSubmit}>
+  {#if disabled}
+    <Button class="mb-5" on:click={() => (disabled = false)}
+      >Edit class details</Button
+    >
+  {/if}
+
+  <fieldset class="space-y-4" {disabled}>
+    <h2 class="text-xl font-bold">Your class details</h2>
+
+    <Select
+      bind:value={values.course}
+      label="Course"
+      options={coursesJson}
+      floating
+      required
+    />
+
+    <Input
+      type="text"
+      bind:value={values.meetingLink}
+      label="Meeting link"
+      floating
+      required
+    />
+
+    <div class="grid gap-1">
+      <span class="font-bold"
+        >Classes meet twice weekly at consistent days and times throughout the
+        semester and run for 45-60 minutes each.
+      </span>
+
+      <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
+        <div class="sm:col-span-2">
+          <Select
+            bind:value={values.classDay1}
+            label="Meeting day 1"
+            options={daysOfWeekJson}
+            floating
+            required
+          />
+        </div>
+        <Input
+          type="time"
+          bind:value={values.classTime1}
+          label="Meeting time 1"
+          floating
+          required
+        />
+      </div>
+
+      <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
+        <div class="sm:col-span-2">
+          <Select
+            bind:value={values.classDay2}
+            label="Meeting day 2"
+            options={daysOfWeekJson}
+            floating
+            required
+          />
+        </div>
+        <Input
+          type="time"
+          bind:value={values.classTime2}
+          label="Meeting time 2"
+          floating
+          required
+        />
+      </div>
+    </div>
+
+    <Input
+      type="checkbox"
+      bind:value={values.submitting}
+      label="I understand submitting will make my class available for registration, so I should not submit until I am sure the class and class times work for me."
+      required
+    />
+    <div class="flex justify-end">
+      <Button color="blue" type="submit">Submit</Button>
+    </div>
+  </fieldset>
+</Form>
