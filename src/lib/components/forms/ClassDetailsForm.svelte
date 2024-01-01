@@ -13,7 +13,16 @@
 
   let disabled = false
   let showValidation = false
-  let values = {
+  let values: {
+    classDay1: string
+    classTime1: string
+    classDay2: string
+    classTime2: string
+    meetingLink: string
+    course: string
+    submitting: boolean
+    meetingTimes: Date[]
+  } = {
     classDay1: '',
     classTime1: '',
     classDay2: '',
@@ -21,15 +30,50 @@
     meetingLink: '',
     course: '',
     submitting: false,
+    meetingTimes: [],
   }
-  const confirmedOptions = [
-    {
-      name: 'Yes, I can attend all 3 days of gbSTEM.',
-    },
-    {
-      name: 'No, unfortuantely I cannot.',
-    },
-  ]
+
+  function getMeetingDates(
+    classDay1: string,
+    classDay2: string,
+    classTime1: string,
+    classTime2: string,
+    startDate: Date,
+    endDate: Date,
+  ): Date[] {
+    const meetingDates = []
+    const dayMap: Record<string, number> = {
+      Sunday: 0,
+      Monday: 1,
+      Tuesday: 2,
+      Wednesday: 3,
+      Thursday: 4,
+      Friday: 5,
+      Saturday: 6,
+    }
+
+    let currentDate = new Date(startDate.getTime())
+    while (currentDate <= endDate) {
+      if (currentDate.getDay() === dayMap[classDay1]) {
+        let meetingTime = parseTime(classTime1, currentDate)
+        meetingDates.push(new Date(meetingTime))
+      }
+      if (currentDate.getDay() === dayMap[classDay2]) {
+        let meetingTime = parseTime(classTime2, currentDate)
+        meetingDates.push(new Date(meetingTime))
+      }
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+
+    return meetingDates
+  }
+
+  function parseTime(time: string, date: Date): Date {
+    const [hours, minutes] = time.split(':').map((str) => parseInt(str, 10))
+    date.setHours(hours, minutes, 0, 0)
+    return date
+  }
+
   onMount(() => {
     return user.subscribe((user) => {
       if (user) {
@@ -44,6 +88,7 @@
               meetingLink: string
               course: string
               submitting: boolean
+              meetingTimes: Date[]
             }
             disabled = true
           }
@@ -58,6 +103,15 @@
       disabled = true
       if ($user) {
         const frozenUser = $user
+        const meetingTimes = getMeetingDates(
+          values.classDay1,
+          values.classDay2,
+          values.classTime1,
+          values.classTime2,
+          new Date(2024, 2, 15), // TODO: change this to the actual start date
+          new Date(2024, 5, 20), // TODO: change this to the actual end date
+        )
+        values.meetingTimes = meetingTimes
         setDoc(doc(db, 'classesSpring24', frozenUser.object.uid), values)
           .then(() => {
             disabled = false
@@ -77,7 +131,7 @@
 
 <Form class={cn(showValidation && 'show-validation')} on:submit={handleSubmit}>
   {#if disabled}
-    <Button class="mb-5" on:click={() => (disabled = false)}
+    <Button color="blue" class="mb-5" on:click={() => (disabled = false)}
       >Edit class details</Button
     >
   {/if}
