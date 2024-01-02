@@ -17,7 +17,6 @@
     | 'rejected'
     | 'submitted'
     | 'interview'
-    | 'scheduled'
     | null
 
   type DashboardData = {
@@ -65,9 +64,6 @@
                   if(applicationData.meta.interview) {
                     data.application.status = 'interview'
                   }
-                  if(applicationData.meta.scheduled) {
-                    data.application.status = 'scheduled'
-                  } 
                 }
                 resolve()
               },
@@ -143,7 +139,7 @@
                 Unfortunately, instructor applications were extremely
                 competitive, and we were not able to accept you as an instructor
                 for gbSTEM.
-              {:else if data.application.status === 'submitted' || data.application.status === 'scheduled' || data.application.status === 'interview'}
+              {:else if data.application.status === 'submitted' || data.application.status === 'interview'}
                 Your application is submitted and in review!
               {:else}
                 Your application is in progress. Make sure to submit by the
@@ -161,13 +157,6 @@
         <div>
           {#if data.application.status === 'interview'}
             <InterviewForm />
-          {/if}
-          {#if data.application.status === 'scheduled'}
-          <!-- <Card>
-            <h2 class="text-xl font-bold">Your Interview Has Been Scheduled</h2>
-            <Link href="/interview">View Details</Link>
-          </Card> -->
-          <InterviewForm />
           {/if}
         </div>
       </div>

@@ -158,7 +158,6 @@ declare global {
         uid: string
         submitted: boolean
         interview: boolean
-        scheduled: boolean
       }
       timestamps: {
         created: Timestamp
