@@ -1,9 +1,11 @@
 <script lang="ts">
   import { db, user } from '$lib/client/firebase'
   import Card from '$lib/components/Card.svelte'
+  import ClassSchedule from '$lib/components/ClassSchedule.svelte'
   import Link from '$lib/components/Link.svelte'
   import Loading from '$lib/components/Loading.svelte'
   import PageLayout from '$lib/components/PageLayout.svelte'
+  import ClassDetailsForm from '$lib/components/forms/ClassDetailsForm.svelte'
   import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
     import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
@@ -48,6 +50,15 @@
                     applicationDoc.data() as Data.Application
                   if (applicationData.meta.submitted) {
                     data.application.status = 'submitted'
+                    getDoc(doc(db, 'decisionsSpring24', user.object.uid)).then(
+                      (snapshot) => {
+                        if (snapshot.exists()) {
+                          data.application.status = snapshot.data()
+                            .type as Data.Decision
+                        }
+                        resolve()
+                      },
+                    )
                   } else {
                     data.application.status = null
                   }
@@ -91,8 +102,7 @@
   <title>Dashboard</title>
 </svelte:head>
 
-<PageLayout cols={2}>
-  <svelte:fragment slot="title">Dashboard</svelte:fragment>
+<div class="grid md:grid-cols-2">
   <div class="relative w-full">
     {#if loading}
       <Loading
@@ -145,7 +155,7 @@
         </Card>
         {#if data.application.status === 'accepted'}
           <Card class="space-y-4">
-            <ConfirmationForm />
+            <ClassDetailsForm />
           </Card>
         {/if}
         <div>
@@ -166,4 +176,16 @@
       </div>
     {/if}
   </div>
-</PageLayout>
+  <div class="relative w-full">
+    {#if loading}
+      <!-- Loading state -->
+    {:else}
+      <!-- Existing content -->
+      {#if data.application.status === 'accepted'}
+        <ClassSchedule />
+      {:else}
+        <!-- Other content for students or other roles -->
+      {/if}
+    {/if}
+  </div>
+</div>
