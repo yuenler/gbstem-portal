@@ -17,6 +17,7 @@
   } from 'firebase/firestore'
   import { alert } from '$lib/stores'
   import Select from '$lib/components/Select.svelte'
+  import StudentSelect from '$lib/components/StudentSelect.svelte'
 
   type ClassInfo = {
     id: string
@@ -30,6 +31,7 @@
   let loading = true
   let dialogEl: Dialog
   let dialogClassDetails: ClassInfo | null = null
+  let selectedStudentUid = ''
   let childName = ''
 
   function formatTime24to12(time24: string): string {
@@ -51,38 +53,8 @@
     })
   }
 
-  let options: { name: string }[] = []
-  const nameToUid: Record<string, string> = {}
-  let ready = false
-
-  const fetchData = async (user: Data.User.Store) => {
-    const uid = user.object.uid
-    for (let i = 1; i < 6; ++i) {
-      const docRef = await getDoc(
-        doc(db, 'registrationsSpring24', `${uid}-${i}`),
-      )
-      if (docRef.exists() && docRef.data()?.meta.submitted) {
-        const name =
-          `${docRef.data().personal.studentFirstName} ${
-            docRef.data().personal.studentLastName
-          }`.trim() || `Child ${i}`
-        options.push({
-          name,
-        })
-        nameToUid[name] = `${uid}-${i}`
-      } else {
-        break
-      }
-    }
-    ready = true
-  }
-
   onMount(() => {
     return user.subscribe(async (user) => {
-      if (user && user.profile.role === 'student') {
-        fetchData(user)
-      }
-
       const classesCollectionRef = collection(db, 'classesSpring24')
       const querySnapshot = await getDocs(classesCollectionRef)
       classes = querySnapshot.docs.map((doc) => {
@@ -118,13 +90,13 @@
   }
 
   async function enrollInClass(classId: string): Promise<void> {
-    if (childName === '') {
+    if (selectedStudentUid === '') {
       alert.trigger('error', 'Please select a child!')
       return
     }
     const classDocRef = doc(db, 'classesSpring24', classId)
     await updateDoc(classDocRef, {
-      students: arrayUnion(childName), // Assuming 'students' is an array field in your class document
+      students: arrayUnion(childName),
     }).catch((error) => {
       alert.trigger('error', 'Error enrolling in class!')
     })
@@ -132,7 +104,7 @@
     const registrationDocRef = doc(
       db,
       'registrationsSpring24',
-      nameToUid[childName],
+      selectedStudentUid,
     )
     await updateDoc(registrationDocRef, {
       classes: arrayUnion(classId),
@@ -163,15 +135,11 @@
         {/each}
       </ul>
       <div class="flex items-center gap-2">
-        {#each [options] as optionList (optionList.length)}
-          <Select
-            bind:value={childName}
-            class="mr-2 w-full"
-            label="Select a child"
-            {options}
-            floating
-          />
-        {/each}
+        <StudentSelect
+          bind:selectedStudent={childName}
+          bind:selectedStudentUid
+        />
+
         <Button
           color="blue"
           on:click={() => {
