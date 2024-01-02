@@ -8,7 +8,6 @@ import {
 } from '$env/static/private'
 import { addDataToHtmlTemplate } from '$lib/utils'
 
-
 export const POST: RequestHandler = async ({ request, locals }) => {
   let topError
   try {

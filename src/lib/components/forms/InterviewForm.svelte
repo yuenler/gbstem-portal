@@ -21,7 +21,6 @@
 
   let showValidation = false
   let valuesJson: Data.Interview[] = []
-  let selectedId: string[] = []
 
   let scheduledInterview: Data.Interview = {
     date: new Date(0),
@@ -47,20 +46,12 @@
   }
 
   function handleSubmit() {
-    console.log(selectedId)
-    if (selectedId.length > 1 || selectedId.length == 0) {
-      alert.trigger('error', 'Please select one time')
-    } else {
-      const interviewerId = selectedId[0]
-      valuesJson.forEach((interview) => {
-        if (interview.id === interviewerId) {
-          console.log('FOUND')
-          scheduledInterview = interview
+    console.log(scheduledInterview)
           scheduledInterview.interviewSlotStatus = 'pending'
           scheduled = true
           scheduledInterview.intervieweeFirstName = interviewee.firstName
           scheduledInterview.intervieweeLastName = interviewee.lastName
-          updateDoc(doc(db, 'instructorInterviewTimes', interview.id), {
+          updateDoc(doc(db, 'instructorInterviewTimes', scheduledInterview.id), {
             interviewSlotStatus: scheduledInterview.interviewSlotStatus,
             intervieweeFirstName: interviewee.firstName,
             intervieweeLastName: interviewee.lastName,
@@ -94,9 +85,7 @@
             'Thank you for signing up for an interview! You will receive an email with the details shortly.',
           )
         }
-      })
-    }
-  }
+      
 
   async function getData() {
     user.subscribe((user) => {
@@ -161,7 +150,23 @@
         <div class="mb-4">
           <div class="grid grid-cols-2 gap-2">
             {#each value as val}
-              <Input
+            <label>
+              <input type="radio" bind:group={scheduledInterview} value={val} />
+              {new Date(
+                Number(val.date['seconds'] * 1000),
+              ).toUTCString()}
+            </label>
+            
+            <!-- <label>
+              <input type="radio" bind:group={} value={2} />
+              Two scoops
+            </label>
+            
+            <label>
+              <input type="radio" bind:group={} value={3} />
+              Three scoops
+            </label> -->
+              <!-- <Input
                 type="checkbox"
                 bind:value={selectedId}
                 label={new Date(
@@ -170,7 +175,7 @@
                 name={val.id}
                 floating
                 required
-              />
+              /> -->
             {/each}
           </div>
         </div>
