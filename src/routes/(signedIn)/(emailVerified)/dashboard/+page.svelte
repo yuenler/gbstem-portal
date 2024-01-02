@@ -8,6 +8,8 @@
   import StudentSchedule from '$lib/components/StudentSchedule.svelte'
   import ClassDetailsForm from '$lib/components/forms/ClassDetailsForm.svelte'
   import is from 'date-fns/locale/is'
+  import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
+    import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
 
@@ -16,13 +18,15 @@
     | 'waitlisted'
     | 'rejected'
     | 'submitted'
+    | 'interview'
     | null
+
   type DashboardData = {
     application: {
       status: ApplicationStatus
     }
   }
-
+ 
   let loading = true
   let data: DashboardData = {
     application: {
@@ -59,6 +63,9 @@
                     )
                   } else {
                     data.application.status = null
+                  }
+                  if(applicationData.meta.interview) {
+                    data.application.status = 'interview'
                   }
                 }
                 resolve()
@@ -135,7 +142,7 @@
                 Unfortunately, instructor applications were extremely
                 competitive, and we were not able to accept you as an instructor
                 for gbSTEM.
-              {:else if data.application.status === 'submitted'}
+              {:else if data.application.status === 'submitted' || data.application.status === 'interview'}
                 Your application is submitted and in review!
               {:else}
                 Your application is in progress. Make sure to submit by the
@@ -150,6 +157,11 @@
             <ClassDetailsForm />
           </Card>
         {/if}
+        <div>
+          {#if data.application.status === 'interview'}
+            <InterviewForm />
+          {/if}
+        </div>
       </div>
     {/if}
   </div>

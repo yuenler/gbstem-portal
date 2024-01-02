@@ -99,9 +99,24 @@ declare global {
       Subject: string,
       From: string,
       To: string,
+      Cc: string,
       HTMLBody: string,
       ReplyTo: string,
       MessageStream: 'outbound'
+    }
+
+    type Interview = {
+      date: string,
+      id: string,
+      interviewerFirstName: string,
+      interviewerLastName: string,
+      interviewerEmail:string,
+      interviewLink: string,
+      interviewSlotStatus: string,
+      intervieweeFirstName: string,
+      intervieweeLastName: string,
+      intervieweeId: string,
+      intervieweeEmail: string,
     }
 
     type Application = {
@@ -142,6 +157,7 @@ declare global {
         id: string
         uid: string
         submitted: boolean
+        interview: boolean
       }
       timestamps: {
         created: Timestamp

@@ -71,6 +71,7 @@
       id: '',
       uid: '',
       submitted: false,
+      interview: false,
     },
     timestamps: {
       created: serverTimestamp() as Timestamp,
@@ -256,6 +257,7 @@
       return 'Save changes before leaving?'
     }
   }
+
 </script>
 
 <svelte:window on:beforeunload={handleUnload} />

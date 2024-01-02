@@ -1,12 +1,13 @@
 import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { adminAuth, adminDb } from '$lib/server/firebase'
+import { adminAuth } from '$lib/server/firebase'
 import type { FirebaseError } from 'firebase-admin'
 import postmark from 'postmark'
 import {
   POSTMARK_API_TOKEN,
 } from '$env/static/private'
-
+import { addDataToHtmlTemplate } from '$lib/utils'
+import { actionEmailTemplate } from '$lib/data/emailTemplates/actionEmailTemplate'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   let topError
@@ -93,28 +94,13 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       }
 
       // get html template from firebase
-      const document = await adminDb.collection('templates').doc(template.name).get()
 
-      const html = document.data()?.html
-
-      // replace html template with data
-      const htmlBody = html.replace(/{{(.*?)}}/g, (_, key) => {
-        const keys = key.trim().split('.');
-        let value = template.data;
-        for (const k of keys) {
-          value = value[k];
-          if (value === undefined) {
-            return '';
-          }
-        }
-        return value;
-      });
-
-
-
+      const htmlBody = addDataToHtmlTemplate(actionEmailTemplate, template);
+      
       const emailData: Data.EmailData = {
         From: 'donotreply@gbstem.org',
         To: to,
+        Cc: '',
         Subject: String(template.data.subject),
         HTMLBody: htmlBody,
         ReplyTo: 'contact@gbstem.org',
