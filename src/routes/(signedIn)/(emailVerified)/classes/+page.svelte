@@ -53,8 +53,13 @@
     })
   }
 
+  let isStudent = true
+
   onMount(() => {
     return user.subscribe(async (user) => {
+      if (user?.profile.role !== 'student') {
+        isStudent = false
+      }
       const classesCollectionRef = collection(db, 'classesSpring24')
       const querySnapshot = await getDocs(classesCollectionRef)
       classes = querySnapshot.docs.map((doc) => {
@@ -134,21 +139,23 @@
           <li>{classTime}</li>
         {/each}
       </ul>
-      <div class="flex items-center gap-2">
-        <StudentSelect
-          bind:selectedStudent={childName}
-          bind:selectedStudentUid
-        />
+      {#if isStudent}
+        <div class="flex items-center gap-2">
+          <StudentSelect
+            bind:selectedStudent={childName}
+            bind:selectedStudentUid
+          />
 
-        <Button
-          color="blue"
-          on:click={() => {
-            if (dialogClassDetails) {
-              enrollInClass(dialogClassDetails.id)
-            }
-          }}>Enroll</Button
-        >
-      </div>
+          <Button
+            color="blue"
+            on:click={() => {
+              if (dialogClassDetails) {
+                enrollInClass(dialogClassDetails.id)
+              }
+            }}>Enroll</Button
+          >
+        </div>
+      {/if}
     {/if}
 
     <DialogActions>
