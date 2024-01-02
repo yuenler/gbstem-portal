@@ -106,7 +106,7 @@ declare global {
     }
 
     type Interview = {
-      date: Date,
+      date: string,
       id: string,
       interviewerFirstName: string,
       interviewerLastName: string,

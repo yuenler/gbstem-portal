@@ -23,7 +23,7 @@
   let valuesJson: Data.Interview[] = []
 
   let scheduledInterview: Data.Interview = {
-    date: new Date(0),
+    date: '',
     id: '',
     interviewerFirstName: '',
     interviewerLastName: '',
@@ -64,9 +64,7 @@
       },
       body: JSON.stringify({
         email: scheduledInterview.interviewerEmail,
-        date: new Date(
-          Number(scheduledInterview.date['seconds'] * 1000),
-        ).toUTCString(),
+        date: new Date(scheduledInterview.date).toUTCString() + ', or ' + new Date(scheduledInterview.date).toLocaleTimeString() + ' local time',
         link: scheduledInterview.interviewLink,
         interviewer: scheduledInterview.interviewerFirstName,
       }),
@@ -112,7 +110,7 @@
       } else {
         if (json['interviewSlotStatus'] === 'available') {
           valuesJson.push({
-            date: json['date'],
+            date: new Date(json['date']).toLocaleString(),
             id: doc.id,
             interviewerFirstName: json['interviewerFirstName'],
             interviewerLastName: json['interviewerLastName'],
@@ -155,7 +153,7 @@
                   bind:group={scheduledInterview}
                   value={val}
                 />
-                {new Date(Number(val.date['seconds'] * 1000)).toUTCString()}
+                {val.date}
               </label>
 
               <!-- <label>
@@ -190,17 +188,13 @@
       <div
         class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
       >
-        Your interview will be on {new Date(
-          Number(scheduledInterview.date['seconds'] * 1000),
-        ).toUTCString()}.
+        Your interview will be on {new Date(scheduledInterview.date).toUTCString()}, or {new Date(scheduledInterview.date).toLocaleTimeString()} local time.
       </div>
     {:else}
       <div
         class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
       >
-        Your interview was on {new Date(
-          Number(scheduledInterview.date['seconds'] * 1000),
-        ).toUTCString()}. Thank you for applying to gbSTEM!
+        Your interview was on {new Date(scheduledInterview.date).toUTCString()}, or {new Date(scheduledInterview.date).toLocaleTimeString()} local time.. Thank you for applying to gbSTEM!
       </div>
     {/if}
   </Card>
