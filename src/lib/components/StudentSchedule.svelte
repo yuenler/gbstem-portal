@@ -52,7 +52,9 @@
 </script>
 
 <div class="p-4">
-  <StudentSelect bind:selectedStudentUid />
+  <div class="mb-5">
+    <StudentSelect bind:selectedStudentUid />
+  </div>
   {#if classSchedules.length > 0}
     <ul class="list-none space-y-2">
       {#each classSchedules as schedule}
