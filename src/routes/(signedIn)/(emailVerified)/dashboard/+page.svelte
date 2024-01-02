@@ -160,17 +160,14 @@
         {/if}
         <div>
           {#if data.application.status === 'interview'}
-            <Card>
-              <h2 class="text-xl font-bold">Schedule Your Interview</h2>
-              <div class="space-y-1">Thanks for filling out the application! Please sign up for an interview here.</div>
-              <Link href="/interview">View Interview Slots</Link>
-            </Card>
+            <InterviewForm />
           {/if}
           {#if data.application.status === 'scheduled'}
-          <Card>
+          <!-- <Card>
             <h2 class="text-xl font-bold">Your Interview Has Been Scheduled</h2>
             <Link href="/interview">View Details</Link>
-          </Card>
+          </Card> -->
+          <InterviewForm />
           {/if}
         </div>
       </div>

@@ -106,13 +106,17 @@ declare global {
     }
 
     type Interview = {
-      date: string,
+      date: Date,
       id: string,
-      interviewer: string,
+      interviewerFirstName: string,
+      interviewerLastName: string,
       interviewerEmail:string,
-      link: string,
-      status: string,
-      interviewee: string,
+      interviewLink: string,
+      interviewSlotStatus: string,
+      intervieweeFirstName: string,
+      intervieweeLastName: string,
+      intervieweeId: string,
+      intervieweeEmail: string,
     }
 
     type Application = {
@@ -155,14 +159,6 @@ declare global {
         submitted: boolean
         interview: boolean
         scheduled: boolean
-      }
-      interview:{
-        date: string,
-        id: string,
-        interviewer: string,
-        interviewerEmail:string,
-        link: string,
-        status: string,
       }
       timestamps: {
         created: Timestamp

@@ -1,227 +1,201 @@
 <script lang="ts">
-import { collection, query, getDocs, updateDoc, doc, getDoc, setDoc, serverTimestamp,
-    Timestamp} from "firebase/firestore";
-import { onDestroy, onMount } from 'svelte';
-import { db, storage, user } from '$lib/client/firebase';
-import Input from '$lib/components/Input.svelte';
-import * as fs from 'fs';
-import Form from '$lib/components/Form.svelte';
-import clsx from 'clsx';
-import { alert } from '$lib/stores'
-import { cloneDeep } from 'lodash-es'
-import Card from "../Card.svelte";
+  import {
+    collection,
+    query,
+    getDocs,
+    updateDoc,
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp,
+    Timestamp,
+  } from 'firebase/firestore'
+  import { onMount } from 'svelte'
+  import { db, user } from '$lib/client/firebase'
+  import Input from '$lib/components/Input.svelte'
+  import Form from '$lib/components/Form.svelte'
+  import clsx from 'clsx'
+  import { alert } from '$lib/stores'
+  import { cloneDeep } from 'lodash-es'
+  import Card from '../Card.svelte'
 
-let showValidation = false
-let valuesJson:Data.Interview[] = [];
-let selectedId:string[] = []
+  let showValidation = false
+  let valuesJson: Data.Interview[] = []
+  let selectedId: string[] = []
 
-let values: Data.Application = {
-    personal: {
-      email: '',
-      firstName: '',
-      lastName: '',
-      gender: '',
-      race: [],
-      phoneNumber: '',
-      dateOfBirth: '',
-    },
-    academic: {
-      school: '',
-      graduationYear: '',
-    },
-    program: {
-      courses: [],
-      preferences: '',
-      timeSlots: [],
-      notAvailable: '',
-      inPerson: false,
-      numClasses: '',
-      reason: '',
-    },
-    essay: {
-      taughtBefore: false,
-      academicBackground: '',
-      teachingScenario: '',
-      why: '',
-    },
-    agreements: {
-      entireProgram: false,
-      timeCommitment: false,
-      submitting: false,
-    },
-    meta: {
-      id: '',
-      uid: '',
-      submitted: false,
-      interview: false,
-      scheduled: false,
-    },
-    interview:{
-      date: '',
-      id: '',
-      interviewer: '',
-      interviewerEmail:'',
-      link: '',
-      status:'',
-    },
-    timestamps: {
-      created: serverTimestamp() as Timestamp,
-      updated: serverTimestamp() as Timestamp,
-    },
+  let scheduledInterview: Data.Interview = {
+    date: new Date(0),
+    id: '',
+    interviewerFirstName: '',
+    interviewerLastName: '',
+    interviewerEmail: '',
+    intervieweeFirstName: '',
+    intervieweeLastName: '',
+    intervieweeId: '',
+    intervieweeEmail: '',
+    interviewLink: '',
+    interviewSlotStatus: 'available',
   }
 
-onMount(() => {
-    return user.subscribe((user) => {
+  let scheduled = false
+
+  let interviewee = {
+    email: '',
+    firstName: '',
+    lastName: '',
+    id: '',
+  }
+
+  function handleSubmit() {
+    console.log(selectedId)
+    if (selectedId.length > 1 || selectedId.length == 0) {
+      alert.trigger('error', 'Please select one time')
+    } else {
+      const interviewerId = selectedId[0]
+      valuesJson.forEach((interview) => {
+        if (interview.id === interviewerId) {
+          console.log('FOUND')
+          scheduledInterview = interview
+          scheduledInterview.interviewSlotStatus = 'pending'
+          scheduled = true
+          scheduledInterview.intervieweeFirstName = interviewee.firstName
+          scheduledInterview.intervieweeLastName = interviewee.lastName
+          updateDoc(doc(db, 'instructorInterviewTimes', interview.id), {
+            interviewSlotStatus: scheduledInterview.interviewSlotStatus,
+            intervieweeFirstName: interviewee.firstName,
+            intervieweeLastName: interviewee.lastName,
+            intervieweeId: interviewee.id,
+          })
+          fetch('/api/interview', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: scheduledInterview.interviewerEmail,
+              date: new Date(
+                Number(scheduledInterview.date['seconds'] * 1000),
+              ).toUTCString(),
+              link: scheduledInterview.interviewLink,
+              interviewer: scheduledInterview.interviewerFirstName,
+            }),
+          }).then(async (res) => {
+            if (!res.ok) {
+              const { message } = await res.json()
+              console.log(message)
+            }
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth',
+            })
+          })
+          alert.trigger(
+            'success',
+            'Thank you for signing up for an interview! You will receive an email with the details shortly.',
+          )
+        }
+      })
+    }
+  }
+
+  async function getData() {
+    user.subscribe((user) => {
       if (user) {
         getDoc(doc(db, 'applicationsSpring24', user.object.uid)).then(
           (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
             if (applicationExists) {
               const applicationData = applicationDoc.data() as Data.Application
-              values = cloneDeep(applicationData)
+              interviewee['email'] = applicationData.personal['email']
+              interviewee.firstName = applicationData.personal.firstName
+              interviewee.lastName = applicationData.personal.lastName
+              interviewee.id = applicationData.meta.id
             }
-        })
-    }
-})
-})
-
-function handleSubmit() {
-    console.log(selectedId);
-    if(selectedId.length > 1 || selectedId.length == 0) {
-        alert.trigger(
-            'error',
-            'Please select one time',
+          },
         )
-    } else {
-        const interviewerId = selectedId[0];
-        console.log(valuesJson)
-        valuesJson.forEach((interview) => {
-            console.log(interview["id"])
-            if(interview.id === interviewerId) {
-                console.log("FOUND")
-                interview.status = 'pending';
-                values.interview = interview;
-                values.meta.scheduled = true;
-                interview.interviewee = values.personal.firstName + " " + values.personal.lastName;
-                updateDoc(doc(db, 'instructorInterviewTimes', interview.id), {status: interview.status, interviewee:interview.interviewee});
-                setDoc(
-          doc(db, 'applicationsSpring24', values.meta.uid),
-          modifiedValues(),
-        )
-          .then(() => {
-            alert.trigger('success', 'Your interview has been scheduled!')
-            getDoc(doc(db, 'applicationsSpring24', values.meta.uid)).then(
-              (applicationDoc) => {
-                console.log("sending email");
-                fetch('/api/interview', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    email: interview.interviewerEmail,
-                    date: interview.date,
-                    link: interview.link,
-                    interviewer: interview.interviewer,
-                  }),
-                }).then(async (res) => {
-                  if (!res.ok) {
-                    const { message } = await res.json()
-                    console.log(message)
-                  }
-                  const applicationData =
-                    applicationDoc.data() as Data.Application
-                  values = cloneDeep(applicationData)
-                  window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth',
-                  })
-                  })})
-        })
-        }})
-     
-        alert.trigger(
-            'success',
-            'Thank you for signing up for an interview! You will receive an email with the details shortly.',
-        )
-
-    }
-}
-
-function modifiedValues() {
-    return {
-      ...values,
-      timestamps: {
-        ...values.timestamps,
-        updated: serverTimestamp(),
-      },
-    }
+      }
+    })
+    const q = query(collection(db, 'instructorInterviewTimes'))
+    const querySnapshot = await getDocs(q)
+    querySnapshot.forEach((doc) => {
+      const json = doc.data()
+      if (json['intervieweeId'] === interviewee.id) {
+        scheduledInterview = json as Data.Interview
+      } else {
+        if (json['interviewSlotStatus'] === 'available') {
+          valuesJson.push({
+            date: json['date'],
+            id: doc.id,
+            interviewerFirstName: json['interviewerFirstName'],
+            interviewerLastName: json['interviewerLastName'],
+            interviewerEmail: json['interviewerEmail'],
+            interviewLink: json['interviewLink'],
+            interviewSlotStatus: json['interviewSlotStatus'],
+            intervieweeFirstName: ' ',
+            intervieweeLastName: ' ',
+            intervieweeId: ' ',
+            intervieweeEmail: ' ',
+          })
+        }
+      }
+    })
+    return valuesJson
   }
 
-async function getData() {
- const q = query(collection(db, "instructorInterviewTimes"))
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    const json = doc.data();
-    const id = doc.id;
-    const date = json["date"];
-    const interviewDate = new Date(date["seconds"] * 1000).toLocaleString();
-    if(json["status"] === 'available') {
-        valuesJson.push({
-        date: interviewDate,
-        id: id,
-        interviewer:json["interviewer"],
-        interviewerEmail:json["interviewerEmail"],
-        link: json["link"],
-        status: json["status"],
-        interviewee:" ",
-    });
-    }
-    })
-    return valuesJson;
-}
-
-let data = getData();
-
+  let data = getData()
 </script>
-{#await data}
-{:then value}
-<Card class="my-2 grid gap-3">
-{#if values.meta.scheduled}
-  {#if values.interview.status === "pending"}
-    <div
-    class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm">
-        Your interview will be on {values.interview.date}.
-    </div>
-  {:else}
-    <div
-    class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm">
-        Your interview was on {values.interview.date}. Thank you for applying to gbSTEM!
-    </div>
-  {/if}
-{:else}
-{#if values.meta.interview}
-<h2 class="font-bold">Available Interview Slots</h2>
-<div>Please sign up for one. If there are no slots available for you, please email contact@gbstem.org and we will try to find a time that works for you.</div>
-<Form class={clsx('max-w-2xl', showValidation && 'show-validation')}
-on:submit={handleSubmit}>
-<div class = "mb-4">
-    <div class="grid grid-cols-2 gap-2">
-    {#each value as val}
-    <Input
-     type = "checkbox"
-     bind:value = {selectedId}
-     label = {val.date}
-     name = {val.id}
-     floating
-     required
-    />
-    {/each}
-    </div>
-</div>
-<button type="submit"class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500">Submit</button>
-</Form>
-{/if}
-{/if}
-</Card>
+
+{#await data then value}
+  <Card class="my-2 grid gap-3">
+    {#if scheduledInterview.interviewSlotStatus === 'available'}
+      <h2 class="font-bold">Available Interview Slots</h2>
+      <div>
+        Please sign up for one. If there are no slots available for you, please
+        email contact@gbstem.org and we will try to find a time that works for
+        you.
+      </div>
+      <Form
+        class={clsx('max-w-2xl', showValidation && 'show-validation')}
+        on:submit={handleSubmit}
+      >
+        <div class="mb-4">
+          <div class="grid grid-cols-2 gap-2">
+            {#each value as val}
+              <Input
+                type="checkbox"
+                bind:value={selectedId}
+                label={new Date(
+                  Number(val.date['seconds'] * 1000),
+                ).toUTCString()}
+                name={val.id}
+                floating
+                required
+              />
+            {/each}
+          </div>
+        </div>
+        <button
+          type="submit"
+          class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
+          >Submit</button
+        >
+      </Form>
+    {:else if scheduledInterview.interviewSlotStatus === 'pending'}
+      <div
+        class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
+      >
+        Your interview will be on {new Date(
+          Number(scheduledInterview.date['seconds'] * 1000),
+        ).toUTCString()}.
+      </div>
+    {:else}
+      <div
+        class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
+      >
+        Your interview was on {new Date(
+          Number(scheduledInterview.date['seconds'] * 1000),
+        ).toUTCString()}. Thank you for applying to gbSTEM!
+      </div>
+    {/if}
+  </Card>
 {/await}
