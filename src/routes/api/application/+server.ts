@@ -1,11 +1,11 @@
 import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { adminDb } from '$lib/server/firebase'
 import postmark from 'postmark'
 import {
   POSTMARK_API_TOKEN,
 } from '$env/static/private'
 import { addDataToHtmlTemplate } from '$lib/utils'
+import { applicationSubmittedEmailTemplate } from '$lib/data/emailTemplates/applicationSubmittedEmailTemplate'
 
 export const POST: RequestHandler = async ({ locals }) => {
   if (locals.user === null) {
@@ -21,9 +21,8 @@ export const POST: RequestHandler = async ({ locals }) => {
         },
       },
     }
-    const document = await adminDb.collection('templates').doc(template.name).get()
 
-    const htmlBody = addDataToHtmlTemplate(document.data()?.html, template);
+    const htmlBody = addDataToHtmlTemplate(applicationSubmittedEmailTemplate, template);
 
     const emailData: Data.EmailData = {
       From: 'donotreply@gbstem.org',

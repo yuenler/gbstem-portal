@@ -1,12 +1,12 @@
 import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { adminDb } from '$lib/server/firebase'
 import postmark from 'postmark'
 import type { FirebaseError } from 'firebase-admin'
 import {
   POSTMARK_API_TOKEN,
 } from '$env/static/private'
 import { addDataToHtmlTemplate } from '$lib/utils'
+import { interviewScheduledEmailTemplate } from '$lib/data/emailTemplates/interviewScheduledEmailTemplate'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   let topError
@@ -34,10 +34,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
                 link: interviewLink,
             }
           },
-        }
-        const document = await adminDb.collection('templates').doc(template.name).get()
-    
-        const htmlBody = addDataToHtmlTemplate(document.data()?.html, template);
+        }    
+        
+        const htmlBody = addDataToHtmlTemplate(interviewScheduledEmailTemplate, template);
     
         const emailData: Data.EmailData = {
           From: 'donotreply@gbstem.org',

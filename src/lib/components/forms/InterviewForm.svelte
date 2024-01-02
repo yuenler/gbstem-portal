@@ -47,45 +47,44 @@
 
   function handleSubmit() {
     console.log(scheduledInterview)
-          scheduledInterview.interviewSlotStatus = 'pending'
-          scheduled = true
-          scheduledInterview.intervieweeFirstName = interviewee.firstName
-          scheduledInterview.intervieweeLastName = interviewee.lastName
-          updateDoc(doc(db, 'instructorInterviewTimes', scheduledInterview.id), {
-            interviewSlotStatus: scheduledInterview.interviewSlotStatus,
-            intervieweeFirstName: interviewee.firstName,
-            intervieweeLastName: interviewee.lastName,
-            intervieweeId: interviewee.id,
-          })
-          fetch('/api/interview', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: scheduledInterview.interviewerEmail,
-              date: new Date(
-                Number(scheduledInterview.date['seconds'] * 1000),
-              ).toUTCString(),
-              link: scheduledInterview.interviewLink,
-              interviewer: scheduledInterview.interviewerFirstName,
-            }),
-          }).then(async (res) => {
-            if (!res.ok) {
-              const { message } = await res.json()
-              console.log(message)
-            }
-            window.scrollTo({
-              top: 0,
-              behavior: 'smooth',
-            })
-          })
-          alert.trigger(
-            'success',
-            'Thank you for signing up for an interview! You will receive an email with the details shortly.',
-          )
-        }
-      
+    scheduledInterview.interviewSlotStatus = 'pending'
+    scheduled = true
+    scheduledInterview.intervieweeFirstName = interviewee.firstName
+    scheduledInterview.intervieweeLastName = interviewee.lastName
+    updateDoc(doc(db, 'instructorInterviewTimes', scheduledInterview.id), {
+      interviewSlotStatus: scheduledInterview.interviewSlotStatus,
+      intervieweeFirstName: interviewee.firstName,
+      intervieweeLastName: interviewee.lastName,
+      intervieweeId: interviewee.id,
+    })
+    fetch('/api/interview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: scheduledInterview.interviewerEmail,
+        date: new Date(
+          Number(scheduledInterview.date['seconds'] * 1000),
+        ).toUTCString(),
+        link: scheduledInterview.interviewLink,
+        interviewer: scheduledInterview.interviewerFirstName,
+      }),
+    }).then(async (res) => {
+      if (!res.ok) {
+        const { message } = await res.json()
+        console.log(message)
+      }
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      })
+    })
+    alert.trigger(
+      'success',
+      'Thank you for signing up for an interview! You will receive an email with the details shortly.',
+    )
+  }
 
   async function getData() {
     user.subscribe((user) => {
@@ -150,14 +149,16 @@
         <div class="mb-4">
           <div class="grid grid-cols-2 gap-2">
             {#each value as val}
-            <label>
-              <input type="radio" bind:group={scheduledInterview} value={val} />
-              {new Date(
-                Number(val.date['seconds'] * 1000),
-              ).toUTCString()}
-            </label>
-            
-            <!-- <label>
+              <label>
+                <input
+                  type="radio"
+                  bind:group={scheduledInterview}
+                  value={val}
+                />
+                {new Date(Number(val.date['seconds'] * 1000)).toUTCString()}
+              </label>
+
+              <!-- <label>
               <input type="radio" bind:group={} value={2} />
               Two scoops
             </label>
