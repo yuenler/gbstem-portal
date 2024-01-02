@@ -130,6 +130,7 @@
   let saveInterval: number | undefined = undefined
 
   const initializeForm = () => {
+    disabled = true
     return user.subscribe((user) => {
       if (user) {
         getDoc(doc(db, 'registrationsSpring24', childUid)).then(
@@ -651,22 +652,22 @@
 
         <p class="font-bold">Students from Fall 2023:</p>
         <p>
-          If you took a math class in the fall 2023 semester, it's advisable to opt for the
-          “b” version of the course. For example, if you completed
+          If you took a math class in the fall 2023 semester, it's advisable to
+          opt for the “b” version of the course. For example, if you completed
           Math 2a in the fall, you should proceed to Math 2b.
         </p>
 
         <p class="font-bold">Students from Spring 2023:</p>
 
         <p>
-          If your most recent math class was in the spring semester of 2023 (and you did not take any
-          math class in the fall 2023 semester), you should continue with the “a” semester of
-          the next level course you were enrolled in. For example, if you completed Math 3b in the spring, you would proceed to Math 4a. Unfortunately, we don't offer the "a" section
-          of math courses in the spring, so we recommend waiting until next fall to
-          enroll in a math course.
+          If your most recent math class was in the spring semester of 2023 (and
+          you did not take any math class in the fall 2023 semester), you should
+          continue with the “a” semester of the next level course you were
+          enrolled in. For example, if you completed Math 3b in the spring, you
+          would proceed to Math 4a. Unfortunately, we don't offer the "a"
+          section of math courses in the spring, so we recommend waiting until
+          next fall to enroll in a math course.
         </p>
-
-        
       </span>
       <div class="mb-2">
         <Select

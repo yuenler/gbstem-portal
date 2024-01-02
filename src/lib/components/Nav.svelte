@@ -31,6 +31,14 @@
       name: 'Apply / Register',
       href: '/apply',
     },
+    ...(user.role === 'student'
+      ? [
+          {
+            name: 'Class Catalog',
+            href: '/classes',
+          },
+        ]
+      : []),
     {
       name: 'FAQ',
       href: '/faq',

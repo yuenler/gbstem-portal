@@ -5,7 +5,9 @@
   import Link from '$lib/components/Link.svelte'
   import Loading from '$lib/components/Loading.svelte'
   import PageLayout from '$lib/components/PageLayout.svelte'
+  import StudentSchedule from '$lib/components/StudentSchedule.svelte'
   import ClassDetailsForm from '$lib/components/forms/ClassDetailsForm.svelte'
+  import is from 'date-fns/locale/is'
   import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
     import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
@@ -31,9 +33,10 @@
       status: null,
     },
   }
-
+  let isStudent = false
   user.subscribe((user) => {
     if (user) {
+      isStudent = user.profile.role === 'student'
       let timer: number
       Promise.all([
         new Promise<void>((resolve) => {
@@ -169,8 +172,8 @@
       <!-- Existing content -->
       {#if data.application.status === 'accepted'}
         <ClassSchedule />
-      {:else}
-        <!-- Other content for students or other roles -->
+      {:else if isStudent}
+        <StudentSchedule />
       {/if}
     {/if}
   </div>
