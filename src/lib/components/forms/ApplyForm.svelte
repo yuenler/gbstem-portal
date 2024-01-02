@@ -72,7 +72,6 @@
       uid: '',
       submitted: false,
       interview: false,
-      scheduled: false,
     },
     timestamps: {
       created: serverTimestamp() as Timestamp,
@@ -208,7 +207,6 @@
         showValidation = false
         disabled = true
         values.meta.submitted = true
-        values.meta.scheduled = false
         setDoc(
           doc(db, 'applicationsSpring24', frozenUser.object.uid),
           modifiedValues(),
