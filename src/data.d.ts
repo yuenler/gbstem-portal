@@ -105,19 +105,20 @@ declare global {
       MessageStream: 'outbound'
     }
 
-    type Interview = {
+
+
+    type InterviewSlot = {
       date: string,
       id: string,
-      interviewerFirstName: string,
-      interviewerLastName: string,
-      interviewerEmail:string,
-      interviewLink: string,
-      interviewSlotStatus: string,
+      interviewerName: string,
       intervieweeFirstName: string,
       intervieweeLastName: string,
       intervieweeId: string,
-      intervieweeEmail: string,
+      interviewerEmail: string,
+      interviewSlotStatus: string,
+      meetingLink: string,
     }
+
 
     type Application = {
       personal: {

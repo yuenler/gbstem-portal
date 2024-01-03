@@ -36,7 +36,7 @@
                   new Date(time.seconds * 1000),
               )
               originalMeetingTimes = meetingTimes.map((time) =>
-                toLocalISOString(time).slice(0, 16),
+                toLocalISOString(time),
               )
               editedMeetingTimes = [...originalMeetingTimes]
             }
@@ -108,7 +108,7 @@
     const hour = pad(date.getHours())
     const minute = pad(date.getMinutes())
 
-    return `${year}-${month}-${day}T${hour}:${minute}`
+    return `${year}-${month}-${day}T${hour}:${minute}`.slice(0, 16)
   }
 
   async function updateMeetingTimes(): Promise<void> {

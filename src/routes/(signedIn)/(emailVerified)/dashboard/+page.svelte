@@ -9,7 +9,7 @@
   import ClassDetailsForm from '$lib/components/forms/ClassDetailsForm.svelte'
   import is from 'date-fns/locale/is'
   import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
-    import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
+  import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
 
@@ -26,7 +26,7 @@
       status: ApplicationStatus
     }
   }
- 
+
   let loading = true
   let data: DashboardData = {
     application: {
@@ -64,7 +64,7 @@
                   } else {
                     data.application.status = null
                   }
-                  if(applicationData.meta.interview) {
+                  if (applicationData.meta.interview) {
                     data.application.status = 'interview'
                   }
                 }

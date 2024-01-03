@@ -29,15 +29,15 @@ export const POST: RequestHandler = async ({ request, locals }) => {
               link: 'https://portal.gbstem.org',
             },
             interview: {
-                name: interviewerName,
-                date: interviewDate,
-                link: interviewLink,
+              name: interviewerName,
+              date: interviewDate,
+              link: interviewLink,
             }
           },
-        }    
-        
+        }
+
         const htmlBody = addDataToHtmlTemplate(interviewScheduledEmailTemplate, template);
-    
+
         const emailData: Data.EmailData = {
           From: 'donotreply@gbstem.org',
           To: locals.user.email,
@@ -50,7 +50,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         try {
           const client = new postmark.ServerClient(POSTMARK_API_TOKEN);
           client.sendEmail(emailData);
-    
+
           return new Response()
         } catch (err) {
           throw error(400, 'Failed to send email.')
@@ -83,5 +83,5 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     topError = error(400, 'Invalid request body.')
   }
   throw topError
-  
+
 }
