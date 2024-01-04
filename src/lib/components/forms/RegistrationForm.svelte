@@ -510,6 +510,8 @@
   </div> -->
   <fieldset class="space-y-14" {disabled}>
     <div class="grid gap-1">
+      <span class="font-bold mt-3">Pre-Registration</span>
+    <p class="mb-2">This form will collect your availability and class interest for the 2024 Spring Semester. Please fill out this form to help ensure the right number of classes are opened for each offered course. The class times will be posted after pre-registration closes, and you will then be able to select the classes you wish to enroll in, first come first serve.</p>
       <span class="font-bold">Personal</span>
       <Card class="my-2 grid gap-3">
         <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
@@ -765,7 +767,7 @@
         <Input
           type="checkbox"
           bind:value={values.agreements.submitting}
-          label="I understand submitting means I can no longer make changes to my application. Don't check this box until you are sure that you are ready to submit."
+          label="I understand submitting means I can no longer make changes to my pre-registration. Don't check this box until you are sure that you are ready to submit."
           required
         />
       </div>
