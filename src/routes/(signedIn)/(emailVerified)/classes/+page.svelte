@@ -25,6 +25,8 @@
     classDays: string[]
     classTimes: string[]
     course: string
+    instructorFirstName: string
+    instructorLastName: string
   }
 
   let classes: ClassInfo[] = []
@@ -96,6 +98,8 @@
           classDays: [],
           classTimes: [],
           course: data.course,
+          instructorFirstName: data.instructorFirstName,
+          instructorLastName: data.instructorLastName,
         }
         // Assuming there are a fixed number of class days and times
         for (let i = 1; i <= 2; i++) {
@@ -107,7 +111,7 @@
         }
         return classInfo
       })
-      if (user) {
+      if (user && isStudent) {
         await determineStudentEnrollment(user)
       }
       loading = false
@@ -211,6 +215,9 @@
   <div slot="description" class="space-y-4">
     {#if dialogClassDetails !== null}
       <h2 class="text-xl font-bold">{dialogClassDetails.course}</h2>
+      <h3 class="text-lg font-bold">
+        {`Instructor: ${dialogClassDetails.instructorFirstName} ${dialogClassDetails.instructorLastName}`}
+      </h3>
       <ul>
         {#each formatClassTimes(dialogClassDetails.classDays, dialogClassDetails.classTimes) as classTime}
           <li>{classTime}</li>
@@ -222,14 +229,6 @@
             bind:selectedStudent={childName}
             bind:selectedStudentUid
           />
-          <!-- <Button
-            color="blue"
-            on:click={() => {
-              if (dialogClassDetails) {
-                enrollInClass(dialogClassDetails.id)
-              }
-            }}>Enroll</Button
-          > -->
           <Button
             color={isEnrolled(dialogClassDetails.id, selectedStudentUid)
               ? 'red'
@@ -262,6 +261,9 @@
       {#each classes as classInfo (classInfo.id)}
         <Card class="space-y-2">
           <h2 class="text-xl font-bold">{classInfo.course}</h2>
+          <h3 class="text-lg font-bold">
+            {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}
+          </h3>
           <ul>
             {#each formatClassTimes(classInfo.classDays, classInfo.classTimes) as classTime}
               <li>{classTime}</li>

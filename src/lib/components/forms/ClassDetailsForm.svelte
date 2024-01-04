@@ -22,6 +22,8 @@
     course: string
     submitting: boolean
     meetingTimes: Date[]
+    instructorFirstName: string
+    instructorLastName: string
   } = {
     classDay1: '',
     classTime1: '',
@@ -31,6 +33,8 @@
     course: '',
     submitting: false,
     meetingTimes: [],
+    instructorFirstName: '',
+    instructorLastName: '',
   }
 
   function getMeetingDates(
@@ -89,6 +93,8 @@
               course: string
               submitting: boolean
               meetingTimes: Date[]
+              instructorFirstName: string
+              instructorLastName: string
             }
             disabled = true
           }
@@ -112,6 +118,8 @@
           new Date(2024, 5, 20), // TODO: change this to the actual end date
         )
         values.meetingTimes = meetingTimes
+        values.instructorFirstName = frozenUser.profile.firstName
+        values.instructorLastName = frozenUser.profile.lastName
         setDoc(doc(db, 'classesSpring24', frozenUser.object.uid), values)
           .then(() => {
             disabled = false
