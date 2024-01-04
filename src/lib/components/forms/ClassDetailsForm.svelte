@@ -24,6 +24,7 @@
     meetingTimes: Date[]
     instructorFirstName: string
     instructorLastName: string
+    classCap: number
   } = {
     classDay1: '',
     classTime1: '',
@@ -35,6 +36,7 @@
     meetingTimes: [],
     instructorFirstName: '',
     instructorLastName: '',
+    classCap: 7,
   }
 
   function getMeetingDates(
@@ -95,6 +97,7 @@
               meetingTimes: Date[]
               instructorFirstName: string
               instructorLastName: string
+              classCap: number
             }
             disabled = true
           }
@@ -142,9 +145,10 @@
     <Button color="blue" class="mb-5" on:click={() => (disabled = false)}
       >Edit class details</Button
     >
+    <p>Note that editing your class details will reset your class schedule.</p>
   {/if}
 
-  <fieldset class="space-y-4" {disabled}>
+  <fieldset class="mt-4 space-y-4" {disabled}>
     <h2 class="text-xl font-bold">Your class details</h2>
 
     <Select
@@ -207,6 +211,14 @@
         />
       </div>
     </div>
+
+    <Input
+      type="number"
+      bind:value={values.classCap}
+      label="Class capacity"
+      floating
+      required
+    />
 
     <Input
       type="checkbox"

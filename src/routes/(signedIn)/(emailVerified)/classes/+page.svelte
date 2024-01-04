@@ -27,6 +27,7 @@
     course: string
     instructorFirstName: string
     instructorLastName: string
+    spotsRemaining: number
   }
 
   let classes: ClassInfo[] = []
@@ -83,7 +84,7 @@
     }
   }
 
-  onMount(() => {
+  const getData = () => {
     return user.subscribe(async (user) => {
       if (user?.profile.role === 'instructor') {
         isStudent = false
@@ -100,6 +101,7 @@
           course: data.course,
           instructorFirstName: data.instructorFirstName,
           instructorLastName: data.instructorLastName,
+          spotsRemaining: data.classCap - data.students.length,
         }
         // Assuming there are a fixed number of class days and times
         for (let i = 1; i <= 2; i++) {
@@ -116,6 +118,10 @@
       }
       loading = false
     })
+  }
+
+  onMount(() => {
+    getData()
   })
 
   function formatClassTimes(
@@ -134,16 +140,17 @@
     return studentUidToClassIds[studentUid].includes(classId)
   }
 
-  const toggleEnrollment = (classId: string): void => {
+  const toggleEnrollment = async (classId: string) => {
     if (selectedStudentUid === '') {
       alert.trigger('error', 'Please select a child!')
       return
     }
     if (isEnrolled(classId, selectedStudentUid)) {
-      unenrollFromClass(classId)
+      await unenrollFromClass(classId)
     } else {
-      enrollInClass(classId)
+      await enrollInClass(classId)
     }
+    getData()
   }
 
   async function enrollInClass(classId: string): Promise<void> {
@@ -152,6 +159,14 @@
       return
     }
     const classDocRef = doc(db, 'classesSpring24', classId)
+    // get updated number of students in the class
+    const classDoc = await getDoc(classDocRef)
+    const classData = classDoc.data()
+    const numStudents = classData?.students.length ?? 0
+    if (numStudents >= classData?.classCap) {
+      alert.trigger('error', 'Class is full!')
+      return
+    }
     await updateDoc(classDocRef, {
       students: arrayUnion(childName),
     }).catch((error) => {
@@ -169,7 +184,6 @@
       .then(() => {
         alert.trigger('success', 'Enrolled in class!')
         dialogEl.close()
-        studentUidToClassIds[selectedStudentUid].push(classId)
       })
       .catch((error) => {
         alert.trigger('error', 'Error enrolling in class!')
@@ -195,9 +209,6 @@
       .then(() => {
         alert.trigger('success', 'Unenrolled from class!')
         dialogEl.close()
-        studentUidToClassIds[selectedStudentUid] = studentUidToClassIds[
-          selectedStudentUid
-        ].filter((id) => id !== classId)
       })
       .catch((error) => {
         alert.trigger('error', 'Error unenrolling from class!')
@@ -210,21 +221,38 @@
 </svelte:head>
 
 <Dialog bind:this={dialogEl} initial={dialogClassDetails !== null} size="min">
-  <svelte:fragment slot="title">Class details</svelte:fragment>
+  <svelte:fragment slot="title">Class Details</svelte:fragment>
 
-  <div slot="description" class="space-y-4">
+  <div slot="description" class="space-y-4 p-4">
     {#if dialogClassDetails !== null}
-      <h2 class="text-xl font-bold">{dialogClassDetails.course}</h2>
-      <h3 class="text-lg font-bold">
-        {`Instructor: ${dialogClassDetails.instructorFirstName} ${dialogClassDetails.instructorLastName}`}
-      </h3>
-      <ul>
-        {#each formatClassTimes(dialogClassDetails.classDays, dialogClassDetails.classTimes) as classTime}
-          <li>{classTime}</li>
-        {/each}
-      </ul>
+      <h2 class="text-2xl font-bold text-gray-800">
+        {dialogClassDetails.course}
+      </h2>
+      <p class="text-lg font-medium text-gray-700">
+        Instructor: {`${dialogClassDetails.instructorFirstName} ${dialogClassDetails.instructorLastName}`}
+      </p>
+      <div>
+        <h4 class="font-semibold text-gray-700">Class Times:</h4>
+        <ul class="list-inside list-disc text-gray-600">
+          {#each formatClassTimes(dialogClassDetails.classDays, dialogClassDetails.classTimes) as classTime}
+            <li>{classTime}</li>
+          {/each}
+        </ul>
+      </div>
+      <div class="mt-2">
+        <span
+          class="inline-block rounded-full px-3 py-1 text-sm font-semibold text-white {dialogClassDetails.spotsRemaining <=
+          0
+            ? 'bg-red-600'
+            : 'bg-green-600'}"
+        >
+          {dialogClassDetails.spotsRemaining <= 0
+            ? 'Class Full'
+            : `${dialogClassDetails.spotsRemaining} spots remaining`}
+        </span>
+      </div>
       {#if isStudent}
-        <div class="flex items-center gap-2">
+        <div class="mt-2 flex items-center gap-2">
           <StudentSelect
             bind:selectedStudent={childName}
             bind:selectedStudentUid
@@ -257,30 +285,57 @@
   {#if loading}
     <Loading />
   {:else}
-    <div class="grid gap-4 md:grid-cols-2" transition:fade={{ duration: 500 }}>
+    <div class="grid gap-6 md:grid-cols-2" transition:fade={{ duration: 500 }}>
       {#each classes as classInfo (classInfo.id)}
-        <Card class="space-y-2">
-          <h2 class="text-xl font-bold">{classInfo.course}</h2>
-          <h3 class="text-lg font-bold">
-            {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}
-          </h3>
-          <ul>
-            {#each formatClassTimes(classInfo.classDays, classInfo.classTimes) as classTime}
-              <li>{classTime}</li>
-            {/each}
-          </ul>
+        <Card
+          class="space-y-4 rounded-lg border border-gray-300 bg-white p-4 shadow-md"
+        >
+          <h2 class="text-2xl font-bold text-gray-800">{classInfo.course}</h2>
+          <p class="text-lg font-medium text-gray-700">
+            Instructor: {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}
+          </p>
+          <div>
+            <h4 class="font-semibold text-gray-700">Class Times:</h4>
+            <ul class="list-inside list-disc text-gray-600">
+              {#each formatClassTimes(classInfo.classDays, classInfo.classTimes) as classTime}
+                <li>{classTime}</li>
+              {/each}
+            </ul>
+          </div>
           <Button
+            class="mt-2"
             color="blue"
             on:click={() => (dialogClassDetails = classInfo)}
           >
             View class details
           </Button>
-          {#each Object.entries(studentUidToClassIds) as [studentUid, classIds]}
-            {#if classIds.includes(classInfo.id)}
-              <p>
-                {uidToName[studentUid]} is enrolled in this class
-              </p>{/if}
-          {/each}
+          {#if Object.entries(studentUidToClassIds).some( ([studentUid, classIds]) => classIds.includes(classInfo.id), )}
+            <div class="mt-2">
+              <h4 class="font-semibold text-gray-700">
+                Your Enrolled Students:
+              </h4>
+              <ul class="ml-4 list-inside list-disc text-gray-600">
+                {#each Object.entries(studentUidToClassIds) as [studentUid, classIds]}
+                  {#if classIds.includes(classInfo.id)}
+                    <li>{uidToName[studentUid]}</li>
+                  {/if}
+                {/each}
+              </ul>
+            </div>
+          {/if}
+
+          <div class="mt-2 text-right">
+            <span
+              class="inline-block rounded-full px-3 py-1 text-sm font-semibold text-white {classInfo.spotsRemaining <=
+              0
+                ? 'bg-red-600'
+                : 'bg-green-600'}"
+            >
+              {classInfo.spotsRemaining <= 0
+                ? 'Class Full'
+                : `${classInfo.spotsRemaining} spots remaining`}
+            </span>
+          </div>
         </Card>
       {/each}
     </div>
