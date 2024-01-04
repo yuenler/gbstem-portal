@@ -12,6 +12,7 @@
   import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
+    import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
 
   type ApplicationStatus =
     | 'accepted'
@@ -33,11 +34,27 @@
       status: null,
     },
   }
+
+  let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue:'',
+  }
+
   let isStudent = false
+
   user.subscribe((user) => {
     if (user) {
       isStudent = user.profile.role === 'student'
       let timer: number
+      getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
+        const datesDocExists = datesDoc.exists()
+        if(datesDocExists) {
+          semesterDates.classesStart = datesDoc.data()["classesStart"];
+        }
+      })
       Promise.all([
         new Promise<void>((resolve) => {
           timer = window.setTimeout(resolve, 400)
@@ -63,9 +80,6 @@
                     )
                   } else {
                     data.application.status = null
-                  }
-                  if (applicationData.meta.interview) {
-                    data.application.status = 'interview'
                   }
                 }
                 resolve()
@@ -170,7 +184,9 @@
       <!-- Loading state -->
     {:else}
       <!-- Existing content -->
-      {#if data.application.status === 'accepted'}
+      {#if (data.application.status === 'accepted' || isStudent) && Date.now() : new Date(semesterDates.classesStart).getTime()}
+        <StudentFeedbackForm />
+      {:else if data.application.status === 'accepted'}
         <ClassSchedule />
       {:else if isStudent}
         <StudentSchedule />
