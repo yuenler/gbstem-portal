@@ -510,8 +510,14 @@
   </div> -->
   <fieldset class="space-y-14" {disabled}>
     <div class="grid gap-1">
-      <span class="font-bold mt-3">Pre-Registration</span>
-    <p class="mb-2">This form will collect your availability and class interest for the 2024 Spring Semester. Please fill out this form to help ensure the right number of classes are opened for each offered course. The class times will be posted after pre-registration closes, and you will then be able to select the classes you wish to enroll in, first come first serve.</p>
+      <span class="mt-3 font-bold">Pre-Registration</span>
+      <p class="mb-2">
+        To register for our spring semester, you must first fill out this form,
+        providing your availability and course preferences. After this initial
+        registration, class schedules will be posted once pre-registration
+        closes. You will then receive an email notification to proceed with
+        class enrollment on a first-come, first-served basis.
+      </p>
       <span class="font-bold">Personal</span>
       <Card class="my-2 grid gap-3">
         <div class="rounded-md bg-gray-100 px-3 py-2 shadow-sm">
