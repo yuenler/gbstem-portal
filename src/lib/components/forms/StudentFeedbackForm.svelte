@@ -15,6 +15,7 @@
   let disabled = false
   let showValidation = false
   let pastClassNumber = 0
+  let className = ''
 
   let values: {
     instructor: string
@@ -34,11 +35,11 @@
     feedback: '',
   }
 
-  function retrievePastClassFeedback(classNumber: number) {
+  function retrievePastClassFeedback(classNumber: number, className: string) {
     return user.subscribe((user) => {
       if (user) {
         getDoc(
-          doc(db, 'classFeedback', user.object.uid + '-' + classNumber),
+          doc(db, 'classFeedback24', user.object.uid, className, String(classNumber)),
         ).then((snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.data()
@@ -51,8 +52,9 @@
               rating: number
               feedback: string
             }
-            disabled = true
-            console.log(values)
+            disabled = false
+          } else {
+            alert.trigger('error', 'Feedback not found.');
           }
         })
       }
@@ -68,13 +70,12 @@
         setDoc(
           doc(
             db,
-            'classFeedback',
-            frozenUser.object.uid + '-' + values.classNumber,
+            'classFeedback24',
+            frozenUser.object.uid, values.course, String(values.classNumber),
           ),
           values,
         )
           .then(() => {
-            disabled = false
             alert.trigger('success', 'Class Feedback saved!')
           })
           .catch((err) => {
@@ -93,20 +94,26 @@
 <Card class="ml-2">
   <Form
     class={cn(showValidation && 'show-validation')}
-    on:submit={retrievePastClassFeedback(pastClassNumber)}
+    on:submit={retrievePastClassFeedback(pastClassNumber, className)}
   >
+    <h2 class = "font-bold">Retrieve and Edit Feedback from Previous Class</h2>
+    <Select
+      bind:value={className}
+      label="Course Name"
+      options={coursesJson}
+      floating
+    />
     <Input
       type="number"
       min="1"
       max="14"
       bind:value={pastClassNumber}
-      label="Retrieve and Edit Feedback for Previous Class"
+      label="Class Number"
       floating
-    />
-    <Button color="blue" type="submit">Retrieve</Button>
+     class="mt-4"/>
+    <Button color="blue" type="submit" class="mt-4">Retrieve</Button>
   </Form>
-</Card>
-<Card class="ml-2">
+  <hr class="mt-6 mb-6"/>
   <Form
     class={cn(showValidation && 'show-validation')}
     on:submit={handleSubmit}
@@ -115,7 +122,7 @@
       <Button color="blue" class="mb-5" on:click={() => (disabled = false)}
         >Edit class feedback</Button
       >
-    {/if}
+    {:else}
 
     <fieldset class="space-y-4" {disabled}>
       <h2 class="font-bold">Feedback</h2>
@@ -155,7 +162,7 @@
       <div class="grid gap-1">
         <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
           <div class="sm:col-span-1">
-            <Input type="date" bind:value={values.date} label="Date" required />
+            <Input type="date" bind:value={values.date} label="Date of Class" required />
           </div>
           <div class="sm:col-span-3">
             <Input
@@ -186,5 +193,6 @@
         <Button color="blue" type="submit">Submit</Button>
       </div>
     </fieldset>
+    {/if}
   </Form>
 </Card>
