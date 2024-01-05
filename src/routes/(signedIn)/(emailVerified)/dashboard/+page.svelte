@@ -167,7 +167,7 @@
             <Link href="/apply">View application</Link>
           </div>
         </Card>
-        {#if data.application.status === 'accepted'}
+        {#if data.application.status === 'accepted' }
           {#if Date.now() < new Date(semesterDates.classesStart).getTime()}
             <Card class="space-y-4">
               <ClassDetailsForm />
@@ -180,7 +180,7 @@
               <InstructorFeedbackForm />
             </Card>
           {/if}
-        {:else if isStudent && Date.now() < new Date(semesterDates.classesStart).getTime()}
+        {:else if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
           <StudentSchedule />
           <StudentFeedbackForm />
         {/if}
