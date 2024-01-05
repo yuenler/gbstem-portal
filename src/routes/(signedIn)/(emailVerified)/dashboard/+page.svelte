@@ -53,7 +53,7 @@
       getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
         const datesDocExists = datesDoc.exists()
         if (datesDocExists) {
-          semesterDates.classesStart = datesDoc.data()['classesStart']
+          semesterDates = datesDoc.data() as Data.SemesterDates
         }
       })
       Promise.all([
