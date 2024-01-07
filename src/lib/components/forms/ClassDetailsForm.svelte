@@ -38,6 +38,15 @@
     instructorLastName: '',
     classCap: 7,
   }
+  
+  let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue: '',
+  }
+
 
   function getMeetingDates(
     classDay1: string,
@@ -102,6 +111,12 @@
             disabled = true
           }
         })
+        getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
+        const datesDocExists = datesDoc.exists()
+        if (datesDocExists) {
+          semesterDates = datesDoc.data() as Data.SemesterDates
+        }
+      })
       }
     })
   })
@@ -117,8 +132,8 @@
           values.classDay2,
           values.classTime1,
           values.classTime2,
-          new Date(2024, 2, 15), // TODO: change this to the actual start date
-          new Date(2024, 5, 20), // TODO: change this to the actual end date
+          new Date(semesterDates.classesStart), // TODO: change this to the actual start date
+          new Date(semesterDates.classesEnd), // TODO: change this to the actual end date
         )
         values.meetingTimes = meetingTimes
         values.instructorFirstName = frozenUser.profile.firstName
