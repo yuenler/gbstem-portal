@@ -11,15 +11,19 @@
   import Link from '$lib/components/Link.svelte'
   import { coursesJson } from '$lib/data'
   import Card from '../Card.svelte'
+    import StudentSelect from '../StudentSelect.svelte'
 
   let disabled = false
   let showValidation = false
   let pastClassNumber = 0
+  let selectedStudentUid = ""
+  let selectedStudentCourses: string[] = []
+  let pastSelected = ""
 
   let values: {
     instructor: string
     classNumber: number
-    studentName: string
+    studentId: string
     date: string
     course: string
     rating: number
@@ -27,39 +31,28 @@
   } = {
     instructor: '',
     classNumber: 1,
-    studentName: '',
+    studentId: '',
     date: new Date().toISOString(),
     course: '',
     rating: 0,
     feedback: '',
   }
 
-  function retrievePastClassFeedback(classNumber: number) {
-    return user.subscribe((user) => {
-      if (user) {
-        getDoc(
-          doc(db, 'classFeedback', user.object.uid + '-' + classNumber),
-        ).then((snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.data()
-            values = data as {
-              instructor: string
-              classNumber: number
-              studentName: string
-              date: string
-              course: string
-              rating: number
-              feedback: string
-            }
-            disabled = true
-            console.log(values)
-          }
-        })
+async function fetchCourseList(classIds: string[]) {
+  const coursePromises = classIds.map((classId) =>
+      getDoc(doc(db, 'classesSpring24', classId)),
+  )
+  const courseDocs = await Promise.all(coursePromises)
+   selectedStudentCourses = courseDocs.map((doc) => {
+      if(doc.exists()) {
+        return doc.data().course;
       }
     })
   }
 
   function handleSubmit(e: CustomEvent<SubmitData>) {
+    console.log(values.course);
+    values.studentId = selectedStudentUid;
     if (e.detail.error === null) {
       showValidation = false
       disabled = true
@@ -68,8 +61,7 @@
         setDoc(
           doc(
             db,
-            'classFeedback',
-            frozenUser.object.uid + '-' + values.classNumber,
+            'classFeedback24', selectedStudentUid, values.course, new Date().toISOString(),
           ),
           values,
         )
@@ -87,24 +79,47 @@
       alert.trigger('error', e.detail.error)
     }
   }
+
+  $: if (selectedStudentUid) {
+    if(selectedStudentUid !== pastSelected || pastSelected === "") {
+      getDoc(doc(db, 'registrationsSpring24', selectedStudentUid)).then(
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const classIds = docSnapshot.data().classes || []
+          fetchCourseList(classIds);
+          console.log(selectedStudentCourses);
+        }
+      },
+    )
+    pastSelected = selectedStudentUid
+    }    
+}
 </script>
 
+{#if selectedStudentUid === "" && values.course === ""}
+<div class="mb-5">
+  <StudentSelect bind:selectedStudentUid/>
+</div>
+
+{:else if selectedStudentCourses.length == 0} 
+<div class="mb-5">
+  <StudentSelect bind:selectedStudentUid/>
+</div>
+<div>This student is not currently enrolled in a course.</div>
+
+{:else}
 <h2 class="ml-2 text-xl font-bold">Weekly Class Feedback Form</h2>
+
 <Card class="ml-2">
-  <Form
-    class={cn(showValidation && 'show-validation')}
-    on:submit={retrievePastClassFeedback(pastClassNumber)}
-  >
-    <Input
-      type="number"
-      min="1"
-      max="14"
-      bind:value={pastClassNumber}
-      label="Retrieve and Edit Feedback for Previous Class"
-      floating
-    />
-    <Button color="blue" type="submit">Retrieve</Button>
-  </Form>
+  <div class="mb-5">
+    <h2 class="font-bold text-lg">Select Course:</h2>
+      {#each selectedStudentCourses as studentCourse}
+      <label>
+        <input type = "radio" bind:group={values.course} value = {studentCourse}/> 
+        {studentCourse}
+      </label>
+      {/each}
+    </div>
 </Card>
 <Card class="ml-2">
   <Form
@@ -137,14 +152,6 @@
       />
 
       <Input
-        type="text"
-        bind:value={values.studentName}
-        label="Student Name"
-        floating
-        required
-      />
-
-      <Input
         type="number"
         bind:value={values.classNumber}
         label="Class session #"
@@ -159,19 +166,13 @@
           </div>
           <div class="sm:col-span-3">
             <Input
-              type="range"
+              type="number"
               bind:value={values.rating}
               min="1"
               max="10"
               label="Rate Today's Class From 1-10"
               required
             />
-            <div
-              style="margin-top:-1.75rem; height:8px; background-color:gainsboro; margin-left:1rem; margin-right:1rem;"
-            ></div>
-            <p style="padding-top:1rem;">
-              <i>Current Rating: {values.rating}</i>
-            </p>
           </div>
         </div>
         <Input
@@ -188,3 +189,4 @@
     </fieldset>
   </Form>
 </Card>
+{/if}

@@ -184,7 +184,7 @@
       <!-- Loading state -->
     {:else}
       <!-- Existing content -->
-      {#if (data.application.status === 'accepted' || isStudent) && Date.now() : new Date(semesterDates.classesStart).getTime()}
+      {#if (data.application.status === 'accepted' || isStudent) && Date.now() < new Date(semesterDates.classesStart).getTime()}
         <StudentFeedbackForm />
       {:else if data.application.status === 'accepted'}
         <ClassSchedule />
