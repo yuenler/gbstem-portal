@@ -12,7 +12,8 @@
   import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
-    import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
+  import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
+  import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
 
   type ApplicationStatus =
     | 'accepted'
@@ -40,7 +41,7 @@
     classesStart: '',
     leadershipAppsDue: '',
     newInstructorAppsDue: '',
-    returningInstructorAppsDue:'',
+    returningInstructorAppsDue: '',
   }
 
   let isStudent = false
@@ -51,8 +52,8 @@
       let timer: number
       getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
         const datesDocExists = datesDoc.exists()
-        if(datesDocExists) {
-          semesterDates.classesStart = datesDoc.data()["classesStart"];
+        if (datesDocExists) {
+          semesterDates = datesDoc.data() as Data.SemesterDates
         }
       })
       Promise.all([
@@ -166,10 +167,22 @@
             <Link href="/apply">View application</Link>
           </div>
         </Card>
-        {#if data.application.status === 'accepted'}
-          <Card class="space-y-4">
-            <ClassDetailsForm />
-          </Card>
+        {#if data.application.status === 'accepted' }
+          {#if Date.now() < new Date(semesterDates.classesStart).getTime()}
+            <Card class="space-y-4">
+              <ClassDetailsForm />
+            </Card>
+          {:else}
+            <Card>
+              <ClassSchedule />
+            </Card>
+            <Card>
+              <InstructorFeedbackForm />
+            </Card>
+          {/if}
+        {:else if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
+          <StudentSchedule />
+          <StudentFeedbackForm />
         {/if}
         <div>
           {#if data.application.status === 'interview'}
