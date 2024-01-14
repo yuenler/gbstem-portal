@@ -152,8 +152,7 @@
     <Input
       type="text"
       bind:value={classFeedback.feedback}
-      label="Please provide any feedback for this class."
-      floating
+      label="Reflect on how the class went. What went well? What could be improved? This will be shared with your course curriculum developer and track directors to help improve the class."
     />
     <hr class="mb-3 mt-5" />
 
@@ -166,8 +165,7 @@
               <Input
                 type="checkbox"
                 bind:value={values[student].attendance}
-                label="{student} Present At Today's Class?"
-                required
+                label={student}
               />
             </div>
           </div>
