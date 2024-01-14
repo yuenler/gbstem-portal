@@ -7,33 +7,22 @@
   import { cn } from '$lib/utils'
   import { doc, setDoc, query, collection, getDocs } from 'firebase/firestore'
   import { onMount } from 'svelte'
-  import Link from '$lib/components/Link.svelte'
-  import { coursesJson } from '$lib/data'
-  import Card from '../Card.svelte'
 
   let disabled = false
   let showValidation = false
   let currentUser: Data.User.Store
   let loading = true
   let classDate = ''
-  let classSession = 1
   let course = ''
-  let classFeedback: {
+  let values: {
     date: string
     feedback: string
+    attendanceList: Record<string, { present: boolean }>
   } = {
     date: '',
     feedback: '',
+    attendanceList: {},
   }
-
-  let values: {
-    [key: string]: {
-      course: string
-      studentName: string
-      date: string
-      attendance: boolean
-    }
-  } = {}
 
   let classList: string[] = []
 
@@ -52,18 +41,12 @@
     const querySnapshot = await getDocs(q)
     console.log(querySnapshot)
     querySnapshot.forEach((doc) => {
-      console.log(doc.data())
-      console.log(currentUser.object.uid)
       if (doc.id === currentUser.object.uid) {
         classList = doc.data()['students']
         course = doc.data()['course']
-        console.log(classList)
         classList.forEach((student: string) => {
-          values[student] = {
-            course: course,
-            studentName: student,
-            date: new Date().toISOString(),
-            attendance: false,
+          values.attendanceList[student] = {
+            present: false,
           }
         })
       }
@@ -74,37 +57,17 @@
   function handleSubmit() {
     if ($user) {
       const frozenUser = $user
-      if (classDate === '' || classSession === 0) {
+      if (classDate === '') {
         alert.trigger('error', 'Please enter class date and session.')
       } else {
         disabled = true
-        classList.forEach((studentName) => {
-          console.log(studentName)
-          console.log(values[studentName])
-          classFeedback.date = classDate
-          setDoc(
-            doc(
-              db,
-              'instructorFeedback24',
-              frozenUser.object.uid,
-              studentName,
-              String(classSession),
-            ),
-            values[studentName],
-          ).catch((err) => {
-            disabled = false
-            alert.trigger('error', err.code, true)
-          })
-        })
         setDoc(
           doc(
             db,
             'instructorFeedback24',
-            frozenUser.object.uid,
-            'classFeedback',
-            String(classSession),
+            `${frozenUser.object.uid}-${Date.now()}`,
           ),
-          classFeedback,
+          values,
         ).catch((error) => {
           console.log(error)
         })
@@ -137,21 +100,10 @@
           required
         />
       </div>
-      <div class="mt-7 sm:col-span-1">
-        <Input
-          type="number"
-          min="1"
-          max="20"
-          bind:value={classSession}
-          label="Class Session #"
-          floating
-          required
-        />
-      </div>
     </div>
     <Input
       type="text"
-      bind:value={classFeedback.feedback}
+      bind:value={values.feedback}
       label="Reflect on how the class went. What went well? What could be improved? This will be shared with your course curriculum developer and track directors to help improve the class."
     />
     <hr class="mb-3 mt-5" />
@@ -164,7 +116,7 @@
             <div class="sm:col-span-3">
               <Input
                 type="checkbox"
-                bind:value={values[student].attendance}
+                bind:value={values.attendanceList[student].present}
                 label={student}
               />
             </div>
