@@ -5,7 +5,7 @@
   import Brand from './Brand.svelte'
   import { navigating } from '$app/stores'
   import { fade } from 'svelte/transition'
-  import AnnouncementsBell from './AnnouncementsBell.svelte'
+  // import AnnouncementsBell from './AnnouncementsBell.svelte'
   import { cubicInOut } from 'svelte/easing'
   import { cn } from '$lib/utils'
 
@@ -71,9 +71,9 @@
     {/if}
   </div>
   <div class="flex items-center gap-1 sm:gap-3 md:gap-4">
-    {#if user.emailVerified}
+    <!-- {#if user.emailVerified}
       <AnnouncementsBell />
-    {/if}
+    {/if} -->
     <ProfileMenu class="hidden sm:block" />
     <button
       class="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-200 sm:hidden"
