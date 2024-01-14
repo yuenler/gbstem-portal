@@ -78,8 +78,6 @@
             docRef.data().personal.studentLastName
           }`.trim() || `Child ${i}`
         uidToName[studentUid] = name
-      } else {
-        break
       }
     }
   }

@@ -27,8 +27,6 @@
           name,
         })
         nameToUid[name] = `${uid}-${i}`
-      } else {
-        break
       }
     }
   }
