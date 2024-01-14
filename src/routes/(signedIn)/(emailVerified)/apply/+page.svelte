@@ -43,6 +43,8 @@
       })
       nameToUid[`Child 1`] = `${uid}-1`
     }
+    // set the selected student to the first student
+    value = options[0].name
     ready = true
   }
 
