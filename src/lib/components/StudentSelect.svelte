@@ -48,6 +48,10 @@
         if (userData && userData.profile.role === 'student') {
           await fetchData(userData)
         }
+        // set the selected student to the first student
+        if (studentsOptions.length > 0) {
+          selectedStudent = studentsOptions[0].name
+        }
         loading = false
       }
     })

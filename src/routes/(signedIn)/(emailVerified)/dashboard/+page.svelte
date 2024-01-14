@@ -166,21 +166,23 @@
           <InstructorFeedbackForm />
         </Card>
       {/if}
+      {#if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
+        <StudentFeedbackForm />
+      {/if}
     </div>
 
     {#if data.application.status === 'accepted'}
       {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
-        <Card class="space-y-4">
-          <ClassDetailsForm />
-        </Card>
-      {:else}
         <Card>
           <ClassSchedule />
+        </Card>
+      {:else}
+        <Card class="space-y-4">
+          <ClassDetailsForm />
         </Card>
       {/if}
     {:else if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
       <StudentSchedule />
-      <StudentFeedbackForm />
     {/if}
     <div>
       {#if data.application.status === 'interview'}
