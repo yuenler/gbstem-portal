@@ -105,7 +105,13 @@ declare global {
       MessageStream: 'outbound'
     }
 
-
+    type SemesterDates = {
+      classesEnd: string,
+      classesStart: string,
+      leadershipAppsDue: string,
+      newInstructorAppsDue: string,
+      returningInstructorAppsDue:string,
+    }
 
     type InterviewSlot = {
       date: string,

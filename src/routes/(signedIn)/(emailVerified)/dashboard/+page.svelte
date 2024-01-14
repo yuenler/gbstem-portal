@@ -12,6 +12,8 @@
   import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
+  import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
+  import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
 
   type ApplicationStatus =
     | 'accepted'
@@ -33,11 +35,27 @@
       status: null,
     },
   }
+
+  let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue: '',
+  }
+
   let isStudent = false
+
   user.subscribe((user) => {
     if (user) {
       isStudent = user.profile.role === 'student'
       let timer: number
+      getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
+        const datesDocExists = datesDoc.exists()
+        if (datesDocExists) {
+          semesterDates = datesDoc.data() as Data.SemesterDates
+        }
+      })
       Promise.all([
         new Promise<void>((resolve) => {
           timer = window.setTimeout(resolve, 400)
@@ -63,9 +81,6 @@
                     )
                   } else {
                     data.application.status = null
-                  }
-                  if (applicationData.meta.interview) {
-                    data.application.status = 'interview'
                   }
                 }
                 resolve()
@@ -102,79 +117,72 @@
 </svelte:head>
 
 <div class="grid md:grid-cols-2">
-  <div class="relative w-full">
-    {#if loading}
-      <Loading
-        class="absolute left-0 right-0 top-0 h-[calc(100vh-216px-80px)] md:h-[calc(100vh-216px)]"
-      />
-    {:else}
-      <div
-        class="space-y-6"
-        transition:fade={{
-          duration: 500,
-        }}
-      >
-        <Card class="space-y-2">
-          <h2 class="text-xl font-bold">Application</h2>
-          {#if data.application.status === null}
-            <div class="space-y-1">
-              <p>
-                Applications to be an instructor are due <span
-                  class="font-bold"
-                >
-                  September 15th, 2023
-                </span>
-                at 11:59 PM ET. Registrations to be a student are due
-                <span class="font-bold"> September 20th, 2023 </span> at 11:59 PM
-                ET.
-              </p>
-            </div>
-          {/if}
+  {#if loading}
+    <Loading
+      class="absolute left-0 right-0 top-0 h-[calc(100vh-216px-80px)] md:h-[calc(100vh-216px)]"
+    />
+  {:else}
+    <div
+      class="space-y-6"
+      transition:fade={{
+        duration: 500,
+      }}
+    >
+      <Card class="space-y-2">
+        <h2 class="text-xl font-bold">Application</h2>
+        {#if data.application.status === null}
           <div class="space-y-1">
             <p>
-              {#if data.application.status === 'accepted'}
-                You have been accepted to gbSTEM as an instructor! We look
-                forward to seeing you.
-              {:else if data.application.status === 'waitlisted'}
-                You have been waitlisted. We will follow up with more
-                information!
-              {:else if data.application.status === 'rejected'}
-                Unfortunately, instructor applications were extremely
-                competitive, and we were not able to accept you as an instructor
-                for gbSTEM.
-              {:else if data.application.status === 'submitted' || data.application.status === 'interview'}
-                Your application is submitted and in review!
-              {:else}
-                Your application is in progress. Make sure to submit by the
-                deadline!
-              {/if}
+              Applications to be an instructor are due <span class="font-bold">
+                September 15th, 2023
+              </span>
+              at 11:59 PM ET. Registrations to be a student are due
+              <span class="font-bold"> September 20th, 2023 </span> at 11:59 PM ET.
             </p>
-            <Link href="/apply">View application</Link>
           </div>
-        </Card>
-        {#if data.application.status === 'accepted'}
-          <Card class="space-y-4">
-            <ClassDetailsForm />
-          </Card>
         {/if}
-        <div>
-          {#if data.application.status === 'interview'}
-            <InterviewForm />
-          {/if}
+        <div class="space-y-1">
+          <p>
+            {#if data.application.status === 'accepted'}
+              You have been accepted to gbSTEM as an instructor! We look forward
+              to seeing you.
+            {:else if data.application.status === 'waitlisted'}
+              You have been waitlisted. We will follow up with more information!
+            {:else if data.application.status === 'rejected'}
+              Unfortunately, instructor applications were extremely competitive,
+              and we were not able to accept you as an instructor for gbSTEM.
+            {:else if data.application.status === 'submitted' || data.application.status === 'interview'}
+              Your application is submitted and in review!
+            {:else}
+              Your application is in progress. Make sure to submit by the
+              deadline!
+            {/if}
+          </p>
+          <Link href="/apply">View application</Link>
         </div>
-      </div>
-    {/if}
-  </div>
-  <div class="relative w-full">
-    {#if loading}
-      <!-- Loading state -->
-    {:else}
-      <!-- Existing content -->
-      {#if data.application.status === 'accepted'}
-        <ClassSchedule />
-      {:else if isStudent}
-        <StudentSchedule />
+      </Card>
+    </div>
+    {#if data.application.status === 'accepted'}
+      {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
+        <Card class="space-y-4">
+          <ClassDetailsForm />
+        </Card>
+      {:else}
+        <Card>
+          <ClassSchedule />
+        </Card>
+        <Card>
+          <InstructorFeedbackForm />
+        </Card>
       {/if}
+    {:else if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
+      <StudentSchedule />
+      <StudentFeedbackForm />
     {/if}
-  </div>
+    <div>
+      {#if data.application.status === 'interview'}
+        <InterviewForm />
+      {/if}
+    </div>
+  {/if}
 </div>
