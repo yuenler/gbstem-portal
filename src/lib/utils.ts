@@ -53,7 +53,7 @@ export function trapFocus(node: HTMLElement) {
     },
   }
 }
-        
+
 // replace html template with data
 export function addDataToHtmlTemplate(html, template) {
   const htmlBody = html.replace(/{{(.*?)}}/g, (_, key) => {
@@ -65,7 +65,6 @@ export function addDataToHtmlTemplate(html, template) {
         return '';
       }
     }
-    console.log(value);
     return value;
   });
   return htmlBody;
