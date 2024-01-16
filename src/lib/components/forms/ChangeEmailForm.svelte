@@ -46,6 +46,7 @@
         body: JSON.stringify({
           type: 'changeEmail',
           newEmail: values.newEmail,
+          firstName: $user.profile.firstName,
         }),
       }).then(async (res) => {
         if (res.ok) {

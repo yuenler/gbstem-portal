@@ -173,7 +173,7 @@ export const registrationSubmittedEmailTemplate = `<!doctype html>
                                                 style="font-size:0px;padding:10px 25px;padding-top:0px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
-                                                    <p style="margin: 20px 0">Thanks for registering for gbSTEM's spring
+                                                    <p style="margin: 20px 0"><p style="margin: 0 0">Hi {{app.firstName}},</p>Thanks for registering for gbSTEM's spring
                                                         semester! Please note that your registration does <span
                                                             style="font-weight: 700">not</span> guarantee your child a
                                                         class for the spring semester, but it helps us ensure there will

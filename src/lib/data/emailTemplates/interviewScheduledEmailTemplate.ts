@@ -173,7 +173,7 @@ export const interviewScheduledEmailTemplate = `<!doctype html>
                                                 style="font-size:0px;padding:10px 25px;padding-top:0px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
-                                                    <p style="margin: 20px 0">Thank you for signing up for an interview!
+                                                    <p style="margin: 20px 0"> <p style="margin: 0 0">Hi {{interview.interviewee}},</p> Thank you for signing up for an interview!
                                                         Your interviewer is {{interview.name}}, and your interview will
                                                         be taking place on {{interview.date}}. The meeting link is
                                                         {{interview.link}}. </p>

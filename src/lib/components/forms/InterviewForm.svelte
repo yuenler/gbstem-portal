@@ -43,6 +43,7 @@
         date: formatDate(new Date(scheduledInterview.date)) + ' local time',
         link: scheduledInterview.meetingLink,
         interviewer: scheduledInterview.interviewerName,
+        firstName: currentUser.profile.firstName,
       }),
     }).then(async (res) => {
       if (!res.ok) {
@@ -159,7 +160,7 @@
         >
           Your interview was on {formatDate(
             new Date(scheduledInterview.date),
-          )}Eastern time. Thank you for applying to gbSTEM!
+          )} Eastern Time. Thank you for applying to gbSTEM!
         </div>
       {/if}
     </Card>

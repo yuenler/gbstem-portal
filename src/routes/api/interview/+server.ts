@@ -17,6 +17,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       const interviewDate = body.date;
       const interviewLink = body.link;
       const interviewerName = body.interviewer;
+      const intervieweeFirstName = body.firstName;
       if (locals.user === null) {
         throw error(400, 'User not signed in.')
       } else {
@@ -29,6 +30,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
               link: 'https://portal.gbstem.org',
             },
             interview: {
+              interviewee: intervieweeFirstName,
               name: interviewerName,
               date: interviewDate,
               link: interviewLink,

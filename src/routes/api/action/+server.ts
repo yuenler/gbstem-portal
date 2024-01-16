@@ -15,6 +15,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     const body = await request.json()
     let to
     let data
+    const firstName = body.firstName;
     try {
       switch (body.type) {
         case 'verifyEmail': {
@@ -35,6 +36,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             action: {
               link,
               name: 'Verify Email',
+              firstName: firstName,
               description:
                 'Please verify your email for your gbSTEM account by clicking the button below.',
             },
@@ -53,6 +55,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             to = body.newEmail
             data = {
               subject: 'Change Email for gbSTEM Account',
+              name: firstName,
               action: {
                 link,
                 name: 'Change Email',
@@ -69,6 +72,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
           to = body.email
           data = {
             subject: 'Reset Password for gbSTEM Account',
+            name: firstName,
             action: {
               link,
               name: 'Reset Password',
@@ -96,7 +100,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       // get html template from firebase
 
       const htmlBody = addDataToHtmlTemplate(actionEmailTemplate, template);
-      
+
       const emailData: Data.EmailData = {
         From: 'donotreply@gbstem.org',
         To: to,

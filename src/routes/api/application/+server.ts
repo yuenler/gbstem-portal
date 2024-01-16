@@ -7,7 +7,9 @@ import {
 import { addDataToHtmlTemplate } from '$lib/utils'
 import { applicationSubmittedEmailTemplate } from '$lib/data/emailTemplates/applicationSubmittedEmailTemplate'
 
-export const POST: RequestHandler = async ({ locals }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
+  const body = await request.json();
+  const firstName = body.firstName;
   if (locals.user === null) {
     throw error(400, 'User not signed in.')
   } else {
@@ -16,6 +18,7 @@ export const POST: RequestHandler = async ({ locals }) => {
       data: {
         subject: 'Next steps for your gbSTEM application',
         app: {
+          firstName: firstName,
           name: 'Portal',
           link: 'https://portal.gbstem.org',
         },

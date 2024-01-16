@@ -173,7 +173,7 @@ export const applicationSubmittedEmailTemplate = `<!doctype html>
                                                 style="font-size:0px;padding:10px 25px;padding-top:0px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
-                                                    <p style="margin: 20px 0">Thanks for applying to be a gbSTEM
+                                                    <p style="margin: 20px 0"> <p style="margin: 0 0">Hi {{app.firstName}},</p> Thanks for applying to be a gbSTEM
                                                         instructor! We'll be reviewing applications on a rolling basis,
                                                         and we'll email you if you are selected for an interview. You
                                                         can also check the status of your application on our portal's

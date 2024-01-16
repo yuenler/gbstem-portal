@@ -455,6 +455,9 @@
               (applicationDoc) => {
                 fetch('/api/registration', {
                   method: 'POST',
+                  body: JSON.stringify({
+                    firstName: frozenUser.profile.firstName,
+                  }),
                 }).then(async (res) => {
                   if (!res.ok) {
                     const { message } = await res.json()
