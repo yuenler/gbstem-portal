@@ -61,6 +61,7 @@
         alert.trigger('error', 'Please enter class date and session.')
       } else {
         disabled = true
+        values.date = classDate;
         setDoc(
           doc(
             db,
