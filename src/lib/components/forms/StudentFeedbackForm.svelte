@@ -114,6 +114,7 @@
               <input type="radio" bind:group={values.classId} value={classId} />
               {course} (taught by {instructor})
             </label>
+            <br/>
           {/each}
         </div>
 
