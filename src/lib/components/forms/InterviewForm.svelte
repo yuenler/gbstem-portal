@@ -40,7 +40,7 @@
       },
       body: JSON.stringify({
         email: scheduledInterview.interviewerEmail,
-        date: formatDate(new Date(scheduledInterview.date)) + ' local time',
+        date: formatDate(new Date(scheduledInterview.date)) + ' Eastern Time',
         link: scheduledInterview.meetingLink,
         interviewer: scheduledInterview.interviewerName,
         firstName: currentUser.profile.firstName,
@@ -158,9 +158,8 @@
         <div
           class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
         >
-          Your interview was on {formatDate(
-            new Date(scheduledInterview.date),
-          )} Eastern Time. Thank you for applying to gbSTEM!
+          Your interview was on {formatDate(new Date(scheduledInterview.date))} Eastern
+          Time. Thank you for applying to gbSTEM!
         </div>
       {/if}
     </Card>
