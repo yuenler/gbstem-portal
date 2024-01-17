@@ -99,7 +99,9 @@
           course: data.course,
           instructorFirstName: data.instructorFirstName,
           instructorLastName: data.instructorLastName,
-          spotsRemaining: data.classCap - data.students.length,
+          spotsRemaining: data.students
+            ? data.classCap - data.students.length
+            : data.classCap,
         }
         // Assuming there are a fixed number of class days and times
         for (let i = 1; i <= 2; i++) {
@@ -160,7 +162,7 @@
     // get updated number of students in the class
     const classDoc = await getDoc(classDocRef)
     const classData = classDoc.data()
-    const numStudents = classData?.students.length ?? 0
+    const numStudents = classData?.students?.length ?? 0
     if (numStudents >= classData?.classCap) {
       alert.trigger('error', 'Class is full!')
       return

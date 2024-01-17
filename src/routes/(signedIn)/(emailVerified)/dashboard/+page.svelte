@@ -161,18 +161,18 @@
           <Link href="/apply">View application</Link>
         </div>
       </Card>
-      {#if data.application.status === 'accepted' && Date.now() > new Date(semesterDates.classesStart).getTime()}
+      {#if data.application.status === 'accepted' && Date.now() < new Date(semesterDates.classesStart).getTime()}
         <Card>
           <InstructorFeedbackForm />
         </Card>
       {/if}
-      {#if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
+      {#if isStudent && Date.now() < new Date(semesterDates.classesStart).getTime()}
         <StudentFeedbackForm />
       {/if}
     </div>
 
     {#if data.application.status === 'accepted'}
-      {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
+      {#if Date.now() < new Date(semesterDates.classesStart).getTime()}
         <Card>
           <ClassSchedule />
         </Card>
@@ -181,7 +181,7 @@
           <ClassDetailsForm />
         </Card>
       {/if}
-    {:else if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
+    {:else if isStudent && Date.now() < new Date(semesterDates.classesStart).getTime()}
       <StudentSchedule />
     {/if}
     <div>
