@@ -16,7 +16,6 @@
     raceJson,
     coursesJson,
     timeSlotsJson,
-    classesPerWeekJson,
   } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
@@ -53,7 +52,6 @@
       timeSlots: [],
       notAvailable: '',
       inPerson: false,
-      numClasses: '',
       reason: '',
     },
     essay: {
@@ -260,7 +258,6 @@
       return 'Save changes before leaving?'
     }
   }
-
 </script>
 
 <svelte:window on:beforeunload={handleUnload} />
@@ -377,20 +374,6 @@
           bind:value={values.program.preferences}
           label="Preferences"
           floating
-        />
-      </div>
-
-      <div class="mt-4">
-        <span class="font-bold"
-          >How many classes would you be able to teach a week? Each class will
-          meet for 2 hours a week.</span
-        >
-        <Select
-          bind:value={values.program.numClasses}
-          label="Num classes per week"
-          options={classesPerWeekJson}
-          floating
-          required
         />
       </div>
 

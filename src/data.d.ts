@@ -110,7 +110,7 @@ declare global {
       classesStart: string,
       leadershipAppsDue: string,
       newInstructorAppsDue: string,
-      returningInstructorAppsDue:string,
+      returningInstructorAppsDue: string,
     }
 
     type InterviewSlot = {
@@ -143,7 +143,6 @@ declare global {
       program: {
         courses: string[]
         preferences: string
-        numClasses: string
         timeSlots: string[]
         notAvailable: string
         inPerson: boolean
