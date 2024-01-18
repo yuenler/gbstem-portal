@@ -145,7 +145,7 @@
         values.instructorLastName = frozenUser.profile.lastName
         setDoc(doc(db, 'classesSpring24', frozenUser.object.uid), values)
           .then(() => {
-            disabled = false
+            disabled = true
             alert.trigger('success', 'Class details saved!')
           })
           .catch((err) => {
