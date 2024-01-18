@@ -198,7 +198,6 @@ declare global {
         mathCourse: string
         engineeringCourse: string
         scienceCourse: string
-        timeSlots: string[]
         reason: string
         inPerson: boolean
       }

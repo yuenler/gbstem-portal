@@ -14,7 +14,6 @@
     reasonsJson,
     raceJson,
     mathCoursesJson,
-    timeSlotsJson,
     frlpJson,
     parentEducationJson,
     csCoursesJson,
@@ -29,9 +28,6 @@
   import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
   import { db, storage, user } from '$lib/client/firebase'
   import { cloneDeep, isEqual } from 'lodash-es'
-  // import value from '$lib/components/value.svelte'
-  import Button from '../Button.svelte'
-  import Link from '../Link.svelte'
 
   export let childUid: string = ''
 
@@ -63,7 +59,6 @@
       engineeringCourse: '',
       mathCourse: '',
       scienceCourse: '',
-      timeSlots: [],
       inPerson: false,
       reason: '',
     },
@@ -107,7 +102,6 @@
       engineeringCourse: '',
       mathCourse: '',
       scienceCourse: '',
-      timeSlots: [],
       inPerson: false,
       reason: '',
     },
@@ -256,14 +250,6 @@
     // check if the user has selected more timeslots than number of courses
     const numClasses =
       selectedCS + selectedMath + selectedEngineering + selectedScience
-    if (values.program.timeSlots.length < numClasses) {
-      alert.trigger(
-        'error',
-        'You must select more timeslots than the number of classes enrolled',
-        false,
-      )
-      return true
-    }
 
     // if environmental science was selected, make sure that the student is at least in 4 grade or older
     if (
@@ -421,20 +407,6 @@
       return true
     }
 
-    // if the user opted for in-person classes, make sure they selected the Saturday 230pm option
-    if (
-      values.program.inPerson &&
-      !values.program.timeSlots.includes(
-        'saturday-2-30-4-30-pm-you-need-to-select-this-option-if-you-want-the-in-person-class',
-      )
-    ) {
-      alert.trigger(
-        'error',
-        'If you select in-person classes, you must select the Saturday 2:30 - 4:30 pm timeslot',
-        false,
-      )
-      return true
-    }
     return false
   }
 
@@ -636,7 +608,13 @@
       </div>
     </div>
     <div class="grid gap-1">
-      <span class="font-bold">Course Selection (max 2 courses)</span>
+      <span class="font-bold">Course Interest (max 2 courses)</span>
+      <span
+        >Note that selecting your courses below is NOT formally enrolling in the
+        course. Your response here will help us estimate the number of sections
+        for each course. Course enrollment will be on a first-come, first-served
+        basis, and you will be notified via email when enrollment opens.
+      </span>
       <span
         >Go to <a href="https://gbstem.org/#/cs" class="link" target="_blank"
           >https://gbstem.org/#/cs
@@ -723,24 +701,6 @@
           required
         />
       </div>
-      <div class="mt-3 grid gap-1">
-        <span class="font-bold">Timeslots</span>
-        <span
-          >You must check at least as many boxes as the number of classes you
-          select. Note that we cannot guarantee that you will be placed into one
-          of your desired timeslots, but we will try our best.</span
-        >
-        <div class="grid grid-cols-2 gap-2">
-          {#each timeSlotsJson as timeSlot}
-            <Input
-              type="checkbox"
-              bind:value={values.program.timeSlots}
-              label={timeSlot.name}
-            />
-          {/each}
-        </div>
-      </div>
-
       <div class="mt-2">
         <Select
           bind:value={values.program.reason}
@@ -750,11 +710,10 @@
           required
         />
       </div>
-
       <Input
         type="checkbox"
         bind:value={values.program.inPerson}
-        label="gbSTEM will offer in-person classes at the Cambridge Public Library. Would you like to opt for the in-person option if available for your student? Note that we cannot guarantee that in-person classes will be available for all students."
+        label="gbSTEM will offer in-person classes at the Cambridge Public Library on Saturdays 2:30-4:30pm. Would you like to opt for the in-person option if available for your child? Note that we cannot guarantee that in-person classes will be available for all students."
       />
     </div>
     <div class="grid gap-1">
@@ -770,7 +729,7 @@
         <Input
           type="checkbox"
           bind:value={values.agreements.timeCommitment}
-          label="Do you hereby confirm that the student can meet the gbSTEM weekly time commitment? Once you have registered for your courses, you will not be able to unenroll. Please understand that an unused spot for your child prevents others from joining or getting their preferred time slots. The time commitment for EACH course selected is at minimum 2 hours per week.  This means that if your student takes an engineering and math course the time commitment will be 4 hours a week. Students are not allowed to miss classes unless for medical reasons or family emergencies."
+          label="Do you hereby confirm that the student can meet the gbSTEM weekly time commitment? Please understand that an unused spot for your child prevents others from joining or getting their preferred time slots. The time commitment for EACH course selected is at minimum 2 hours per week.  This means that if your student takes an engineering and math course the time commitment will be 4 hours a week. Students are not allowed to miss classes unless for medical reasons or family emergencies."
           required
         />
         <Input
