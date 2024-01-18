@@ -204,7 +204,7 @@
                   if (disable) {
                     disabled = false
                   }
-                  alert.trigger('success', 'Your application was saved.')
+                  alert.trigger('success', 'Your pre-registration was saved.')
                   resolve()
                 },
               )
@@ -422,7 +422,10 @@
         values.meta.submitted = true
         setDoc(doc(db, 'registrationsSpring24', childUid), modifiedValues())
           .then(() => {
-            alert.trigger('success', 'Your application has been submitted!')
+            alert.trigger(
+              'success',
+              'Your pre-registration has been submitted!',
+            )
             getDoc(doc(db, 'registrationsSpring24', childUid)).then(
               (applicationDoc) => {
                 fetch('/api/registration', {
@@ -447,7 +450,7 @@
                   })
                   alert.trigger(
                     'success',
-                    'Your application has been submitted!',
+                    'Your pre-registration has been submitted!',
                   )
                 })
               },
@@ -751,7 +754,7 @@
         <div
           class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
         >
-          Application submitted and in review!
+          Pre-registration submitted!
         </div>
       {:else}
         <button
