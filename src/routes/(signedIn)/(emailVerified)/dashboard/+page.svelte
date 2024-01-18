@@ -171,7 +171,7 @@
           <ClassDetailsForm />
         </Card>
       {/if}
-      {#if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
+      {#if isStudent && Date.now() < new Date(semesterDates.classesStart).getTime()}
         <StudentFeedbackForm />
       {/if}
     </div>

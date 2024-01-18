@@ -21,12 +21,16 @@
     classId: string
     rating: number
     feedback: string
+    instructor: string
+    studentName: string
   } = {
     studentId: '',
     date: new Date().toISOString().slice(0, 10),
     classId: '',
     rating: 0,
     feedback: '',
+    instructor: '',
+    studentName: '',
   }
 
   async function fetchCourseList(classIds: string[]) {
@@ -36,6 +40,9 @@
     const courseDocs = await Promise.all(coursePromises)
     selectedStudentCourses = courseDocs.map((doc) => {
       if (doc.exists()) {
+        values.instructor = doc.data().instructorFirstName +
+            ' ' +
+            doc.data().instructorLastName;
         return {
           classId: doc.id,
           course: doc.data().course,
@@ -77,6 +84,7 @@
       getDoc(doc(db, 'registrationsSpring24', selectedStudentUid)).then(
         (docSnapshot) => {
           if (docSnapshot.exists()) {
+            values.studentName = docSnapshot.data().personal.studentFirstName + " " + docSnapshot.data().personal.studentLastName
             const classIds = docSnapshot.data().classes || []
             fetchCourseList(classIds)
           }
