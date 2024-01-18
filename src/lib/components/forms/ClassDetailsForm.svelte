@@ -6,10 +6,11 @@
   import Select from '$lib/components/Select.svelte'
   import Input from '$lib/components/Input.svelte'
   import { cn } from '$lib/utils'
-  import { doc, getDoc, setDoc } from 'firebase/firestore'
+  import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import Link from '$lib/components/Link.svelte'
   import { coursesJson, daysOfWeekJson } from '$lib/data'
+  import { create } from 'lodash-es'
 
   let disabled = false
   let showValidation = false
@@ -38,7 +39,9 @@
     instructorLastName: '',
     classCap: 7,
   }
-  
+
+  let createClassSchedule = false
+
   let semesterDates: Data.SemesterDates = {
     classesEnd: '',
     classesStart: '',
@@ -46,7 +49,6 @@
     newInstructorAppsDue: '',
     returningInstructorAppsDue: '',
   }
-
 
   function getMeetingDates(
     classDay1: string,
@@ -112,11 +114,11 @@
           }
         })
         getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
-        const datesDocExists = datesDoc.exists()
-        if (datesDocExists) {
-          semesterDates = datesDoc.data() as Data.SemesterDates
-        }
-      })
+          const datesDocExists = datesDoc.exists()
+          if (datesDocExists) {
+            semesterDates = datesDoc.data() as Data.SemesterDates
+          }
+        })
       }
     })
   })
@@ -127,15 +129,17 @@
       disabled = true
       if ($user) {
         const frozenUser = $user
-        const meetingTimes = getMeetingDates(
-          values.classDay1,
-          values.classDay2,
-          values.classTime1,
-          values.classTime2,
-          new Date(semesterDates.classesStart), // TODO: change this to the actual start date
-          new Date(semesterDates.classesEnd), // TODO: change this to the actual end date
-        )
-        values.meetingTimes = meetingTimes
+        if (createClassSchedule) {
+          const meetingTimes = getMeetingDates(
+            values.classDay1,
+            values.classDay2,
+            values.classTime1,
+            values.classTime2,
+            new Date(semesterDates.classesStart),
+            new Date(semesterDates.classesEnd),
+          )
+          values.meetingTimes = meetingTimes
+        }
         values.instructorFirstName = frozenUser.profile.firstName
         values.instructorLastName = frozenUser.profile.lastName
         setDoc(doc(db, 'classesSpring24', frozenUser.object.uid), values)
@@ -241,6 +245,13 @@
       label="I understand submitting will make my class available for registration, so I should not submit until I am sure the class and class times work for me."
       required
     />
+
+    <Input
+      type="checkbox"
+      bind:value={createClassSchedule}
+      label="Would you like a class schedule to be automatically created for you? Typically, you want to check this box the first time you submit your class details, but you should avoid checking this box when submitting the form again to edit your class details because it will overwrite changes you have made to your existing class schedule."
+    />
+
     <div class="flex justify-end">
       <Button color="blue" type="submit">Submit</Button>
     </div>
