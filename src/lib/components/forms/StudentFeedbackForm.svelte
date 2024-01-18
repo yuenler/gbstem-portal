@@ -23,6 +23,7 @@
     feedback: string
     instructor: string
     studentName: string
+    course: string
   } = {
     studentId: '',
     date: new Date().toISOString().slice(0, 10),
@@ -31,6 +32,7 @@
     feedback: '',
     instructor: '',
     studentName: '',
+    course: '',
   }
 
   async function fetchCourseList(classIds: string[]) {
@@ -40,9 +42,6 @@
     const courseDocs = await Promise.all(coursePromises)
     selectedStudentCourses = courseDocs.map((doc) => {
       if (doc.exists()) {
-        values.instructor = doc.data().instructorFirstName +
-            ' ' +
-            doc.data().instructorLastName;
         return {
           classId: doc.id,
           course: doc.data().course,
@@ -56,6 +55,12 @@
   }
 
   function handleSubmit(e: CustomEvent<SubmitData>) {
+    selectedStudentCourses.map((selectedCourse) => {
+      if(selectedCourse.classId === values.classId) {
+        values.instructor = selectedCourse.instructor;
+        values.course = selectedCourse.course;
+      }
+    })
     values.studentId = selectedStudentUid
     if (e.detail.error === null) {
       showValidation = false
