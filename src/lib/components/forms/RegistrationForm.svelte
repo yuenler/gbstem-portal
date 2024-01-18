@@ -223,16 +223,16 @@
   }
 
   function customErrors() {
-    const selectedCS = values.program.csCourse.startsWith('I do not') ? 0 : 1
-    const selectedMath = values.program.mathCourse.startsWith('I do not')
+    const selectedCS = values.program.csCourse.startsWith('I am not') ? 0 : 1
+    const selectedMath = values.program.mathCourse.startsWith('I am not')
       ? 0
       : 1
     const selectedEngineering = values.program.engineeringCourse.startsWith(
-      'I do not',
+      'I am not',
     )
       ? 0
       : 1
-    const selectedScience = values.program.scienceCourse.startsWith('I do not')
+    const selectedScience = values.program.scienceCourse.startsWith('I am not')
       ? 0
       : 1
 
