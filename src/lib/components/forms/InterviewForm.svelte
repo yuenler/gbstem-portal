@@ -13,7 +13,6 @@
   import Card from '../Card.svelte'
   import Link from '../Link.svelte'
   import { onMount } from 'svelte'
-  import { get } from 'svelte/store'
   import Loading from '../Loading.svelte'
 
   let showValidation = false
@@ -31,6 +30,7 @@
       interviewSlotStatus: scheduledInterview.interviewSlotStatus,
       intervieweeFirstName: currentUser.profile.firstName,
       intervieweeLastName: currentUser.profile.lastName,
+      intervieweeEmail: currentUser.object.email,
       intervieweeId: currentUser.object.uid,
     })
     fetch('/api/interview', {
@@ -104,6 +104,10 @@
         }
       }
     })
+    // Sort by date
+    valuesJson.sort((a, b) => {
+      return new Date(a.date).getTime() - new Date(b.date).getTime()
+    })
     return valuesJson
   }
 </script>
@@ -150,9 +154,20 @@
         <div
           class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
         >
-          Your interview will be on {formatDate(
-            new Date(scheduledInterview.date),
-          )} Eastern Time with {scheduledInterview.interviewerName}. Please check your inbox for an email with interview details.
+          <p>
+            Your interview will be on {formatDate(
+              new Date(scheduledInterview.date),
+            )} Eastern Time with {scheduledInterview.interviewerName}.
+          </p>
+          <p>
+            Your interview meeting link is <Link
+              href={scheduledInterview.meetingLink}
+              target="_blank"
+              rel="noopener">{scheduledInterview.meetingLink}</Link
+            >.
+          </p>
+
+          <p>Please check your inbox for an email with interview details.</p>
         </div>
       {:else}
         <div

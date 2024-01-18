@@ -119,6 +119,7 @@ declare global {
       interviewerName: string,
       intervieweeFirstName: string,
       intervieweeLastName: string,
+      intervieweeEmail: string,
       intervieweeId: string,
       interviewerEmail: string,
       interviewSlotStatus: string,

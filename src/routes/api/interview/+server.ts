@@ -24,7 +24,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         const template = {
           name: 'interviewScheduled',
           data: {
-            subject: `${intervieweeFirstName}, Your Interview With ${interviewerName} Has Been Scheduled`,
+            subject: `${intervieweeFirstName}, your interview with ${interviewerName} has been scheduled`,
             app: {
               name: 'Portal',
               link: 'https://portal.gbstem.org',
@@ -43,10 +43,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         const emailData: Data.EmailData = {
           From: 'donotreply@gbstem.org',
           To: locals.user.email,
-          Cc: interviewerEmail,
+          Cc: 'contact@gbstem.org',
           Subject: String(template.data.subject),
           HTMLBody: htmlBody,
-          ReplyTo: 'contact@gbstem.org',
+          ReplyTo: interviewerEmail,
           MessageStream: 'outbound'
         }
         try {
