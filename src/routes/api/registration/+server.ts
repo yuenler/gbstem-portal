@@ -10,6 +10,7 @@ import { registrationSubmittedEmailTemplate } from '$lib/data/emailTemplates/reg
 export const POST: RequestHandler = async ({ request, locals }) => {
   const body = await request.json();
   const firstName = body.firstName;
+  const studentName = body.studentName;
   if (locals.user === null) {
     throw error(400, 'User not signed in.')
   } else {
@@ -19,6 +20,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         subject: 'Next steps for your gbSTEM registration',
         app: {
           firstName: firstName,
+          studentName: studentName,
           name: 'Portal',
           link: 'https://portal.gbstem.org',
         },
