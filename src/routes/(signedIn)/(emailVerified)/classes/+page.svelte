@@ -28,6 +28,8 @@
     instructorFirstName: string
     instructorLastName: string
     spotsRemaining: number
+    meetingLink: string
+    gradeRecommendation: string
   }
 
   let classes: ClassInfo[] = []
@@ -102,6 +104,8 @@
           spotsRemaining: data.students
             ? data.classCap - data.students.length
             : data.classCap,
+          meetingLink: data.meetingLink,
+          gradeRecommendation: data.gradeRecommendation,
         }
         // Assuming there are a fixed number of class days and times
         for (let i = 1; i <= 2; i++) {
@@ -227,6 +231,11 @@
     {#if dialogClassDetails !== null}
       <h2 class="text-2xl font-bold text-gray-800">
         {dialogClassDetails.course}
+        <span
+          >{dialogClassDetails.gradeRecommendation
+            ? ` (Grades ${dialogClassDetails.gradeRecommendation})`
+            : ''}</span
+        >
       </h2>
       <p class="text-lg font-medium text-gray-700">
         Instructor: {`${dialogClassDetails.instructorFirstName} ${dialogClassDetails.instructorLastName}`}
@@ -290,7 +299,15 @@
         <Card
           class="space-y-4 rounded-lg border border-gray-300 bg-white p-4 shadow-md"
         >
-          <h2 class="text-2xl font-bold text-gray-800">{classInfo.course}</h2>
+          <h2 class="text-2xl font-bold text-gray-800">
+            {classInfo.course}
+
+            <span
+              >{classInfo.gradeRecommendation
+                ? ` (Grades ${classInfo.gradeRecommendation})`
+                : ''}</span
+            >
+          </h2>
           <p class="text-lg font-medium text-gray-700">
             Instructor: {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}
           </p>
@@ -321,6 +338,17 @@
                   {/if}
                 {/each}
               </ul>
+              <!-- display meeting link -->
+              <div class="mt-2 flex items-center">
+                <h4 class="font-semibold text-gray-700">Meeting Link:</h4>
+                <a
+                  href={classInfo.meetingLink}
+                  target="_blank"
+                  rel="noopener"
+                  class="ml-2 text-blue-500 underline"
+                  >{classInfo.meetingLink}</a
+                >
+              </div>
             </div>
           {/if}
 

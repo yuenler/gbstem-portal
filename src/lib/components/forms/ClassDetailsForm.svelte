@@ -20,6 +20,7 @@
     classDay2: string
     classTime2: string
     meetingLink: string
+    gradeRecommendation: string
     course: string
     submitting: boolean
     meetingTimes: Date[]
@@ -32,6 +33,7 @@
     classDay2: '',
     classTime2: '',
     meetingLink: '',
+    gradeRecommendation: '',
     course: '',
     submitting: false,
     meetingTimes: [],
@@ -103,6 +105,7 @@
               classDay2: string
               classTime2: string
               meetingLink: string
+              gradeRecommendation: string
               course: string
               submitting: boolean
               meetingTimes: Date[]
@@ -181,6 +184,12 @@
       options={coursesJson}
       floating
       required
+    />
+
+    <Input
+      type="text"
+      bind:value={values.gradeRecommendation}
+      label="Grade recommendation. For example, 3-5 or 6-8."
     />
 
     <Input
