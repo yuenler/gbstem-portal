@@ -221,7 +221,10 @@
     <Button
       color="blue"
       class={`${editMode ? 'hidden' : ''}`}
-      on:click={() => (editMode = true)}>Edit</Button
+      on:click={() => (editMode = true)}>Edit Schedule</Button
+    >
+    <Button color="green" class={`${editMode ? 'hidden' : ''}`}
+      >Add Class to Schedule</Button
     >
     {#if editMode}
       <Button color="red" on:click={cancelChanges}>Cancel Changes</Button>
