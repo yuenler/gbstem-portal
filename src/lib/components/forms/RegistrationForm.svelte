@@ -432,6 +432,7 @@
                   method: 'POST',
                   body: JSON.stringify({
                     firstName: frozenUser.profile.firstName,
+                    studentName: values.personal.studentFirstName + " " + values.personal.studentLastName,
                   }),
                 }).then(async (res) => {
                   if (!res.ok) {

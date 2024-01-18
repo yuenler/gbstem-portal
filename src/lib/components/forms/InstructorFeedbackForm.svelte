@@ -18,10 +18,14 @@
     date: string
     feedback: string
     attendanceList: Record<string, { present: boolean }>
+    courseName: string
+    instructorName: string
   } = {
     date: '',
     feedback: '',
     attendanceList: {},
+    courseName: '',
+    instructorName: '',
   }
 
   let classList: string[] = []
@@ -44,6 +48,8 @@
       if (doc.id === currentUser.object.uid) {
         classList = doc.data()['students']
         course = doc.data()['course']
+        values.courseName = course
+        values.instructorName = currentUser.profile.firstName + " " + currentUser.profile.lastName
         classList.forEach((student: string) => {
           values.attendanceList[student] = {
             present: false,
