@@ -40,7 +40,7 @@
     classCap: 7,
   }
 
-  let createClassSchedule = false
+  let createClassSchedule = true
 
   let semesterDates: Data.SemesterDates = {
     classesEnd: '',
@@ -111,6 +111,7 @@
               classCap: number
             }
             disabled = true
+            createClassSchedule = false
           }
         })
         getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
