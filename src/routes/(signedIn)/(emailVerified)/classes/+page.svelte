@@ -307,7 +307,7 @@
             color="blue"
             on:click={() => (dialogClassDetails = classInfo)}
           >
-            View class details
+            Add/Drop class
           </Button>
           {#if Object.entries(studentUidToClassIds).some( ([studentUid, classIds]) => classIds.includes(classInfo.id), )}
             <div class="mt-2">
