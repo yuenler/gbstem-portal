@@ -169,6 +169,10 @@
   {/if}
 
   <fieldset class="mt-4 space-y-4" {disabled}>
+    <p>
+      Please do not fill this form out until you have been told by gbSTEM
+      leadership what class you will be teaching.
+    </p>
     <h2 class="text-xl font-bold">Your class details</h2>
 
     <Select
