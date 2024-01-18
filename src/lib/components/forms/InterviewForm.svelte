@@ -135,7 +135,7 @@
                     bind:group={scheduledInterview}
                     value={val}
                   />
-                  {val.date}
+                  {val.date} ({val.interviewerName})
                 </label>
               {/each}
             </div>
@@ -152,7 +152,7 @@
         >
           Your interview will be on {formatDate(
             new Date(scheduledInterview.date),
-          )} Eastern time.
+          )} Eastern Time with {scheduledInterview.interviewerName}. Please check your inbox for an email with interview details.
         </div>
       {:else}
         <div

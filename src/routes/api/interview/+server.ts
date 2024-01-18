@@ -24,7 +24,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         const template = {
           name: 'interviewScheduled',
           data: {
-            subject: 'Your Interview Has Been Scheduled',
+            subject: `${intervieweeFirstName}, Your Interview With ${interviewerName} Has Been Scheduled`,
             app: {
               name: 'Portal',
               link: 'https://portal.gbstem.org',
