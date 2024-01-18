@@ -432,7 +432,7 @@
                   method: 'POST',
                   body: JSON.stringify({
                     firstName: frozenUser.profile.firstName,
-                    studentName: values.personal.studentFirstName + " " + values.personal.studentLastName,
+                    studentName: values.personal.studentFirstName,
                   }),
                 }).then(async (res) => {
                   if (!res.ok) {
