@@ -177,9 +177,7 @@
     </div>
 
     {#if data.application.status === 'accepted'}
-      <Card>
-        <ClassSchedule />
-      </Card>
+      <ClassSchedule />
     {:else if isStudent}
       <StudentSchedule />
     {/if}

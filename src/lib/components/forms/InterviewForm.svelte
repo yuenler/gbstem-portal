@@ -112,71 +112,74 @@
   }
 </script>
 
-{#if loading}
-  <Loading />
-{:else}
-  {#await data then value}
-    <Card class="my-2 grid gap-3">
-      {#if scheduled === false}
-        <h2 class="font-bold">Available Interview Slots</h2>
-        <div>
-          Please sign up for one. If there are no slots available for you,
-          please email us at
-          <Link href="mailto:contact@gbstem.org">contact@gbstem.org</Link> and we
-          will try to find a time that works for you.
-        </div>
-
-        <Form
-          class={clsx('max-w-2xl', showValidation && 'show-validation')}
-          on:submit={handleSubmit}
-        >
-          <div class="mb-4">
-            <div class="grid grid-cols-2 gap-2">
-              {#each value as val}
-                <label>
-                  <input
-                    type="radio"
-                    bind:group={scheduledInterview}
-                    value={val}
-                  />
-                  {val.date} ({val.interviewerName})
-                </label>
-              {/each}
-            </div>
+<div class="ps-4">
+  {#if loading}
+    <Loading />
+  {:else}
+    {#await data then value}
+      <Card class="my-2 grid gap-3">
+        {#if scheduled === false}
+          <h2 class="font-bold">Available Interview Slots</h2>
+          <div>
+            Please sign up for one. If there are no slots available for you,
+            please email us at
+            <Link href="mailto:contact@gbstem.org">contact@gbstem.org</Link> and
+            we will try to find a time that works for you.
           </div>
-          <button
-            type="submit"
-            class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
-            >Submit</button
-          >
-        </Form>
-      {:else if scheduledInterview.interviewSlotStatus === 'pending'}
-        <div
-          class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
-        >
-          <p>
-            Your interview will be on {formatDate(
-              new Date(scheduledInterview.date),
-            )} Eastern Time with {scheduledInterview.interviewerName}.
-          </p>
-          <p>
-            Your interview meeting link is <Link
-              href={scheduledInterview.meetingLink}
-              target="_blank"
-              rel="noopener">{scheduledInterview.meetingLink}</Link
-            >.
-          </p>
 
-          <p>Please check your inbox for an email with interview details.</p>
-        </div>
-      {:else}
-        <div
-          class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
-        >
-          Your interview was on {formatDate(new Date(scheduledInterview.date))} Eastern
-          Time. Thank you for applying to gbSTEM!
-        </div>
-      {/if}
-    </Card>
-  {/await}
-{/if}
+          <Form
+            class={clsx('max-w-2xl', showValidation && 'show-validation')}
+            on:submit={handleSubmit}
+          >
+            <div class="mb-4">
+              <div class="grid grid-cols-2 gap-2">
+                {#each value as val}
+                  <label>
+                    <input
+                      type="radio"
+                      bind:group={scheduledInterview}
+                      value={val}
+                    />
+                    {val.date} ({val.interviewerName})
+                  </label>
+                {/each}
+              </div>
+            </div>
+            <button
+              type="submit"
+              class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
+              >Submit</button
+            >
+          </Form>
+        {:else if scheduledInterview.interviewSlotStatus === 'pending'}
+          <div
+            class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
+          >
+            <p>
+              Your interview will be on {formatDate(
+                new Date(scheduledInterview.date),
+              )} Eastern Time with {scheduledInterview.interviewerName}.
+            </p>
+            <p>
+              Your interview meeting link is <Link
+                href={scheduledInterview.meetingLink}
+                target="_blank"
+                rel="noopener">{scheduledInterview.meetingLink}</Link
+              >.
+            </p>
+
+            <p>Please check your inbox for an email with interview details.</p>
+          </div>
+        {:else}
+          <div
+            class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
+          >
+            Your interview was on {formatDate(
+              new Date(scheduledInterview.date),
+            )} Eastern Time. Thank you for applying to gbSTEM!
+          </div>
+        {/if}
+      </Card>
+    {/await}
+  {/if}
+</div>
