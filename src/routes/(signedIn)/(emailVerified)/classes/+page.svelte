@@ -37,7 +37,6 @@
   let dialogEl: Dialog
   let dialogClassDetails: ClassInfo | null = null
   let selectedStudentUid = ''
-  let childName = ''
 
   const studentUidToClassIds: {
     [studentUid: string]: string[]
@@ -172,7 +171,7 @@
       return
     }
     await updateDoc(classDocRef, {
-      students: arrayUnion(childName),
+      students: arrayUnion(selectedStudentUid),
     }).catch((error) => {
       alert.trigger('error', 'Error enrolling in class!')
     })
@@ -197,7 +196,7 @@
   async function unenrollFromClass(classId: string): Promise<void> {
     const classDocRef = doc(db, 'classesSpring24', classId)
     await updateDoc(classDocRef, {
-      students: arrayRemove(childName),
+      students: arrayRemove(selectedStudentUid),
     }).catch((error) => {
       alert.trigger('error', 'Error unenrolling from class!')
     })
@@ -262,10 +261,7 @@
       </div>
       {#if isStudent}
         <div class="mt-2 flex items-center gap-2">
-          <StudentSelect
-            bind:selectedStudent={childName}
-            bind:selectedStudentUid
-          />
+          <StudentSelect bind:selectedStudentUid />
           <Button
             color={isEnrolled(dialogClassDetails.id, selectedStudentUid)
               ? 'red'
