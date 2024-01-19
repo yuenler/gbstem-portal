@@ -92,6 +92,10 @@
           ...interviewInfo,
           id: doc.id,
           date: formatDate(new Date(interviewInfo['date'].seconds * 1000)),
+          interviewSlotStatus:
+            new Date(interviewInfo['date'].seconds * 1000) < new Date()
+              ? 'completed'
+              : interviewInfo['interviewSlotStatus'],
         } as Data.InterviewSlot
         scheduled = true
       } else {
@@ -176,7 +180,7 @@
           >
             Your interview was on {formatDate(
               new Date(scheduledInterview.date),
-            )} Eastern Time. Thank you for applying to gbSTEM!
+            )} Eastern Time.
           </div>
         {/if}
       </Card>
