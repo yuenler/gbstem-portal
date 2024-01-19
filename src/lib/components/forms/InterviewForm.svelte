@@ -99,7 +99,10 @@
         } as Data.InterviewSlot
         scheduled = true
       } else {
-        if (interviewInfo['interviewSlotStatus'] === 'available') {
+        if (
+          interviewInfo['interviewSlotStatus'] === 'available' &&
+          new Date(interviewInfo['date'].seconds * 1000) > new Date()
+        ) {
           valuesJson.push({
             ...interviewInfo,
             id: doc.id,
