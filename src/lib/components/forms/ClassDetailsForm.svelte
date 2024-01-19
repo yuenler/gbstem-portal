@@ -26,6 +26,7 @@
     meetingTimes: Date[]
     instructorFirstName: string
     instructorLastName: string
+    instructorEmail: string
     classCap: number
   } = {
     classDay1: '',
@@ -39,6 +40,7 @@
     meetingTimes: [],
     instructorFirstName: '',
     instructorLastName: '',
+    instructorEmail: '',
     classCap: 7,
   }
 
@@ -111,6 +113,7 @@
               meetingTimes: Date[]
               instructorFirstName: string
               instructorLastName: string
+              instructorEmail: string
               classCap: number
             }
             disabled = true
@@ -146,6 +149,7 @@
         }
         values.instructorFirstName = frozenUser.profile.firstName
         values.instructorLastName = frozenUser.profile.lastName
+        values.instructorEmail = frozenUser.object.email as string
         setDoc(doc(db, 'classesSpring24', frozenUser.object.uid), values)
           .then(() => {
             disabled = true

@@ -27,6 +27,7 @@
     course: string
     instructorFirstName: string
     instructorLastName: string
+    instructorEmail: string
     spotsRemaining: number
     meetingLink: string
     gradeRecommendation: string
@@ -100,6 +101,7 @@
           course: data.course,
           instructorFirstName: data.instructorFirstName,
           instructorLastName: data.instructorLastName,
+          instructorEmail: data.instructorEmail,
           spotsRemaining: data.students
             ? data.classCap - data.students.length
             : data.classCap,
@@ -336,13 +338,22 @@
               </ul>
               <!-- display meeting link -->
               <div class="mt-2 flex items-center">
-                <h4 class="font-semibold text-gray-700">Meeting Link:</h4>
+                <h4 class="font-semibold text-gray-700">Meeting link:</h4>
                 <a
                   href={classInfo.meetingLink}
                   target="_blank"
                   rel="noopener"
                   class="ml-2 text-blue-500 underline"
                   >{classInfo.meetingLink}</a
+                >
+              </div>
+
+              <div class="mt-2 flex items-center">
+                <h4 class="font-semibold text-gray-700">Instructor email:</h4>
+                <a
+                  href={`mailto:${classInfo.instructorEmail}`}
+                  class="ml-2 text-blue-500 underline"
+                  >{classInfo.instructorEmail}</a
                 >
               </div>
             </div>
