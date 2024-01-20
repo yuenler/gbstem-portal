@@ -144,7 +144,7 @@ declare global {
       program: {
         courses: string[]
         preferences: string
-        timeSlots: string[]
+        timeSlots: string
         notAvailable: string
         inPerson: boolean
         reason: string

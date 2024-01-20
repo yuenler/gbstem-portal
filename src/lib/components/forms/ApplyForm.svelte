@@ -10,13 +10,7 @@
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import Textarea from '$lib/components/Textarea.svelte'
-  import {
-    gendersJson,
-    reasonsJson,
-    raceJson,
-    coursesJson,
-    timeSlotsJson,
-  } from '$lib/data'
+  import { gendersJson, reasonsJson, raceJson, coursesJson } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
   import Card from '$lib/components/Card.svelte'
@@ -49,7 +43,7 @@
     program: {
       courses: [],
       preferences: '',
-      timeSlots: [],
+      timeSlots: '',
       notAvailable: '',
       inPerson: false,
       reason: '',
@@ -189,19 +183,19 @@
     if ($user) {
       const frozenUser = $user
       if (e.detail.error === null) {
-        if (
-          values.program.inPerson &&
-          !values.program.timeSlots.includes(
-            'saturday-2-30-4-30-pm-you-need-to-select-this-option-if-you-want-the-in-person-class',
-          )
-        ) {
-          alert.trigger(
-            'error',
-            'To be available to teach in-person classes, you must select the Saturday 2:30-4:30pm timeslot option.',
-            false,
-          )
-          return
-        }
+        // if (
+        //   values.program.inPerson &&
+        //   !values.program.timeSlots.includes(
+        //     'saturday-2-30-4-30-pm-you-need-to-select-this-option-if-you-want-the-in-person-class',
+        //   )
+        // ) {
+        //   alert.trigger(
+        //     'error',
+        //     'To be available to teach in-person classes, you must select the Saturday 2:30-4:30pm timeslot option.',
+        //     false,
+        //   )
+        //   return
+        // }
         showValidation = false
         disabled = true
         values.meta.submitted = true
@@ -379,16 +373,12 @@
 
       <div class="mt-3 grid gap-1">
         <span class="font-bold">Timeslots</span>
-        <div class="grid grid-cols-2 gap-2">
-          {#each timeSlotsJson as timeSlot}
-            <Input
-              type="checkbox"
-              bind:value={values.program.timeSlots}
-              label={timeSlot.name}
-              required
-            />
-          {/each}
-        </div>
+        <Input
+          type="text"
+          bind:value={values.program.timeSlots}
+          label="Please describe your weekly availability. For example, 'weekdays after 4pm' or 'weekends anytime'."
+          required
+        />
       </div>
 
       <div class="mt-2">
@@ -402,7 +392,7 @@
       <Input
         type="checkbox"
         bind:value={values.program.inPerson}
-        label="gbSTEM will offer both virtual classes and in-person classes at the Cambridge Public Library. Check this box if you would be able to conduct in-person lessons."
+        label="gbSTEM will offer some in-person classes at the Cambridge Public Library. Check this box if you would be able to conduct in-person lessons on Saturdays 2:30-4:30pm."
       />
 
       <div class="mt-2">
