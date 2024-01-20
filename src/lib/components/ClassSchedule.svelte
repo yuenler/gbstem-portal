@@ -17,6 +17,7 @@
   const classesCollection = 'classesSpring24'
   let classId = ''
   let dialogEl: Dialog
+  let addClassDialogEl: Dialog
   let emailHtmlContent = ''
   let studentList: {
     name: string
@@ -26,6 +27,9 @@
     grade: number
     school: string
   }[] = []
+  let addingClass = false
+
+  let classToBeAdded = ''
 
   const getStudentList = (studentUids: string[]) => {
     studentUids.forEach((studentUid) => {
@@ -172,6 +176,16 @@
   function saveChanges(): void {
     editMode = false
     emailHtmlContent = generateMeetingTimeChangeEmail()
+    // sort the meeting times
+    editedMeetingTimes.sort((a, b) => {
+      const dateA = new Date(a)
+      const dateB = new Date(b)
+      return dateA.getTime() - dateB.getTime()
+    })
+    // remove duplicates from the meeting times
+    editedMeetingTimes = editedMeetingTimes.filter(
+      (time, index) => editedMeetingTimes.indexOf(time) === index,
+    )
     originalMeetingTimes = [...editedMeetingTimes]
     updateMeetingTimes()
   }
@@ -354,9 +368,45 @@
       class={`${editMode ? 'hidden' : ''}`}
       on:click={() => (editMode = true)}>Edit Schedule</Button
     >
-    <Button color="green" class={`${editMode ? 'hidden' : ''}`}
-      >Add Class to Schedule</Button
+    <Button
+      color="green"
+      class={`${editMode ? 'hidden' : ''}`}
+      on:click={() => (addingClass = true)}>Add Class to Schedule</Button
     >
+
+    <Dialog
+      bind:this={addClassDialogEl}
+      initial={addingClass}
+      size="min"
+      on:cancel={() => (addingClass = false)}
+    >
+      <svelte:fragment slot="title">Add Class to Schedule</svelte:fragment>
+
+      <div slot="description" class="space-y-4">
+        <p>
+          Please enter the date and time of the class you would like to add.
+        </p>
+
+        <Input
+          type="datetime-local"
+          class="rounded border p-1"
+          bind:value={classToBeAdded}
+        />
+        <Button
+          color="green"
+          on:click={() => {
+            editedMeetingTimes.push(classToBeAdded)
+            editedMeetingTimes = editedMeetingTimes.slice()
+            saveChanges()
+            addingClass = false
+          }}>Add Class</Button
+        >
+        <DialogActions>
+          <Button on:click={() => (addingClass = false)}>Close</Button>
+        </DialogActions>
+      </div>
+    </Dialog>
+
     {#if editMode}
       <Button color="red" on:click={cancelChanges}>Cancel Changes</Button>
       <Button color="green" on:click={saveChanges}>Save Changes</Button>
