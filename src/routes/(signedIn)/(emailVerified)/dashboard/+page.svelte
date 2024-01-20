@@ -162,7 +162,7 @@
         </div>
       </Card>
       {#if data.application.status === 'accepted'}
-        {#if Date.now() < new Date(semesterDates.classesStart).getTime()}
+        {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
           <Card>
             <InstructorFeedbackForm />
           </Card>
