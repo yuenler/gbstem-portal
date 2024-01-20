@@ -5,7 +5,14 @@
   import Button from '../Button.svelte'
   import Input from '$lib/components/Input.svelte'
   import { cn } from '$lib/utils'
-  import { doc, setDoc, query, collection, getDocs } from 'firebase/firestore'
+  import {
+    doc,
+    setDoc,
+    query,
+    collection,
+    getDocs,
+    getDoc,
+  } from 'firebase/firestore'
   import { onMount } from 'svelte'
 
   let disabled = false
@@ -34,7 +41,7 @@
     return user.subscribe(async (user) => {
       if (user) {
         currentUser = user
-        classList = await getData()
+        getData()
         loading = false
       }
     })
@@ -43,18 +50,38 @@
   async function getData() {
     const q = query(collection(db, 'classesSpring24'))
     const querySnapshot = await getDocs(q)
-    querySnapshot.forEach((doc) => {
-      if (doc.id === currentUser.object.uid) {
-        classList = doc.data()['students']
-        course = doc.data()['course']
-        values.courseName = course
-        values.instructorName =
-          currentUser.profile.firstName + ' ' + currentUser.profile.lastName
-        classList.forEach((student: string) => {
-          values.attendanceList[student] = {
-            present: false,
-          }
-        })
+    querySnapshot.forEach((document) => {
+      if (document.id === currentUser.object.uid) {
+        const uids = document.data()['students']
+        const classListPromises = uids.map((uid: string) =>
+          getDoc(doc(db, 'registrationsSpring24', uid))
+            .then((userDoc) => {
+              const userData = userDoc.data()?.personal
+              return `${userData['studentFirstName']} ${userData['studentLastName']}`
+            })
+            .catch((error) => {
+              console.error('Error fetching student data:', error)
+              return 'Error' // Or handle the error as appropriate
+            }),
+        )
+
+        Promise.all(classListPromises)
+          .then((list) => {
+            classList = list
+            course = document.data()['course']
+            values.courseName = course
+            values.instructorName =
+              currentUser.profile.firstName + ' ' + currentUser.profile.lastName
+            classList.forEach((student: string) => {
+              values.attendanceList[student] = {
+                present: false,
+              }
+            })
+          })
+          .catch((error) => {
+            // Handle any errors that occurred during Promise.all
+            console.error('Error with class list:', error)
+          })
       }
     })
     return classList
