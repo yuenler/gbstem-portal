@@ -142,8 +142,10 @@
         </div>
       </div>
 
-      <div class="flex justify-center">
-        <canvas id="qr"></canvas>
+      <div class="w-50 flex justify-center">
+        <Link href="/dashboard">
+          Click here to go to your application dashboard.</Link
+        >
       </div>
 
       <div class="text-sm">
