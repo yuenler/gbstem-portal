@@ -18,6 +18,9 @@
   } from 'firebase/firestore'
   import { alert } from '$lib/stores'
   import StudentSelect from '$lib/components/StudentSelect.svelte'
+  import Select from '$lib/components/Select.svelte'
+  import coursesJson from '$lib/data/courses.json'
+  import Alert from '$lib/components/Alert.svelte'
 
   type ClassInfo = {
     id: string
@@ -38,6 +41,8 @@
   let dialogEl: Dialog
   let dialogClassDetails: ClassInfo | null = null
   let selectedStudentUid = ''
+
+  let classFilter = ''
 
   const studentUidToClassIds: {
     [studentUid: string]: string[]
@@ -292,86 +297,95 @@
   {#if loading}
     <Loading />
   {:else}
+    <div class="mb-5 flex items-center justify-between">
+      <Select
+        bind:value={classFilter}
+        placeholder="Filter by course"
+        options={coursesJson}
+      />
+    </div>
     <div class="grid gap-6 md:grid-cols-2" transition:fade={{ duration: 500 }}>
       {#each classes as classInfo (classInfo.id)}
-        <Card
-          class="space-y-4 rounded-lg border border-gray-300 bg-white p-4 shadow-md"
-        >
-          <h2 class="text-2xl font-bold text-gray-800">
-            {classInfo.course}
-
-            <span
-              >{classInfo.gradeRecommendation
-                ? ` (Grades ${classInfo.gradeRecommendation})`
-                : ''}</span
-            >
-          </h2>
-          <p class="text-lg font-medium text-gray-700">
-            Instructor: {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}
-          </p>
-          <div>
-            <h4 class="font-semibold text-gray-700">Class Times:</h4>
-            <ul class="list-inside list-disc text-gray-600">
-              {#each formatClassTimes(classInfo.classDays, classInfo.classTimes) as classTime}
-                <li>{classTime}</li>
-              {/each}
-            </ul>
-          </div>
-          <Button
-            class="mt-2"
-            color="blue"
-            on:click={() => (dialogClassDetails = classInfo)}
+        {#if classFilter == '' || classFilter == classInfo.course}
+          <Card
+            class="space-y-4 rounded-lg border border-gray-300 bg-white p-4 shadow-md"
           >
-            Add/Drop class
-          </Button>
-          {#if Object.entries(studentUidToClassIds).some( ([studentUid, classIds]) => classIds.includes(classInfo.id), )}
-            <div class="mt-2">
-              <h4 class="font-semibold text-gray-700">
-                Your Enrolled Students:
-              </h4>
-              <ul class="ml-4 list-inside list-disc text-gray-600">
-                {#each Object.entries(studentUidToClassIds) as [studentUid, classIds]}
-                  {#if classIds.includes(classInfo.id)}
-                    <li>{uidToName[studentUid]}</li>
-                  {/if}
+            <h2 class="text-2xl font-bold text-gray-800">
+              {classInfo.course}
+
+              <span
+                >{classInfo.gradeRecommendation
+                  ? ` (Grades ${classInfo.gradeRecommendation})`
+                  : ''}</span
+              >
+            </h2>
+            <p class="text-lg font-medium text-gray-700">
+              Instructor: {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}
+            </p>
+            <div>
+              <h4 class="font-semibold text-gray-700">Class Times:</h4>
+              <ul class="list-inside list-disc text-gray-600">
+                {#each formatClassTimes(classInfo.classDays, classInfo.classTimes) as classTime}
+                  <li>{classTime}</li>
                 {/each}
               </ul>
-              <!-- display meeting link -->
-              <div class="mt-2 flex items-center">
-                <h4 class="font-semibold text-gray-700">Meeting link:</h4>
-                <a
-                  href={classInfo.meetingLink}
-                  target="_blank"
-                  rel="noopener"
-                  class="ml-2 text-blue-500 underline"
-                  >{classInfo.meetingLink}</a
-                >
-              </div>
-
-              <div class="mt-2 flex items-center">
-                <h4 class="font-semibold text-gray-700">Instructor email:</h4>
-                <a
-                  href={`mailto:${classInfo.instructorEmail}`}
-                  class="ml-2 text-blue-500 underline"
-                  >{classInfo.instructorEmail}</a
-                >
-              </div>
             </div>
-          {/if}
-
-          <div class="mt-2 text-right">
-            <span
-              class="inline-block rounded-full px-3 py-1 text-sm font-semibold text-white {classInfo.spotsRemaining <=
-              0
-                ? 'bg-red-600'
-                : 'bg-green-600'}"
+            <Button
+              class="mt-2"
+              color="blue"
+              on:click={() => (dialogClassDetails = classInfo)}
             >
-              {classInfo.spotsRemaining <= 0
-                ? 'Class Full'
-                : `${classInfo.spotsRemaining} spots remaining`}
-            </span>
-          </div>
-        </Card>
+              Add/Drop class
+            </Button>
+            {#if Object.entries(studentUidToClassIds).some( ([studentUid, classIds]) => classIds.includes(classInfo.id), )}
+              <div class="mt-2">
+                <h4 class="font-semibold text-gray-700">
+                  Your Enrolled Students:
+                </h4>
+                <ul class="ml-4 list-inside list-disc text-gray-600">
+                  {#each Object.entries(studentUidToClassIds) as [studentUid, classIds]}
+                    {#if classIds.includes(classInfo.id)}
+                      <li>{uidToName[studentUid]}</li>
+                    {/if}
+                  {/each}
+                </ul>
+                <!-- display meeting link -->
+                <div class="mt-2 flex items-center">
+                  <h4 class="font-semibold text-gray-700">Meeting link:</h4>
+                  <a
+                    href={classInfo.meetingLink}
+                    target="_blank"
+                    rel="noopener"
+                    class="ml-2 text-blue-500 underline"
+                    >{classInfo.meetingLink}</a
+                  >
+                </div>
+
+                <div class="mt-2 flex items-center">
+                  <h4 class="font-semibold text-gray-700">Instructor email:</h4>
+                  <a
+                    href={`mailto:${classInfo.instructorEmail}`}
+                    class="ml-2 text-blue-500 underline"
+                    >{classInfo.instructorEmail}</a
+                  >
+                </div>
+              </div>
+            {/if}
+
+            <div class="mt-2 text-right">
+              <span
+                class="inline-block rounded-full px-3 py-1 text-sm font-semibold text-white {classInfo.spotsRemaining <=
+                0
+                  ? 'bg-red-600'
+                  : 'bg-green-600'}"
+              >
+                {classInfo.spotsRemaining <= 0
+                  ? 'Class Full'
+                  : `${classInfo.spotsRemaining} spots remaining`}
+              </span>
+            </div>
+          </Card>
+        {/if}
       {/each}
     </div>
   {/if}
