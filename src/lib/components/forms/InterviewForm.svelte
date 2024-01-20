@@ -26,6 +26,12 @@
   function handleSubmit() {
     scheduledInterview.interviewSlotStatus = 'pending'
     scheduled = true
+
+    // update application to indicate interview scheduled
+    updateDoc(doc(db, 'applicationsSpring24', currentUser.object.uid), {
+      'meta.interview': true,
+    })
+
     updateDoc(doc(db, 'instructorInterviewTimes', scheduledInterview.id), {
       interviewSlotStatus: scheduledInterview.interviewSlotStatus,
       intervieweeFirstName: currentUser.profile.firstName,
