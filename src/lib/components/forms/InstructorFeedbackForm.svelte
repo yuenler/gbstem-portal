@@ -43,13 +43,13 @@
   async function getData() {
     const q = query(collection(db, 'classesSpring24'))
     const querySnapshot = await getDocs(q)
-    console.log(querySnapshot)
     querySnapshot.forEach((doc) => {
       if (doc.id === currentUser.object.uid) {
         classList = doc.data()['students']
         course = doc.data()['course']
         values.courseName = course
-        values.instructorName = currentUser.profile.firstName + " " + currentUser.profile.lastName
+        values.instructorName =
+          currentUser.profile.firstName + ' ' + currentUser.profile.lastName
         classList.forEach((student: string) => {
           values.attendanceList[student] = {
             present: false,
@@ -67,7 +67,7 @@
         alert.trigger('error', 'Please enter class date and session.')
       } else {
         disabled = true
-        values.date = classDate;
+        values.date = classDate
         setDoc(
           doc(
             db,
