@@ -259,12 +259,6 @@
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
-  <!-- <div
-    class="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
-    role="alert"
-  >
-    <strong class="font-bold">Applications for fall 2023 are closed!</strong>
-  </div> -->
   <fieldset class="space-y-14" {disabled}>
     <div class="grid gap-1">
       <span class="font-bold">Personal</span>
@@ -447,7 +441,7 @@
           <Input
             type="checkbox"
             bind:value={values.agreements.entireProgram}
-            label="gbSTEM will run from September 24th to December 23rd. Do you confirm that you will be able to teach for the entirety of the program?"
+            label="gbSTEM will run from March 17th to June 15th, 2024. Do you confirm that you will be able to teach for the entirety of the program?"
             required
           />
           <Input

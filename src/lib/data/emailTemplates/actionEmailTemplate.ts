@@ -247,7 +247,7 @@ export const actionEmailTemplate = `<!doctype html>
                                                             target="_blank" rel="noopener noreferrer"
                                                             style="color: darkblue" href="{{app.link}}"><span
                                                                 style="color: darkblue">{{app.name}}</span></a></p>
-                                                    <p style="margin: 10px 0">gbSTEM &copy; 2023</p>
+                                                    <p style="margin: 10px 0">gbSTEM &copy; 2024</p>
                                                 </div>
                                             </td>
                                         </tr>

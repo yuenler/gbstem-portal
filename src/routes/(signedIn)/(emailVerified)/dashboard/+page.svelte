@@ -134,10 +134,10 @@
           <div class="space-y-1">
             <p>
               Applications to be an instructor are due <span class="font-bold">
-                September 15th, 2023
+                March 2, 2024
               </span>
               at 11:59 PM ET. Registrations to be a student are due
-              <span class="font-bold"> September 20th, 2023 </span> at 11:59 PM ET.
+              <span class="font-bold"> March 7, 2024 </span> at 11:59 PM ET.
             </p>
           </div>
         {/if}
