@@ -48,7 +48,24 @@
   const studentUidToClassIds: {
     [studentUid: string]: string[]
   } = {}
+
+  const studentUidToGrade: Record<string, string> = {}
+
   const uidToName: Record<string, string> = {}
+
+  const courseToMinGrade = {
+    'Environmental Science': 5,
+    Python: 3,
+    'Web Development': 5,
+    'Python II': 5,
+    'Mathematics 2b': 1,
+    'Mathematics 3b': 3,
+    'Mathematics 4b': 5,
+    'Mathematics 5b': 6,
+    'Engineering I': 2,
+    'Engineering II': 4,
+    'Engineering III': 5,
+  }
 
   function formatTime24to12(time24: string): string {
     // Split the string by ":" to obtain hours and minutes
@@ -86,6 +103,7 @@
             docRef.data().personal.studentLastName
           }`.trim() || `Child ${i}`
         uidToName[studentUid] = name
+        studentUidToGrade[studentUid] = docRef.data()?.academic.grade ?? ''
       }
     }
   }
@@ -178,6 +196,32 @@
       alert.trigger('error', 'Class is full!')
       return
     }
+
+    // throw alert if student attempts to enroll in more than 2 classes
+    if (studentUidToClassIds[selectedStudentUid].length >= 2) {
+      alert.trigger(
+        'error',
+        'Each student may only enroll in a maximum of 2 classes!',
+      )
+      return
+    }
+
+    if (
+      dialogClassDetails &&
+      Object.keys(courseToMinGrade).includes(dialogClassDetails.course) &&
+      (studentUidToGrade[selectedStudentUid] == 'K' ||
+        parseInt(studentUidToGrade[selectedStudentUid], 10) <
+          courseToMinGrade[dialogClassDetails.course ?? ''])
+    ) {
+      alert.trigger(
+        'error',
+        `Students must be in grade ${
+          courseToMinGrade[dialogClassDetails.course ?? '']
+        } or higher to enroll in this class!`,
+      )
+      return
+    }
+
     await updateDoc(classDocRef, {
       students: arrayUnion(selectedStudentUid),
     }).catch((error) => {
@@ -362,7 +406,9 @@
                   </ul>
                   <!-- display meeting link -->
                   <div class="mt-2 flex items-center">
-                    <h4 class="font-semibold text-gray-700">Meeting link:</h4>
+                    <h4 class="font-semibold text-gray-700">
+                      Meeting Location:
+                    </h4>
                     <a
                       href={classInfo.meetingLink}
                       target="_blank"
