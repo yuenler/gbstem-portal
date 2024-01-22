@@ -91,7 +91,7 @@
     if ($user) {
       const frozenUser = $user
       if (classDate === '') {
-        alert.trigger('error', 'Please enter class date and session.')
+        alert.trigger('error', 'Please enter class date.')
       } else {
         disabled = true
         values.date = classDate
