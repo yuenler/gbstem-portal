@@ -133,17 +133,30 @@
       <Card class="my-2 grid gap-3">
         {#if scheduled === false}
           <h2 class="font-bold">Available Interview Slots</h2>
-          <div>
-            Please sign up for one. If there are no slots available for you,
-            please email us at
-            <Link href="mailto:contact@gbstem.org">contact@gbstem.org</Link> and
-            we will try to find a time that works for you.
-          </div>
 
           <Form
             class={clsx('max-w-2xl', showValidation && 'show-validation')}
             on:submit={handleSubmit}
           >
+            {#if value.length === 0}
+              <div
+                class="rounded-md bg-red-100 px-4 py-2 text-red-900 shadow-sm"
+              >
+                There are no interview slots available at this time. Please
+                email us at <Link href="mailto:contact@gbstem.org ">
+                  contact@gbstem.org
+                </Link> and we will try to find a time that works for you.
+              </div>
+            {:else}
+              <div>
+                Please sign up for one of the following interview slots. If none
+                of them work for you, please email us at <Link
+                  href="mailto:contact@gbstem.org "
+                >
+                  contact@gbstem.org
+                </Link> and we will try to find a time that works for you.
+              </div>
+            {/if}
             <div class="mb-4">
               <div class="grid grid-cols-2 gap-2">
                 {#each value as val}
