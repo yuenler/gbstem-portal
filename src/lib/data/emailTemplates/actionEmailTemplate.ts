@@ -201,7 +201,7 @@ export const actionEmailTemplate = `<!doctype html>
                                                 style="font-size:0px;padding:10px 25px;padding-top:0px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
-                                                    <p style="margin: 30px 0"> <p style="margin: 0 0">Hi {{action.firstName}},</p> If you did not request this action, please
+                                                    <p style="margin: 30px 0">If you did not request this action, please
                                                         ignore this email. Additionally, if the above button does not
                                                         work, you can manually visit <a target="_blank"
                                                             rel="noopener noreferrer" style="color: darkblue"
