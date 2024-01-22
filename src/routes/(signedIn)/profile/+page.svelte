@@ -67,9 +67,18 @@
     <p>
       Your email is not verified. Please check your inbox and spam folder for
       the verification email. If you want to use another email, please change
-      your email through the profile.
+      your email through the profile. Once you've verified your email, click the
+      button below.
     </p>
+
     <DialogActions>
+      <Button
+        color="blue"
+        on:click={() => {
+          location.reload()
+          setTimeout(() => (window.location.href = '/dashboard'), 100)
+        }}>Go to dashboard</Button
+      >
       <Button on:click={dialogEl.cancel}>Close</Button>
     </DialogActions>
   </div>
@@ -113,7 +122,7 @@
         <Field class="pr-9">
           <div class="relative h-6 overflow-x-auto">
             <div class="absolute left-0 top-0 whitespace-nowrap">
-              {`id: ${$user ? $user.profile.id : ''}`}
+              {`id: ${$user ? $user.profile?.id : ''}`}
             </div>
           </div>
         </Field>
