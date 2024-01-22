@@ -271,7 +271,7 @@
     ) {
       alert.trigger(
         'error',
-        'Python is only available to students in at least 3rd grade.',
+        'Python I is only available to students in at least 3rd grade.',
         false,
       )
       return true
