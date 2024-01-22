@@ -17,33 +17,30 @@
     if (e.detail.error === null) {
       showValidation = false
       disabled = true
-      if ($user) {
-        fetch('/api/action', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            type: 'resetPassword',
-            email: values.email,
-            firstName: $user.profile.firstName,
-          }),
-        }).then(async (res) => {
-          if (res.ok) {
-            alert.trigger(
-              'info',
-              'Password reset email was sent. Please check your inbox.',
-            )
-          } else {
-            const { message } = await res.json()
-            alert.trigger('error', message)
-          }
-          values = {
-            email: '',
-          }
-          disabled = false
-        })
-      }
+      fetch('/api/action', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'resetPassword',
+          email: values.email,
+        }),
+      }).then(async (res) => {
+        if (res.ok) {
+          alert.trigger(
+            'info',
+            'Password reset email was sent. Please check your inbox.',
+          )
+        } else {
+          const { message } = await res.json()
+          alert.trigger('error', message)
+        }
+        values = {
+          email: '',
+        }
+        disabled = false
+      })
     } else {
       showValidation = true
       alert.trigger('error', e.detail.error)

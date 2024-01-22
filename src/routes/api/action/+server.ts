@@ -68,11 +68,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
           break
         }
         case 'resetPassword': {
+          console.log(body.email)
           const link = await adminAuth.generatePasswordResetLink(body.email)
           to = body.email
           data = {
             subject: 'Reset Password for gbSTEM Account',
-            name: firstName,
             action: {
               link,
               name: 'Reset Password',
@@ -111,7 +111,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         MessageStream: 'outbound'
       }
 
+
       try {
+        console.log('sending email')
         const client = new postmark.ServerClient(POSTMARK_API_TOKEN);
         client.sendEmail(emailData);
         return new Response()
