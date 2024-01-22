@@ -266,12 +266,12 @@
 
     // if python was selected, make sure that the student is at least in 3rd grade or older
     if (
-      values.program.csCourse === 'Python' &&
+      values.program.csCourse === 'Python I' &&
       (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
     ) {
       alert.trigger(
         'error',
-        'Python is only available to students in at least 3rd grade.',
+        ' I is only available to students in at least 3rd grade.',
         false,
       )
       return true

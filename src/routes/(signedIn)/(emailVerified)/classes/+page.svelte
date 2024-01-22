@@ -55,7 +55,7 @@
 
   const courseToMinGrade = {
     'Environmental Science': 5,
-    Python: 3,
+    'Python I': 3,
     'Web Development': 5,
     'Python II': 5,
     'Mathematics 2b': 1,
