@@ -437,7 +437,6 @@
                 }).then(async (res) => {
                   if (!res.ok) {
                     const { message } = await res.json()
-                    console.log(message)
                   }
                   const applicationData =
                     applicationDoc.data() as Data.Registration
