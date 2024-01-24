@@ -2,9 +2,12 @@
   import { db } from '$lib/client/firebase'
   import { doc, getDoc, collection, getDocs } from 'firebase/firestore'
   import StudentSelect from './StudentSelect.svelte'
+    import Input from './Input.svelte'
 
   let classSchedules: { [k: string]: string }[] = []
+  let listView: boolean = true
   let selectedStudentUid = ''
+  let courses = new Set()
 
   async function fetchClassSchedules(classIds: string[]) {
     const schedulesPromises = classIds.map((classId) =>
@@ -15,6 +18,7 @@
       .map((docSnapshot) => {
         if (docSnapshot.exists()) {
           const data = docSnapshot.data()
+          courses.add(data.course);
           return data.meetingTimes.map((time: any) => ({
             id: docSnapshot.id,
             course: data.course,
@@ -56,7 +60,16 @@
     <StudentSelect bind:selectedStudentUid />
   </div>
   {#if classSchedules.length > 0}
-    <ul class="list-none space-y-2">
+  <Input
+                type="checkbox"
+                bind:value={listView}
+                label={"Show As List?"}
+              />
+  
+
+      
+      {#if listView}
+      <ul class="list-none space-y-2">
       {#each classSchedules as schedule}
         <li
           class="flex items-center justify-between rounded-lg bg-gray-100 p-4"
@@ -64,8 +77,25 @@
           <p class="class-name">{schedule.course}</p>
           <p class="meeting-time">{formatDate(schedule.meetingTime)}</p>
         </li>
-      {/each}
-    </ul>
+        {/each}
+      </ul>
+        {:else}
+        <table
+          class = "grid grid-cols-2 gap-0 justify-between" style = "margin-top:1rem;">
+          {#each courses as course}
+          <div>
+              <div class = "bg-gray-100" style = "border-width:1px; border-style:solid; border-color:gray; padding:1rem;">{course}</div>
+              {#each classSchedules as schedule}
+              {#if schedule.course == course}
+              <div style = "border-width:1px; border-style:solid; border-color:gray; padding:1rem;">
+                <p class="meeting-time">{formatDate(schedule.meetingTime)}</p>
+              </div>
+              {/if}
+              {/each}
+          </div>
+          {/each}
+      </table>
+        {/if}
   {:else}
     <p>Please select a student to view their class schedule.</p>
   {/if}
