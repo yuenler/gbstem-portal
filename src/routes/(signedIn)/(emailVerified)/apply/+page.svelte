@@ -7,6 +7,7 @@
   import Select from '$lib/components/Select.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { onMount } from 'svelte'
+  import { alert } from '$lib/stores'
 
   // if this is a registration, iterate through the user's uid and check if uid-1, uid-2, etc. exists
   // if it does, add it to the options array
@@ -49,6 +50,10 @@
   }
 
   const addChild = () => {
+    if (options.length >= 5) {
+      alert.trigger('error', 'You can only register up to 5 children')
+      return
+    }
     const newChildNumber = options.length + 1
     const newChildName = `Child ${newChildNumber}`
 
