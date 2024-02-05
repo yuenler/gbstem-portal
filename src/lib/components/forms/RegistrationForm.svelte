@@ -525,13 +525,6 @@
 
       <Input
         type="email"
-        bind:value={values.personal.email}
-        label="Primary email"
-        floating
-        required
-      />
-      <Input
-        type="email"
         bind:value={values.personal.secondaryEmail}
         label="Secondary email"
         floating
