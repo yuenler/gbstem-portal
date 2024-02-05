@@ -779,13 +779,13 @@
           >Submit</button
         >
 
-        <Button
+        <!-- <Button
           type="button"
           color={'red'}
           on:click={() => {
             handleDelete()
           }}>Delete draft</Button
-        >
+        > -->
       {/if}
     </div>
   </fieldset>
