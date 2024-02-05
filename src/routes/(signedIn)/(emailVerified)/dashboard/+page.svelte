@@ -14,6 +14,7 @@
   import { fade } from 'svelte/transition'
   import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
   import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
+  import Button from '$lib/components/Button.svelte'
 
   type ApplicationStatus =
     | 'accepted'
@@ -158,7 +159,9 @@
               deadline!
             {/if}
           </p>
-          <Link href="/apply">View application</Link>
+          <a href="/apply">
+            <Button class="mt-5">View Application</Button>
+          </a>
         </div>
       </Card>
       {#if data.application.status === 'accepted'}
