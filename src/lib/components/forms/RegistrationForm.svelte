@@ -28,6 +28,7 @@
   import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
   import { db, storage, user } from '$lib/client/firebase'
   import { cloneDeep, isEqual } from 'lodash-es'
+  import Link from '../Link.svelte'
 
   export let childUid: string = ''
 
@@ -613,9 +614,9 @@
         basis, and you will be notified via email when enrollment opens.
       </span>
       <span
-        >Go to <a href="https://gbstem.org/#/cs" class="link" target="_blank"
+        >Go to <Link href="https://gbstem.org/#/cs" class="link" target="_blank"
           >https://gbstem.org/#/cs
-        </a> for more information</span
+        </Link> for more information</span
       >
       <div class="mb-2">
         <Select
@@ -627,9 +628,12 @@
         />
       </div>
       <span
-        >Go to <a href="https://gbstem.org/#/math" class="link" target="_blank"
+        >Go to <Link
+          href="https://gbstem.org/#/math"
+          class="link"
+          target="_blank"
           >https://gbstem.org/#/math
-        </a> for more information.
+        </Link> for more information.
       </span>
       <span class="text-sm"
         >gbSTEM math classes have a separate fall and spring curriculum for each
@@ -665,12 +669,12 @@
         />
       </div>
       <span
-        >Go to <a
+        >Go to <Link
           href="https://gbstem/#/engineering"
           class="link"
           target="_blank"
           >https://gbstem.org/#/engineering
-        </a> for more information</span
+        </Link> for more information</span
       >
       <div class="mb-2">
         <Select
@@ -682,12 +686,12 @@
         />
       </div>
       <span
-        >Go to <a
+        >Go to <Link
           href="https://gbstem.org/#/science"
           class="link"
           target="_blank"
           >https://gbstem.org/#/science
-        </a> for more information</span
+        </Link> for more information</span
       >
       <div class="mt-2">
         <Select
