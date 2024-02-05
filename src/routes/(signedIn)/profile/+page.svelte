@@ -166,6 +166,6 @@
     <ChangeNameForm />
     <ChangeEmailForm />
     <ChangePasswordForm />
-    <DeleteAccountForm />
+    <!-- <DeleteAccountForm /> -->
   </div>
 </PageLayout>

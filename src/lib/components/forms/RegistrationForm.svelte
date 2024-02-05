@@ -6,6 +6,7 @@
     setDoc,
     serverTimestamp,
     Timestamp,
+    deleteDoc,
   } from 'firebase/firestore'
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
@@ -29,6 +30,7 @@
   import { db, storage, user } from '$lib/client/firebase'
   import { cloneDeep, isEqual } from 'lodash-es'
   import Link from '../Link.svelte'
+  import Button from '../Button.svelte'
 
   export let childUid: string = ''
 
@@ -186,6 +188,22 @@
       },
     }
   }
+
+  function handleDelete() {
+    if ($user) {
+      if (confirm('Are you sure you want to delete this draft?')) {
+        deleteDoc(doc(db, 'registrationsSpring24', childUid))
+          .then(() => {
+            alert.trigger('success', 'Draft was successfully deleted.')
+            location.reload()
+          })
+          .catch((err) => {
+            alert.trigger('error', err.code, true)
+          })
+      }
+    }
+  }
+
   function handleSave(disable: boolean = false) {
     if (!disabled) {
       showValidation = false
@@ -759,6 +777,14 @@
           type="submit"
           class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
           >Submit</button
+        >
+
+        <Button
+          type="button"
+          color={'red'}
+          on:click={() => {
+            handleDelete()
+          }}>Delete draft</Button
         >
       {/if}
     </div>
