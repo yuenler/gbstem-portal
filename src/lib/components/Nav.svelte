@@ -23,23 +23,14 @@
   })
   $: pathname = $page.url.pathname
   const pages = [
-    {
-      name: 'Dashboard',
-      href: '/dashboard',
-    },
-    {
-      name: 'Apply / Register',
-      href: '/apply',
-    },
-    {
-      name: 'Class Catalog',
-      href: '/classes',
-    },
-    {
-      name: 'FAQ',
-      href: '/faq',
-    },
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Apply / Register', href: '/apply' },
+    ...(new Date() >= new Date('2024-03-31')
+      ? [{ name: 'Class Catalog', href: '/classes' }]
+      : []),
+    { name: 'FAQ', href: '/faq' },
   ]
+
   function updateShadow() {
     shadow = window.scrollY !== 0
   }

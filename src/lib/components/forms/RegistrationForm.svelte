@@ -434,6 +434,7 @@
                   body: JSON.stringify({
                     firstName: frozenUser.profile.firstName,
                     studentName: values.personal.studentFirstName,
+                    secondaryEmail: values.personal.secondaryEmail,
                   }),
                 }).then(async (res) => {
                   if (!res.ok) {
