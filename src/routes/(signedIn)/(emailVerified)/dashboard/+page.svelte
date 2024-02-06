@@ -170,11 +170,12 @@
           <p>
             Pre-registrations to be a student are due
             <span class="font-bold"> March 7, 2024 </span> at 11:59 PM ET. Be sure
-            you have registered each student by the deadline!
+            you have pre-registered each student by the deadline!
           </p>
           {#if numSubmitted > 0}
             <p>
-              You have already registered {numSubmitted} students for this semester.
+              You have {numSubmitted} student{numSubmitted > 1 ? 's' : ''}{' '} pre-registered
+              for this semester.
             </p>
           {:else}
             <p>You have not yet registered any students for this semester.</p>
