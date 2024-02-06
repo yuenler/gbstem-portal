@@ -179,7 +179,9 @@
                 : ''}{' '} pre-registered for this semester.
             </p>
           {:else}
-            <p>You have not yet registered any students for this semester.</p>
+            <p>
+              You have not yet pre-registered any students for this semester.
+            </p>
           {/if}
           <div>
             <a href="/apply">
