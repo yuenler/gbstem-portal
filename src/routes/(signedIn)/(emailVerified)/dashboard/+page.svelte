@@ -10,7 +10,7 @@
   import is from 'date-fns/locale/is'
   import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
   import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
-  import { getDoc, doc } from 'firebase/firestore'
+  import { getDoc, doc, collection, getDocs, query } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
   import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
   import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
@@ -31,6 +31,8 @@
   }
 
   let loading = true
+  let numSubmitted = 0
+
   let data: DashboardData = {
     application: {
       status: null,
@@ -88,21 +90,34 @@
               },
             )
           } else {
-            getDoc(doc(db, 'registrationsSpring24', user.object.uid)).then(
-              (applicationDoc) => {
-                const applicationExists = applicationDoc.exists()
-                if (applicationExists) {
-                  const applicationData =
-                    applicationDoc.data() as Data.Application
-                  if (applicationData.meta.submitted) {
-                    data.application.status = 'submitted'
-                  } else {
-                    data.application.status = null
-                  }
+            const q = query(collection(db, 'registrationsSpring24'))
+            getDocs(q).then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                const id = doc.id
+                console.log(id)
+                console.log(user.object.uid)
+                if (id.includes(user.object.uid)) {
+                  console.log('hello??')
+                  numSubmitted += 1
                 }
-                resolve()
-              },
-            )
+              })
+              resolve()
+            })
+            // getDoc(doc(db, 'registrationsSpring24', user.object.uid + "-1")).then(
+            //   (applicationDoc) => {
+            //     const applicationExists = applicationDoc.exists()
+            //     if (applicationExists) {
+            //       const applicationData =
+            //         applicationDoc.data() as Data.Application
+            //       if (applicationData.meta.submitted) {
+            //         data.application.status = 'submitted'
+            //       } else {
+            //         data.application.status = null
+            //       }
+            //     }
+            //     resolve()
+            //   },
+            // )
           }
         }),
       ]).then(() => {
@@ -131,38 +146,59 @@
     >
       <Card class="space-y-2">
         <h2 class="text-xl font-bold">Application</h2>
-        {#if data.application.status === null}
+        {#if !isStudent}
+          {#if data.application.status === null}
+            <div class="space-y-1">
+              <p>
+                Applications to be an instructor are due <span
+                  class="font-bold"
+                >
+                  March 2, 2024
+                </span>
+                at 11:59 PM ET.
+              </p>
+            </div>
+          {/if}
           <div class="space-y-1">
             <p>
-              Applications to be an instructor are due <span class="font-bold">
-                March 2, 2024
-              </span>
-              at 11:59 PM ET. Registrations to be a student are due
-              <span class="font-bold"> March 7, 2024 </span> at 11:59 PM ET.
+              {#if data.application.status === 'accepted'}
+                You have been accepted to gbSTEM as an instructor! We look
+                forward to seeing you.
+              {:else if data.application.status === 'waitlisted'}
+                You have been waitlisted. We will follow up with more
+                information!
+              {:else if data.application.status === 'rejected'}
+                Unfortunately, instructor applications were extremely
+                competitive, and we were not able to accept you as an instructor
+                for gbSTEM.
+              {:else if data.application.status === 'submitted' || data.application.status === 'interview'}
+                Your application is submitted and in review!
+              {:else}
+                Your application is in progress. Make sure to submit by the
+                deadline!
+              {/if}
+              <a href="/apply">
+                <Button class="mt-5">View Application</Button>
+              </a>
             </p>
           </div>
-        {/if}
-        <div class="space-y-1">
+        {:else}
           <p>
-            {#if data.application.status === 'accepted'}
-              You have been accepted to gbSTEM as an instructor! We look forward
-              to seeing you.
-            {:else if data.application.status === 'waitlisted'}
-              You have been waitlisted. We will follow up with more information!
-            {:else if data.application.status === 'rejected'}
-              Unfortunately, instructor applications were extremely competitive,
-              and we were not able to accept you as an instructor for gbSTEM.
-            {:else if data.application.status === 'submitted' || data.application.status === 'interview'}
-              Your application is submitted and in review!
-            {:else}
-              Your application is in progress. Make sure to submit by the
-              deadline!
-            {/if}
+            Registrations to be a student are due
+            <span class="font-bold"> March 7, 2024 </span> at 11:59 PM ET. Be sure
+            you have registered each student by the deadline!
           </p>
+          {#if numSubmitted > 0}
+            <p>
+              You have already registered {numSubmitted} students for this semester.
+            </p>
+          {:else}
+            <p>You have not yet registered any students for this semester.</p>
+          {/if}
           <a href="/apply">
-            <Button class="mt-5">View Application</Button>
+            <Button class="mt-5">View Registration Form</Button>
           </a>
-        </div>
+        {/if}
       </Card>
       {#if data.application.status === 'accepted'}
         {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
