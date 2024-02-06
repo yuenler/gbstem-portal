@@ -158,7 +158,7 @@
       />
 
       {#if values.role === 'Parent registering my child for classes'}
-        <div
+        <!-- <div
           class="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
           role="alert"
         >
@@ -167,7 +167,7 @@
             ACCOUNT NOW, YOUR ACCOUNT WILL BE DELETED AND ALL ACCOUNT INFO WILL
             BE LOST.
           </strong>
-        </div>
+        </div> -->
 
         <div
           class="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
