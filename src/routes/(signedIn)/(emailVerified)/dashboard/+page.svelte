@@ -94,11 +94,10 @@
             getDocs(q).then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
                 const id = doc.id
-                console.log(id)
-                console.log(user.object.uid)
                 if (id.includes(user.object.uid)) {
-                  console.log('hello??')
-                  numSubmitted += 1
+                  if (doc.data().meta.submitted) {
+                    numSubmitted += 1
+                  }
                 }
               })
               resolve()
