@@ -174,8 +174,9 @@
           </p>
           {#if numSubmitted > 0}
             <p>
-              You have {numSubmitted} student{numSubmitted > 1 ? 's' : ''}{' '} pre-registered
-              for this semester.
+              You currently have {numSubmitted} student{numSubmitted > 1
+                ? 's'
+                : ''}{' '} pre-registered for this semester.
             </p>
           {:else}
             <p>You have not yet registered any students for this semester.</p>
