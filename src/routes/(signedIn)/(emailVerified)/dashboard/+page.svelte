@@ -169,7 +169,7 @@
           </div>
         {:else}
           <p>
-            Registrations to be a student are due
+            Pre-registrations to be a student are due
             <span class="font-bold"> March 7, 2024 </span> at 11:59 PM ET. Be sure
             you have registered each student by the deadline!
           </p>
@@ -182,7 +182,7 @@
           {/if}
           <div>
             <a href="/apply">
-              <Button class="mt-5">View Registration Form</Button>
+              <Button class="mt-5">View Pre-registration Form</Button>
             </a>
           </div>
         {/if}
