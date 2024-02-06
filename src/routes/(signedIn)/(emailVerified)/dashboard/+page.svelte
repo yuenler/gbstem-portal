@@ -103,21 +103,6 @@
               })
               resolve()
             })
-            // getDoc(doc(db, 'registrationsSpring24', user.object.uid + "-1")).then(
-            //   (applicationDoc) => {
-            //     const applicationExists = applicationDoc.exists()
-            //     if (applicationExists) {
-            //       const applicationData =
-            //         applicationDoc.data() as Data.Application
-            //       if (applicationData.meta.submitted) {
-            //         data.application.status = 'submitted'
-            //       } else {
-            //         data.application.status = null
-            //       }
-            //     }
-            //     resolve()
-            //   },
-            // )
           }
         }),
       ]).then(() => {
@@ -177,10 +162,10 @@
                 Your application is in progress. Make sure to submit by the
                 deadline!
               {/if}
-              <a href="/apply">
-                <Button class="mt-5">View Application</Button>
-              </a>
             </p>
+            <a href="/apply">
+              <Button class="mt-5">View Application</Button>
+            </a>
           </div>
         {:else}
           <p>
@@ -195,9 +180,11 @@
           {:else}
             <p>You have not yet registered any students for this semester.</p>
           {/if}
-          <a href="/apply">
-            <Button class="mt-5">View Registration Form</Button>
-          </a>
+          <div>
+            <a href="/apply">
+              <Button class="mt-5">View Registration Form</Button>
+            </a>
+          </div>
         {/if}
       </Card>
       {#if data.application.status === 'accepted'}
