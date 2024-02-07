@@ -28,7 +28,10 @@
         return []
       })
       .flat()
-      .sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime)) // Sort by date
+      .sort(
+        (a, b) =>
+          new Date(a.meetingTime).getTime() - new Date(b.meetingTime).getTime(),
+      ) // Sort by date
   }
 
   function formatDate(dateString: string) {
