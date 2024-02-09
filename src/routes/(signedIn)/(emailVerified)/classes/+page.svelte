@@ -21,8 +21,8 @@
   import Select from '$lib/components/Select.svelte'
   import coursesJson from '$lib/data/courses.json'
   import Alert from '$lib/components/Alert.svelte'
-    import { formatTime24to12 } from '$lib/utils'
-    import { onlineClassEnrolledEmailTemplate } from '$lib/data/emailTemplates/onlineClassEnrolledEmailTemplate'
+  import { formatTime24to12 } from '$lib/utils'
+  import { onlineClassEnrolledEmailTemplate } from '$lib/data/emailTemplates/onlineClassEnrolledEmailTemplate'
 
   type ClassInfo = {
     id: string
@@ -130,9 +130,10 @@
         return classInfo
       })
       if (user && isStudent) {
-        if(user.object.email) userEmail = user.object.email
-        if(user.object.displayName) userName = user.profile.firstName,
-        await determineStudentEnrollment(user)
+        if (user.object.email) userEmail = user.object.email
+        if (user.object.displayName)
+          (userName = user.profile.firstName),
+            await determineStudentEnrollment(user)
       }
       loading = false
     })
@@ -228,38 +229,37 @@
       .then(() => {
         alert.trigger('success', 'Enrolled in class!')
         fetch('/api/enroll', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: userEmail,
-        firstName: userName,
-        instructor: dialogClassDetails?.instructorFirstName,
-        instructorEmail: dialogClassDetails?.instructorEmail,
-        classTimes: dialogClassDetails?.classTimes,
-        classDays: dialogClassDetails?.classDays,
-        course: dialogClassDetails?.course,
-        meetingLink: dialogClassDetails?.meetingLink,
-        online: dialogClassDetails?.online,
-      }),
-    }).then(async (res) => {
-      if (!res.ok) {
-        const { message } = await res.json()
-        console.log(message)
-      }
-      dialogEl.close()
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: userEmail,
+            firstName: userName,
+            instructor: dialogClassDetails?.instructorFirstName,
+            instructorEmail: dialogClassDetails?.instructorEmail,
+            classTimes: dialogClassDetails?.classTimes,
+            classDays: dialogClassDetails?.classDays,
+            course: dialogClassDetails?.course,
+            meetingLink: dialogClassDetails?.meetingLink,
+            online: dialogClassDetails?.online,
+          }),
+        }).then(async (res) => {
+          if (!res.ok) {
+            const { message } = await res.json()
+            console.log(message)
+          }
+          dialogEl.close()
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          })
+        })
+        alert.trigger(
+          'success',
+          'Thank you for enrolling! You will receive an email confirming course details shortly.',
+        )
       })
-    })
-    alert.trigger(
-      'success',
-      'Thank you for enrolling! You will receive an email confirming course details shortly.',
-    )
-  }
-      )
       .catch((error) => {
         alert.trigger('error', 'Error enrolling in class!')
       })
@@ -308,7 +308,9 @@
             : ''}</span
         >
       </h2>
-      <p class="text-lg font-medium text-gray-700">{dialogClassDetails.online ? `Online` : `In-Person`}</p>
+      <p class="text-lg font-medium text-gray-700">
+        {dialogClassDetails.online ? `Online` : `In-Person`}
+      </p>
       <p class="text-lg font-medium text-gray-700">
         Instructor: {`${dialogClassDetails.instructorFirstName} ${dialogClassDetails.instructorLastName}`}
       </p>
@@ -395,7 +397,9 @@
                     : ''}</span
                 >
               </h2>
-              <p class="text-lg font-medium text-gray-700">{classInfo.online ? `Online` : `In-Person`}</p>
+              <p class="text-lg font-medium text-gray-700">
+                {classInfo.online ? `Online` : `In-Person`}
+              </p>
               <p class="text-lg font-medium text-gray-700">
                 Instructor: {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}
               </p>

@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         const classTimes: string[] = body.classTimes
         const classDays: string[] = body.classDays
         const classes = classDays.map(
-            (day, index) => `${day} at ${formatTime24to12(classTimes[index])}`,
+          (day, index) => `${day} at ${formatTime24to12(classTimes[index])}`,
         )
         const class1Time = classes[0]
         const class2Time = classes[1]
@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
               firstName: body.firstName,
               class1Time: class1Time,
               class2Time: class2Time,
-              meetingLink:  body.meetingLink,
+              meetingLink: body.meetingLink,
               course: body.course,
               instructorEmail: body.instructorEmail,
               online: body.online,
