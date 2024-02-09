@@ -94,11 +94,10 @@
             getDocs(q).then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
                 const id = doc.id
-                console.log(id)
-                console.log(user.object.uid)
                 if (id.includes(user.object.uid)) {
-                  console.log('hello??')
-                  numSubmitted += 1
+                  if (doc.data().meta.submitted) {
+                    numSubmitted += 1
+                  }
                 }
               })
               resolve()
@@ -169,20 +168,24 @@
           </div>
         {:else}
           <p>
-            Registrations to be a student are due
+            Pre-registrations to be a student are due
             <span class="font-bold"> March 7, 2024 </span> at 11:59 PM ET. Be sure
-            you have registered each student by the deadline!
+            you have pre-registered each student by the deadline!
           </p>
           {#if numSubmitted > 0}
             <p>
-              You have so far registered {numSubmitted} students for this semester.
+              You currently have {numSubmitted} student{numSubmitted > 1
+                ? 's'
+                : ''}{' '} pre-registered for this semester.
             </p>
           {:else}
-            <p>You have not yet registered any students for this semester.</p>
+            <p>
+              You have not yet pre-registered any students for this semester.
+            </p>
           {/if}
           <div>
             <a href="/apply">
-              <Button class="mt-5">View Registration Form</Button>
+              <Button class="mt-5">View Pre-registration Form</Button>
             </a>
           </div>
         {/if}
