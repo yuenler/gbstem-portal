@@ -28,6 +28,7 @@
     instructorLastName: string
     instructorEmail: string
     classCap: number
+    online: boolean
   } = {
     classDay1: '',
     classTime1: '',
@@ -42,6 +43,7 @@
     instructorLastName: '',
     instructorEmail: '',
     classCap: 7,
+    online: true,
   }
 
   let createClassSchedule = true
@@ -115,6 +117,7 @@
               instructorLastName: string
               instructorEmail: string
               classCap: number
+              online: boolean
             }
             disabled = true
             createClassSchedule = false
@@ -196,6 +199,7 @@
       label="Grade recommendation. For example, 3-5 or 6-8."
     />
 
+    {#if values.online}
     <Input
       type="text"
       bind:value={values.meetingLink}
@@ -203,11 +207,12 @@
       floating
       required
     />
+    {/if}
 
     <div class="grid gap-1">
       <span class="font-bold"
-        >Classes meet twice weekly at consistent days and times throughout the
-        semester and run for 45-60 minutes each.
+        >Online classes meet twice weekly at consistent days and times throughout the
+        semester and run for 45-60 minutes each. In-person classes meet once a week on a weekend afternoon at the Cambridge Public Library.
       </span>
 
       <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
@@ -229,6 +234,7 @@
         />
       </div>
 
+    {#if values.online }
       <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
         <div class="sm:col-span-2">
           <Select
@@ -247,14 +253,21 @@
           required
         />
       </div>
-    </div>
+    {/if}
 
+    </div>
     <Input
       type="number"
       bind:value={values.classCap}
       label="Class capacity"
       floating
       required
+    />
+
+    <Input
+      type="checkbox"
+      bind:value={values.online}
+      label="Class taught online?"
     />
 
     <Input

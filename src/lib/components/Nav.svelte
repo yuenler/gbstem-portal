@@ -29,6 +29,7 @@
       ? [{ name: 'Class Catalog', href: '/classes' }]
       : []),
     { name: 'FAQ', href: '/faq' },
+    { name: 'Class Catalog', href: '/classes' }
   ]
 
   function updateShadow() {

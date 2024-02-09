@@ -175,7 +175,7 @@
           </p>
           {#if numSubmitted > 0}
             <p>
-              You have already registered {numSubmitted} students for this semester.
+              You have so far registered {numSubmitted} students for this semester.
             </p>
           {:else}
             <p>You have not yet registered any students for this semester.</p>
