@@ -36,6 +36,7 @@
 
   let disabled = true
   let showValidation = false
+  let ignoreAgeLimits = false
   let dbValues: Data.Registration
 
   const emptyValues: Data.Registration = {
@@ -271,159 +272,161 @@
       selectedCS + selectedMath + selectedEngineering + selectedScience
 
     // if environmental science was selected, make sure that the student is at least in 4 grade or older
-    if (
-      values.program.scienceCourse === 'Environmental Science' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Environmental Science is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
+    if (!ignoreAgeLimits) {
+      if (
+        values.program.scienceCourse === 'Environmental Science' &&
+        (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Environmental Science is only available to students in at least 5th grade.',
+          false,
+        )
+        return true
+      }
 
-    // if python was selected, make sure that the student is at least in 3rd grade or older
-    if (
-      values.program.csCourse === 'Python I' &&
-      (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Python I is only available to students in at least 3rd grade.',
-        false,
-      )
-      return true
-    }
+      // if python was selected, make sure that the student is at least in 3rd grade or older
+      if (
+        values.program.csCourse === 'Python I' &&
+        (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Python I is only available to students in at least 3rd grade.',
+          false,
+        )
+        return true
+      }
 
-    // if java was selected, make sure that the student is at least in 4th grade or older
-    if (
-      values.program.csCourse === 'Java' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Java is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
+      // if java was selected, make sure that the student is at least in 4th grade or older
+      if (
+        values.program.csCourse === 'Java' &&
+        (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Java is only available to students in at least 5th grade.',
+          false,
+        )
+        return true
+      }
 
-    // if web development was selected, make sure that the student is at least in 4th grade or older
-    if (
-      values.program.csCourse === 'Web Development' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Web Development is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
+      // if web development was selected, make sure that the student is at least in 4th grade or older
+      if (
+        values.program.csCourse === 'Web Development' &&
+        (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Web Development is only available to students in at least 5th grade.',
+          false,
+        )
+        return true
+      }
 
-    // if python II was selected, make sure that the student is at least in 5th grade or older
-    if (
-      values.program.csCourse === 'Python II' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Python II is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
+      // if python II was selected, make sure that the student is at least in 5th grade or older
+      if (
+        values.program.csCourse === 'Python II' &&
+        (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Python II is only available to students in at least 5th grade.',
+          false,
+        )
+        return true
+      }
 
-    // math II only for 1st grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 2b' &&
-      (parseInt(values.academic.grade) < 1 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math II is only available to students in at least 1st grade.',
-        false,
-      )
-      return true
-    }
+      // math II only for 1st grade and up
+      if (
+        values.program.mathCourse === 'Mathematics 2b' &&
+        (parseInt(values.academic.grade) < 1 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Math II is only available to students in at least 1st grade.',
+          false,
+        )
+        return true
+      }
 
-    // math III only for 2nd grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 3b' &&
-      (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math III is only available to students in at least 3rd grade.',
-        false,
-      )
-      return true
-    }
+      // math III only for 2nd grade and up
+      if (
+        values.program.mathCourse === 'Mathematics 3b' &&
+        (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Math III is only available to students in at least 3rd grade.',
+          false,
+        )
+        return true
+      }
 
-    // math IV only for 4th grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 4b' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math IV is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
+      // math IV only for 4th grade and up
+      if (
+        values.program.mathCourse === 'Mathematics 4b' &&
+        (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Math IV is only available to students in at least 5th grade.',
+          false,
+        )
+        return true
+      }
 
-    // math V only for 5th grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 5b' &&
-      (parseInt(values.academic.grade) < 6 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math V is only available to students in at least 6th grade.',
-        false,
-      )
-      return true
-    }
+      // math V only for 5th grade and up
+      if (
+        values.program.mathCourse === 'Mathematics 5b' &&
+        (parseInt(values.academic.grade) < 6 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Math V is only available to students in at least 6th grade.',
+          false,
+        )
+        return true
+      }
 
-    // engineering I only for grade 2 and up
-    if (
-      values.program.engineeringCourse === 'Engineering I' &&
-      (parseInt(values.academic.grade) < 2 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Engineering I is only available to students in at least 2nd grade.',
-        false,
-      )
-      return true
-    }
+      // engineering I only for grade 2 and up
+      if (
+        values.program.engineeringCourse === 'Engineering I' &&
+        (parseInt(values.academic.grade) < 2 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Engineering I is only available to students in at least 2nd grade.',
+          false,
+        )
+        return true
+      }
 
-    // engineering II only for grade 4 and up
-    if (
-      values.program.engineeringCourse === 'Engineering II' &&
-      (parseInt(values.academic.grade) < 4 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Engineering II is only available to students in at least 4th grade.',
-        false,
-      )
-      return true
-    }
+      // engineering II only for grade 4 and up
+      if (
+        values.program.engineeringCourse === 'Engineering II' &&
+        (parseInt(values.academic.grade) < 4 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Engineering II is only available to students in at least 4th grade.',
+          false,
+        )
+        return true
+      }
 
-    // engineering III only for grade 5 and up
-    if (
-      values.program.engineeringCourse === 'Engineering III' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Engineering III is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
+      // engineering III only for grade 5 and up
+      if (
+        values.program.engineeringCourse === 'Engineering III' &&
+        (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
+      ) {
+        alert.trigger(
+          'error',
+          'Engineering III is only available to students in at least 5th grade.',
+          false,
+        )
+        return true
+      }
     }
 
     return false
@@ -625,11 +628,20 @@
         for each course. Course enrollment will be on a first-come, first-served
         basis, and you will be notified via email when enrollment opens.
       </span>
+      
+      <div class="mb-4"><Input
+        bind:value={ignoreAgeLimits}
+        label="Ignore Age Limit Guidelines?"
+        type="checkbox"
+        floating
+      /></div>
+
       <span
         >Go to <Link href="https://gbstem.org/#/cs" class="link" target="_blank"
           >https://gbstem.org/#/cs
         </Link> for more information</span
       >
+
       <div class="mb-2">
         <Select
           bind:value={values.program.csCourse}
