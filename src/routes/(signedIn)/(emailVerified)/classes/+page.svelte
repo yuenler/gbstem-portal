@@ -196,20 +196,27 @@
       return
     }
 
-    if (
-      dialogClassDetails &&
-      Object.keys(courseToMinGrade).includes(dialogClassDetails.course) &&
-      (studentUidToGrade[selectedStudentUid] == 'K' ||
-        parseInt(studentUidToGrade[selectedStudentUid], 10) <
-          courseToMinGrade[dialogClassDetails.course ?? ''])
-    ) {
-      alert.trigger(
-        'error',
-        `Students must be in grade ${
-          courseToMinGrade[dialogClassDetails.course ?? '']
-        } or higher to enroll in this class!`,
-      )
-      return
+    const ageLimitsDoc = await getDoc(
+      doc(db, 'registrationsSpring24', selectedStudentUid),
+    )
+    const ageBypassEnabled = ageLimitsDoc.data()?.agreements.bypassAgeLimits
+
+    if (!ageBypassEnabled) {
+      if (
+        dialogClassDetails &&
+        Object.keys(courseToMinGrade).includes(dialogClassDetails.course) &&
+        (studentUidToGrade[selectedStudentUid] == 'K' ||
+          parseInt(studentUidToGrade[selectedStudentUid], 10) <
+            courseToMinGrade[dialogClassDetails.course ?? ''])
+      ) {
+        alert.trigger(
+          'error',
+          `Students must be in grade ${
+            courseToMinGrade[dialogClassDetails.course ?? '']
+          } or higher to enroll in this class!`,
+        )
+        return
+      }
     }
 
     await updateDoc(classDocRef, {
