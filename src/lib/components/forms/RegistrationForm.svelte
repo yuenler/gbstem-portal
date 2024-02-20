@@ -66,6 +66,7 @@
       reason: '',
     },
     agreements: {
+      bypassAgeLimits: false,
       entireProgram: false,
       timeCommitment: false,
       submitting: false,
@@ -109,6 +110,7 @@
       reason: '',
     },
     agreements: {
+      bypassAgeLimits: false,
       entireProgram: false,
       timeCommitment: false,
       submitting: false,
@@ -270,6 +272,7 @@
     const numClasses =
       selectedCS + selectedMath + selectedEngineering + selectedScience
 
+    if(!values.agreements.bypassAgeLimits) {
     // if environmental science was selected, make sure that the student is at least in 4 grade or older
     if (
       values.program.scienceCourse === 'Environmental Science' &&
@@ -425,6 +428,7 @@
       )
       return true
     }
+  }
 
     return false
   }

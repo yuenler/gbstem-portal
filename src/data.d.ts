@@ -203,6 +203,7 @@ declare global {
         inPerson: boolean
       }
       agreements: {
+        bypassAgeLimits: boolean
         entireProgram: boolean
         timeCommitment: boolean
         submitting: boolean
