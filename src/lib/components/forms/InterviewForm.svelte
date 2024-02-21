@@ -45,7 +45,7 @@
       },
       body: JSON.stringify({
         firstName: currentUser.profile.firstName,
-        timeSlot: dateToAdd
+        timeSlot: formatDate(new Date(dateToAdd)) + " Eastern Time."
       }),
     }).then(async (res) => {
       if (!res.ok) {
