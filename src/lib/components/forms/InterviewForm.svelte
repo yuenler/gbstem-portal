@@ -29,6 +29,15 @@
 
   async function sendSlotRequest() {
     const dueDate = await getDoc(doc(db, 'semesterDates', 'spring24'))
+    if(dueDate.exists()) {
+      if(new Date(dateToAdd) > new Date(dueDate.data().instructorOrientation)) {
+        alert.trigger(
+        'error',
+        'Instructor interviews close on ' + new Date(dateToAdd).toDateString() + '. Please pick a time before then.'
+        )
+        return;
+      }
+    }
     fetch('/api/slotRequest', {
       method: 'POST',
       headers: {
@@ -48,6 +57,7 @@
         behavior: 'smooth',
       })
     })
+    showRequestNewTime = false;
     alert.trigger(
       'success',
       `Thank you for requesting a new timeslot! We will add new times soon. Please check back here soon to schedule your interview.`,
@@ -215,7 +225,7 @@
 
           <button
           type="submit"
-          class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
+          class="mt-2 rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
           >Submit</button
         >
           </Form>
