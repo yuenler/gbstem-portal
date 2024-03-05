@@ -5,6 +5,7 @@
     getDocs,
     updateDoc,
     doc,
+    getDoc,
   } from 'firebase/firestore'
   import { db, user } from '$lib/client/firebase'
   import Form from '$lib/components/Form.svelte'
@@ -14,6 +15,7 @@
   import Link from '../Link.svelte'
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
+  import Input from '$lib/components/Input.svelte'
 
   let showValidation = false
   let valuesJson: Data.InterviewSlot[] = []
@@ -22,8 +24,48 @@
   let scheduled = false
   let data: Data.InterviewSlot[] = []
   let loading = true
+  let showRequestNewTime = false
+  let dateToAdd = ""
 
-  function handleSubmit() {
+  async function sendSlotRequest() {
+    const dueDate = await getDoc(doc(db, 'semesterDates', 'spring24'))
+    if(dueDate.exists()) {
+      if(new Date(dateToAdd) > new Date(dueDate.data().instructorOrientation)) {
+        alert.trigger(
+        'error',
+        'Instructor interviews close on ' + new Date(dateToAdd).toDateString() + '. Please pick a time before then.'
+        )
+        return;
+      }
+    }
+    fetch('/api/slotRequest', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName: currentUser.profile.firstName,
+        timeSlot: formatDate(new Date(dateToAdd)) + " Eastern Time."
+      }),
+    }).then(async (res) => {
+      if (!res.ok) {
+        const { message } = await res.json()
+        console.log(message)
+      }
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      })
+    })
+    showRequestNewTime = false;
+    alert.trigger(
+      'success',
+      `Thank you for requesting a new timeslot! We will add new times soon. Please check back here soon to schedule your interview.`,
+    )
+  
+  }
+
+  async function handleSubmit() {
     scheduledInterview.interviewSlotStatus = 'pending'
     scheduled = true
 
@@ -142,19 +184,13 @@
               <div
                 class="rounded-md bg-red-100 px-4 py-2 text-red-900 shadow-sm"
               >
-                There are no interview slots available at this time. Please
-                email us at <Link href="mailto:contact@gbstem.org ">
-                  contact@gbstem.org
-                </Link> and we will try to find a time that works for you.
+                There are no interview slots available currently. Please
+                request a new time to be added that works for you. You may request multiple times.
               </div>
             {:else}
               <div>
                 Please sign up for one of the following interview slots. If none
-                of them work for you, please email us at <Link
-                  href="mailto:contact@gbstem.org "
-                >
-                  contact@gbstem.org
-                </Link> and we will try to find a time that works for you.
+                of them work for you, please request a new time to be added. You may request multiple times.
               </div>
             {/if}
             <div class="mb-4">
@@ -176,6 +212,30 @@
               class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
               >Submit</button
             >
+            {#if showRequestNewTime}
+            <Form
+            class={clsx('max-w-2xl', showValidation && 'show-validation')}
+            on:submit={sendSlotRequest}
+          >
+            <Input
+            type="datetime-local"
+            bind:value={dateToAdd}
+            label="Set Date (your local time)"
+          />
+
+          <button
+          type="submit"
+          class="mt-2 rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
+          >Submit</button
+        >
+          </Form>
+            {:else}
+            <button 
+              type ="button"
+              on:click={() => showRequestNewTime = true}
+              class="rounded-md bg-blue-100 px-4 py-2 text-blue-900 shadow-sm transition-colors duration-300 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-500"
+              >Request A Time</button>
+            {/if}
           </Form>
         {:else if scheduledInterview.interviewSlotStatus === 'pending'}
           <div
