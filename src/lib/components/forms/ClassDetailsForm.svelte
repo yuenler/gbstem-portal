@@ -200,19 +200,21 @@
     />
 
     {#if values.online}
-    <Input
-      type="text"
-      bind:value={values.meetingLink}
-      label="Meeting link"
-      floating
-      required
-    />
+      <Input
+        type="text"
+        bind:value={values.meetingLink}
+        label="Meeting link"
+        floating
+        required
+      />
     {/if}
 
     <div class="grid gap-1">
       <span class="font-bold"
-        >Online classes meet twice weekly at consistent days and times throughout the
-        semester and run for 45-60 minutes each. In-person classes meet once a week on a weekend afternoon at the Cambridge Public Library.
+        >Online classes meet twice weekly at consistent days and times
+        throughout the semester and run for 45-60 minutes each. In-person
+        classes meet once a week on a weekend afternoon at the Cambridge Public
+        Library.
       </span>
 
       <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
@@ -234,27 +236,25 @@
         />
       </div>
 
-    {#if values.online }
-      <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
-        <div class="sm:col-span-2">
-          <Select
-            bind:value={values.classDay2}
-            label="Meeting day 2"
-            options={daysOfWeekJson}
+      {#if values.online}
+        <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
+          <div class="sm:col-span-2">
+            <Select
+              bind:value={values.classDay2}
+              label="Meeting day 2"
+              options={daysOfWeekJson}
+              floating
+              required
+            />
+          </div>
+          <Input
+            type="time"
+            bind:value={values.classTime2}
+            label="Meeting time 2"
             floating
-            required
           />
         </div>
-        <Input
-          type="time"
-          bind:value={values.classTime2}
-          label="Meeting time 2"
-          floating
-          required
-        />
-      </div>
-    {/if}
-
+      {/if}
     </div>
     <Input
       type="number"
