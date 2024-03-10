@@ -316,7 +316,9 @@
         >
       </h2>
       <p class="text-lg font-medium text-gray-700">
-        {dialogClassDetails.online ? `Online` : `In-Person`}
+        {dialogClassDetails.online
+          ? `Online`
+          : `In-Person (Cambridge Public Library main branch)`}
       </p>
       <p class="text-lg font-medium text-gray-700">
         Instructor: {`${dialogClassDetails.instructorFirstName} ${dialogClassDetails.instructorLastName}`}
@@ -405,7 +407,9 @@
                 >
               </h2>
               <p class="text-lg font-medium text-gray-700">
-                {classInfo.online ? `Online` : `In-Person`}
+                {classInfo.online
+                  ? `Online`
+                  : `In-Person (Cambridge Public Library main branch)`}
               </p>
               <p class="text-lg font-medium text-gray-700">
                 Instructor: {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}

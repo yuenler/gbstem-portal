@@ -25,9 +25,10 @@
   const pages = [
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Apply / Register', href: '/apply' },
-    ...(new Date() >= new Date('2024-03-31')
-      ? [{ name: 'Class Catalog', href: '/classes' }]
-      : []),
+    // ...(new Date() >= new Date('2024-03-31')
+    //   ? [{ name: 'Class Catalog', href: '/classes' }]
+    //   : []),
+    { name: 'Class Catalog', href: '/classes' },
     { name: 'FAQ', href: '/faq' },
   ]
 
