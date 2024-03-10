@@ -321,13 +321,17 @@
       <p class="text-lg font-medium text-gray-700">
         {dialogClassDetails.online
           ? `Online`
-          : `In-Person (Cambridge Public Library main branch)`}
+          : `In-Person (Cambridge Public Library Main Branch)`}
       </p>
       <p class="text-lg font-medium text-gray-700">
         Instructor: {`${dialogClassDetails.instructorFirstName} ${dialogClassDetails.instructorLastName}`}
       </p>
       <div>
-        <h4 class="font-semibold text-gray-700">Class Times:</h4>
+        <h4 class="font-semibold text-gray-700">
+          {`Class Times (${
+            dialogClassDetails.online ? '1-hour classes' : '2-hour class'
+          }):`}
+        </h4>
         <ul class="list-inside list-disc text-gray-600">
           {#each formatClassTimes(dialogClassDetails.classDays, dialogClassDetails.classTimes) as classTime}
             <li>{classTime}</li>
@@ -412,13 +416,17 @@
               <p class="text-lg font-medium text-gray-700">
                 {classInfo.online
                   ? `Online`
-                  : `In-Person (Cambridge Public Library main branch)`}
+                  : `In-Person (Cambridge Public Library Main Branch)`}
               </p>
               <p class="text-lg font-medium text-gray-700">
                 Instructor: {`${classInfo.instructorFirstName} ${classInfo.instructorLastName}`}
               </p>
               <div>
-                <h4 class="font-semibold text-gray-700">Class Times:</h4>
+                <h4 class="font-semibold text-gray-700">
+                  {`Class Times (${
+                    classInfo.online ? '1-hour classes' : '2-hour class'
+                  }):`}
+                </h4>
                 <ul class="list-inside list-disc text-gray-600">
                   {#each formatClassTimes(classInfo.classDays, classInfo.classTimes) as classTime}
                     <li>{classTime}</li>
