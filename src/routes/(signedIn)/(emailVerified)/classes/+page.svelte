@@ -128,6 +128,9 @@
         }
         return classInfo
       })
+      // sort classes so that classes with most spots remaining are at the top
+      classes.sort((a, b) => b.spotsRemaining - a.spotsRemaining)
+
       if (user && isStudent) {
         if (user.object.email) userEmail = user.object.email
         if (user.object.displayName)
