@@ -164,7 +164,7 @@ export const inPersonClassEnrolledEmailTemplate = `<!doctype html>
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#797e82;">
                                                     <h1
                                                         style="text-align: center;               color: #000000;               font-weight: 700;               font-size: 34px;">
-                                                        Application Confirmation</h1>
+                                                        Class Enrollment Confirmation</h1>
                                                 </div>
                                             </td>
                                         </tr>
@@ -173,7 +173,7 @@ export const inPersonClassEnrolledEmailTemplate = `<!doctype html>
                                                 style="font-size:0px;padding:10px 25px;padding-top:0px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
-                                                    <p style="margin: 20px 0"> <p style="margin: 0 0">Hi {{app.firstName}},</p> Thanks for enrolling for an in-person {{app.course}} class with us this semester! The class will meet on {{app.class1Time}} weekly in person at the Cambridge Public Library. Your instructor will be {{app.instructor}}. You can email them at {{app.instructorEmail}} or email <a target="_blank"
+                                                    <p style="margin: 20px 0"> <p style="margin: 0 0">Hi {{app.firstName}},</p> Thanks for enrolling {{app.studentName}} for an in-person {{app.course}} class with us this semester! The class will meet on {{app.class1Time}} weekly in person at the Cambridge Public Library. Your instructor will be {{app.instructor}}. You can email them at {{app.instructorEmail}} or email <a target="_blank"
                                                     rel="noopener noreferrer" style="color: darkblue"
                                                     href="mailto:contact@gbstem.org">contact@gbstem.org</a> if you have any questions! </p>
                                                     <p style="margin: 30px 0">In the meantime, follow us on <a

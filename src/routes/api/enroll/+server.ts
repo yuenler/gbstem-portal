@@ -28,7 +28,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         const template = {
           name: 'interviewScheduled',
           data: {
-            subject: `Your Class Details`,
+            subject: `${body.course} class details for ${body.studentName}`,
             app: {
               name: 'Portal',
               link: 'https://portal.gbstem.org',
@@ -40,6 +40,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
               course: body.course,
               instructorEmail: body.instructorEmail,
               online: body.online,
+              studentName: body.studentName,
             }
           },
         }

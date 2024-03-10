@@ -22,7 +22,6 @@
   import coursesJson from '$lib/data/courses.json'
   import Alert from '$lib/components/Alert.svelte'
   import { formatTime24to12 } from '$lib/utils'
-  import { onlineClassEnrolledEmailTemplate } from '$lib/data/emailTemplates/onlineClassEnrolledEmailTemplate'
 
   type ClassInfo = {
     id: string
@@ -250,6 +249,7 @@
             course: dialogClassDetails?.course,
             meetingLink: dialogClassDetails?.meetingLink,
             online: dialogClassDetails?.online,
+            studentName: uidToName[selectedStudentUid],
           }),
         }).then(async (res) => {
           if (!res.ok) {
