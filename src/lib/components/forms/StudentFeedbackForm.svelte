@@ -40,25 +40,28 @@
       getDoc(doc(db, 'classesSpring24', classId)),
     )
     const courseDocs = await Promise.all(coursePromises)
-    selectedStudentCourses = courseDocs.map((doc) => {
-      if (doc.exists()) {
-        return {
-          classId: doc.id,
-          course: doc.data().course,
-          instructor:
-            doc.data().instructorFirstName +
-            ' ' +
-            doc.data().instructorLastName,
+    selectedStudentCourses = courseDocs
+      .map((doc) => {
+        if (doc.exists() && doc.data()) {
+          console.log(doc.data())
+          return {
+            classId: doc.id,
+            course: doc.data().course,
+            instructor:
+              doc.data().instructorFirstName +
+              ' ' +
+              doc.data().instructorLastName,
+          }
         }
-      }
-    })
+      })
+      .filter(Boolean)
   }
 
   function handleSubmit(e: CustomEvent<SubmitData>) {
     selectedStudentCourses.map((selectedCourse) => {
-      if(selectedCourse.classId === values.classId) {
-        values.instructor = selectedCourse.instructor;
-        values.course = selectedCourse.course;
+      if (selectedCourse.classId === values.classId) {
+        values.instructor = selectedCourse.instructor
+        values.course = selectedCourse.course
       }
     })
     values.studentId = selectedStudentUid
@@ -89,7 +92,10 @@
       getDoc(doc(db, 'registrationsSpring24', selectedStudentUid)).then(
         (docSnapshot) => {
           if (docSnapshot.exists()) {
-            values.studentName = docSnapshot.data().personal.studentFirstName + " " + docSnapshot.data().personal.studentLastName
+            values.studentName =
+              docSnapshot.data().personal.studentFirstName +
+              ' ' +
+              docSnapshot.data().personal.studentLastName
             const classIds = docSnapshot.data().classes || []
             fetchCourseList(classIds)
           }
@@ -127,7 +133,7 @@
               <input type="radio" bind:group={values.classId} value={classId} />
               {course} (taught by {instructor})
             </label>
-            <br/>
+            <br />
           {/each}
         </div>
 
