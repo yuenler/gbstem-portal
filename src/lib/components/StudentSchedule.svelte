@@ -81,21 +81,18 @@
         </ul>
       {:else}
         <table
-          class="grid grid-cols-2 justify-between gap-0"
+          class="grid grid-cols-2 justify-between gap-1"
           style="margin-top:1rem;"
         >
           {#each courses as course}
-            <div>
-              <div
-                class="bg-gray-100"
-                style="border-width:1px; border-style:solid; border-color:gray; padding:1rem;"
-              >
-                {course}
+            <div class="rounded-lg bg-gray-100 p-4">
+              <div class="flex items-center justify-between p-4">
+                <strong>{course}</strong>
               </div>
               {#each classSchedules as schedule}
                 {#if schedule.course == course}
                   <div
-                    style="border-width:1px; border-style:solid; border-color:gray; padding:1rem;"
+                    style="border-width:1px 0 0 0; border-color:gray; padding:1rem;"
                   >
                     <p class="meeting-time">
                       {formatDate(schedule.meetingTime)}
