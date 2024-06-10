@@ -3,8 +3,11 @@
   import { doc, getDoc, collection, getDocs } from 'firebase/firestore'
   import StudentSelect from './StudentSelect.svelte'
   import Input from './Input.svelte'
+  import Card from './Card.svelte'
+  import Button from './Button.svelte'
 
   let classSchedules: { [k: string]: string }[] = []
+  let nextClassIndex = 0
   let listView: boolean = true
   let selectedStudentUid = ''
   let courses = new Set()
@@ -23,6 +26,7 @@
             id: docSnapshot.id,
             course: data.course,
             meetingTime: new Date(time.seconds * 1000).toISOString(), // Convert Firestore timestamp to ISO string
+            link: data.meetingLink,
           }))
         }
         return []
@@ -32,6 +36,14 @@
         (a, b) =>
           new Date(a.meetingTime).getTime() - new Date(b.meetingTime).getTime(),
       ) // Sort by date
+
+      for(let i = 0; i < classSchedules.length; i++) {
+        let diff = new Date().getTime() - new Date(classSchedules[i].meetingTime).getTime()
+        if(diff < 0) {
+          nextClassIndex = i
+          break
+        }
+      }
   }
 
   function formatDate(dateString: string) {
@@ -44,6 +56,10 @@
       hour: '2-digit',
       minute: '2-digit',
     })
+  }
+
+  function recordClass(link: string) {
+    window.open(link);
   }
 
   $: if (selectedStudentUid) {
@@ -66,6 +82,18 @@
     {#if classSchedules.length === 0}
       <p>This student is not enrolled in any classes.</p>
     {:else}
+    <Card>
+      <div class="font-bold mb-2">Next Upcoming Class:</div>
+        <div>
+          {classSchedules[nextClassIndex].course},
+          {formatDate(classSchedules[nextClassIndex].meetingTime)}
+        </div>
+        <Button color="blue" class="mb-2 mt-4" on:click={() => {recordClass(classSchedules[nextClassIndex].link)}}
+          >Join Class</Button>
+      </Card>
+
+      <div class="font-bold mb-2 mt-4">Class Schedule</div>
+
       <Input type="checkbox" bind:value={listView} label={'Show As List?'} />
 
       {#if listView}
