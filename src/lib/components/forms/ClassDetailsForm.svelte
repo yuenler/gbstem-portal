@@ -24,6 +24,8 @@
     course: string
     submitting: boolean
     meetingTimes: Date[]
+    datesHeld: Date[]
+    feedbackCompleted: boolean[]
     instructorFirstName: string
     instructorLastName: string
     instructorEmail: string
@@ -39,6 +41,8 @@
     course: '',
     submitting: false,
     meetingTimes: [],
+    datesHeld: [],
+    feedbackCompleted: [],
     instructorFirstName: '',
     instructorLastName: '',
     instructorEmail: '',
@@ -113,6 +117,8 @@
               course: string
               submitting: boolean
               meetingTimes: Date[]
+              datesHeld: Date[]
+              feedbackCompleted: boolean[]
               instructorFirstName: string
               instructorLastName: string
               instructorEmail: string
@@ -149,6 +155,7 @@
             new Date(semesterDates.classesEnd),
           )
           values.meetingTimes = meetingTimes
+          values.feedbackCompleted = new Array(meetingTimes.length).fill(false)
         }
         values.instructorFirstName = frozenUser.profile.firstName
         values.instructorLastName = frozenUser.profile.lastName
