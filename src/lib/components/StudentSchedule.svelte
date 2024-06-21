@@ -58,10 +58,6 @@
     })
   }
 
-  function recordClass(link: string) {
-    window.open(link);
-  }
-
   $: if (selectedStudentUid) {
     getDoc(doc(db, 'registrationsSpring24', selectedStudentUid)).then(
       (docSnapshot) => {
@@ -88,7 +84,7 @@
           {classSchedules[nextClassIndex].course},
           {formatDate(classSchedules[nextClassIndex].meetingTime)}
         </div>
-        <Button color="blue" class="mb-2 mt-4" on:click={() => {recordClass(classSchedules[nextClassIndex].link)}}
+        <Button color="blue" class="mb-2 mt-4" on:click={() => {window.open(classSchedules[nextClassIndex].link)}}
           >Join Class</Button>
       </Card>
 

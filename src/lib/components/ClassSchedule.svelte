@@ -14,6 +14,10 @@
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
   let editedMeetingTimes: string[] = []
+  let classStatuses: string[] = []
+  let course: string = ''
+  let nextClassIndex = 0
+  let link: string = ''
   const classesCollection = 'classesSpring24'
   let classId = ''
   let dialogEl: Dialog
@@ -67,6 +71,7 @@
           classId,
         )
         getDoc(classDocRef).then((classDoc) => {
+          console.log(classDoc.data());
           if (classDoc.exists()) {
             const data = classDoc.data()
             const studentUids = data?.students
@@ -78,10 +83,18 @@
                 (time: { seconds: number; nanoseconds: number }) =>
                   new Date(time.seconds * 1000),
               )
+              meetingTimes.sort((a, b) => {
+                const dateA = new Date(a)
+                const dateB = new Date(b)
+                return dateA.getTime() - dateB.getTime()
+              })
               originalMeetingTimes = meetingTimes.map((time) =>
                 toLocalISOString(time),
               )
               editedMeetingTimes = [...originalMeetingTimes]
+              course = data.course
+              link = data.meetingLink
+              findNextClassDate()
             }
           }
         })
@@ -159,6 +172,7 @@
     await updateDoc(doc(db, classesCollection, classId), {
       meetingTimes: meetingTimesDate,
     }).then(() => {
+      findNextClassDate()
       alert.trigger('success', 'Meeting times updated!')
     })
   }
@@ -224,6 +238,35 @@
     document.execCommand('copy')
     document.body.removeChild(el)
     alert.trigger('success', 'Email copied to clipboard!')
+  }
+
+  function findNextClassDate() {
+    for (let i = 0; i < editedMeetingTimes.length; i++) {
+      const diff = new Date().getTime() - new Date(editedMeetingTimes[i]).getTime()
+      console.log("IDFFF" + diff)
+      console.log(new Date(editedMeetingTimes[i]))
+      console.log(i)
+      if (diff < 0) {
+        nextClassIndex = i
+        break
+      }
+    }
+  }
+
+  const recordClass = async (classId: string, link: string) => {
+    const classDoc = await getDoc(doc(db, 'classesSpring24', classId));
+    if(classDoc.exists()) {
+      const confirmHoldClass = confirm("Please confirm you are holding class now.");
+      if (confirmHoldClass) {
+        const datesHeld = classDoc.data().datesHeld;
+        updateDoc(doc(db, 'classesSpring24', classId), {
+          datesHeld: [...datesHeld, new Date()],
+        });
+        window.open(link);
+      }
+    } else {
+      alert.trigger('error', 'Class Not Found!');
+    }
   }
 
   function copyEmails() {
@@ -362,6 +405,16 @@
       </table>
     </div>
   </Card>
+  <Card class = "mb-4">
+    <div class="font-bold mb-2">Next Upcoming Class:</div>
+      <div>
+        {course},
+        {formatDate(editedMeetingTimes[nextClassIndex])}
+      </div>
+      <Button color="blue" class="mb-2 mt-4" on:click={() => {recordClass(classId, link)}}
+        >Join Class</Button>
+    </Card>
+
   <div class="mb-4 flex justify-between">
     <Button
       color="blue"
@@ -412,7 +465,6 @@
       <Button color="green" on:click={saveChanges}>Save Changes</Button>
     {/if}
   </div>
-
   <ul class="list-none space-y-2">
     {#each editedMeetingTimes as classTime, index (classTime)}
       <li
@@ -434,7 +486,7 @@
             }}>Delete</Button
           >
         {:else}
-          <span>{formatDate(classTime)}</span>
+          <span>{course + " at " + formatDate(classTime)}</span>
         {/if}
       </li>
     {/each}
