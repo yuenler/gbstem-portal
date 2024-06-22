@@ -205,6 +205,7 @@
     }).then(() => {
       findNextClassDate()
       alert.trigger('success', 'Meeting times updated!')
+      location.reload()
     })
   }
 
@@ -317,14 +318,12 @@
         const data = classDoc.data()
         let datesHeld: Date[] = []
         if(!classTodayHeld(data.datesHeld, new Date)) datesHeld = [...data.datesHeld, new Date()]
-        for (let i = 0; i < meetingTimes.length; i++){
-           if (new Date().toDateString() === meetingTimes[i].toDateString()) {
-              classStatuses[i] = feedbackCompleted[i] ? 'allComplete' : 'missingFeedback'
-              classIndex = i
-              break
+          let classToday = false
+           if (nextClassIndex !== -1 && nextClassIndex < meetingTimes.length && new Date().toDateString() === meetingTimes[nextClassIndex].toDateString()) {
+              classToday = true
+              classStatuses[nextClassIndex] = feedbackCompleted[nextClassIndex] ? 'allComplete' : 'missingFeedback'
             }
-          }
-          if(classIndex === -1) {
+          if(!classToday) {
             alert.trigger('error', 'No class session found today! Please update your class schedule if you are planning to hold class today.')
             setTimeout(() => window.open(link), 1000)
           } else {
