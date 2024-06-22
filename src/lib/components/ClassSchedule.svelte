@@ -125,7 +125,9 @@
           classStatuses[i] = feedbackCompleted[i] ? 'allComplete' : 'classMissed'
          } else if (classUpcoming(meetingTimes[i])) {
             classStatuses[i] = 'upcoming'
-          }
+          } else if (classStatuses[i] === 'missingFeedback' && feedbackCompleted[i]) {
+            classStatuses[i] = 'allComplete'
+         }
          }
         updateDoc(doc(db, 'classesSpring24', classId), {
         classesStatus: classStatuses,
