@@ -26,6 +26,7 @@
     meetingTimes: Date[]
     datesHeld: Date[]
     feedbackCompleted: boolean[]
+    classesStatus: string[]
     instructorFirstName: string
     instructorLastName: string
     instructorEmail: string
@@ -43,6 +44,7 @@
     meetingTimes: [],
     datesHeld: [],
     feedbackCompleted: [],
+    classesStatus: [],
     instructorFirstName: '',
     instructorLastName: '',
     instructorEmail: '',
@@ -119,6 +121,7 @@
               meetingTimes: Date[]
               datesHeld: Date[]
               feedbackCompleted: boolean[]
+              classesStatus: string[]
               instructorFirstName: string
               instructorLastName: string
               instructorEmail: string
@@ -156,6 +159,7 @@
           )
           values.meetingTimes = meetingTimes
           values.feedbackCompleted = new Array(meetingTimes.length).fill(false)
+          values.classesStatus = new Array(meetingTimes.length).fill('sometime')
         }
         values.instructorFirstName = frozenUser.profile.firstName
         values.instructorLastName = frozenUser.profile.lastName
