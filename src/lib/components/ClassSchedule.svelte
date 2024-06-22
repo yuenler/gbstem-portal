@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { db, user } from '$lib/client/firebase'
-  import { doc, getDoc, updateDoc, DocumentReference } from 'firebase/firestore'
+  import { doc, getDoc, updateDoc, DocumentReference, Timestamp } from 'firebase/firestore'
   import Input from './Input.svelte'
   import { alert } from '$lib/stores'
   import { slide } from 'svelte/transition'
@@ -15,8 +15,9 @@
   let originalMeetingTimes: string[] = []
   let editedMeetingTimes: string[] = []
   let classStatuses: string[] = []
+  let feedbackCompleted: boolean[] = []
   let course: string = ''
-  let nextClassIndex = 0
+  let nextClassIndex = -1
   let link: string = ''
   const classesCollection = 'classesSpring24'
   let classId = ''
@@ -34,6 +35,20 @@
   let addingClass = false
 
   let classToBeAdded = ''
+
+  const timestampToDate = (timestamp: Timestamp | Date) => {
+    return new Date(timestamp.seconds * 1000)
+  }
+
+  const classTodayHeld = (datesHeld: Date[], classToday: Date) => {
+    return datesHeld.filter((date) => classToday.toDateString() === timestampToDate(date).toDateString() && new Date() > date).length > 0
+  }
+
+  const classUpcoming = (date: Date) => {
+    return date.getTime() > Date.now() && Math.abs(date.getTime() - new Date().getTime()) / (1000*60) < 30
+  }
+
+  let classIndex = -1
 
   const getStudentList = (studentUids: string[]) => {
     studentUids.forEach((studentUid) => {
@@ -71,7 +86,6 @@
           classId,
         )
         getDoc(classDocRef).then((classDoc) => {
-          console.log(classDoc.data());
           if (classDoc.exists()) {
             const data = classDoc.data()
             const studentUids = data?.students
@@ -94,6 +108,9 @@
               editedMeetingTimes = [...originalMeetingTimes]
               course = data.course
               link = data.meetingLink
+              classStatuses = data.classesStatus
+              feedbackCompleted = data.feedbackCompleted
+              checkStatuses()
               findNextClassDate()
             }
           }
@@ -101,6 +118,19 @@
       }
     })
   })
+
+  function checkStatuses() {
+    for (let i = 0; i < meetingTimes.length; i++){
+        if(new Date().getTime() > meetingTimes[i].getTime() && classStatuses[i] !== 'allComplete' && classStatuses[i] !== 'missingFeedback') {
+          classStatuses[i] = feedbackCompleted[i] ? 'allComplete' : 'classMissed'
+         } else if (classUpcoming(meetingTimes[i])) {
+            classStatuses[i] = 'upcoming'
+          }
+         }
+        updateDoc(doc(db, 'classesSpring24', classId), {
+        classesStatus: classStatuses,
+    });
+  }
 
   function generateMeetingTimeChangeEmail(): string {
     let addedClasses: string[] = []
@@ -157,7 +187,6 @@
 
   function toLocalISOString(date: Date) {
     const pad = (number: number) => (number < 10 ? '0' + number : number)
-
     const year = date.getFullYear()
     const month = pad(date.getMonth() + 1) // JavaScript months are 0-indexed.
     const day = pad(date.getDate())
@@ -167,10 +196,12 @@
     return `${year}-${month}-${day}T${hour}:${minute}`.slice(0, 16)
   }
 
-  async function updateMeetingTimes(): Promise<void> {
+  async function updateMeetingTimes(newFeedback: boolean[], newClassStatuses: string[]): Promise<void> {
     const meetingTimesDate = editedMeetingTimes.map((time) => new Date(time))
     await updateDoc(doc(db, classesCollection, classId), {
       meetingTimes: meetingTimesDate,
+      feedbackCompleted: newFeedback,
+      classesStatus: newClassStatuses,
     }).then(() => {
       findNextClassDate()
       alert.trigger('success', 'Meeting times updated!')
@@ -200,8 +231,36 @@
     editedMeetingTimes = editedMeetingTimes.filter(
       (time, index) => editedMeetingTimes.indexOf(time) === index,
     )
+
+    let removed: number[]= []
+    originalMeetingTimes.map((x, index) => {if(!editedMeetingTimes.includes(x)) removed.push(index)});
+
+    let added: number[] = []
+    editedMeetingTimes.map((x, index) => {if(!originalMeetingTimes.includes(x)) added.push(index)});
+
+    let newFeedback = [...feedbackCompleted]
+    let newClassStatuses = [...classStatuses]
+    removed.forEach((index) => {
+      newFeedback.splice(index, 1)
+      newClassStatuses.splice(index, 1)
+    })
+    added.forEach((index) => {
+      newFeedback = [
+       ...newFeedback.slice(0, index),
+       false,
+       ...newFeedback.slice(index)
+      ];
+      newClassStatuses = [
+       ...newClassStatuses.slice(0, index),
+        'sometime',
+       ...newClassStatuses.slice(index)
+      ];
+    })
+
     originalMeetingTimes = [...editedMeetingTimes]
-    updateMeetingTimes()
+    feedbackCompleted = newFeedback
+    classStatuses = newClassStatuses
+    updateMeetingTimes(feedbackCompleted, classStatuses)
   }
 
   function formatDate(date: string): string {
@@ -243,9 +302,6 @@
   function findNextClassDate() {
     for (let i = 0; i < editedMeetingTimes.length; i++) {
       const diff = new Date().getTime() - new Date(editedMeetingTimes[i]).getTime()
-      console.log("IDFFF" + diff)
-      console.log(new Date(editedMeetingTimes[i]))
-      console.log(i)
       if (diff < 0) {
         nextClassIndex = i
         break
@@ -254,15 +310,30 @@
   }
 
   const recordClass = async (classId: string, link: string) => {
-    const classDoc = await getDoc(doc(db, 'classesSpring24', classId));
+    const classDoc = await getDoc(doc(db, 'classesSpring24', classId))
     if(classDoc.exists()) {
-      const confirmHoldClass = confirm("Please confirm you are holding class now.");
+      const confirmHoldClass = confirm("Please confirm you are holding class now.")
       if (confirmHoldClass) {
-        const datesHeld = classDoc.data().datesHeld;
-        updateDoc(doc(db, 'classesSpring24', classId), {
-          datesHeld: [...datesHeld, new Date()],
-        });
-        window.open(link);
+        const data = classDoc.data()
+        let datesHeld: Date[] = []
+        if(!classTodayHeld(data.datesHeld, new Date)) datesHeld = [...data.datesHeld, new Date()]
+        for (let i = 0; i < meetingTimes.length; i++){
+           if (new Date().toDateString() === meetingTimes[i].toDateString()) {
+              classStatuses[i] = feedbackCompleted[i] ? 'allComplete' : 'missingFeedback'
+              classIndex = i
+              break
+            }
+          }
+          if(classIndex === -1) {
+            alert.trigger('error', 'No class session found today! Please update your class schedule if you are planning to hold class today.')
+            setTimeout(() => window.open(link), 1000)
+          } else {
+            updateDoc(doc(db, 'classesSpring24', classId), {
+              datesHeld: datesHeld,
+              classesStatus: classStatuses,
+            });
+            window.open(link)
+          }
       }
     } else {
       alert.trigger('error', 'Class Not Found!');
@@ -408,8 +479,7 @@
   <Card class = "mb-4">
     <div class="font-bold mb-2">Next Upcoming Class:</div>
       <div>
-        {course},
-        {formatDate(editedMeetingTimes[nextClassIndex])}
+        {nextClassIndex === -1 ? 'No Upcoming Classes' : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex])}
       </div>
       <Button color="blue" class="mb-2 mt-4" on:click={() => {recordClass(classId, link)}}
         >Join Class</Button>
@@ -467,8 +537,55 @@
   </div>
   <ul class="list-none space-y-2">
     {#each editedMeetingTimes as classTime, index (classTime)}
+      {#if classStatuses[index] === 'classMissed'}
       <li
-        class="flex items-center justify-between rounded-lg bg-gray-100 p-4"
+          class="flex items-center justify-between rounded-lg bg-red-100 p-4"
+          transition:slide={{ duration: 1000 }}
+        >
+          <span class="font-semibold">Class {index + 1}:</span>
+          {#if editMode}
+            <Input
+              type="datetime-local"
+              class="rounded border p-1"
+              bind:value={editedMeetingTimes[index]}
+            />
+            <Button
+              color="red"
+              on:click={() => {
+                editedMeetingTimes.splice(index, 1)
+                editedMeetingTimes = editedMeetingTimes.slice()
+              }}>Delete</Button
+            >
+          {:else}
+            <span>{course + " at " + formatDate(classTime)}</span>
+          {/if}
+        </li>
+      {:else if classStatuses[index] === 'missingFeedback'}
+          <li
+          class="flex items-center justify-between rounded-lg bg-yellow-100 p-4"
+          transition:slide={{ duration: 1000 }}
+        >
+          <span class="font-semibold">Class {index + 1}:</span>
+          {#if editMode}
+            <Input
+              type="datetime-local"
+              class="rounded border p-1"
+              bind:value={editedMeetingTimes[index]}
+            />
+            <Button
+              color="red"
+              on:click={() => {
+                editedMeetingTimes.splice(index, 1)
+                editedMeetingTimes = editedMeetingTimes.slice()
+              }}>Delete</Button
+            >
+          {:else}
+            <span>{course + " at " + formatDate(classTime)}</span>
+          {/if}
+        </li>
+        {:else if classStatuses[index] === 'upcoming'}
+        <li
+        class="flex items-center justify-between rounded-lg bg-blue-100 p-4"
         transition:slide={{ duration: 1000 }}
       >
         <span class="font-semibold">Class {index + 1}:</span>
@@ -489,6 +606,53 @@
           <span>{course + " at " + formatDate(classTime)}</span>
         {/if}
       </li>
+      {:else if classStatuses[index] === 'allComplete'}
+      <li
+          class="flex items-center justify-between rounded-lg bg-green-100 p-4"
+          transition:slide={{ duration: 1000 }}
+        >
+          <span class="font-semibold">Class {index + 1}:</span>
+          {#if editMode}
+            <Input
+              type="datetime-local"
+              class="rounded border p-1"
+              bind:value={editedMeetingTimes[index]}
+            />
+            <Button
+              color="red"
+              on:click={() => {
+                editedMeetingTimes.splice(index, 1)
+                editedMeetingTimes = editedMeetingTimes.slice()
+              }}>Delete</Button
+            >
+          {:else}
+            <span>{course + " at " + formatDate(classTime)}</span>
+          {/if}
+        </li>
+      {:else}
+        <li
+          class="flex items-center justify-between rounded-lg bg-gray-100 p-4"
+          transition:slide={{ duration: 1000 }}
+        >
+          <span class="font-semibold">Class {index + 1}:</span>
+          {#if editMode}
+            <Input
+              type="datetime-local"
+              class="rounded border p-1"
+              bind:value={editedMeetingTimes[index]}
+            />
+            <Button
+              color="red"
+              on:click={() => {
+                editedMeetingTimes.splice(index, 1)
+                editedMeetingTimes = editedMeetingTimes.slice()
+              }}>Delete</Button
+            >
+          {:else}
+            <span>{course + " at " + formatDate(classTime)}</span>
+          {/if}
+        </li>
+      {/if}
     {/each}
   </ul>
 </div>
