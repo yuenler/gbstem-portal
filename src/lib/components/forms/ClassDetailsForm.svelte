@@ -30,6 +30,7 @@
     instructorFirstName: string
     instructorLastName: string
     instructorEmail: string
+    otherInstructorEmails: string
     classCap: number
     online: boolean
   } = {
@@ -48,6 +49,7 @@
     instructorFirstName: '',
     instructorLastName: '',
     instructorEmail: '',
+    otherInstructorEmails: '',
     classCap: 7,
     online: true,
   }
@@ -125,6 +127,7 @@
               instructorFirstName: string
               instructorLastName: string
               instructorEmail: string
+              otherInstructorEmails: string
               classCap: number
               online: boolean
             }
@@ -273,6 +276,13 @@
       label="Class capacity"
       floating
       required
+    />
+
+    <Input
+      type="text"
+      bind:value={values.otherInstructorEmails}
+      floating
+      label="Enter the emails of any co-instructors here, comma separated. Keep in mind that only one instructor per class should fill out this form."
     />
 
     <Input

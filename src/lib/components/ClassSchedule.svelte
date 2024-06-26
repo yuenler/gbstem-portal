@@ -9,6 +9,7 @@
   import Button from '$lib/components/Button.svelte'
   import DialogActions from '$lib/components/DialogActions.svelte'
   import Card from './Card.svelte'
+  import { MailIcon } from 'svelte-feather-icons'
 
   let meetingTimes: Date[] = []
   let editMode: boolean = false
@@ -16,6 +17,9 @@
   let editedMeetingTimes: string[] = []
   let classStatuses: string[] = []
   let feedbackCompleted: boolean[] = []
+  let instructorName = ''
+  let instructorEmail = ''
+  let otherInstructorEmails = ''
   let course: string = ''
   let nextClassIndex = -1
   let link: string = ''
@@ -76,6 +80,64 @@
     })
   }
 
+  function sendClassReminder(student: string, instructorName: string, instructorEmail: string, otherInstructorEmails: string, className: string, nextMeetingTime: string) {
+    const confirmSend = confirm("Send class reminder to this student?");
+    if (confirmSend) {
+      if(nextMeetingTime === 'No Upcoming Classes') {
+        alert.trigger('error', 'No upcoming classes found!')
+        return;
+      }
+      if(student === 'all') {
+      studentList.map((student) => {
+        fetch('/api/remindStudents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: normalizeCapitals(student.name),
+          email: student.email,
+          instructorEmail: instructorEmail,
+          otherInstructorEmails: otherInstructorEmails,
+          class: className,
+          classTime: nextMeetingTime,
+          instructorName: normalizeCapitals(instructorName),
+        })
+      }).then(async (res) => {
+        if (res.ok) {
+          alert.trigger('success', 'Reminder emails were sent!')
+        } else {
+           const { message } = await res.json()
+           alert.trigger('error', message)
+        }
+      });
+      })
+    } else {
+      fetch('/api/remindStudents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: student,
+          email: student.email,
+          instructorEmail: instructorEmail,
+          otherInstructorEmails: otherInstructorEmails,
+          class: className,
+          classTime: nextMeetingTime,
+          instructorName: normalizeCapitals(instructorName),
+        })
+      }).then(async (res) => {
+        if (res.ok) {
+          alert.trigger('success', 'Reminder email was sent to ' + student + '!')
+        } else {
+           const { message } = await res.json()
+           alert.trigger('error', message)
+        }
+      });
+    }
+  }
+  }
   onMount(() => {
     return user.subscribe((user) => {
       if (user) {
@@ -110,6 +172,9 @@
               link = data.meetingLink
               classStatuses = data.classesStatus
               feedbackCompleted = data.feedbackCompleted
+              instructorEmail = data.instructorEmail
+              instructorName = data.instructorFirstName
+              otherInstructorEmails = data.otherInstructorEmails
               checkStatuses()
               findNextClassDate()
             }
@@ -360,6 +425,11 @@
         alert.trigger('error', 'Failed to copy emails to clipboard!')
       })
   }
+
+  function normalizeCapitals(name: string) {
+    return name.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  }
+
 </script>
 
 <Dialog bind:this={dialogEl} initial={emailHtmlContent !== ''} size="min">
@@ -460,17 +530,22 @@
               style="white-space: nowrap; border-bottom: 1px solid #ccc; padding: 8px;"
               >School</th
             >
+            <th
+              style="white-space: nowrap; border-bottom: 1px solid #ccc; padding: 8px;"
+              ></th
+            >
           </tr>
         </thead>
         <tbody>
           {#each studentList as student}
             <tr style="border-bottom: 1px solid #ccc;">
-              <td style="padding: 8px;">{student.name}</td>
+              <td style="padding: 8px;">{normalizeCapitals(student.name)}</td>
               <td style="padding: 8px;">{student.email}</td>
               <td style="padding: 8px;">{student.secondaryEmail}</td>
               <td style="padding: 8px;">{student.phone}</td>
               <td style="padding: 8px;">{student.grade}</td>
               <td style="padding: 8px;">{student.school}</td>
+              <td><Button color = 'blue' on:click = {() => sendClassReminder(normalizeCapitals(student.name), instructorName, instructorEmail, otherInstructorEmails, course, nextClassIndex === -1 ? 'No Upcoming Classes' : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex]))}><MailIcon size="16"/></Button></td>
             </tr>
           {/each}
         </tbody>
@@ -484,6 +559,7 @@
       </div>
       <Button color="blue" class="mb-2 mt-4" on:click={() => {recordClass(classId, link)}}
         >Join Class</Button>
+        <Button color = 'blue' on:click = {() => sendClassReminder('all', instructorName, instructorEmail, otherInstructorEmails, course, nextClassIndex === -1 ? 'No Upcoming Classes' : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex]))}>Send Class Reminder</Button>
     </Card>
 
   <div class="mb-4 flex justify-between">
