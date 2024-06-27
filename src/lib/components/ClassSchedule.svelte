@@ -1,7 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { db, user } from '$lib/client/firebase'
-  import { doc, getDoc, updateDoc, DocumentReference, Timestamp } from 'firebase/firestore'
+  import {
+    doc,
+    getDoc,
+    updateDoc,
+    DocumentReference,
+    Timestamp,
+  } from 'firebase/firestore'
   import Input from './Input.svelte'
   import { alert } from '$lib/stores'
   import { slide } from 'svelte/transition'
@@ -45,11 +51,20 @@
   }
 
   const classTodayHeld = (datesHeld: Date[], classToday: Date) => {
-    return datesHeld.filter((date) => classToday.toDateString() === timestampToDate(date).toDateString() && new Date() > date).length > 0
+    return (
+      datesHeld.filter(
+        (date) =>
+          classToday.toDateString() === timestampToDate(date).toDateString() &&
+          new Date() > date,
+      ).length > 0
+    )
   }
 
   const classUpcoming = (date: Date) => {
-    return date.getTime() > Date.now() && Math.abs(date.getTime() - new Date().getTime()) / (1000*60) < 30
+    return (
+      date.getTime() > Date.now() &&
+      Math.abs(date.getTime() - new Date().getTime()) / (1000 * 60) < 30
+    )
   }
 
   let classIndex = -1
@@ -80,63 +95,83 @@
     })
   }
 
-  function sendClassReminder(student: string, instructorName: string, instructorEmail: string, otherInstructorEmails: string, className: string, nextMeetingTime: string) {
-    const confirmSend = confirm("Send class reminder to this student?");
-    if (confirmSend) {
-      if(nextMeetingTime === 'No Upcoming Classes') {
-        alert.trigger('error', 'No upcoming classes found!')
-        return;
+  function sendClassReminder(
+    student: string,
+    studentEmail: string,
+    instructorName: string,
+    instructorEmail: string,
+    otherInstructorEmails: string,
+    className: string,
+    nextMeetingTime: string,
+  ) {
+    if (student === 'all') {
+      const confirmSend = confirm('Send class reminder to all students?')
+      if (confirmSend) {
+        if (nextMeetingTime === 'No Upcoming Classes') {
+          alert.trigger('error', 'No upcoming classes found!')
+          return
+        }
+        studentList.map((student) => {
+          fetch('/api/remindStudents', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: normalizeCapitals(student.name),
+              email: student.email,
+              instructorEmail: instructorEmail,
+              otherInstructorEmails: otherInstructorEmails,
+              class: className,
+              classTime: nextMeetingTime,
+              instructorName: normalizeCapitals(instructorName),
+            }),
+          }).then(async (res) => {
+            if (res.ok) {
+              alert.trigger('success', 'Reminder emails were sent!')
+            } else {
+              const { message } = await res.json()
+              alert.trigger('error', message)
+            }
+          })
+        })
       }
-      if(student === 'all') {
-      studentList.map((student) => {
-        fetch('/api/remindStudents', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: normalizeCapitals(student.name),
-          email: student.email,
-          instructorEmail: instructorEmail,
-          otherInstructorEmails: otherInstructorEmails,
-          class: className,
-          classTime: nextMeetingTime,
-          instructorName: normalizeCapitals(instructorName),
-        })
-      }).then(async (res) => {
-        if (res.ok) {
-          alert.trigger('success', 'Reminder emails were sent!')
-        } else {
-           const { message } = await res.json()
-           alert.trigger('error', message)
-        }
-      });
-      })
     } else {
-      fetch('/api/remindStudents', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: student,
-          email: student.email,
-          instructorEmail: instructorEmail,
-          otherInstructorEmails: otherInstructorEmails,
-          class: className,
-          classTime: nextMeetingTime,
-          instructorName: normalizeCapitals(instructorName),
-        })
-      }).then(async (res) => {
-        if (res.ok) {
-          alert.trigger('success', 'Reminder email was sent to ' + student + '!')
-        } else {
-           const { message } = await res.json()
-           alert.trigger('error', message)
+      const confirmSend = confirm(
+        'Send class reminder to student ' + student + '?',
+      )
+      if (confirmSend) {
+        if (nextMeetingTime === 'No Upcoming Classes') {
+          alert.trigger('error', 'No upcoming classes found!')
+          return
         }
-      });
+        fetch('/api/remindStudents', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: student,
+            email: studentEmail,
+            instructorEmail: instructorEmail,
+            otherInstructorEmails: otherInstructorEmails,
+            class: className,
+            classTime: nextMeetingTime,
+            instructorName: normalizeCapitals(instructorName),
+          }),
+        }).then(async (res) => {
+          if (res.ok) {
+            alert.trigger(
+              'success',
+              'Reminder email was sent to ' + student + '!',
+            )
+          } else {
+            const { message } = await res.json()
+            alert.trigger('error', message)
+          }
+        })
+      }
     }
-  }
   }
   onMount(() => {
     return user.subscribe((user) => {
@@ -185,18 +220,25 @@
   })
 
   function checkStatuses() {
-    for (let i = 0; i < meetingTimes.length; i++){
-        if(new Date().getTime() > meetingTimes[i].getTime() && classStatuses[i] !== 'allComplete' && classStatuses[i] !== 'missingFeedback') {
-          classStatuses[i] = feedbackCompleted[i] ? 'allComplete' : 'classMissed'
-         } else if (classUpcoming(meetingTimes[i])) {
-            classStatuses[i] = 'upcoming'
-          } else if (classStatuses[i] === 'missingFeedback' && feedbackCompleted[i]) {
-            classStatuses[i] = 'allComplete'
-         }
-         }
-        updateDoc(doc(db, 'classesSpring24', classId), {
-        classesStatus: classStatuses,
-    });
+    for (let i = 0; i < meetingTimes.length; i++) {
+      if (
+        new Date().getTime() > meetingTimes[i].getTime() &&
+        classStatuses[i] !== 'allComplete' &&
+        classStatuses[i] !== 'missingFeedback'
+      ) {
+        classStatuses[i] = feedbackCompleted[i] ? 'allComplete' : 'classMissed'
+      } else if (classUpcoming(meetingTimes[i])) {
+        classStatuses[i] = 'upcoming'
+      } else if (
+        classStatuses[i] === 'missingFeedback' &&
+        feedbackCompleted[i]
+      ) {
+        classStatuses[i] = 'allComplete'
+      }
+    }
+    updateDoc(doc(db, 'classesSpring24', classId), {
+      classesStatus: classStatuses,
+    })
   }
 
   function generateMeetingTimeChangeEmail(): string {
@@ -263,7 +305,10 @@
     return `${year}-${month}-${day}T${hour}:${minute}`.slice(0, 16)
   }
 
-  async function updateMeetingTimes(newFeedback: boolean[], newClassStatuses: string[]): Promise<void> {
+  async function updateMeetingTimes(
+    newFeedback: boolean[],
+    newClassStatuses: string[],
+  ): Promise<void> {
     const meetingTimesDate = editedMeetingTimes.map((time) => new Date(time))
     await updateDoc(doc(db, classesCollection, classId), {
       meetingTimes: meetingTimesDate,
@@ -300,11 +345,15 @@
       (time, index) => editedMeetingTimes.indexOf(time) === index,
     )
 
-    let removed: number[]= []
-    originalMeetingTimes.map((x, index) => {if(!editedMeetingTimes.includes(x)) removed.push(index)});
+    let removed: number[] = []
+    originalMeetingTimes.map((x, index) => {
+      if (!editedMeetingTimes.includes(x)) removed.push(index)
+    })
 
     let added: number[] = []
-    editedMeetingTimes.map((x, index) => {if(!originalMeetingTimes.includes(x)) added.push(index)});
+    editedMeetingTimes.map((x, index) => {
+      if (!originalMeetingTimes.includes(x)) added.push(index)
+    })
 
     let newFeedback = [...feedbackCompleted]
     let newClassStatuses = [...classStatuses]
@@ -314,15 +363,15 @@
     })
     added.forEach((index) => {
       newFeedback = [
-       ...newFeedback.slice(0, index),
-       false,
-       ...newFeedback.slice(index)
-      ];
+        ...newFeedback.slice(0, index),
+        false,
+        ...newFeedback.slice(index),
+      ]
       newClassStatuses = [
-       ...newClassStatuses.slice(0, index),
+        ...newClassStatuses.slice(0, index),
         'sometime',
-       ...newClassStatuses.slice(index)
-      ];
+        ...newClassStatuses.slice(index),
+      ]
     })
 
     originalMeetingTimes = [...editedMeetingTimes]
@@ -369,7 +418,8 @@
 
   function findNextClassDate() {
     for (let i = 0; i < editedMeetingTimes.length; i++) {
-      const diff = new Date().getTime() - new Date(editedMeetingTimes[i]).getTime()
+      const diff =
+        new Date().getTime() - new Date(editedMeetingTimes[i]).getTime()
       if (diff < 0) {
         nextClassIndex = i
         break
@@ -379,30 +429,43 @@
 
   const recordClass = async (classId: string, link: string) => {
     const classDoc = await getDoc(doc(db, 'classesSpring24', classId))
-    if(classDoc.exists()) {
-      const confirmHoldClass = confirm("Please confirm you are holding class now.")
+    if (classDoc.exists()) {
+      const confirmHoldClass = confirm(
+        'Please confirm you are holding class now.',
+      )
       if (confirmHoldClass) {
         const data = classDoc.data()
         let datesHeld: Date[] = []
-        if(!classTodayHeld(data.datesHeld, new Date)) datesHeld = [...data.datesHeld, new Date()]
-          let classToday = false
-           if (nextClassIndex !== -1 && nextClassIndex < meetingTimes.length && new Date().toDateString() === meetingTimes[nextClassIndex].toDateString()) {
-              classToday = true
-              classStatuses[nextClassIndex] = feedbackCompleted[nextClassIndex] ? 'allComplete' : 'missingFeedback'
-            }
-          if(!classToday) {
-            alert.trigger('error', 'No class session found today! Please update your class schedule if you are planning to hold class today.')
-            setTimeout(() => window.open(link), 1000)
-          } else {
-            updateDoc(doc(db, 'classesSpring24', classId), {
-              datesHeld: datesHeld,
-              classesStatus: classStatuses,
-            });
-            window.open(link)
-          }
+        if (!classTodayHeld(data.datesHeld, new Date()))
+          datesHeld = [...data.datesHeld, new Date()]
+        let classToday = false
+        if (
+          nextClassIndex !== -1 &&
+          nextClassIndex < meetingTimes.length &&
+          new Date().toDateString() ===
+            meetingTimes[nextClassIndex].toDateString()
+        ) {
+          classToday = true
+          classStatuses[nextClassIndex] = feedbackCompleted[nextClassIndex]
+            ? 'allComplete'
+            : 'missingFeedback'
+        }
+        if (!classToday) {
+          alert.trigger(
+            'error',
+            'No class session found today! Please update your class schedule if you are planning to hold class today.',
+          )
+          setTimeout(() => window.open(link), 1000)
+        } else {
+          updateDoc(doc(db, 'classesSpring24', classId), {
+            datesHeld: datesHeld,
+            classesStatus: classStatuses,
+          })
+          window.open(link)
+        }
       }
     } else {
-      alert.trigger('error', 'Class Not Found!');
+      alert.trigger('error', 'Class Not Found!')
     }
   }
 
@@ -427,9 +490,11 @@
   }
 
   function normalizeCapitals(name: string) {
-    return name.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    return name
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
   }
-
 </script>
 
 <Dialog bind:this={dialogEl} initial={emailHtmlContent !== ''} size="min">
@@ -532,8 +597,7 @@
             >
             <th
               style="white-space: nowrap; border-bottom: 1px solid #ccc; padding: 8px;"
-              ></th
-            >
+            ></th>
           </tr>
         </thead>
         <tbody>
@@ -545,22 +609,61 @@
               <td style="padding: 8px;">{student.phone}</td>
               <td style="padding: 8px;">{student.grade}</td>
               <td style="padding: 8px;">{student.school}</td>
-              <td><Button color = 'blue' on:click = {() => sendClassReminder(normalizeCapitals(student.name), instructorName, instructorEmail, otherInstructorEmails, course, nextClassIndex === -1 ? 'No Upcoming Classes' : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex]))}><MailIcon size="16"/></Button></td>
+              <td
+                ><Button
+                  color="blue"
+                  on:click={() =>
+                    sendClassReminder(
+                      normalizeCapitals(student.name),
+                      student.email,
+                      instructorName,
+                      instructorEmail,
+                      otherInstructorEmails,
+                      course,
+                      nextClassIndex === -1
+                        ? 'No Upcoming Classes'
+                        : course +
+                            ', ' +
+                            formatDate(editedMeetingTimes[nextClassIndex]),
+                    )}><MailIcon size="16" /></Button
+                ></td
+              >
             </tr>
           {/each}
         </tbody>
       </table>
     </div>
   </Card>
-  <Card class = "mb-4">
-    <div class="font-bold mb-2">Next Upcoming Class:</div>
-      <div>
-        {nextClassIndex === -1 ? 'No Upcoming Classes' : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex])}
-      </div>
-      <Button color="blue" class="mb-2 mt-4" on:click={() => {recordClass(classId, link)}}
-        >Join Class</Button>
-        <Button color = 'blue' on:click = {() => sendClassReminder('all', instructorName, instructorEmail, otherInstructorEmails, course, nextClassIndex === -1 ? 'No Upcoming Classes' : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex]))}>Send Class Reminder</Button>
-    </Card>
+  <Card class="mb-4">
+    <div class="mb-2 font-bold">Next Upcoming Class:</div>
+    <div>
+      {nextClassIndex === -1
+        ? 'No Upcoming Classes'
+        : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex])}
+    </div>
+    <Button
+      color="blue"
+      class="mb-2 mt-4"
+      on:click={() => {
+        recordClass(classId, link)
+      }}>Join Class</Button
+    >
+    <Button
+      color="blue"
+      on:click={() =>
+        sendClassReminder(
+          'all',
+          '',
+          instructorName,
+          instructorEmail,
+          otherInstructorEmails,
+          course,
+          nextClassIndex === -1
+            ? 'No Upcoming Classes'
+            : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex]),
+        )}>Send Class Reminder</Button
+    >
+  </Card>
 
   <div class="mb-4 flex justify-between">
     <Button
@@ -615,7 +718,7 @@
   <ul class="list-none space-y-2">
     {#each editedMeetingTimes as classTime, index (classTime)}
       {#if classStatuses[index] === 'classMissed'}
-      <li
+        <li
           class="flex items-center justify-between rounded-lg bg-red-100 p-4"
           transition:slide={{ duration: 1000 }}
         >
@@ -634,11 +737,11 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + " at " + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDate(classTime)}</span>
           {/if}
         </li>
       {:else if classStatuses[index] === 'missingFeedback'}
-          <li
+        <li
           class="flex items-center justify-between rounded-lg bg-yellow-100 p-4"
           transition:slide={{ duration: 1000 }}
         >
@@ -657,34 +760,34 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + " at " + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDate(classTime)}</span>
           {/if}
         </li>
-        {:else if classStatuses[index] === 'upcoming'}
+      {:else if classStatuses[index] === 'upcoming'}
         <li
-        class="flex items-center justify-between rounded-lg bg-blue-100 p-4"
-        transition:slide={{ duration: 1000 }}
-      >
-        <span class="font-semibold">Class {index + 1}:</span>
-        {#if editMode}
-          <Input
-            type="datetime-local"
-            class="rounded border p-1"
-            bind:value={editedMeetingTimes[index]}
-          />
-          <Button
-            color="red"
-            on:click={() => {
-              editedMeetingTimes.splice(index, 1)
-              editedMeetingTimes = editedMeetingTimes.slice()
-            }}>Delete</Button
-          >
-        {:else}
-          <span>{course + " at " + formatDate(classTime)}</span>
-        {/if}
-      </li>
+          class="flex items-center justify-between rounded-lg bg-blue-100 p-4"
+          transition:slide={{ duration: 1000 }}
+        >
+          <span class="font-semibold">Class {index + 1}:</span>
+          {#if editMode}
+            <Input
+              type="datetime-local"
+              class="rounded border p-1"
+              bind:value={editedMeetingTimes[index]}
+            />
+            <Button
+              color="red"
+              on:click={() => {
+                editedMeetingTimes.splice(index, 1)
+                editedMeetingTimes = editedMeetingTimes.slice()
+              }}>Delete</Button
+            >
+          {:else}
+            <span>{course + ' at ' + formatDate(classTime)}</span>
+          {/if}
+        </li>
       {:else if classStatuses[index] === 'allComplete'}
-      <li
+        <li
           class="flex items-center justify-between rounded-lg bg-green-100 p-4"
           transition:slide={{ duration: 1000 }}
         >
@@ -703,7 +806,7 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + " at " + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDate(classTime)}</span>
           {/if}
         </li>
       {:else}
@@ -726,7 +829,7 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + " at " + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDate(classTime)}</span>
           {/if}
         </li>
       {/if}
