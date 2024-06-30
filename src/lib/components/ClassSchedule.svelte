@@ -296,7 +296,7 @@
       feedbackCompleted: newFeedback,
       classesStatus: newClassStatuses,
     }).then(() => {
-      findNextClassDate()
+      nextClassIndex = findNextClassDate()
       alert.trigger('success', 'Meeting times updated!')
       location.reload()
     })
@@ -366,8 +366,7 @@
       const diff =
         new Date().getTime() - new Date(editedMeetingTimes[i]).getTime()
       if (diff < 0) {
-        nextClassIndex = i
-        break
+        return i
       }
     }
   }
