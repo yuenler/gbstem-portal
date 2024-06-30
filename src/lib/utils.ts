@@ -105,14 +105,6 @@ export const classTodayHeld = (datesHeld: Date[], classToday: Date) => {
   )
 }
 
-export const classUpcoming = (date: Date) => {
-  return (
-    date.getTime() > Date.now() &&
-    // Check if the class is within the next 30 minutes
-    Math.abs(date.getTime() - new Date().getTime()) / (1000 * 60) < 30
-  )
-}
-
 export function normalizeCapitals(name: string) {
   return name
     .split(' ')

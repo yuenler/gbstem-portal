@@ -16,7 +16,7 @@
   import DialogActions from '$lib/components/DialogActions.svelte'
   import Card from './Card.svelte'
   import { MailIcon } from 'svelte-feather-icons'
-    import { classTodayHeld, classUpcoming, copyToClipboard, formatDateString, normalizeCapitals, toLocalISOString } from '$lib/utils'
+    import { classTodayHeld, copyToClipboard, formatDateString, normalizeCapitals, toLocalISOString } from '$lib/utils'
 
   let meetingTimes: Date[] = []
   let editMode: boolean = false
@@ -203,15 +203,23 @@
     })
   })
 
+  const isClassUpcoming = (date: Date) => {
+  return (
+    date.getTime() > Date.now() &&
+    // Check if the class is within the next 30 minutes
+    Math.abs(date.getTime() - new Date().getTime()) / (1000 * 60) < 30
+  )
+}
+
   function checkStatuses() {
     for (let i = 0; i < meetingTimes.length; i++) {
       if (
-        new Date().getTime() > meetingTimes[i].getTime() &&
+        new Date() > meetingTimes[i] &&
         classStatuses[i] !== 'allComplete' &&
         classStatuses[i] !== 'missingFeedback'
       ) {
         classStatuses[i] = feedbackCompleted[i] ? 'allComplete' : 'classMissed'
-      } else if (classUpcoming(meetingTimes[i])) {
+      } else if (isClassUpcoming(meetingTimes[i])) {
         classStatuses[i] = 'upcoming'
       } else if (
         classStatuses[i] === 'missingFeedback' &&
