@@ -1,6 +1,8 @@
 import type { ClassValue } from 'clsx'
 import clsx from 'clsx'
+import { Timestamp } from 'firebase/firestore'
 import { twMerge } from 'tailwind-merge'
+import { alert } from '$lib/stores'
 
 export function cn(...classes: Array<ClassValue>) {
   return twMerge(clsx(...classes))
@@ -88,3 +90,80 @@ export function formatTime24to12(time24: string): string {
     hour12: true,
   })
 }
+
+export const timestampToDate = (timestamp: Timestamp | Date) => {
+  return new Date(timestamp.seconds * 1000)
+}
+
+export const classTodayHeld = (datesHeld: Date[], classToday: Date) => {
+  return (
+    datesHeld.filter(
+      (date) =>
+        classToday.toDateString() === timestampToDate(date).toDateString() &&
+        new Date() > date,
+    ).length > 0
+  )
+}
+
+export const classUpcoming = (date: Date) => {
+  return (
+    date.getTime() > Date.now() &&
+    // Check if the class is within the next 30 minutes
+    Math.abs(date.getTime() - new Date().getTime()) / (1000 * 60) < 30
+  )
+}
+
+export function normalizeCapitals(name: string) {
+  return name
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
+export function formatDate(date: string): string {
+  const dateObj = new Date(date)
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+  return dateObj.toLocaleString(undefined, options)
+}
+
+export function htmlToPlainText(html: string): string {
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+
+  // Replace <br> and block elements with new lines
+  doc.querySelectorAll('br').forEach((br) => br.replaceWith('\n'))
+  doc
+    .querySelectorAll('p, div, h1, h2, h3, h4, h5, h6, ul, ol, li')
+    .forEach((block) => {
+      block.append(document.createTextNode('\n'))
+    })
+
+  return doc.body.textContent?.replace(/\n+/g, '\n').trim() || ''
+}
+
+export function copyToClipboard(emailHtmlContent: string) {
+  const el = document.createElement('textarea')
+  el.value = htmlToPlainText(emailHtmlContent)
+  document.body.appendChild(el)
+  el.select()
+  document.execCommand('copy')
+  document.body.removeChild(el)
+  alert.trigger('success', 'Email copied to clipboard!')
+}
+
+export function toLocalISOString(date: Date) {
+  const pad = (number: number) => (number < 10 ? '0' + number : number)
+  const year = date.getFullYear()
+  const month = pad(date.getMonth() + 1) // JavaScript months are 0-indexed.
+  const day = pad(date.getDate())
+  const hour = pad(date.getHours())
+  const minute = pad(date.getMinutes())
+
+  return `${year}-${month}-${day}T${hour}:${minute}`.slice(0, 16)
+}
+

@@ -9,13 +9,14 @@
     Timestamp,
   } from 'firebase/firestore'
   import Input from './Input.svelte'
-  import { alert } from '$lib/stores'
   import { slide } from 'svelte/transition'
+  import { alert } from '$lib/stores'
   import Dialog from '$lib/components/Dialog.svelte'
   import Button from '$lib/components/Button.svelte'
   import DialogActions from '$lib/components/DialogActions.svelte'
   import Card from './Card.svelte'
   import { MailIcon } from 'svelte-feather-icons'
+    import { classTodayHeld, classUpcoming, copyToClipboard, formatDate, normalizeCapitals, toLocalISOString } from '$lib/utils'
 
   let meetingTimes: Date[] = []
   let editMode: boolean = false
@@ -25,9 +26,13 @@
   let feedbackCompleted: boolean[] = []
   let instructorName = ''
   let instructorEmail = ''
+  //comma-separated string of emails of other instructors from the class from the document in the database
   let otherInstructorEmails = ''
+  //name of the course
   let course: string = ''
+  //index of the next class date from the list of meeting times
   let nextClassIndex = -1
+  //link to the class meeting
   let link: string = ''
   const classesCollection = 'classesSpring24'
   let classId = ''
@@ -45,29 +50,6 @@
   let addingClass = false
 
   let classToBeAdded = ''
-
-  const timestampToDate = (timestamp: Timestamp | Date) => {
-    return new Date(timestamp.seconds * 1000)
-  }
-
-  const classTodayHeld = (datesHeld: Date[], classToday: Date) => {
-    return (
-      datesHeld.filter(
-        (date) =>
-          classToday.toDateString() === timestampToDate(date).toDateString() &&
-          new Date() > date,
-      ).length > 0
-    )
-  }
-
-  const classUpcoming = (date: Date) => {
-    return (
-      date.getTime() > Date.now() &&
-      Math.abs(date.getTime() - new Date().getTime()) / (1000 * 60) < 30
-    )
-  }
-
-  let classIndex = -1
 
   const getStudentList = (studentUids: string[]) => {
     studentUids.forEach((studentUid) => {
@@ -294,17 +276,6 @@
     return emailBody
   }
 
-  function toLocalISOString(date: Date) {
-    const pad = (number: number) => (number < 10 ? '0' + number : number)
-    const year = date.getFullYear()
-    const month = pad(date.getMonth() + 1) // JavaScript months are 0-indexed.
-    const day = pad(date.getDate())
-    const hour = pad(date.getHours())
-    const minute = pad(date.getMinutes())
-
-    return `${year}-${month}-${day}T${hour}:${minute}`.slice(0, 16)
-  }
-
   async function updateMeetingTimes(
     newFeedback: boolean[],
     newClassStatuses: string[],
@@ -380,42 +351,6 @@
     updateMeetingTimes(feedbackCompleted, classStatuses)
   }
 
-  function formatDate(date: string): string {
-    const dateObj = new Date(date)
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }
-    return dateObj.toLocaleString(undefined, options)
-  }
-
-  function htmlToPlainText(html: string): string {
-    const doc = new DOMParser().parseFromString(html, 'text/html')
-
-    // Replace <br> and block elements with new lines
-    doc.querySelectorAll('br').forEach((br) => br.replaceWith('\n'))
-    doc
-      .querySelectorAll('p, div, h1, h2, h3, h4, h5, h6, ul, ol, li')
-      .forEach((block) => {
-        block.append(document.createTextNode('\n'))
-      })
-
-    return doc.body.textContent?.replace(/\n+/g, '\n').trim() || ''
-  }
-
-  function copyToClipboard() {
-    const el = document.createElement('textarea')
-    el.value = htmlToPlainText(emailHtmlContent)
-    document.body.appendChild(el)
-    el.select()
-    document.execCommand('copy')
-    document.body.removeChild(el)
-    alert.trigger('success', 'Email copied to clipboard!')
-  }
-
   function findNextClassDate() {
     for (let i = 0; i < editedMeetingTimes.length; i++) {
       const diff =
@@ -470,31 +405,24 @@
   }
 
   function copyEmails() {
-    const emailList = studentList
-      .map(
-        (student) =>
-          `${student.email}${
-            student.secondaryEmail ? `, ${student.secondaryEmail}` : ''
-          }`,
-      )
-      .join(', ')
+  const emailList = studentList
+    .map(
+      (student) =>
+        `${student.email}${
+          student.secondaryEmail ? `, ${student.secondaryEmail}` : ''
+        }`,
+    )
+    .join(', ')
 
-    navigator.clipboard
-      .writeText(emailList)
-      .then(() => {
-        alert.trigger('success', 'Emails copied to clipboard!')
-      })
-      .catch((err) => {
-        alert.trigger('error', 'Failed to copy emails to clipboard!')
-      })
-  }
-
-  function normalizeCapitals(name: string) {
-    return name
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ')
-  }
+  navigator.clipboard
+    .writeText(emailList)
+    .then(() => {
+      alert.trigger('success', 'Emails copied to clipboard!')
+    })
+    .catch((err) => {
+      alert.trigger('error', 'Failed to copy emails to clipboard!')
+    })
+}
 </script>
 
 <Dialog bind:this={dialogEl} initial={emailHtmlContent !== ''} size="min">
@@ -507,7 +435,7 @@
       Here is an email template you can copy to send to your students' parents.
     </p>
     <div class="mt-5 flex justify-end">
-      <Button on:click={copyToClipboard} class="flex items-center gap-1">
+      <Button on:click={() => copyToClipboard(emailHtmlContent)} class="flex items-center gap-1">
         <svg
           fill="#000000"
           height="20"
