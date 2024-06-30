@@ -120,7 +120,7 @@ export function normalizeCapitals(name: string) {
     .join(' ')
 }
 
-export function formatDate(date: string): string {
+export function formatDateString(date: string): string {
   const dateObj = new Date(date)
   const options: Intl.DateTimeFormatOptions = {
     weekday: 'long',
@@ -130,6 +130,17 @@ export function formatDate(date: string): string {
     minute: '2-digit',
   }
   return dateObj.toLocaleString(undefined, options)
+}
+
+export const formatDate = (date: Date) => {
+  return date.toLocaleString('en-US', {
+    weekday: 'short', // long, short, narrow
+    month: 'short', // numeric, 2-digit, long, short, narrow
+    day: 'numeric', // numeric, 2-digit
+    hour: 'numeric', // numeric, 2-digit
+    minute: 'numeric', // numeric, 2-digit
+    hour12: true, // use 12-hour time format with AM/PM
+  })
 }
 
 export function htmlToPlainText(html: string): string {

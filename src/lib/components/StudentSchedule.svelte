@@ -5,6 +5,7 @@
   import Input from './Input.svelte'
   import Card from './Card.svelte'
   import Button from './Button.svelte'
+    import { formatDateString } from '$lib/utils'
 
   let classSchedules: { [k: string]: string }[] = []
   let nextClassIndex = 0
@@ -46,18 +47,6 @@
       }
   }
 
-  function formatDate(dateString: string) {
-    const date = new Date(dateString)
-    return date.toLocaleString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
   $: if (selectedStudentUid) {
     getDoc(doc(db, 'registrationsSpring24', selectedStudentUid)).then(
       (docSnapshot) => {
@@ -82,7 +71,7 @@
       <div class="font-bold mb-2">Next Upcoming Class:</div>
         <div>
           {classSchedules[nextClassIndex].course},
-          {formatDate(classSchedules[nextClassIndex].meetingTime)}
+          {formatDateString(classSchedules[nextClassIndex].meetingTime)}
         </div>
         <Button color="blue" class="mb-2 mt-4" on:click={() => {window.open(classSchedules[nextClassIndex].link)}}
           >Join Class</Button>
@@ -99,7 +88,7 @@
               class="flex items-center justify-between rounded-lg bg-gray-100 p-4"
             >
               <p class="class-name">{schedule.course}</p>
-              <p class="meeting-time">{formatDate(schedule.meetingTime)}</p>
+              <p class="meeting-time">{formatDateString(schedule.meetingTime)}</p>
             </li>
           {/each}
         </ul>
@@ -119,7 +108,7 @@
                     style="border-width:1px 0 0 0; border-color:gray; padding:1rem;"
                   >
                     <p class="meeting-time">
-                      {formatDate(schedule.meetingTime)}
+                      {formatDateString(schedule.meetingTime)}
                     </p>
                   </div>
                 {/if}

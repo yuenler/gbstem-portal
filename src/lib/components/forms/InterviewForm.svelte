@@ -16,6 +16,7 @@
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
+    import { formatDate } from '$lib/utils'
 
   let showValidation = false
   let valuesJson: Data.InterviewSlot[] = []
@@ -121,17 +122,6 @@
       'success',
       'Thank you for signing up for an interview! You will receive an email with the details shortly.',
     )
-  }
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleString('en-US', {
-      weekday: 'short', // long, short, narrow
-      month: 'short', // numeric, 2-digit, long, short, narrow
-      day: 'numeric', // numeric, 2-digit
-      hour: 'numeric', // numeric, 2-digit
-      minute: 'numeric', // numeric, 2-digit
-      hour12: true, // use 12-hour time format with AM/PM
-    })
   }
 
   onMount(() => {

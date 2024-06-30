@@ -16,7 +16,7 @@
   import DialogActions from '$lib/components/DialogActions.svelte'
   import Card from './Card.svelte'
   import { MailIcon } from 'svelte-feather-icons'
-    import { classTodayHeld, classUpcoming, copyToClipboard, formatDate, normalizeCapitals, toLocalISOString } from '$lib/utils'
+    import { classTodayHeld, classUpcoming, copyToClipboard, formatDateString, normalizeCapitals, toLocalISOString } from '$lib/utils'
 
   let meetingTimes: Date[] = []
   let editMode: boolean = false
@@ -185,13 +185,15 @@
                 toLocalISOString(time),
               )
               editedMeetingTimes = [...originalMeetingTimes]
-              course = data.course
-              link = data.meetingLink
-              classStatuses = data.classesStatus
-              feedbackCompleted = data.feedbackCompleted
-              instructorEmail = data.instructorEmail
-              instructorName = data.instructorFirstName
-              otherInstructorEmails = data.otherInstructorEmails
+              const {
+                course,
+                meetingLink: link,
+                classesStatus: classStatuses,
+                feedbackCompleted,
+                instructorEmail,
+                instructorFirstName: instructorName,
+                otherInstructorEmails
+              } = data;
               checkStatuses()
               findNextClassDate()
             }
@@ -230,14 +232,14 @@
     // Check for deletions
     originalMeetingTimes.forEach((time) => {
       if (!editedMeetingTimes.includes(time)) {
-        removedClasses.push(`Class on ${formatDate(time)}`)
+        removedClasses.push(`Class on ${formatDateString(time)}`)
       }
     })
 
     // Check for additions
     editedMeetingTimes.forEach((time) => {
       if (!originalMeetingTimes.includes(time)) {
-        addedClasses.push(`Class added on ${formatDate(time)}`)
+        addedClasses.push(`Class added on ${formatDateString(time)}`)
       }
     })
 
@@ -552,7 +554,7 @@
                         ? 'No Upcoming Classes'
                         : course +
                             ', ' +
-                            formatDate(editedMeetingTimes[nextClassIndex]),
+                            formatDateString(editedMeetingTimes[nextClassIndex]),
                     )}><MailIcon size="16" /></Button
                 ></td
               >
@@ -567,7 +569,7 @@
     <div>
       {nextClassIndex === -1
         ? 'No Upcoming Classes'
-        : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex])}
+        : course + ', ' + formatDateString(editedMeetingTimes[nextClassIndex])}
     </div>
     <Button
       color="blue"
@@ -588,7 +590,7 @@
           course,
           nextClassIndex === -1
             ? 'No Upcoming Classes'
-            : course + ', ' + formatDate(editedMeetingTimes[nextClassIndex]),
+            : course + ', ' + formatDateString(editedMeetingTimes[nextClassIndex]),
         )}>Send Class Reminder</Button
     >
   </Card>
@@ -665,7 +667,7 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + ' at ' + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDateString(classTime)}</span>
           {/if}
         </li>
       {:else if classStatuses[index] === 'missingFeedback'}
@@ -688,7 +690,7 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + ' at ' + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDateString(classTime)}</span>
           {/if}
         </li>
       {:else if classStatuses[index] === 'upcoming'}
@@ -711,7 +713,7 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + ' at ' + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDateString(classTime)}</span>
           {/if}
         </li>
       {:else if classStatuses[index] === 'allComplete'}
@@ -734,7 +736,7 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + ' at ' + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDateString(classTime)}</span>
           {/if}
         </li>
       {:else}
@@ -757,7 +759,7 @@
               }}>Delete</Button
             >
           {:else}
-            <span>{course + ' at ' + formatDate(classTime)}</span>
+            <span>{course + ' at ' + formatDateString(classTime)}</span>
           {/if}
         </li>
       {/if}
