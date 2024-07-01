@@ -95,17 +95,18 @@ export const timestampToDate = (timestamp: Timestamp | Date) => {
   return new Date(timestamp.seconds * 1000)
 }
 
-export const classTodayHeld = (datesHeld: Date[], classToday: Date) => {
+export const classTodayHeld = (datesHeld: Date[]) => {
   return (
     datesHeld.filter(
       (date) =>
-        classToday.toDateString() === timestampToDate(date).toDateString() &&
+        new Date().toDateString() === timestampToDate(date).toDateString() &&
         new Date() > date,
     ).length > 0
   )
 }
 
 export function normalizeCapitals(name: string) {
+  if(name === undefined) return ''
   return name
     .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
