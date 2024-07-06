@@ -281,7 +281,6 @@
     <Input
       type="text"
       bind:value={values.otherInstructorEmails}
-      floating
       label="Enter the emails of any co-instructors here, comma separated. Keep in mind that only one instructor per class should fill out this form."
     />
 

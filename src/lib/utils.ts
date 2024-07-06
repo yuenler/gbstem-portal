@@ -171,3 +171,11 @@ export function toLocalISOString(date: Date) {
   return `${year}-${month}-${day}T${hour}:${minute}`.slice(0, 16)
 }
 
+
+export const isClassUpcoming = (date: Date) => {
+  return (
+    date.getTime() > Date.now() &&
+    // Check if the class is within the next 30 minutes
+    Math.abs(date.getTime() - new Date().getTime()) / (1000 * 60) < 30
+  )
+}

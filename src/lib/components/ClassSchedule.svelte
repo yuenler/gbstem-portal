@@ -6,7 +6,6 @@
     getDoc,
     updateDoc,
     DocumentReference,
-    Timestamp,
   } from 'firebase/firestore'
   import Input from './Input.svelte'
   import { slide } from 'svelte/transition'
@@ -16,7 +15,16 @@
   import DialogActions from '$lib/components/DialogActions.svelte'
   import Card from './Card.svelte'
   import { MailIcon } from 'svelte-feather-icons'
-    import { classTodayHeld, copyToClipboard, formatDateString, normalizeCapitals, toLocalISOString } from '$lib/utils'
+  import { classTodayHeld, 
+          copyToClipboard, 
+          formatDateString, 
+          isClassUpcoming, 
+          normalizeCapitals, 
+          toLocalISOString
+        } from '$lib/utils'
+  import sendClassReminder from './helpers/sendClassReminder'
+  import type Student from './types/Student'
+  import generateMeetingTimeChangeEmail from './helpers/generateMeetingTimeChangeEmail'
 
   let meetingTimes: Date[] = []
   let editMode: boolean = false
@@ -36,7 +44,7 @@
     //name of the course
     course: string,
     //class meeting link
-    link: string,
+    meetingLink: string,
   } = {
     classStatuses: [],
     feedbackCompleted: [],
@@ -44,40 +52,39 @@
     instructorEmail: '',
     otherInstructorEmails: '',
     course: '',
-    link: '',
+    meetingLink: '',
   }
 
   //index of the next class date from the list of meeting times
   let nextClassIndex = -1
   const classesCollection = 'classesSpring24'
+  const registrationsCollection = 'registrationsSpring24'
   let classId = ''
   let dialogEl: Dialog
   let addClassDialogEl: Dialog
   let emailHtmlContent = ''
-  let studentList: {
-    name: string
-    email: string
-    secondaryEmail: string
-    phone: string
-    grade: number
-    school: string
-  }[] = []
+  let studentList: Student[] = []
   let addingClass = false
+
   enum ClassStatus {
-    ClassNotHeld = 'classMissed',
-    FeedbackIncomplete = 'missingFeedback',
-    ClassUpcomingSoon = 'upcoming',
-    EverythingComplete = 'allComplete',
-    ClassInFuture = 'sometime',
+    ClassNotHeld = 'ClassNotHeld',
+    FeedbackIncomplete = 'FeedbackIncomplete',
+    ClassUpcomingSoon = 'ClassUpcomingSoon',
+    EverythingComplete = 'EverythingComplete',
+    ClassInFuture = 'ClassInFuture',
   }
 
   let classToBeAdded = ''
 
+  /**
+   * Iterates through each student UID to get student info
+   * @param studentUids
+   */
   const getStudentList = (studentUids: string[]) => {
     studentUids.forEach((studentUid) => {
       const studentDocRef: DocumentReference = doc(
         db,
-        'registrationsSpring24',
+        registrationsCollection,
         studentUid,
       )
       getDoc(studentDocRef).then((studentDoc) => {
@@ -99,149 +106,6 @@
     })
   }
 
-  /**
-   * Send a class reminder email to the student
-   * @param studentName The name of the student to send the email to, use "all" if you want to send it ot all of them
-   * @param studentEmail The email of the student to send the email to
-   * @param instructorName The name of the instructor
-   * @param instructorEmail The email of the instructor
-   * @param otherInstructorEmails The emails of other instructors as a comma-separated string
-   * @param className The name of the class
-   * @param nextMeetingTime The time of the next class
-   */
-  function sendClassReminder(
-    studentName: string,
-    studentEmail: string,
-    instructorName: string,
-    instructorEmail: string,
-    otherInstructorEmails: string,
-    className: string,
-    nextMeetingTime: string,
-  ) {
-    /* if it's not to an individual student, student should be 'all' */
-    if (studentName === 'all') {
-      const confirmSend = confirm('Send class reminder to all students?')
-      if (confirmSend) {
-        if (nextMeetingTime === 'No Upcoming Classes') {
-          alert.trigger('error', 'No upcoming classes found!')
-          return
-        }
-        studentList.map((student) => {
-          fetch('/api/remindStudents', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              name: normalizeCapitals(student.name),
-              email: student.email,
-              instructorEmail: instructorEmail,
-              otherInstructorEmails: otherInstructorEmails,
-              class: className,
-              classTime: nextMeetingTime,
-              instructorName: normalizeCapitals(instructorName),
-            }),
-          }).then(async (res) => {
-            if (res.ok) {
-              alert.trigger('success', 'Reminder emails were sent!')
-            } else {
-              const { message } = await res.json()
-              alert.trigger('error', message)
-            }
-          })
-        })
-      }
-    } else {
-      const confirmSend = confirm(
-        'Send class reminder to student ' + studentName + '?',
-      )
-      if (confirmSend) {
-        if (nextMeetingTime === 'No Upcoming Classes') {
-          alert.trigger('error', 'No upcoming classes found!')
-          return
-        }
-        fetch('/api/remindStudents', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: studentName,
-            email: studentEmail,
-            instructorEmail: instructorEmail,
-            otherInstructorEmails: otherInstructorEmails,
-            class: className,
-            classTime: nextMeetingTime,
-            instructorName: normalizeCapitals(instructorName),
-          }),
-        }).then(async (res) => {
-          if (res.ok) {
-            alert.trigger(
-              'success',
-              'Reminder email was sent to ' + studentName + '!',
-            )
-          } else {
-            const { message } = await res.json()
-            alert.trigger('error', message)
-          }
-        })
-      }
-    }
-  }
-  onMount(() => {
-    return user.subscribe((user) => {
-      if (user) {
-        classId = user.object.uid
-        const classDocRef: DocumentReference = doc(
-          db,
-          classesCollection,
-          classId,
-        )
-        getDoc(classDocRef).then((classDoc) => {
-          if (classDoc.exists()) {
-            const data = classDoc.data()
-            const studentUids = data?.students
-            if (studentUids) {
-              getStudentList(studentUids)
-            }
-            if (data && data.meetingTimes) {
-              meetingTimes = data.meetingTimes.map(
-                (time: { seconds: number; nanoseconds: number }) =>
-                  new Date(time.seconds * 1000),
-              )
-              meetingTimes.sort((a, b) => {
-                return a.getTime() - b.getTime()
-              })
-              originalMeetingTimes = meetingTimes.map((time) =>
-                toLocalISOString(time),
-              )
-              editedMeetingTimes = [...originalMeetingTimes]
-              values = {
-                classStatuses: data.classesStatus,
-                feedbackCompleted: data.feedbackCompleted,
-                instructorName: data.instructorName,
-                instructorEmail: data.instructorEmail,
-                otherInstructorEmails: data.otherInstructorEmails,
-                course: data.course,
-                link: data.link,
-              }
-              checkStatuses()
-              nextClassIndex = findNextClassDate()
-            }
-          }
-        })
-      }
-    })
-  })
-
-  const isClassUpcoming = (date: Date) => {
-  return (
-    date.getTime() > Date.now() &&
-    // Check if the class is within the next 30 minutes
-    Math.abs(date.getTime() - new Date().getTime()) / (1000 * 60) < 30
-  )
-}
-
   function checkStatuses() {
     for (let i = 0; i < meetingTimes.length; i++) {
       if (
@@ -259,62 +123,9 @@
         values.classStatuses[i] = ClassStatus.EverythingComplete
       }
     }
-    updateDoc(doc(db, 'classesSpring24', classId), {
+    updateDoc(doc(db, classesCollection, classId), {
       classesStatus: values.classStatuses,
     })
-  }
-
-  function generateMeetingTimeChangeEmail(): string {
-    let addedClasses: string[] = []
-    let removedClasses: string[] = []
-
-    // Check for deletions 
-    originalMeetingTimes.forEach((time) => {
-      if (!editedMeetingTimes.includes(time)) {
-        removedClasses.push(`Class on ${formatDateString(time)}`)
-      }
-    })
-
-    // Check for additions
-    editedMeetingTimes.forEach((time) => {
-      if (!originalMeetingTimes.includes(time)) {
-        addedClasses.push(`Class added on ${formatDateString(time)}`)
-      }
-    })
-
-    // Construct the email content in HTML
-    let emailBody = '<html><body>'
-    emailBody += '<p>Dear gbSTEM Parents,</p>'
-    emailBody +=
-      '<p>I would like to update you on some changes to our class meeting times:</p>'
-
-    if (addedClasses.length > 0) {
-      emailBody += '<p><strong>Classes Added:</strong></p><ul>'
-      addedClasses.forEach((addClass) => {
-        emailBody += `<li>${addClass}</li>`
-      })
-      emailBody += '</ul>'
-    }
-
-    if (removedClasses.length > 0) {
-      emailBody += '<p><strong>Classes Removed:</strong></p><ul>'
-      removedClasses.forEach((removeClass) => {
-        emailBody += `<li>${removeClass}</li>`
-      })
-      emailBody += '</ul>'
-    }
-
-    if (addedClasses.length === 0 && removedClasses.length === 0) {
-      return ''
-    }
-
-    emailBody +=
-      '<p>Please take note of these changes. If you have any questions or concerns, feel free to contact me.</p>'
-    emailBody += '<p>Best,<br>[Your Name]</p>'
-    emailBody += '</body></html>'
-
-    // Return the full email content in HTML format
-    return emailBody
   }
 
   async function updateMeetingTimes(
@@ -345,7 +156,7 @@
 
   function saveChanges(): void {
     editMode = false
-    emailHtmlContent = generateMeetingTimeChangeEmail()
+    emailHtmlContent = generateMeetingTimeChangeEmail(originalMeetingTimes, editedMeetingTimes)
     // sort the meeting times
     editedMeetingTimes.sort((a, b) => {
       const dateA = new Date(a)
@@ -357,7 +168,7 @@
       (time, index) => editedMeetingTimes.indexOf(time) === index,
     )
 
-    /* Find the removed and added classes*/
+    // Find the removed and added classes
     let removed: number[] = []
     originalMeetingTimes.map((x, index) => {
       if (!editedMeetingTimes.includes(x)) removed.push(index)
@@ -371,7 +182,7 @@
     let newFeedback = [...values.feedbackCompleted]
     let newClassStatuses = [...values.classStatuses]
 
-    /* Update the feedback and classStatuses arrays based on deleted/added times */
+    // Update the feedback and classStatuses arrays based on deleted/added times
     removed.forEach((index) => {
       newFeedback.splice(index, 1)
       newClassStatuses.splice(index, 1)
@@ -415,11 +226,12 @@
    * @param classId The ID of the class to update
    * @param link The link to the class session
    */
-  const recordClass = async (classId: string, link: string) => {
-    const classDoc = await getDoc(doc(db, 'classesSpring24', classId))
+  const recordClass = async (classId: string) => {
+    const {meetingLink} = values;
+    const classDoc = await getDoc(doc(db, classesCollection, classId))
     if (classDoc.exists()) {
       const confirmHoldClass = confirm(
-        'Please confirm you are holding class now.',
+        `Please confirm you are holding class now. Confirming will redirect you to ${meetingLink}`,
       )
       if (confirmHoldClass) {
         const data = classDoc.data()
@@ -443,13 +255,14 @@
             'error',
             'No class session found today! Please update your class schedule if you are planning to hold class today.',
           )
-          setTimeout(() => window.open(link), 1000)
+          return;
         } else {
-          updateDoc(doc(db, 'classesSpring24', classId), {
+          updateDoc(doc(db, classesCollection, classId), {
             datesHeld: datesHeld,
             classesStatus: values.classStatuses,
           })
         }
+        window.open(meetingLink)
       }
     } else {
       alert.trigger('error', 'Class Not Found!')
@@ -475,6 +288,52 @@
       alert.trigger('error', 'Failed to copy emails to clipboard!')
     })
 }
+
+onMount(() => {
+    return user.subscribe((user) => {
+      if (user) {
+        classId = user.object.uid
+        const classDocRef: DocumentReference = doc(
+          db,
+          classesCollection,
+          classId,
+        )
+        getDoc(classDocRef).then((classDoc) => {
+          if (classDoc.exists()) {
+            const data = classDoc.data()
+            const studentUids = data?.students
+            if (studentUids) {
+              getStudentList(studentUids)
+            }
+            if (data && data.meetingTimes) {
+              meetingTimes = data.meetingTimes.map(
+                (time: { seconds: number; nanoseconds: number }) =>
+                  new Date(time.seconds * 1000),
+              )
+              meetingTimes.sort((a, b) => {
+                return a.getTime() - b.getTime()
+              })
+              originalMeetingTimes = meetingTimes.map((time) =>
+                toLocalISOString(time),
+              )
+              editedMeetingTimes = [...originalMeetingTimes]
+              values = {
+                classStatuses: data.classesStatus,
+                feedbackCompleted: data.feedbackCompleted,
+                instructorName: data.instructorName,
+                instructorEmail: data.instructorEmail,
+                otherInstructorEmails: data.otherInstructorEmails,
+                course: data.course,
+                meetingLink: data.meetingLink,
+              }
+              checkStatuses()
+              nextClassIndex = findNextClassDate()
+            }
+          }
+        })
+      }
+    })
+  })
 </script>
 
 <Dialog bind:this={dialogEl} initial={emailHtmlContent !== ''} size="min">
@@ -593,19 +452,20 @@
                 ><Button
                   color="blue"
                   on:click={() =>
-                    sendClassReminder(
-                      normalizeCapitals(student.name),
-                      student.email,
-                      values.instructorName,
-                      values.instructorEmail,
-                      values.otherInstructorEmails,
-                      values.course,
-                      nextClassIndex === -1
+                    sendClassReminder({
+                      studentList,
+                      studentName: normalizeCapitals(student.name),
+                      studentEmail: student.email,
+                      instructorName: values.instructorName,
+                      instructorEmail: values.instructorEmail,
+                      otherInstructorEmails: values.otherInstructorEmails,
+                      className: values.course,
+                      nextMeetingTime: nextClassIndex === -1
                         ? 'No Upcoming Classes'
                         : values.course +
                             ', ' +
                             formatDateString(editedMeetingTimes[nextClassIndex]),
-                    )}><MailIcon size="16" /></Button
+                    })}><MailIcon size="16" /></Button
                 ></td
               >
             </tr>
@@ -625,25 +485,23 @@
       color="blue"
       class="mb-2 mt-4"
       on:click={() => {
-        recordClass(classId, values.link).then(() => {
-          window.open(values.link)
-        })
-      }}>Join Class</Button
+        recordClass(classId)
+      }}>Start Class</Button
     >
     <Button
       color="blue"
       on:click={() =>
         sendClassReminder(
-          'all',
-          '',
-          values.instructorName,
-          values.instructorEmail,
-          values.otherInstructorEmails,
-          values.course,
-          nextClassIndex === -1
+          {
+          studentList,
+          instructorName: values.instructorName,
+          instructorEmail: values.instructorEmail,
+          otherInstructorEmails: values.otherInstructorEmails,
+          className: values.course,
+          nextMeetingTime: nextClassIndex === -1
             ? 'No Upcoming Classes'
             : values.course + ', ' + formatDateString(editedMeetingTimes[nextClassIndex]),
-        )}>Send Class Reminder</Button
+        })}>Send Class Reminder</Button
     >
   </Card>
 
