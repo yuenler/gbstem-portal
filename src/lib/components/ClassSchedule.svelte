@@ -6,6 +6,7 @@
     getDoc,
     updateDoc,
     DocumentReference,
+    Timestamp,
   } from 'firebase/firestore'
   import Input from './Input.svelte'
   import { slide } from 'svelte/transition'
@@ -20,45 +21,34 @@
           formatDateString, 
           isClassUpcoming, 
           normalizeCapitals, 
+          timestampToDate, 
           toLocalISOString
         } from '$lib/utils'
   import sendClassReminder from './helpers/sendClassReminder'
   import type Student from './types/Student'
   import generateMeetingTimeChangeEmail from './helpers/generateMeetingTimeChangeEmail'
+    import { classesCollection, registrationsCollection } from '$lib/data/constants'
 
-  let meetingTimes: Date[] = []
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
   let editedMeetingTimes: string[] = []
-  let values: {
-    // completion status of each class
-    classStatuses: string[],
-    // whether feedback has been completed for each class
-    feedbackCompleted: boolean[],
-    // main instructor name
-    instructorName: string,
-    //main instructor email
-    instructorEmail: string,
-    //comma-separated string of emails of other instructors from the class from the document in the database
-    otherInstructorEmails: string,
-    //name of the course
-    course: string,
-    //class meeting link
-    meetingLink: string,
-  } = {
+  let values: Data.Class = {
+    id: '',
+    students: [],
     classStatuses: [],
     feedbackCompleted: [],
-    instructorName: '',
+    instructorFirstName: '',
+    instructorLastName: '',
     instructorEmail: '',
     otherInstructorEmails: '',
     course: '',
     meetingLink: '',
+    meetingTimes: [],
+    completedClassDates: []
   }
 
   //index of the next class date from the list of meeting times
   let nextClassIndex = -1
-  const classesCollection = 'classesSpring24'
-  const registrationsCollection = 'registrationsSpring24'
   let classId = ''
   let dialogEl: Dialog
   let addClassDialogEl: Dialog
@@ -107,24 +97,27 @@
   }
 
   function checkStatuses() {
-    for (let i = 0; i < meetingTimes.length; i++) {
-      if (
-        new Date() > meetingTimes[i] &&
-        values.classStatuses[i] !== ClassStatus.EverythingComplete &&
-        values.classStatuses[i] !== ClassStatus.FeedbackIncomplete
-      ) {
-        values.classStatuses[i] = values.feedbackCompleted[i] ? ClassStatus.EverythingComplete : ClassStatus.ClassNotHeld
-      } else if (isClassUpcoming(meetingTimes[i])) {
-        values.classStatuses[i] = ClassStatus.ClassUpcomingSoon
-      } else if (
-        values.classStatuses[i] === ClassStatus.FeedbackIncomplete &&
-        values.feedbackCompleted[i]
-      ) {
-        values.classStatuses[i] = ClassStatus.EverythingComplete
+    
+    let {classStatuses, feedbackCompleted, meetingTimes} = values
+
+    classStatuses = classStatuses.concat(Array(meetingTimes.length - classStatuses.length).fill(ClassStatus.ClassInFuture));
+
+    const updateStatuses = (classStatus: string, index: number) => {
+      if(new Date() > meetingTimes[index] && classStatus !== ClassStatus.EverythingComplete && classStatus !== ClassStatus.FeedbackIncomplete) {
+        return feedbackCompleted[index] ? ClassStatus.EverythingComplete : ClassStatus.ClassNotHeld
+      } else if (isClassUpcoming(meetingTimes[index])) {
+        return ClassStatus.ClassUpcomingSoon
+      } else if (classStatus === ClassStatus.FeedbackIncomplete && feedbackCompleted[index]) {
+        return ClassStatus.EverythingComplete
+      } else {
+        return classStatus
       }
     }
+
+    classStatuses = classStatuses.map(updateStatuses)
+    
     updateDoc(doc(db, classesCollection, classId), {
-      classesStatus: values.classStatuses,
+      classStatuses: classStatuses,
     })
   }
 
@@ -136,7 +129,7 @@
     await updateDoc(doc(db, classesCollection, classId), {
       meetingTimes: meetingTimesDate,
       feedbackCompleted: newFeedback,
-      classesStatus: newClassStatuses,
+      classStatuses: newClassStatuses,
     }).then(() => {
       nextClassIndex = findNextClassDate()
       alert.trigger('success', 'Meeting times updated!')
@@ -148,7 +141,7 @@
     editMode = false
     editedMeetingTimes = [...originalMeetingTimes]
     updateDoc(doc(db, classesCollection, classId), {
-      meetingTimes: meetingTimes,
+      meetingTimes: values.meetingTimes,
     }).then(() => {
       alert.trigger('success', 'Changes cancelled!')
     })
@@ -179,8 +172,10 @@
       if (!originalMeetingTimes.includes(x)) added.push(index)
     })
 
-    let newFeedback = [...values.feedbackCompleted]
-    let newClassStatuses = [...values.classStatuses]
+    let { feedbackCompleted, classStatuses } = values
+
+    let newFeedback = [...feedbackCompleted]
+    let newClassStatuses = [...classStatuses]
 
     // Update the feedback and classStatuses arrays based on deleted/added times
     removed.forEach((index) => {
@@ -201,9 +196,9 @@
     })
 
     originalMeetingTimes = [...editedMeetingTimes]
-    values.feedbackCompleted = newFeedback
-    values.classStatuses = newClassStatuses
-    updateMeetingTimes(values.feedbackCompleted, values.classStatuses)
+    feedbackCompleted = newFeedback
+    classStatuses = newClassStatuses
+    updateMeetingTimes(feedbackCompleted, classStatuses)
   }
 
   /**
@@ -227,17 +222,13 @@
    * @param link The link to the class session
    */
   const recordClass = async (classId: string) => {
-    const {meetingLink} = values;
-    const classDoc = await getDoc(doc(db, classesCollection, classId))
-    if (classDoc.exists()) {
+    let {meetingLink, meetingTimes, feedbackCompleted, classStatuses, completedClassDates} = values;
       const confirmHoldClass = confirm(
         `Please confirm you are holding class now. Confirming will redirect you to ${meetingLink}`,
       )
       if (confirmHoldClass) {
-        const data = classDoc.data()
-        let datesHeld: Date[] = []
-        if (!classTodayHeld(data.datesHeld))
-          datesHeld = [...data.datesHeld, new Date()]
+        if (!classTodayHeld(completedClassDates))
+          completedClassDates = [...completedClassDates, new Date()]
         let classToday = false
         if (
           nextClassIndex !== -1 &&
@@ -246,7 +237,7 @@
             meetingTimes[nextClassIndex].toDateString()
         ) {
           classToday = true
-          values.classStatuses[nextClassIndex] = values.feedbackCompleted[nextClassIndex]
+          classStatuses[nextClassIndex] = feedbackCompleted[nextClassIndex]
             ? ClassStatus.EverythingComplete
             : ClassStatus.FeedbackIncomplete
         }
@@ -257,17 +248,14 @@
           )
           return;
         } else {
-          updateDoc(doc(db, classesCollection, classId), {
-            datesHeld: datesHeld,
-            classesStatus: values.classStatuses,
+            updateDoc(doc(db, classesCollection, classId), {
+            completedClassDates: completedClassDates,
+            classStatuses: classStatuses,
           })
         }
         window.open(meetingLink)
       }
-    } else {
-      alert.trigger('error', 'Class Not Found!')
-    }
-  }
+    } 
 
   function copyEmails() {
   const emailList = studentList
@@ -300,32 +288,22 @@ onMount(() => {
         )
         getDoc(classDocRef).then((classDoc) => {
           if (classDoc.exists()) {
-            const data = classDoc.data()
-            const studentUids = data?.students
-            if (studentUids) {
-              getStudentList(studentUids)
+            const classData = classDoc.data()
+            values = classData as Data.Class
+            values.meetingTimes = values.meetingTimes.map((time: Date) => (timestampToDate(time)))
+            values.completedClassDates = values.completedClassDates.map((time: Date) => (timestampToDate(time)))
+            let { students, meetingTimes } = values
+            if (students) {
+              getStudentList(students)
             }
-            if (data && data.meetingTimes) {
-              meetingTimes = data.meetingTimes.map(
-                (time: { seconds: number; nanoseconds: number }) =>
-                  new Date(time.seconds * 1000),
-              )
+            if (values && meetingTimes) {
               meetingTimes.sort((a, b) => {
-                return a.getTime() - b.getTime()
+                return a - b;
               })
-              originalMeetingTimes = meetingTimes.map((time) =>
+              originalMeetingTimes = meetingTimes.map((time: Date) =>
                 toLocalISOString(time),
               )
               editedMeetingTimes = [...originalMeetingTimes]
-              values = {
-                classStatuses: data.classesStatus,
-                feedbackCompleted: data.feedbackCompleted,
-                instructorName: data.instructorName,
-                instructorEmail: data.instructorEmail,
-                otherInstructorEmails: data.otherInstructorEmails,
-                course: data.course,
-                meetingLink: data.meetingLink,
-              }
               checkStatuses()
               nextClassIndex = findNextClassDate()
             }
@@ -456,7 +434,7 @@ onMount(() => {
                       studentList,
                       studentName: normalizeCapitals(student.name),
                       studentEmail: student.email,
-                      instructorName: values.instructorName,
+                      instructorName: values.instructorFirstName + ' ' + values.instructorLastName,
                       instructorEmail: values.instructorEmail,
                       otherInstructorEmails: values.otherInstructorEmails,
                       className: values.course,
@@ -494,7 +472,7 @@ onMount(() => {
         sendClassReminder(
           {
           studentList,
-          instructorName: values.instructorName,
+          instructorName: values.instructorFirstName,
           instructorEmail: values.instructorEmail,
           otherInstructorEmails: values.otherInstructorEmails,
           className: values.course,
