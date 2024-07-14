@@ -14,6 +14,7 @@
   import Button from '../Button.svelte'
   import DialogActions from '../DialogActions.svelte'
   import { cn } from '$lib/utils'
+    import { decisionsCollection } from '$lib/data/constants'
 
   let className = ''
   export { className as class }
@@ -60,7 +61,7 @@
               [
                 deleteObject(resumeRef),
                 deleteDoc(doc(db, 'applications', frozenUser.object.uid)),
-                deleteDoc(doc(db, 'decisionsSpring24', frozenUser.object.uid)),
+                deleteDoc(doc(db, decisionsCollection, frozenUser.object.uid)),
               ].map((p) => p.catch((e) => e)),
             )
             Promise.all([

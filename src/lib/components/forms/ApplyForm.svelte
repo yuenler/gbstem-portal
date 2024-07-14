@@ -21,6 +21,7 @@
   // import value from '$lib/components/value.svelte'
   import Button from '../Button.svelte'
   import Link from '../Link.svelte'
+    import { applicationsCollection } from '$lib/data/constants'
 
   let disabled = true
   let showValidation = false
@@ -74,7 +75,7 @@
   onMount(() => {
     return user.subscribe((user) => {
       if (user) {
-        getDoc(doc(db, 'applicationsSpring24', user.object.uid)).then(
+        getDoc(doc(db, applicationsCollection, user.object.uid)).then(
           (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
             if (applicationExists) {
@@ -137,12 +138,12 @@
         if ($user) {
           const frozenUser = $user
           setDoc(
-            doc(db, 'applicationsSpring24', frozenUser.object.uid),
+            doc(db, applicationsCollection, frozenUser.object.uid),
             modifiedValues(),
           )
             .then(() => {
               getDoc(
-                doc(db, 'applicationsSpring24', frozenUser.object.uid),
+                doc(db, applicationsCollection, frozenUser.object.uid),
               ).then((applicationDoc) => {
                 const applicationData =
                   applicationDoc.data() as Data.Application
@@ -200,12 +201,12 @@
         disabled = true
         values.meta.submitted = true
         setDoc(
-          doc(db, 'applicationsSpring24', frozenUser.object.uid),
+          doc(db, applicationsCollection, frozenUser.object.uid),
           modifiedValues(),
         )
           .then(() => {
             alert.trigger('success', 'Your application has been submitted!')
-            getDoc(doc(db, 'applicationsSpring24', frozenUser.object.uid)).then(
+            getDoc(doc(db, applicationsCollection, frozenUser.object.uid)).then(
               (applicationDoc) => {
                 fetch('/api/application', {
                   method: 'POST',

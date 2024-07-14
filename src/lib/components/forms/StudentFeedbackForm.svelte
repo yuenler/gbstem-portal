@@ -8,6 +8,7 @@
   import { doc, getDoc, setDoc } from 'firebase/firestore'
   import Card from '../Card.svelte'
   import StudentSelect from '../StudentSelect.svelte'
+    import { classesCollection } from '$lib/data/constants'
 
   let disabled = false
   let showValidation = false
@@ -37,7 +38,7 @@
 
   async function fetchCourseList(classIds: string[]) {
     const coursePromises = classIds.map((classId) =>
-      getDoc(doc(db, 'classesSpring24', classId)),
+      getDoc(doc(db, classesCollection, classId)),
     )
     const courseDocs = await Promise.all(coursePromises)
     selectedStudentCourses = courseDocs
@@ -89,7 +90,7 @@
 
   $: if (selectedStudentUid) {
     if (selectedStudentUid !== pastSelected || pastSelected === '') {
-      getDoc(doc(db, 'registrationsSpring24', selectedStudentUid)).then(
+      getDoc(doc(db, registrationsCollection, selectedStudentUid)).then(
         (docSnapshot) => {
           if (docSnapshot.exists()) {
             values.studentName =

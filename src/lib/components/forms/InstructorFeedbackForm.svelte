@@ -15,6 +15,7 @@
     updateDoc
   } from 'firebase/firestore'
   import { onMount } from 'svelte'
+    import { classesCollection, registrationsCollection } from '$lib/data/constants'
 
   let disabled = false
   let showValidation = false
@@ -53,14 +54,14 @@
   })
 
   async function getData() {
-    const q = query(collection(db, 'classesSpring24'))
+    const q = query(collection(db, classesCollection))
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach((document) => {
       if (document.id === currentUser.object.uid) {
         const uids = document.data()['students']
         feedbackCompleted = document.data().feedbackCompleted
         const classListPromises = uids.map((uid: string) =>
-          getDoc(doc(db, 'registrationsSpring24', uid))
+          getDoc(doc(db, registrationsCollection, uid))
             .then((userDoc) => {
               const userData = userDoc.data()?.personal
               return `${userData['studentFirstName']} ${userData['studentLastName']}`
@@ -119,7 +120,7 @@
           console.log(error)
         })
         updateDoc(
-          doc(db, 'classesSpring24', frozenUser.object.uid),
+          doc(db, classesCollection, frozenUser.object.uid),
           { feedbackCompleted: feedbackCompleted },
         )
         alert.trigger('success', 'Class Feedback saved!')

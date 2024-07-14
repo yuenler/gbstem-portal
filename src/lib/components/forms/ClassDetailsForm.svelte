@@ -11,6 +11,7 @@
   import Link from '$lib/components/Link.svelte'
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { create } from 'lodash-es'
+    import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
 
   let disabled = false
   let showValidation = false
@@ -108,7 +109,7 @@
   onMount(() => {
     return user.subscribe((user) => {
       if (user) {
-        getDoc(doc(db, 'classesSpring24', user.object.uid)).then((snapshot) => {
+        getDoc(doc(db, classesCollection, user.object.uid)).then((snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.data()
             values = data as {
@@ -135,7 +136,7 @@
             createClassSchedule = false
           }
         })
-        getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
+        getDoc(doc(db, 'semesterDates', semesterDatesDocument)).then((datesDoc) => {
           const datesDocExists = datesDoc.exists()
           if (datesDocExists) {
             semesterDates = datesDoc.data() as Data.SemesterDates
@@ -167,7 +168,7 @@
         values.instructorFirstName = frozenUser.profile.firstName
         values.instructorLastName = frozenUser.profile.lastName
         values.instructorEmail = frozenUser.object.email as string
-        setDoc(doc(db, 'classesSpring24', frozenUser.object.uid), values)
+        setDoc(doc(db, classesCollection, frozenUser.object.uid), values)
           .then(() => {
             disabled = true
             alert.trigger('success', 'Class details saved!')

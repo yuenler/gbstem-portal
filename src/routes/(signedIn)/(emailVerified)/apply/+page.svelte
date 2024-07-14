@@ -8,6 +8,7 @@
   import { getDoc, doc } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import { alert } from '$lib/stores'
+    import { registrationsCollection } from '$lib/data/constants'
 
   // if this is a registration, iterate through the user's uid and check if uid-1, uid-2, etc. exists
   // if it does, add it to the options array
@@ -23,7 +24,7 @@
     uid = user.object.uid
     for (let i = 1; i < 6; ++i) {
       const docRef = await getDoc(
-        doc(db, 'registrationsSpring24', `${uid}-${i}`),
+        doc(db, registrationsCollection, `${uid}-${i}`),
       )
       if (docRef.exists()) {
         const name =

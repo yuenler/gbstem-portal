@@ -6,6 +6,7 @@
   import Card from './Card.svelte'
   import Button from './Button.svelte'
     import { formatDateString } from '$lib/utils'
+    import { classesCollection, registrationsCollection } from '$lib/data/constants'
 
   let classSchedules: { [k: string]: string }[] = []
   let nextClassIndex = 0
@@ -15,7 +16,7 @@
 
   async function fetchClassSchedules(classIds: string[]) {
     const schedulesPromises = classIds.map((classId) =>
-      getDoc(doc(db, 'classesSpring24', classId)),
+      getDoc(doc(db, classesCollection, classId)),
     )
     const schedulesDocs = await Promise.all(schedulesPromises)
     classSchedules = schedulesDocs
@@ -48,7 +49,7 @@
   }
 
   $: if (selectedStudentUid) {
-    getDoc(doc(db, 'registrationsSpring24', selectedStudentUid)).then(
+    getDoc(doc(db, registrationsCollection, selectedStudentUid)).then(
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const classIds = docSnapshot.data().classes || []

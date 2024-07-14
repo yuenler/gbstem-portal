@@ -4,6 +4,7 @@
   import Loading from '$lib/components/Loading.svelte'
   import Select from '$lib/components/Select.svelte'
   import { db, user } from '$lib/client/firebase'
+    import { registrationsCollection } from '$lib/data/constants'
 
   let loading = true
 
@@ -16,7 +17,7 @@
     const uid = user.object.uid
     for (let i = 1; i < 6; ++i) {
       const docRef = await getDoc(
-        doc(db, 'registrationsSpring24', `${uid}-${i}`),
+        doc(db, registrationsCollection, `${uid}-${i}`),
       )
       if (docRef.exists() && docRef.data()?.meta.submitted) {
         const name =
