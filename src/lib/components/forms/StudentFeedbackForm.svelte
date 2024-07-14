@@ -8,7 +8,7 @@
   import { doc, getDoc, setDoc } from 'firebase/firestore'
   import Card from '../Card.svelte'
   import StudentSelect from '../StudentSelect.svelte'
-    import { classesCollection } from '$lib/data/constants'
+    import { classesCollection, registrationsCollection } from '$lib/data/constants'
 
   let disabled = false
   let showValidation = false
