@@ -12,29 +12,12 @@
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { create } from 'lodash-es'
     import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
+    import { ClassDetails } from '../types/ClassDetails'
+    import { ClassStatus } from '../helpers/ClassStatus'
 
   let disabled = false
   let showValidation = false
-  let values: {
-    classDay1: string
-    classTime1: string
-    classDay2: string
-    classTime2: string
-    meetingLink: string
-    gradeRecommendation: string
-    course: string
-    submitting: boolean
-    meetingTimes: Date[]
-    datesHeld: Date[]
-    feedbackCompleted: boolean[]
-    classStatuses: string[]
-    instructorFirstName: string
-    instructorLastName: string
-    instructorEmail: string
-    otherInstructorEmails: string
-    classCap: number
-    online: boolean
-  } = {
+  let values: ClassDetails = {
     classDay1: '',
     classTime1: '',
     classDay2: '',
@@ -163,7 +146,7 @@
           )
           values.meetingTimes = meetingTimes
           values.feedbackCompleted = new Array(meetingTimes.length).fill(false)
-          values.classStatuses = new Array(meetingTimes.length).fill('sometime')
+          values.classStatuses = new Array(meetingTimes.length).fill(ClassStatus.ClassInFuture)
         }
         values.instructorFirstName = frozenUser.profile.firstName
         values.instructorLastName = frozenUser.profile.lastName
