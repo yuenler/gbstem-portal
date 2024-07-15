@@ -28,6 +28,7 @@
   import type Student from './types/Student'
   import generateMeetingTimeChangeEmail from './helpers/generateMeetingTimeChangeEmail'
     import { classesCollection, registrationsCollection } from '$lib/data/constants'
+    import { ClassStatus } from './helpers/ClassStatus'
 
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
@@ -55,14 +56,6 @@
   let emailHtmlContent = ''
   let studentList: Student[] = []
   let addingClass = false
-
-  enum ClassStatus {
-    ClassNotHeld = 'ClassNotHeld',
-    FeedbackIncomplete = 'FeedbackIncomplete',
-    ClassUpcomingSoon = 'ClassUpcomingSoon',
-    EverythingComplete = 'EverythingComplete',
-    ClassInFuture = 'ClassInFuture',
-  }
 
   let classToBeAdded = ''
 
