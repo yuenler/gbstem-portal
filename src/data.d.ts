@@ -169,12 +169,33 @@ declare global {
     }
 
     type Class = {
+      classDay1: string
+      classTime1: string
+      classDay2: string
+      classTime2: string
+      meetingLink: string
+      gradeRecommendation: string
+      course: string
+      submitting: boolean
+      meetingTimes: Date[]
+      completedClassDates: Date[]
+      feedbackCompleted: boolean[]
+      classStatuses: string[]
+      instructorFirstName: string
+      instructorLastName: string
+      instructorEmail: string
+      otherInstructorEmails: string
+      classCap: number
+      students: string[]
+      online: boolean
+    }
+
+    type ClassDetails = {
       id: string
       classStatuses: string[],
       meetingTimes: Date[]
       completedClassDates: Date[],
       feedbackCompleted: boolean[],
-      instructorEmail: string,
       otherInstructorEmails: string,
       course: string
       instructorFirstName: string

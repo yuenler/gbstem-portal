@@ -27,13 +27,13 @@
   import sendClassReminder from './helpers/sendClassReminder'
   import type Student from './types/Student'
   import generateMeetingTimeChangeEmail from './helpers/generateMeetingTimeChangeEmail'
-    import { classesCollection, registrationsCollection } from '$lib/data/constants'
-    import { ClassStatus } from './helpers/ClassStatus'
+  import { classesCollection, registrationsCollection } from '$lib/data/constants'
+  import { ClassStatus } from './helpers/ClassStatus'
 
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
   let editedMeetingTimes: string[] = []
-  let values: Data.Class = {
+  let values: Data.ClassDetails = {
     id: '',
     students: [],
     classStatuses: [],
@@ -199,14 +199,7 @@
    * @returns The index of the next class date
    */
   function findNextClassDate() {
-    for (let i = 0; i < editedMeetingTimes.length; i++) {
-      const diff =
-        new Date().getTime() - new Date(editedMeetingTimes[i]).getTime()
-      if (diff < 0) {
-        return i
-      }
-    }
-    return -1
+     return values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
   }
 
   /**
@@ -282,7 +275,7 @@ onMount(() => {
         getDoc(classDocRef).then((classDoc) => {
           if (classDoc.exists()) {
             const classData = classDoc.data()
-            values = classData as Data.Class
+            values = classData as Data.ClassDetails
             values.meetingTimes = values.meetingTimes.map((time: Date) => (timestampToDate(time)))
             values.completedClassDates = values.completedClassDates.map((time: Date) => (timestampToDate(time)))
             let { students, meetingTimes } = values

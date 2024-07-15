@@ -12,12 +12,11 @@
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { create } from 'lodash-es'
     import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
-    import { ClassDetails } from '../types/ClassDetails'
     import { ClassStatus } from '../helpers/ClassStatus'
 
   let disabled = false
   let showValidation = false
-  let values: ClassDetails = {
+  let values: Data.Class = {
     classDay1: '',
     classTime1: '',
     classDay2: '',
@@ -27,7 +26,7 @@
     course: '',
     submitting: false,
     meetingTimes: [],
-    datesHeld: [],
+    completedClassDates: [],
     feedbackCompleted: [],
     classStatuses: [],
     instructorFirstName: '',
@@ -36,6 +35,7 @@
     otherInstructorEmails: '',
     classCap: 7,
     online: true,
+    students: [],
   }
 
   let createClassSchedule = true
@@ -95,26 +95,7 @@
         getDoc(doc(db, classesCollection, user.object.uid)).then((snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.data()
-            values = data as {
-              classDay1: string
-              classTime1: string
-              classDay2: string
-              classTime2: string
-              meetingLink: string
-              gradeRecommendation: string
-              course: string
-              submitting: boolean
-              meetingTimes: Date[]
-              datesHeld: Date[]
-              feedbackCompleted: boolean[]
-              classStatuses: string[]
-              instructorFirstName: string
-              instructorLastName: string
-              instructorEmail: string
-              otherInstructorEmails: string
-              classCap: number
-              online: boolean
-            }
+            values = data as Data.Class
             disabled = true
             createClassSchedule = false
           }
