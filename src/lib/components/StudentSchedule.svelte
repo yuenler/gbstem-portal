@@ -38,15 +38,8 @@
         (a, b) =>
           new Date(a.meetingTime).getTime() - new Date(b.meetingTime).getTime(),
       ) // Sort by date
-
-      for(let i = 0; i < classSchedules.length; i++) {
-        let diff = new Date().getTime() - new Date(classSchedules[i].meetingTime).getTime()
-        if(diff < 0) {
-          nextClassIndex = i
-          break
-        }
+        nextClassIndex = classSchedules.findIndex(schedule => new Date(schedule.meetingTime) > new Date())
       }
-  }
 
   $: if (selectedStudentUid) {
     getDoc(doc(db, registrationsCollection, selectedStudentUid)).then(
