@@ -16,6 +16,7 @@
   import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
   import Button from '$lib/components/Button.svelte'
     import { applicationsCollection, decisionsCollection, registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
+    import SubClasses from '$lib/components/SubClasses.svelte'
 
   type ApplicationStatus =
     | 'accepted'
@@ -76,9 +77,11 @@
                     data.application.status = 'submitted'
                     getDoc(doc(db, decisionsCollection, user.object.uid)).then(
                       (snapshot) => {
+                        console.log(user.object.uid)
                         if (snapshot.exists()) {
                           data.application.status = snapshot.data()
                             .type as Data.Decision
+                          console.log(data.application.status)
                         }
                         resolve()
                       },
@@ -195,6 +198,9 @@
         {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
           <Card>
             <InstructorFeedbackForm />
+          </Card>
+          <Card>
+            <SubClasses />
           </Card>
         {/if}
         <Card class="space-y-4">

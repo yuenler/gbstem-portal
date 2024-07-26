@@ -5,6 +5,7 @@ import type {
   Timestamp as ClientTimestamp,
 } from 'firebase/firestore'
 import type { User as ClientUser } from 'firebase/auth'
+import { SubRequestStatus } from '$lib/components/helpers/SubRequestStatus'
 
 declare global {
   declare namespace Data {
@@ -203,6 +204,17 @@ declare global {
       instructorEmail: string
       meetingLink: string
       students: string[]
+    }
+
+    type SubRequest = {
+      id: string
+      classNumber: number
+      course: string
+      dateOfClass: Date
+      subInstructorId: string
+      subInstructorFirstName: string
+      subInstructorEmail: string
+      subRequestStatus: SubRequestStatus
     }
 
     type Announcement<T extends 'client' | 'server' | 'pojo'> = {
