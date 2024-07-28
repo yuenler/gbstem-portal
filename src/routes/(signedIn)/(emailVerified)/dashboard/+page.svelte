@@ -15,8 +15,9 @@
   import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
   import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
   import Button from '$lib/components/Button.svelte'
-    import { applicationsCollection, decisionsCollection, registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
-    import SubClasses from '$lib/components/SubClasses.svelte'
+  import { applicationsCollection, decisionsCollection, registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
+  import SubClasses from '$lib/components/SubClasses.svelte'
+  import StudentSelect from '$lib/components/StudentSelect.svelte'
 
   type ApplicationStatus =
     | 'accepted'
@@ -132,6 +133,7 @@
         duration: 500,
       }}
     >
+    <StudentSelect/>
       <Card class="space-y-2">
         <h2 class="text-xl font-bold">Application</h2>
         {#if !isStudent}

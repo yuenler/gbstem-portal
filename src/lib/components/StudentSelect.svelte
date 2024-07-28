@@ -4,7 +4,8 @@
   import Loading from '$lib/components/Loading.svelte'
   import Select from '$lib/components/Select.svelte'
   import { db, user } from '$lib/client/firebase'
-    import { registrationsCollection } from '$lib/data/constants'
+  import { registrationsCollection } from '$lib/data/constants'
+  import { selectedStudentId } from '$lib/stores'
 
   let loading = true
 
@@ -38,6 +39,7 @@
     )
     if (selectedStudentRegistration) {
       selectedStudentUid = nameToUid[selectedStudentRegistration.name]
+      selectedStudentId.set(selectedStudentUid)
     }
   }
 
@@ -55,11 +57,21 @@
       }
     })
   })
+
+  export const load = () => {
+    return {
+      props: {
+        selectedStudentUid: selectedStudentUid,
+      }
+    }
+  }
 </script>
 
 <div>
   {#if loading}
     <Loading />
+  {:else if studentsOptions.length === 1}
+    <div></div>
   {:else}
     <Select
       bind:value={selectedStudent}
