@@ -31,6 +31,7 @@
   import { cloneDeep, isEqual } from 'lodash-es'
   import Link from '../Link.svelte'
   import Button from '../Button.svelte'
+    import { registrationsCollection } from '$lib/data/constants'
 
   export let childUid: string = ''
 
@@ -132,7 +133,7 @@
     disabled = true
     return user.subscribe((user) => {
       if (user) {
-        getDoc(doc(db, 'registrationsSpring24', childUid)).then(
+        getDoc(doc(db, registrationsCollection, childUid)).then(
           (applicationDoc) => {
             const applicationExists = applicationDoc.exists()
             if (applicationExists) {
@@ -194,7 +195,7 @@
   function handleDelete() {
     if ($user) {
       if (confirm('Are you sure you want to delete this draft?')) {
-        deleteDoc(doc(db, 'registrationsSpring24', childUid))
+        deleteDoc(doc(db, registrationsCollection, childUid))
           .then(() => {
             alert.trigger('success', 'Draft was successfully deleted.')
             location.reload()
@@ -214,9 +215,9 @@
       }
       return new Promise<void>((resolve, reject) => {
         if ($user) {
-          setDoc(doc(db, 'registrationsSpring24', childUid), modifiedValues())
+          setDoc(doc(db, registrationsCollection, childUid), modifiedValues())
             .then(() => {
-              getDoc(doc(db, 'registrationsSpring24', childUid)).then(
+              getDoc(doc(db, registrationsCollection, childUid)).then(
                 (applicationDoc) => {
                   const applicationData =
                     applicationDoc.data() as Data.Registration
@@ -443,13 +444,13 @@
         showValidation = false
         disabled = true
         values.meta.submitted = true
-        setDoc(doc(db, 'registrationsSpring24', childUid), modifiedValues())
+        setDoc(doc(db, registrationsCollection, childUid), modifiedValues())
           .then(() => {
             alert.trigger(
               'success',
               'Your pre-registration has been submitted!',
             )
-            getDoc(doc(db, 'registrationsSpring24', childUid)).then(
+            getDoc(doc(db, registrationsCollection, childUid)).then(
               (applicationDoc) => {
                 fetch('/api/registration', {
                   method: 'POST',

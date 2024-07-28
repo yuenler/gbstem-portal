@@ -15,6 +15,8 @@
   import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
   import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
   import Button from '$lib/components/Button.svelte'
+    import { applicationsCollection, decisionsCollection, registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
+    import SubClasses from '$lib/components/SubClasses.svelte'
 
   type ApplicationStatus =
     | 'accepted'
@@ -53,7 +55,7 @@
     if (user) {
       isStudent = user.profile.role === 'student'
       let timer: number
-      getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
+      getDoc(doc(db, 'semesterDates', semesterDatesDocument)).then((datesDoc) => {
         const datesDocExists = datesDoc.exists()
         if (datesDocExists) {
           semesterDates = datesDoc.data() as Data.SemesterDates
@@ -65,7 +67,7 @@
         }),
         new Promise<void>((resolve) => {
           if (user.profile.role === 'instructor') {
-            getDoc(doc(db, 'applicationsSpring24', user.object.uid)).then(
+            getDoc(doc(db, applicationsCollection, user.object.uid)).then(
               (applicationDoc) => {
                 const applicationExists = applicationDoc.exists()
                 if (applicationExists) {
@@ -73,11 +75,13 @@
                     applicationDoc.data() as Data.Application
                   if (applicationData.meta.submitted) {
                     data.application.status = 'submitted'
-                    getDoc(doc(db, 'decisionsSpring24', user.object.uid)).then(
+                    getDoc(doc(db, decisionsCollection, user.object.uid)).then(
                       (snapshot) => {
+                        console.log(user.object.uid)
                         if (snapshot.exists()) {
                           data.application.status = snapshot.data()
                             .type as Data.Decision
+                          console.log(data.application.status)
                         }
                         resolve()
                       },
@@ -90,7 +94,7 @@
               },
             )
           } else {
-            const q = query(collection(db, 'registrationsSpring24'))
+            const q = query(collection(db, registrationsCollection))
             getDocs(q).then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
                 const id = doc.id
@@ -194,6 +198,9 @@
         {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
           <Card>
             <InstructorFeedbackForm />
+          </Card>
+          <Card>
+            <SubClasses />
           </Card>
         {/if}
         <Card class="space-y-4">

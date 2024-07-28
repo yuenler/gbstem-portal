@@ -3,15 +3,20 @@
   import { doc, getDoc, collection, getDocs } from 'firebase/firestore'
   import StudentSelect from './StudentSelect.svelte'
   import Input from './Input.svelte'
+  import Card from './Card.svelte'
+  import Button from './Button.svelte'
+    import { formatDateString } from '$lib/utils'
+    import { classesCollection, registrationsCollection } from '$lib/data/constants'
 
   let classSchedules: { [k: string]: string }[] = []
+  let nextClassIndex = 0
   let listView: boolean = true
   let selectedStudentUid = ''
   let courses = new Set()
 
   async function fetchClassSchedules(classIds: string[]) {
     const schedulesPromises = classIds.map((classId) =>
-      getDoc(doc(db, 'classesSpring24', classId)),
+      getDoc(doc(db, classesCollection, classId)),
     )
     const schedulesDocs = await Promise.all(schedulesPromises)
     classSchedules = schedulesDocs
@@ -23,6 +28,7 @@
             id: docSnapshot.id,
             course: data.course,
             meetingTime: new Date(time.seconds * 1000).toISOString(), // Convert Firestore timestamp to ISO string
+            link: data.meetingLink,
           }))
         }
         return []
@@ -32,22 +38,11 @@
         (a, b) =>
           new Date(a.meetingTime).getTime() - new Date(b.meetingTime).getTime(),
       ) // Sort by date
-  }
-
-  function formatDate(dateString: string) {
-    const date = new Date(dateString)
-    return date.toLocaleString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
+        nextClassIndex = classSchedules.findIndex(schedule => new Date(schedule.meetingTime) > new Date())
+      }
 
   $: if (selectedStudentUid) {
-    getDoc(doc(db, 'registrationsSpring24', selectedStudentUid)).then(
+    getDoc(doc(db, registrationsCollection, selectedStudentUid)).then(
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const classIds = docSnapshot.data().classes || []
@@ -66,6 +61,18 @@
     {#if classSchedules.length === 0}
       <p>This student is not enrolled in any classes.</p>
     {:else}
+    <Card>
+      <div class="font-bold mb-2">Next Upcoming Class:</div>
+        <div>
+          {classSchedules[nextClassIndex].course},
+          {formatDateString(classSchedules[nextClassIndex].meetingTime)}
+        </div>
+        <Button color="blue" class="mb-2 mt-4" on:click={() => {window.open(classSchedules[nextClassIndex].link)}}
+          >Join Class</Button>
+      </Card>
+
+      <div class="font-bold mb-2 mt-4">Class Schedule</div>
+
       <Input type="checkbox" bind:value={listView} label={'Show As List?'} />
 
       {#if listView}
@@ -75,30 +82,27 @@
               class="flex items-center justify-between rounded-lg bg-gray-100 p-4"
             >
               <p class="class-name">{schedule.course}</p>
-              <p class="meeting-time">{formatDate(schedule.meetingTime)}</p>
+              <p class="meeting-time">{formatDateString(schedule.meetingTime)}</p>
             </li>
           {/each}
         </ul>
       {:else}
         <table
-          class="grid grid-cols-2 justify-between gap-0"
+          class="grid grid-cols-2 justify-between gap-1"
           style="margin-top:1rem;"
         >
           {#each courses as course}
-            <div>
-              <div
-                class="bg-gray-100"
-                style="border-width:1px; border-style:solid; border-color:gray; padding:1rem;"
-              >
-                {course}
+            <div class="rounded-lg bg-gray-100 p-4">
+              <div class="flex items-center justify-between p-4">
+                <strong>{course}</strong>
               </div>
               {#each classSchedules as schedule}
                 {#if schedule.course == course}
                   <div
-                    style="border-width:1px; border-style:solid; border-color:gray; padding:1rem;"
+                    style="border-width:1px 0 0 0; border-color:gray; padding:1rem;"
                   >
                     <p class="meeting-time">
-                      {formatDate(schedule.meetingTime)}
+                      {formatDateString(schedule.meetingTime)}
                     </p>
                   </div>
                 {/if}

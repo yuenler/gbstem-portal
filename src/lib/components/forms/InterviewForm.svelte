@@ -16,6 +16,8 @@
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
+    import { formatDate } from '$lib/utils'
+    import { applicationsCollection, semesterDatesDocument } from '$lib/data/constants'
 
   let showValidation = false
   let valuesJson: Data.InterviewSlot[] = []
@@ -28,7 +30,7 @@
   let dateToAdd = ''
 
   async function sendSlotRequest() {
-    const dueDate = await getDoc(doc(db, 'semesterDates', 'spring24'))
+    const dueDate = await getDoc(doc(db, 'semesterDates', semesterDatesDocument))
     if (dueDate.exists()) {
       if (
         new Date(dateToAdd) > new Date(dueDate.data().instructorOrientation)
@@ -84,7 +86,7 @@
     scheduled = true
 
     // update application to indicate interview scheduled
-    updateDoc(doc(db, 'applicationsSpring24', currentUser.object.uid), {
+    updateDoc(doc(db, applicationsCollection, currentUser.object.uid), {
       'meta.interview': true,
     })
 
@@ -121,17 +123,6 @@
       'success',
       'Thank you for signing up for an interview! You will receive an email with the details shortly.',
     )
-  }
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleString('en-US', {
-      weekday: 'short', // long, short, narrow
-      month: 'short', // numeric, 2-digit, long, short, narrow
-      day: 'numeric', // numeric, 2-digit
-      hour: 'numeric', // numeric, 2-digit
-      minute: 'numeric', // numeric, 2-digit
-      hour12: true, // use 12-hour time format with AM/PM
-    })
   }
 
   onMount(() => {

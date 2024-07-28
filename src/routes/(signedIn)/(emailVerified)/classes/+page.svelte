@@ -22,6 +22,7 @@
   import coursesJson from '$lib/data/courses.json'
   import Alert from '$lib/components/Alert.svelte'
   import { formatTime24to12 } from '$lib/utils'
+    import { classesCollection, registrationsCollection } from '$lib/data/constants'
 
   type ClassInfo = {
     id: string
@@ -77,7 +78,7 @@
     const uid = user.object.uid
     for (let i = 1; i < 6; ++i) {
       const docRef = await getDoc(
-        doc(db, 'registrationsSpring24', `${uid}-${i}`),
+        doc(db, registrationsCollection, `${uid}-${i}`),
       )
       if (docRef.exists() && docRef.data()?.meta.submitted) {
         const studentUid = `${uid}-${i}`
@@ -98,7 +99,7 @@
       if (user?.profile.role === 'instructor') {
         isStudent = false
       }
-      const classesCollectionRef = collection(db, 'classesSpring24')
+      const classesCollectionRef = collection(db, classesCollection)
       const querySnapshot = await getDocs(classesCollectionRef)
       classes = querySnapshot.docs.map((doc) => {
         const data = doc.data()
@@ -179,7 +180,7 @@
       alert.trigger('error', 'Please select a child!')
       return
     }
-    const classDocRef = doc(db, 'classesSpring24', classId)
+    const classDocRef = doc(db, classesCollection, classId)
     // get updated number of students in the class
     const classDoc = await getDoc(classDocRef)
     const classData = classDoc.data()
@@ -199,7 +200,7 @@
     }
 
     const ageLimitsDoc = await getDoc(
-      doc(db, 'registrationsSpring24', selectedStudentUid),
+      doc(db, registrationsCollection, selectedStudentUid),
     )
     const ageBypassEnabled = ageLimitsDoc.data()?.agreements.bypassAgeLimits
 
@@ -229,7 +230,7 @@
 
     const registrationDocRef = doc(
       db,
-      'registrationsSpring24',
+      registrationsCollection,
       selectedStudentUid,
     )
     await updateDoc(registrationDocRef, {
@@ -276,7 +277,7 @@
   }
 
   async function unenrollFromClass(classId: string): Promise<void> {
-    const classDocRef = doc(db, 'classesSpring24', classId)
+    const classDocRef = doc(db, classesCollection, classId)
     await updateDoc(classDocRef, {
       students: arrayRemove(selectedStudentUid),
     }).catch((error) => {
@@ -285,7 +286,7 @@
 
     const registrationDocRef = doc(
       db,
-      'registrationsSpring24',
+      registrationsCollection,
       selectedStudentUid,
     )
     await updateDoc(registrationDocRef, {

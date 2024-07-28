@@ -12,27 +12,33 @@
     collection,
     getDocs,
     getDoc,
+    updateDoc
   } from 'firebase/firestore'
   import { onMount } from 'svelte'
+    import { classesCollection, registrationsCollection } from '$lib/data/constants'
 
   let disabled = false
   let showValidation = false
   let currentUser: Data.User.Store
   let loading = true
   let classDate = ''
+  let classNumber = 0
   let course = ''
+  let feedbackCompleted: boolean[] = []
   let values: {
     date: string
     feedback: string
     attendanceList: Record<string, { present: boolean }>
     courseName: string
     instructorName: string
+    classNumber: number
   } = {
     date: '',
     feedback: '',
     attendanceList: {},
     courseName: '',
     instructorName: '',
+    classNumber: 0,
   }
 
   let classList: string[] = []
@@ -48,13 +54,14 @@
   })
 
   async function getData() {
-    const q = query(collection(db, 'classesSpring24'))
+    const q = query(collection(db, classesCollection))
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach((document) => {
       if (document.id === currentUser.object.uid) {
         const uids = document.data()['students']
+        feedbackCompleted = document.data().feedbackCompleted
         const classListPromises = uids.map((uid: string) =>
-          getDoc(doc(db, 'registrationsSpring24', uid))
+          getDoc(doc(db, registrationsCollection, uid))
             .then((userDoc) => {
               const userData = userDoc.data()?.personal
               return `${userData['studentFirstName']} ${userData['studentLastName']}`
@@ -95,6 +102,13 @@
       } else {
         disabled = true
         values.date = classDate
+        values.classNumber = classNumber
+        if(classNumber - 1 < 0 || classNumber - 1 >= feedbackCompleted.length) {
+          alert.trigger('error', 'Invalid class number.')
+          return
+        }
+        feedbackCompleted[classNumber - 1] = true
+        console.log(feedbackCompleted)
         setDoc(
           doc(
             db,
@@ -105,7 +119,12 @@
         ).catch((error) => {
           console.log(error)
         })
+        updateDoc(
+          doc(db, classesCollection, frozenUser.object.uid),
+          { feedbackCompleted: feedbackCompleted },
+        )
         alert.trigger('success', 'Class Feedback saved!')
+        setTimeout(() => location.reload(), 1000)
       }
     }
   }
@@ -130,7 +149,17 @@
         <Input
           type="date"
           bind:value={classDate}
+          floating
           label="Date of Class"
+          required
+        />
+      </div>
+      <div class="sm:col-span-1">
+        <Input
+          type="number"
+          bind:value={classNumber}
+          floating
+          label="Class Number"
           required
         />
       </div>

@@ -11,25 +11,12 @@
   import Link from '$lib/components/Link.svelte'
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { create } from 'lodash-es'
+    import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
+    import { ClassStatus } from '../helpers/ClassStatus'
 
   let disabled = false
   let showValidation = false
-  let values: {
-    classDay1: string
-    classTime1: string
-    classDay2: string
-    classTime2: string
-    meetingLink: string
-    gradeRecommendation: string
-    course: string
-    submitting: boolean
-    meetingTimes: Date[]
-    instructorFirstName: string
-    instructorLastName: string
-    instructorEmail: string
-    classCap: number
-    online: boolean
-  } = {
+  let values: Data.Class = {
     classDay1: '',
     classTime1: '',
     classDay2: '',
@@ -39,11 +26,16 @@
     course: '',
     submitting: false,
     meetingTimes: [],
+    completedClassDates: [],
+    feedbackCompleted: [],
+    classStatuses: [],
     instructorFirstName: '',
     instructorLastName: '',
     instructorEmail: '',
+    otherInstructorEmails: '',
     classCap: 7,
     online: true,
+    students: [],
   }
 
   let createClassSchedule = true
@@ -100,30 +92,15 @@
   onMount(() => {
     return user.subscribe((user) => {
       if (user) {
-        getDoc(doc(db, 'classesSpring24', user.object.uid)).then((snapshot) => {
+        getDoc(doc(db, classesCollection, user.object.uid)).then((snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.data()
-            values = data as {
-              classDay1: string
-              classTime1: string
-              classDay2: string
-              classTime2: string
-              meetingLink: string
-              gradeRecommendation: string
-              course: string
-              submitting: boolean
-              meetingTimes: Date[]
-              instructorFirstName: string
-              instructorLastName: string
-              instructorEmail: string
-              classCap: number
-              online: boolean
-            }
+            values = data as Data.Class
             disabled = true
             createClassSchedule = false
           }
         })
-        getDoc(doc(db, 'semesterDates', 'spring24')).then((datesDoc) => {
+        getDoc(doc(db, 'semesterDates', semesterDatesDocument)).then((datesDoc) => {
           const datesDocExists = datesDoc.exists()
           if (datesDocExists) {
             semesterDates = datesDoc.data() as Data.SemesterDates
@@ -149,11 +126,13 @@
             new Date(semesterDates.classesEnd),
           )
           values.meetingTimes = meetingTimes
+          values.feedbackCompleted = new Array(meetingTimes.length).fill(false)
+          values.classStatuses = new Array(meetingTimes.length).fill(ClassStatus.ClassInFuture)
         }
         values.instructorFirstName = frozenUser.profile.firstName
         values.instructorLastName = frozenUser.profile.lastName
         values.instructorEmail = frozenUser.object.email as string
-        setDoc(doc(db, 'classesSpring24', frozenUser.object.uid), values)
+        setDoc(doc(db, classesCollection, frozenUser.object.uid), values)
           .then(() => {
             disabled = true
             alert.trigger('success', 'Class details saved!')
@@ -262,6 +241,12 @@
       label="Class capacity"
       floating
       required
+    />
+
+    <Input
+      type="text"
+      bind:value={values.otherInstructorEmails}
+      label="Enter the emails of any co-instructors here, comma separated. Keep in mind that only one instructor per class should fill out this form."
     />
 
     <Input

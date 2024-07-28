@@ -1,12 +1,11 @@
 import type {
-  DocumentReference as ServerDocumentReference,
   Timestamp as ServerTimestamp,
 } from 'firebase-admin/firestore'
 import type {
-  DocumentReference as ClientDocumentReference,
   Timestamp as ClientTimestamp,
 } from 'firebase/firestore'
 import type { User as ClientUser } from 'firebase/auth'
+import { SubRequestStatus } from '$lib/components/helpers/SubRequestStatus'
 
 declare global {
   declare namespace Data {
@@ -48,52 +47,6 @@ declare global {
     }
 
     type Decision = 'accepted' | 'waitlisted' | 'rejected'
-
-
-    export type ApplicationData = {
-      personal: {
-        email: string
-        firstName: string
-        lastName: string
-        dateOfBirth: string
-        gender: string
-        race: string[]
-        phoneNumber: string
-      }
-      academic: {
-        school: string
-        graduationYear: string
-      }
-      program: {
-        courses: string[]
-        preferences: string
-        numClasses: string
-        timeSlots: string[]
-        notAvailable: string
-        inPerson: boolean
-        reason: string
-      }
-      essay: {
-        taughtBefore: boolean
-        academicBackground: string
-        teachingScenario: string
-        why: string
-      }
-      agreements: {
-        entireProgram: boolean
-        timeCommitment: boolean
-        submitting: boolean
-      }
-      meta: {
-        id: string
-        uid: string
-        submitted: boolean
-      }
-      timestamps: {
-        created: Timestamp
-        updated: Timestamp
-      }
-    }
 
     type EmailData = {
       Subject: string,
@@ -172,9 +125,6 @@ declare global {
       }
     }
 
-
-
-
     type Registration = {
       personal: {
         email: string
@@ -219,81 +169,52 @@ declare global {
       }
     }
 
-    type ApplicationHackHarvard<T extends 'client' | 'server' | 'pojo'> = {
-      personal: {
-        email: string
-        firstName: string
-        lastName: string
-        age: string
-        gender: string
-        race: string[]
-        underrepresented: string
-        phoneNumber: string
-        countryOfResidence: string
-        shippingAddress: string
-        shippingCity: string
-        shippingState: string
-        shippingCountry: string
-        shippingZipCode: string
-        dietaryRestrictions: string[]
-      }
-      academic: {
-        enrolled: boolean
-        currentSchool: string
-        graduationYear: string
-        major: string
-        affiliated: boolean
-        levelOfStudy: string
-      }
-      hackathon: {
-        shirtSize: string
-        firstHackathon: boolean
-        previouslyParticipated: boolean
-        ableToAttend: boolean
-        reason: string
-      }
-      openResponse: {
-        roles: string[]
-        otherRole: string
-        prolangs: string[]
-        otherProlang: string
-        experience: string
-        whyHh: string
-        project: string
-        predictions: string
-        resume: Resume
-        resumeShare: boolean
-      }
-      agreements: {
-        codeOfConduct: boolean
-        sharing: boolean
-        mlhEmails: boolean
-        submitting: boolean
-      }
-      meta: {
-        id: string
-        uid: string
-        submitted: boolean
-        decision:
-        | (T extends 'client'
-          ? ClientDocumentReference
-          : T extends 'server'
-          ? ServerDocumentReference
-          : Decision)
-        | null
-      }
-      timestamps: {
-        created: T extends 'client'
-        ? ClientTimestamp
-        : T extends 'server'
-        ? ServerTimestamp
-        : Date
-        updated: T extends 'client'
-        ? ClientTimestamp
-        : T extends 'server'
-        ? ServerTimestamp
-        : Date
-      }
+    type Class = {
+      classDay1: string
+      classTime1: string
+      classDay2: string
+      classTime2: string
+      meetingLink: string
+      gradeRecommendation: string
+      course: string
+      submitting: boolean
+      meetingTimes: Date[]
+      completedClassDates: Date[]
+      feedbackCompleted: boolean[]
+      classStatuses: string[]
+      instructorFirstName: string
+      instructorLastName: string
+      instructorEmail: string
+      otherInstructorEmails: string
+      classCap: number
+      students: string[]
+      online: boolean
+    }
+
+    type ClassDetails = {
+      id: string
+      classStatuses: string[],
+      meetingTimes: Date[]
+      completedClassDates: Date[],
+      feedbackCompleted: boolean[],
+      otherInstructorEmails: string,
+      course: string
+      instructorFirstName: string
+      instructorLastName: string
+      instructorEmail: string
+      meetingLink: string
+      students: string[]
+    }
+
+    type SubRequest = {
+      id: string
+      classNumber: number
+      course: string
+      dateOfClass: Date
+      subInstructorId: string
+      subInstructorFirstName: string
+      subInstructorEmail: string
+      subRequestStatus: SubRequestStatus
     }
 
     type Announcement<T extends 'client' | 'server' | 'pojo'> = {
