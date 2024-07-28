@@ -5,11 +5,12 @@
   import Input from './Input.svelte'
   import Card from './Card.svelte'
   import Button from './Button.svelte'
-    import { formatDateString } from '$lib/utils'
+    import { formatDate, formatDateString, timestampToDate } from '$lib/utils'
     import { classesCollection, registrationsCollection } from '$lib/data/constants'
 
-  let classSchedules: { [k: string]: string }[] = []
-  let nextClassIndex = 0
+  type ClassDate = {course: string, meetingTime: Date, link: string}
+  let classes: ClassDate[] = []
+  let nextClass: ClassDate = null 
   let listView: boolean = true
   let selectedStudentUid = ''
   let courses = new Set()
@@ -18,35 +19,36 @@
     const schedulesPromises = classIds.map((classId) =>
       getDoc(doc(db, classesCollection, classId)),
     )
+    let fetchedClasses: ClassDate[] = []
     const schedulesDocs = await Promise.all(schedulesPromises)
-    classSchedules = schedulesDocs
-      .map((docSnapshot) => {
+    schedulesDocs
+      .map(async (docSnapshot) => {
         if (docSnapshot.exists()) {
-          const data = docSnapshot.data()
+          const data = await docSnapshot.data() as Data.Class
           courses.add(data.course)
-          return data.meetingTimes.map((time: any) => ({
-            id: docSnapshot.id,
-            course: data.course,
-            meetingTime: new Date(time.seconds * 1000).toISOString(), // Convert Firestore timestamp to ISO string
-            link: data.meetingLink,
-          }))
+          data.meetingTimes.map((date) => {
+            fetchedClasses.push({
+              course: data.course,
+              meetingTime: new Date(date.seconds * 1000),
+              link: data.meetingLink,
+            })
+          })
         }
-        return []
       })
-      .flat()
-      .sort(
-        (a, b) =>
-          new Date(a.meetingTime).getTime() - new Date(b.meetingTime).getTime(),
-      ) // Sort by date
-        nextClassIndex = classSchedules.findIndex(schedule => new Date(schedule.meetingTime) > new Date())
+      .flat() 
+       console.log(fetchedClasses)
+        return fetchedClasses
       }
 
   $: if (selectedStudentUid) {
     getDoc(doc(db, registrationsCollection, selectedStudentUid)).then(
-      (docSnapshot) => {
+      async (docSnapshot) => {
         if (docSnapshot.exists()) {
           const classIds = docSnapshot.data().classes || []
-          fetchClassSchedules(classIds)
+          classes = await fetchClassSchedules(classIds)
+          console.log(classes)
+          nextClass = classes.filter(classDate => new Date(classDate.meetingTime) > new Date()).sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime))[0]
+          console.log(nextClass)
         }
       },
     )
@@ -58,16 +60,15 @@
     <StudentSelect bind:selectedStudentUid />
   </div>
   {#if selectedStudentUid}
-    {#if classSchedules.length === 0}
+    {#if classes.length === 0}
       <p>This student is not enrolled in any classes.</p>
     {:else}
     <Card>
       <div class="font-bold mb-2">Next Upcoming Class:</div>
         <div>
-          {classSchedules[nextClassIndex].course},
-          {formatDateString(classSchedules[nextClassIndex].meetingTime)}
+          {nextClass === undefined ? 'No Upcoming Classes' :  nextClass.course + ' ' + formatDate(timestampToDate(new Date(nextClass.meetingTime)))}
         </div>
-        <Button color="blue" class="mb-2 mt-4" on:click={() => {window.open(classSchedules[nextClassIndex].link)}}
+        <Button color="blue" class="mb-2 mt-4" on:click={() => {window.open(nextClass?.link)}}
           >Join Class</Button>
       </Card>
 
@@ -77,12 +78,12 @@
 
       {#if listView}
         <ul class="list-none space-y-2">
-          {#each classSchedules as schedule}
+          {#each classes as classSession}
             <li
               class="flex items-center justify-between rounded-lg bg-gray-100 p-4"
             >
-              <p class="class-name">{schedule.course}</p>
-              <p class="meeting-time">{formatDateString(schedule.meetingTime)}</p>
+              <p class="class-name">{classSession.course}</p>
+              <p class="meeting-time">{formatDate(classSession.meetingTime)}</p>
             </li>
           {/each}
         </ul>
@@ -96,13 +97,13 @@
               <div class="flex items-center justify-between p-4">
                 <strong>{course}</strong>
               </div>
-              {#each classSchedules as schedule}
-                {#if schedule.course == course}
+              {#each classes as classSession}
+                {#if classSession.course === course}
                   <div
                     style="border-width:1px 0 0 0; border-color:gray; padding:1rem;"
                   >
                     <p class="meeting-time">
-                      {formatDateString(schedule.meetingTime)}
+                      {formatDate(classSession.meetingTime)}
                     </p>
                   </div>
                 {/if}
