@@ -36,7 +36,6 @@
         }
       })
       .flat() 
-       console.log(fetchedClasses)
         return fetchedClasses
       }
 
@@ -46,9 +45,7 @@
         if (docSnapshot.exists()) {
           const classIds = docSnapshot.data().classes || []
           classes = await fetchClassSchedules(classIds)
-          console.log(classes)
           nextClass = classes.filter(classDate => new Date(classDate.meetingTime) > new Date()).sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime))[0]
-          console.log(nextClass)
         }
       },
     )
@@ -89,7 +86,7 @@
         </ul>
       {:else}
         <table
-          class="grid grid-cols-2 justify-between gap-1"
+          class={`grid grid-cols-${courses.size} justify-between gap-1`}
           style="margin-top:1rem;"
         >
           {#each courses as course}
