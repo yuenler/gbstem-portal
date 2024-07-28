@@ -6,7 +6,6 @@
     getDoc,
     updateDoc,
     DocumentReference,
-    Timestamp,
   } from 'firebase/firestore'
   import Input from './Input.svelte'
   import { slide } from 'svelte/transition'
@@ -284,7 +283,7 @@ onMount(() => {
             }
             if (values && meetingTimes) {
               meetingTimes.sort((a, b) => {
-                return a - b;
+                return a.getTime() - b.getTime()
               })
               originalMeetingTimes = meetingTimes.map((time: Date) =>
                 toLocalISOString(time),

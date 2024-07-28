@@ -8,11 +8,9 @@
   import { cn } from '$lib/utils'
   import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
   import { onMount } from 'svelte'
-  import Link from '$lib/components/Link.svelte'
   import { coursesJson, daysOfWeekJson } from '$lib/data'
-  import { create } from 'lodash-es'
-    import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
-    import { ClassStatus } from '../helpers/ClassStatus'
+  import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
+  import { ClassStatus } from '../helpers/ClassStatus'
 
   let disabled = false
   let showValidation = false

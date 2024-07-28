@@ -1,6 +1,6 @@
 <script lang="ts">
   import { db } from '$lib/client/firebase'
-  import { doc, getDoc, collection, getDocs } from 'firebase/firestore'
+  import { doc, getDoc } from 'firebase/firestore'
   import StudentSelect from './StudentSelect.svelte'
   import Input from './Input.svelte'
   import Card from './Card.svelte'

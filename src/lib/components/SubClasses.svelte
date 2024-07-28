@@ -2,11 +2,9 @@
     import { onMount } from "svelte"
     import { db, user } from '$lib/client/firebase'
     import { collection, doc, getDocs, query, updateDoc } from "firebase/firestore"
-    import { classesCollection, substituteRequestsCollection } from "$lib/data/constants"
+    import { substituteRequestsCollection } from "$lib/data/constants"
     import { SubRequestStatus } from "./helpers/SubRequestStatus"
-    import Select from "./Select.svelte"
     import { formatDate, timestampToDate } from "$lib/utils"
-    import el from "date-fns/locale/el"
     import Button from "./Button.svelte"
 
     let currentUser: Data.User.Store
