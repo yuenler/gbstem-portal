@@ -13,9 +13,16 @@
   import { create } from 'lodash-es'
     import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
     import { ClassStatus } from '../helpers/ClassStatus'
+    import Dialog from '../Dialog.svelte'
+    import Card from '../Card.svelte'
+
+ export let classDetailsDialogEl: Dialog | undefined
+ export let dialog = false
 
   let disabled = false
   let showValidation = false
+  let submitted = false
+
   let values: Data.Class = {
     classDay1: '',
     classTime1: '',
@@ -96,6 +103,9 @@
           if (snapshot.exists()) {
             const data = snapshot.data()
             values = data as Data.Class
+            if(values.course !== '') {
+              submitted = true
+            }
             disabled = true
             createClassSchedule = false
           }
@@ -135,7 +145,9 @@
         setDoc(doc(db, classesCollection, frozenUser.object.uid), values)
           .then(() => {
             disabled = true
-            alert.trigger('success', 'Class details saved!')
+            submitted = true
+             alert.trigger('success', 'Class details saved!');
+             setTimeout(() => location.reload(), 2000)
           })
           .catch((err) => {
             disabled = false
@@ -148,7 +160,11 @@
     }
   }
 </script>
-
+{#if dialog === true}
+<Dialog bind:this={classDetailsDialogEl} size="full" alert>
+  <svelte:fragment slot="title"><div class = "flex justify-between items-center">Your class details <Button color = 'red' class="font-light" on:click={classDetailsDialogEl.cancel}>Close</Button></div> </svelte:fragment>
+  <div slot="description">
+    <Card class="sticky top-2 z-50 flex justify-between gap-3 p-3 md:p-3">
 <Form class={cn(showValidation && 'show-validation')} on:submit={handleSubmit}>
   {#if disabled}
     <Button color="blue" class="mb-5" on:click={() => (disabled = false)}
@@ -273,3 +289,136 @@
     </div>
   </fieldset>
 </Form>
+</Card>
+</div>
+</Dialog>
+{:else if values.course === '' ||  submitted === false} 
+<Card>
+<Form class={cn(showValidation && 'show-validation')} on:submit={handleSubmit}>
+  {#if disabled}
+    <Button color="blue" class="mb-5" on:click={() => (disabled = false)}
+      >Edit class details</Button
+    >
+    <p>Note that editing your class details will reset your class schedule.</p>
+  {/if}
+
+  <fieldset class="mt-4 space-y-4" {disabled}>
+    <p>
+      Please do not fill this form out until you have been told by gbSTEM
+      leadership what class you will be teaching.
+    </p>
+    <h2 class="text-xl font-bold">Your class details</h2>
+
+    <Select
+      bind:value={values.course}
+      label="Course"
+      options={coursesJson}
+      floating
+      required
+    />
+
+    <Input
+      type="text"
+      bind:value={values.gradeRecommendation}
+      label="Grade recommendation. For example, 3-5 or 6-8."
+    />
+
+    {#if values.online}
+      <Input
+        type="text"
+        bind:value={values.meetingLink}
+        label="Meeting link"
+        floating
+        required
+      />
+    {/if}
+
+    <div class="grid gap-1">
+      <span class="font-bold"
+        >Online classes meet twice weekly at consistent days and times
+        throughout the semester and run for 45-60 minutes each. In-person
+        classes meet once a week on a weekend afternoon at the Cambridge Public
+        Library.
+      </span>
+
+      <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
+        <div class="sm:col-span-2">
+          <Select
+            bind:value={values.classDay1}
+            label="Meeting day 1"
+            options={daysOfWeekJson}
+            floating
+            required
+          />
+        </div>
+        <Input
+          type="time"
+          bind:value={values.classTime1}
+          label="Meeting time 1"
+          floating
+          required
+        />
+      </div>
+
+      {#if values.online}
+        <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
+          <div class="sm:col-span-2">
+            <Select
+              bind:value={values.classDay2}
+              label="Meeting day 2"
+              options={daysOfWeekJson}
+              floating
+              required
+            />
+          </div>
+          <Input
+            type="time"
+            bind:value={values.classTime2}
+            label="Meeting time 2"
+            floating
+          />
+        </div>
+      {/if}
+    </div>
+    <Input
+      type="number"
+      bind:value={values.classCap}
+      label="Class capacity"
+      floating
+      required
+    />
+
+    <Input
+      type="text"
+      bind:value={values.otherInstructorEmails}
+      label="Enter the emails of any co-instructors here, comma separated. Keep in mind that only one instructor per class should fill out this form."
+    />
+
+    <Input
+      type="checkbox"
+      bind:value={values.online}
+      label="Class taught online?"
+    />
+
+    <Input
+      type="checkbox"
+      bind:value={values.submitting}
+      label="I understand submitting will make my class available for registration, so I should not submit until I am sure the class and class times work for me."
+      required
+    />
+
+    <Input
+      type="checkbox"
+      bind:value={createClassSchedule}
+      label="Would you like a class schedule to be automatically created for you? Typically, you want to check this box the first time you submit your class details, but you should avoid checking this box when submitting the form again to edit your class details because it will overwrite changes you have made to your existing class schedule."
+    />
+
+    <div class="flex justify-end">
+      <Button color="blue" type="submit">Submit</Button>
+    </div>
+  </fieldset>
+</Form>
+</Card>
+{:else}
+<div></div>
+{/if}

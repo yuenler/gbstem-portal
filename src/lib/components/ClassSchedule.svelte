@@ -30,6 +30,7 @@
   import { classesCollection, registrationsCollection } from '$lib/data/constants'
   import { ClassStatus } from './helpers/ClassStatus'
     import InstructorFeedbackForm from './forms/InstructorFeedbackForm.svelte'
+    import ClassDetailsForm from './forms/ClassDetailsForm.svelte'
 
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
@@ -55,6 +56,7 @@
   let dialogEl: Dialog
   let addClassDialogEl: Dialog
   let feedbackDialogEl: Dialog
+  let classDetailsDialogEl: Dialog
   let emailHtmlContent = ''
   let studentList: Student[] = []
   let addingClass = false
@@ -345,7 +347,7 @@ onMount(() => {
 </Dialog>
 
 <InstructorFeedbackForm bind:feedbackDialogEl classBeingSubbed={undefined}/>
-
+<ClassDetailsForm bind:classDetailsDialogEl dialog={true}/>
 
 <div class="p-4">
   <Card class="mb-4">
@@ -473,6 +475,7 @@ onMount(() => {
         })}>Send Class Reminder</Button
     >
     <Button color="blue" class="mt-2" on:click={() => feedbackDialogEl.open()}>Submit Class Feedback</Button>
+    <Button color="blue" class="mt-2" on:click={() => classDetailsDialogEl.open()}>Edit Class Details</Button>
   </Card>
 
   <div class="mb-4 flex justify-between">
