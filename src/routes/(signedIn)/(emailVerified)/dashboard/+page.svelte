@@ -15,8 +15,9 @@
   import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
   import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
   import Button from '$lib/components/Button.svelte'
-    import { applicationsCollection, decisionsCollection, registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
-    import SubClasses from '$lib/components/SubClasses.svelte'
+  import { applicationsCollection, decisionsCollection, registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
+  import SubClasses from '$lib/components/SubClasses.svelte'
+  import Dialog from '$lib/components/Dialog.svelte'
 
   type ApplicationStatus =
     | 'accepted'
@@ -50,6 +51,7 @@
   }
 
   let isStudent = false
+  let dialogEl: Dialog
 
   user.subscribe((user) => {
     if (user) {
@@ -196,9 +198,6 @@
       </Card>
       {#if data.application.status === 'accepted'}
         {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
-          <Card>
-            <InstructorFeedbackForm />
-          </Card>
           <Card>
             <SubClasses />
           </Card>

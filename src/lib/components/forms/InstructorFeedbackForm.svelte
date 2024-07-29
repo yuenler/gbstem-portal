@@ -19,7 +19,7 @@
     import Dialog from '../Dialog.svelte'
     import Card from '../Card.svelte'
 
-  export let dialogEl: Dialog
+  export let feedbackDialogEl: Dialog
   export let classBeingSubbed: Data.SubRequest | undefined
 
   let disabled = false
@@ -132,8 +132,8 @@
     }
   }
 </script>
-<Dialog bind:this={dialogEl} size="full" alert>
-  <svelte:fragment slot="title"><div class = "flex justify-between items-center">{course} {classBeingSubbed !== undefined ? 'Substitute' : 'Weekly'} Class Feedback Form <Button color = 'red' class="font-light" on:click={dialogEl.cancel}>Close</Button></div> </svelte:fragment>
+<Dialog bind:this={feedbackDialogEl} size="full" alert>
+  <svelte:fragment slot="title"><div class = "flex justify-between items-center">{course} {classBeingSubbed !== undefined ? 'Substitute' : 'Weekly'} Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl.cancel}>Close</Button></div> </svelte:fragment>
   <div slot="description">
     <Card class="sticky top-2 z-50 flex justify-between gap-3 p-3 md:p-3">
   <hr class="mb-3 mt-5" />

@@ -16,7 +16,7 @@
      import Dialog from './Dialog.svelte'
      import InstructorFeedbackForm from './forms/InstructorFeedbackForm.svelte'
 
-    let dialogEl: Dialog
+    let feedbackDialogEl: Dialog
     let currentUser: Data.User.Store
     let classesMissingSubs: Data.SubRequest[] = []
     let userSubClassesList: Data.SubRequest[] = []
@@ -201,13 +201,13 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
     <h2 class="font-bold mt-4 mb-2">Your Classes To Substitute</h2>
     {#if userSubClassesList.length > 0}
     {#each userSubClassesList as classBeingSubbed, i}
-    <InstructorFeedbackForm bind:dialogEl classBeingSubbed={classBeingSubbed}/>
+    <InstructorFeedbackForm bind:feedbackDialogEl classBeingSubbed={classBeingSubbed}/>
     <hr/>
     <div>
         <p>{classBeingSubbed.course} class #{classBeingSubbed.classNumber} at {formatDate(timestampToDate(classBeingSubbed.dateOfClass))}</p>
     </div>
     <Button color = 'blue' class = "mt-2" on:click={() => recordClass(classBeingSubbed)}>Join Class</Button>
-    <Button color = 'blue' class = "mb-2" on:click={() => {dialogEl.open()}}>Submit Feedback</Button>
+    <Button color = 'blue' class = "mb-2" on:click={() => {feedbackDialogEl.open()}}>Submit Feedback</Button>
     <Button color = 'blue' on:click={() => sendReminder(classBeingSubbed)}> Send Class Reminder</Button>
     {/each}
     {:else}

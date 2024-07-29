@@ -29,6 +29,7 @@
   import generateMeetingTimeChangeEmail from './helpers/generateMeetingTimeChangeEmail'
   import { classesCollection, registrationsCollection } from '$lib/data/constants'
   import { ClassStatus } from './helpers/ClassStatus'
+    import InstructorFeedbackForm from './forms/InstructorFeedbackForm.svelte'
 
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
@@ -53,6 +54,7 @@
   let classId = ''
   let dialogEl: Dialog
   let addClassDialogEl: Dialog
+  let feedbackDialogEl: Dialog
   let emailHtmlContent = ''
   let studentList: Student[] = []
   let addingClass = false
@@ -342,6 +344,9 @@ onMount(() => {
   </div>
 </Dialog>
 
+<InstructorFeedbackForm bind:feedbackDialogEl classBeingSubbed={undefined}/>
+
+
 <div class="p-4">
   <Card class="mb-4">
     <div class="mb-4 flex items-center justify-between">
@@ -467,6 +472,7 @@ onMount(() => {
             : values.course + ', ' + formatDateString(editedMeetingTimes[nextClassIndex]),
         })}>Send Class Reminder</Button
     >
+    <Button color="blue" class="mt-2" on:click={() => feedbackDialogEl.open()}>Submit Class Feedback</Button>
   </Card>
 
   <div class="mb-4 flex justify-between">
