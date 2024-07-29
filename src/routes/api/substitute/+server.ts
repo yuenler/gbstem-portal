@@ -12,14 +12,17 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   if (locals.user === null) {
     throw error(400, 'User not signed in.')
   } else {
+    const subInstructorEmail = body.subInstructorEmail;
+    const originalInstructorEmail = body.originalInstructorEmail;
     const template = {
       name: 'interviewSlotRequest',
       data: {
-        subject: `Substituting Class Notice For ${body.firstName} `,
-        interview: {
+        subject: `Class Substitute Confirmation`,
+        app: {
           firstName: body.firstName,
-          subInstructorEmail: body.email,
-          originalInstructorEmail: body.originalInstructorEmail,
+          course: body.course,
+          classNumber: body.classNumber,
+          date: body.date,
           name: 'Portal',
           link: 'https://portal.gbstem.org',
         },
@@ -30,8 +33,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
     const emailData: Data.EmailData = {
       From: 'donotreply@gbstem.org',
-      To: 'admin@gbstem.org',
-      Cc: 'contact@gbstem.org',
+      To: subInstructorEmail,
+      Cc: originalInstructorEmail,
       Subject: String(template.data.subject),
       HTMLBody: htmlBody,
       ReplyTo: 'contact@gbstem.org',
