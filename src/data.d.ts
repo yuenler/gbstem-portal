@@ -64,6 +64,11 @@ declare global {
       leadershipAppsDue: string,
       newInstructorAppsDue: string,
       returningInstructorAppsDue: string,
+      instructorOrientation: string,
+      newInstructorAppsOpen: string,
+      returningInstructorAppsOpen: string,
+      studentOrientation: string,
+      registrationsDue: string,
     }
 
     type InterviewSlot = {
@@ -217,6 +222,7 @@ declare global {
       subInstructorEmail: string
       subRequestStatus: SubRequestStatus
       link: string
+      notes: string
     }
 
     type Announcement<T extends 'client' | 'server' | 'pojo'> = {

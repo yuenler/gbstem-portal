@@ -4,9 +4,7 @@
     import { collection, doc, DocumentReference, getDoc, getDocs, query, updateDoc } from "firebase/firestore"
     import { classesCollection, registrationsCollection, substituteRequestsCollection } from "$lib/data/constants"
     import { SubRequestStatus } from "./helpers/SubRequestStatus"
-    import Select from "./Select.svelte"
     import { classTodayHeld, formatDate, timestampToDate } from "$lib/utils"
-    import el from "date-fns/locale/el"
     import Button from "./Button.svelte"
     import { enhance } from "$app/forms"
     import { alert } from "$lib/stores"
@@ -15,14 +13,17 @@
     import type Student from "./types/Student"
      import Dialog from './Dialog.svelte'
      import InstructorFeedbackForm from './forms/InstructorFeedbackForm.svelte'
+     import Card from "./Card.svelte"
 
     let feedbackDialogEl: Dialog
+    let notesDialogEl: Dialog
     let currentUser: Data.User.Store
     let classesMissingSubs: Data.SubRequest[] = []
     let userSubClassesList: Data.SubRequest[] = []
     let loading = true
     let classesCheckedOff: any[] = []
     let updating = false
+    let subRequestsFromUser: Data.SubRequest[] = []
 
     onMount(() => {
         return user.subscribe(async (user) => {
@@ -37,20 +38,27 @@
     async function getData(userId: string) {
         const q = query(collection(db, substituteRequestsCollection))
         let userSubClasses: Data.SubRequest[] = []
+        let userSubRequests: Data.SubRequest[] = []
         const querySnapshot = await getDocs(q)
         querySnapshot.forEach((doc) => {
             const classInfo = doc.data() as Data.SubRequest
+            if (doc.id.includes(userId)) {
+                userSubRequests.push({
+                ...classInfo, id: doc.id.split('---')[0],
+                } as Data.SubRequest)
+            }
             if (classInfo.subRequestStatus === SubRequestStatus.SubstituteNeeded) {
                 classesCheckedOff.push(null)
                 classesMissingSubs.push({
-                ...classInfo, id: doc.id,
+                ...classInfo, id: doc.id.split('---')[0],
                 } as Data.SubRequest)
             } else if (classInfo.subRequestStatus === SubRequestStatus.SubstituteFound && classInfo.subInstructorId === userId) {
                 userSubClasses.push({
-                ...classInfo, id: doc.id,
+                ...classInfo, id: doc.id.split('---')[0],
                 } as Data.SubRequest)
             }
         })
+        subRequestsFromUser = userSubRequests
         userSubClassesList = userSubClasses
         return classesMissingSubs;
     }
@@ -82,9 +90,9 @@
                     }),
                 }).then((response) => {
                     if (response.ok) {
-                        alert.trigger('success', 'Substitute request sent!')
+                        alert.trigger('success', 'Signup successful!')
                     } else {
-                        alert.trigger('error', 'Error sending substitute request!')
+                        alert.trigger('error', 'Error signing up to substitute, please try again.')
                     }
                 })
             })
@@ -163,6 +171,34 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
 </script>
 <div>
     {#await classesMissingSubs then classesMissingSubs}
+    <Card class = 'mb-4'>
+    <h2 class="my-2 text-xl font-bold">Your Sub Requests</h2>
+    <div>
+        {#if subRequestsFromUser.length > 0}
+        {#each subRequestsFromUser as subRequest}
+            {#if subRequest.subRequestStatus === SubRequestStatus.SubstituteFound}
+                <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4">
+                    <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
+                    <p><strong>Status: Substitute Found</strong></p>
+                </div>
+            {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteNeeded}
+                <div class="flex items-center justify-between rounded-lg bg-red-100 p-4">
+                    <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
+                    <p><strong>Status: Substitute Needed</strong></p>
+                </div>
+            {:else}
+                <div class="flex items-center justify-between rounded-lg bg-green-100 p-4">
+                    <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
+                    <p><strong>Status: Substituted Class Complete</strong></p>
+                </div>
+            {/if}
+        {/each}
+        {:else}
+         <p>You have no current sub requests!</p>
+        {/if}
+    </div>
+    </Card>
+    <Card>
     <h2 class="ml-2 mt-2 text-xl font-bold">Substituting Classes</h2>
     <hr class="mb-3 mt-5" />
     <h2 class="font-bold mb-2">Sign Up To Substitute A Class</h2>
@@ -202,16 +238,26 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
     {#if userSubClassesList.length > 0}
     {#each userSubClassesList as classBeingSubbed, i}
     <InstructorFeedbackForm bind:feedbackDialogEl classBeingSubbed={classBeingSubbed}/>
+    <Dialog bind:this={notesDialogEl} size="min">
+            <svelte:fragment slot="title"><div class="flex items-center justify-between"><div>Class Prep Notes</div><Button color="red" on:click={notesDialogEl.cancel}>Close</Button></div></svelte:fragment>
+        <Card slot="description">
+            <p>{classBeingSubbed.notes}</p>
+            <br/>
+            <p>Please reach out to the class's usual instructor at {classBeingSubbed.originalInstructorEmail} if you have questions!</p>
+        </Card>
+    </Dialog>
     <hr/>
     <div>
         <p>{classBeingSubbed.course} class #{classBeingSubbed.classNumber} at {formatDate(timestampToDate(classBeingSubbed.dateOfClass))}</p>
     </div>
-    <Button color = 'blue' class = "mt-2" on:click={() => recordClass(classBeingSubbed)}>Join Class</Button>
+    <Button color = 'blue' class = "mt-2" on:click={() => recordClass(classBeingSubbed)}>Start Class</Button>
     <Button color = 'blue' class = "mb-2" on:click={() => {feedbackDialogEl.open()}}>Submit Feedback</Button>
     <Button color = 'blue' on:click={() => sendReminder(classBeingSubbed)}> Send Class Reminder</Button>
+    <Button color = 'blue' class = "mt-2" on:click={() => {notesDialogEl.open()}}>View Prep Notes</Button>
     {/each}
     {:else}
         <p>You are not currently substituting any classes.</p>
     {/if}
+    </Card>
     {/await}
 </div>

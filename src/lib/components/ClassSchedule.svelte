@@ -7,6 +7,7 @@
     updateDoc,
     DocumentReference,
     Timestamp,
+    setDoc,
   } from 'firebase/firestore'
   import Input from './Input.svelte'
   import { slide } from 'svelte/transition'
@@ -31,6 +32,8 @@
   import { ClassStatus } from './helpers/ClassStatus'
     import InstructorFeedbackForm from './forms/InstructorFeedbackForm.svelte'
     import ClassDetailsForm from './forms/ClassDetailsForm.svelte'
+    import { bind } from 'lodash-es'
+    import { SubRequestStatus } from './helpers/SubRequestStatus'
 
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
@@ -58,12 +61,15 @@
   let feedbackDialogEl: Dialog
   let classDetailsDialogEl: Dialog
   let studentDetailsDialogEl: Dialog
+  let subRequestDialogEl: Dialog
   let emailHtmlContent = ''
   let studentList: Student[] = []
   let addingClass = false
 
   let classToBeAdded = ''
-
+  let subRequestDate: string = ''
+  let subRequestClassNumber: number = 0
+  let subRequestNotes: string = ''
   /**
    * Iterates through each student UID to get student info
    * @param studentUids
@@ -248,6 +254,28 @@
       }
     } 
 
+  function sendSubRequest() {
+    const subRequest: Data.SubRequest = {
+      classNumber: subRequestClassNumber,
+      dateOfClass: new Date(subRequestDate),
+      id: classId,
+      notes: subRequestNotes,
+      course: values.course,
+      originalInstructorEmail: values.instructorEmail,
+      subInstructorFirstName: '',      
+      subInstructorEmail: '',
+      subInstructorId: '',
+      subRequestStatus: SubRequestStatus.SubstituteNeeded,
+      link: values.meetingLink,
+    }
+    setDoc(doc(db, 'subRequests', classId + '---' + subRequestClassNumber), subRequest).then((res) => {
+      alert.trigger('success', 'Sub request sent!')
+      window.setTimeout(() => { location.reload() }, 1000)
+    }).catch((err) => {
+      alert.trigger('error', 'Failed to send sub request, please try again.')
+    })
+  }
+
   function copyEmails() {
   const emailList = studentList
     .map(
@@ -289,7 +317,7 @@ onMount(() => {
             }
             if (values && meetingTimes) {
               meetingTimes.sort((a, b) => {
-                return a - b;
+                return a.getTime() - b.getTime()
               })
               originalMeetingTimes = meetingTimes.map((time: Date) =>
                 toLocalISOString(time),
@@ -350,7 +378,7 @@ onMount(() => {
 <InstructorFeedbackForm bind:feedbackDialogEl classBeingSubbed={undefined}/>
 <ClassDetailsForm bind:classDetailsDialogEl dialog={true}/>
 
-<div class="p-4">
+<div class="p-0">
   <Dialog bind:this={studentDetailsDialogEl} size="min">
     <svelte:fragment slot="title"><div class = "flex justify-between items-center"> Class List <Button color = 'red' class="font-light" on:click={studentDetailsDialogEl.cancel}>Close</Button></div> </svelte:fragment>
   <Card slot="description" class="mb-4">
@@ -534,6 +562,40 @@ onMount(() => {
   </div>
   <ul class="list-none space-y-2">
     {#each editedMeetingTimes as classTime, classNumber }
+    <Dialog bind:this={subRequestDialogEl} initial={false} size="min">
+      <svelte:fragment slot="title"><div class="flex items-center justify-between">Submit A Sub Request<DialogActions>
+        <Button on:click={() => subRequestDialogEl.close()} color='red'>Close</Button>
+      </DialogActions></div></svelte:fragment>
+      <div slot="description" class="space-y-4">
+        <Input
+          type="number"
+          class="rounded border p-1"
+          bind:value={subRequestClassNumber}
+          floating
+          label="Please confirm the class number ."
+        />
+        <Input
+          type="datetime-local"
+          class="rounded border p-1"
+          bind:value={subRequestDate}
+          floating
+          label="Please confirm the date and time of the class you would like to request a sub for."
+        />
+        <Input
+          type="text"
+          class="rounded border p-1"
+          bind:value={subRequestNotes}
+          label="Please describe what topic/lesson the substitute class will cover, and any helpful notes for the substitute instructor."
+        />
+        <Button
+          color="green"
+          on:click={() => {
+            sendSubRequest()
+            subRequestDialogEl.close()
+          }}>Confirm Request</Button
+        >
+      </div>
+      </Dialog>
       {#if values.classStatuses[classNumber] === ClassStatus.ClassNotHeld}
         <li
           class="flex items-center justify-between rounded-lg bg-red-100 p-4"
@@ -647,6 +709,12 @@ onMount(() => {
               }}>Delete</Button
             >
           {:else}
+            <Button color = "blue" on:click={() => {
+              subRequestDate = classTime
+              subRequestClassNumber = classNumber + 1
+              subRequestNotes = ''
+              subRequestDialogEl.open()
+            }}>Request A Sub</Button>
             <span>{values.course + ' at ' + formatDateString(classTime)}</span>
           {/if}
         </li>

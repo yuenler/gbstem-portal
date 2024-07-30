@@ -1,6 +1,6 @@
 <script lang="ts">
   import { db, user } from '$lib/client/firebase'
-  import { alert } from '$lib/stores'
+  import { alert, selectedStudentId } from '$lib/stores'
   import Form from '$lib/components/Form.svelte'
   import Button from '../Button.svelte'
   import Input from '$lib/components/Input.svelte'
@@ -13,6 +13,11 @@
   let disabled = false
   let showValidation = false
   let selectedStudentUid = ''
+
+  const subscribe = selectedStudentId.subscribe((value) => {
+		selectedStudentUid = value;
+	});
+  
   let selectedStudentCourses: any[] = []
   let pastSelected = ''
 
@@ -107,14 +112,6 @@
   }
 </script>
 
-<div class="mb-5">
-  <StudentSelect bind:selectedStudentUid />
-</div>
-{#if selectedStudentCourses.length == 0}
-  <div>This student is not currently enrolled in a course.</div>
-{/if}
-<h2 class="ml-2 text-xl font-bold">Weekly Class Feedback Form</h2>
-
 <Card class="ml-2">
   <Form
     class={cn(showValidation && 'show-validation')}
@@ -126,7 +123,10 @@
       >
     {:else}
       <fieldset class="space-y-4" {disabled}>
-        <h2 class="font-bold">Feedback</h2>
+        <h2 class="font-bold">Weekly Class Feedback Form For {values.studentName}</h2>
+        {#if selectedStudentCourses.length == 0}
+          <div>This student is not currently enrolled in a course.</div>
+        {:else}
         <div class="mb-5">
           <h2 class="text-lg font-bold">Select Course:</h2>
           {#each selectedStudentCourses as { instructor, course, classId }}
@@ -169,6 +169,7 @@
         <div class="justify flex">
           <Button color="blue" type="submit">Submit</Button>
         </div>
+        {/if}
       </fieldset>
     {/if}
   </Form>
