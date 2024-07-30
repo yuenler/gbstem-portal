@@ -126,7 +126,7 @@
 <svelte:head>
   <title>Dashboard</title>
 </svelte:head>
-  <div class="grid md:grid-cols-2">
+  <div class="grid md:grid-cols-2 gap-2">
     {#if loading}
       <Loading
         class="absolute left-0 right-0 top-0 h-[calc(100vh-216px-80px)] md:h-[calc(100vh-216px)]"
@@ -141,7 +141,7 @@
       {#if isStudent}
         <StudentSelect/>
       {/if}
-        
+
       {#if new Date() < new Date(semesterDates.classesStart)}
       <Card class="space-y-2">
         <h2 class="text-xl font-bold">Application</h2>
@@ -209,9 +209,7 @@
       
       {#if data.application.status === 'accepted'}
         <ClassDetailsForm semesterDates = {semesterDates} classDetailsDialogEl={undefined} dialog={false}/>
-        <Card>
           <SubClasses />
-        </Card>  
       {:else if isStudent}
         <StudentSchedule />
         
