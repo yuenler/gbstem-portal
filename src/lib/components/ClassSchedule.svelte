@@ -374,8 +374,12 @@ onMount(() => {
     </DialogActions>
   </div>
 </Dialog>
-
-<InstructorFeedbackForm bind:feedbackDialogEl classBeingSubbed={undefined}/>
+<Dialog bind:this={feedbackDialogEl} size="full" alert>
+  <svelte:fragment slot="title"><div class = "flex justify-between items-center">Weekly {values.course} Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl.cancel}>Close</Button></div> </svelte:fragment>
+  <div slot="description">
+    <InstructorFeedbackForm classBeingSubbed={undefined}/>
+  </div>
+</Dialog>
 <ClassDetailsForm bind:classDetailsDialogEl dialog={true}/>
 
 <div class="p-0">
@@ -671,7 +675,6 @@ onMount(() => {
           transition:slide={{ duration: 1000 }}
         >
           <span class="font-semibold">Class {classNumber + 1}:</span>
-          <span><Button>Request a Sub For This Class</Button></span>
           {#if editMode}
             <Input
               type="datetime-local"

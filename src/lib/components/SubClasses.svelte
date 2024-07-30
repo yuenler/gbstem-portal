@@ -15,8 +15,8 @@
      import InstructorFeedbackForm from './forms/InstructorFeedbackForm.svelte'
      import Card from "./Card.svelte"
 
-    let feedbackDialogEl: Dialog
-    let notesDialogEl: Dialog
+    let feedbackDialogEl: Dialog[] = []
+    let notesDialogEl: Dialog[] = []
     let currentUser: Data.User.Store
     let classesMissingSubs: Data.SubRequest[] = []
     let userSubClassesList: Data.SubRequest[] = []
@@ -56,6 +56,8 @@
                 userSubClasses.push({
                 ...classInfo, id: doc.id,
                 } as Data.SubRequest)
+                feedbackDialogEl.push(null)
+                notesDialogEl.push(null)
             }
         })
         subRequestsFromUser = userSubRequests
@@ -180,9 +182,14 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
         <h2 class="font-bold mt-4 text-xl mb-2">Your Classes To Substitute</h2>
     {#if userSubClassesList.length > 0}
     {#each userSubClassesList as classBeingSubbed, i}
-    <InstructorFeedbackForm bind:feedbackDialogEl classBeingSubbed={classBeingSubbed}/>
-    <Dialog bind:this={notesDialogEl} size="min">
-            <svelte:fragment slot="title"><div class="flex items-center justify-between"><div>Class Prep Notes</div><Button color="red" on:click={notesDialogEl.cancel}>Close</Button></div></svelte:fragment>
+    <Dialog bind:this={feedbackDialogEl[i]} size="full" alert>
+        <svelte:fragment slot="title"><div class = "flex justify-between items-center">{classBeingSubbed.course} Substitute Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl[i].cancel}>Close</Button></div> </svelte:fragment>
+        <div slot="description">
+            <InstructorFeedbackForm classBeingSubbed={classBeingSubbed}/>
+        </div>
+    </Dialog>
+    <Dialog bind:this={notesDialogEl[i]} size="min">
+            <svelte:fragment slot="title"><div class="flex items-center justify-between"><div>Class Prep Notes</div><Button color="red" on:click={notesDialogEl[i].cancel}>Close</Button></div></svelte:fragment>
         <Card slot="description">
             <p>{classBeingSubbed.notes}</p>
             <br/>
@@ -195,9 +202,9 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
     </div>
     <div class='text-sm italic'>{classBeingSubbed.subRequestStatus === SubRequestStatus.SubstituteFeedbackNeeded ? 'Please remember to fill out the feedback form for this class!' : timestampToDate(classBeingSubbed.dateOfClass) > new Date() ? 'Please remember to review the notes and prep for the class. Thank you for substituting!' : 'Looks like the substitute class was not held! Please reach out to the usual instructor to let them know.'}</div>
     <Button color = 'blue' class = "mt-2" on:click={() => recordClass(classBeingSubbed)}>Join Class</Button>
-    <Button color = 'blue' on:click={() => {feedbackDialogEl.open()}}>Submit Class Feedback</Button>
+    <Button color = 'blue' on:click={() => {feedbackDialogEl[i].open()}}>Submit Class Feedback</Button>
     <Button color = 'blue' on:click={() => sendReminder(classBeingSubbed)}> Send Class Reminder</Button>
-    <Button color = 'blue' class = "mt-2 mb-4" on:click={() => {notesDialogEl.open()}}>View Prep Notes</Button>
+    <Button color = 'blue' class = "mt-2 mb-4" on:click={() => {notesDialogEl[i].open()}}>View Prep Notes</Button>
     {/each}
     {:else}
         <p>You are not currently substituting any classes.</p>
