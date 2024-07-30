@@ -62,7 +62,7 @@
   }
 </script>
 
-<div class="p-4">
+<div class="p-0">
   <!-- <div class="mb-5">
     <StudentSelect bind:selectedStudentUid />
   </div> -->
