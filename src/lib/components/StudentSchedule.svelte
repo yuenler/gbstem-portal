@@ -5,15 +5,22 @@
   import Input from './Input.svelte'
   import Card from './Card.svelte'
   import Button from './Button.svelte'
-    import { formatDate, formatDateString, timestampToDate } from '$lib/utils'
-    import { classesCollection, registrationsCollection } from '$lib/data/constants'
+  import { formatDate, formatDateString, timestampToDate } from '$lib/utils'
+  import { classesCollection, registrationsCollection } from '$lib/data/constants'
+  import { getContext, onMount } from 'svelte'
+  import { selectedStudentId } from '$lib/stores'
 
   type ClassDate = {course: string, meetingTime: Date, link: string}
   let classes: ClassDate[] = []
   let nextClass: ClassDate = null 
   let listView: boolean = true
-  let selectedStudentUid = ''
   let courses = new Set()
+  let selectedStudentUid = ''
+  let selectedStudentName = ''
+
+  const subscribe = selectedStudentId.subscribe((value) => {
+		selectedStudentUid = value;
+	});
 
   async function fetchClassSchedules(classIds: string[]) {
     const schedulesPromises = classIds.map((classId) =>
@@ -39,11 +46,14 @@
         return fetchedClasses
       }
 
+    console.log(selectedStudentUid)
   $: if (selectedStudentUid) {
     getDoc(doc(db, registrationsCollection, selectedStudentUid)).then(
       async (docSnapshot) => {
         if (docSnapshot.exists()) {
-          const classIds = docSnapshot.data().classes || []
+          const data = docSnapshot.data() 
+          const classIds = data.classes || []
+          selectedStudentName = data.personal.studentFirstName
           classes = await fetchClassSchedules(classIds)
           nextClass = classes.filter(classDate => new Date(classDate.meetingTime) > new Date()).sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime))[0]
         }
@@ -52,16 +62,16 @@
   }
 </script>
 
-<div class="p-4">
-  <div class="mb-5">
+<div class="p-0">
+  <!-- <div class="mb-5">
     <StudentSelect bind:selectedStudentUid />
-  </div>
+  </div> -->
   {#if selectedStudentUid}
     {#if classes.length === 0}
       <p>This student is not enrolled in any classes.</p>
     {:else}
     <Card>
-      <div class="font-bold mb-2">Next Upcoming Class:</div>
+      <div class="font-bold mb-2">Next Upcoming Class For {selectedStudentName}:</div>
         <div>
           {nextClass === undefined ? 'No Upcoming Classes' :  nextClass.course + ' ' + formatDate(timestampToDate(new Date(nextClass.meetingTime)))}
         </div>
@@ -69,7 +79,7 @@
           >Join Class</Button>
       </Card>
 
-      <div class="font-bold mb-2 mt-4">Class Schedule</div>
+      <div class="font-bold mb-2 mt-4">{selectedStudentName}'s Class Schedule</div>
 
       <Input type="checkbox" bind:value={listView} label={'Show As List?'} />
 
