@@ -253,7 +253,7 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
     <Button color = 'blue' class = "mt-2" on:click={() => recordClass(classBeingSubbed)}>Start Class</Button>
     <Button color = 'blue' class = "mb-2" on:click={() => {feedbackDialogEl.open()}}>Submit Feedback</Button>
     <Button color = 'blue' on:click={() => sendReminder(classBeingSubbed)}> Send Class Reminder</Button>
-    <Button color = 'blue' on:click={() => {notesDialogEl.open()}}>View Prep Notes</Button>
+    <Button color = 'blue' class = "mt-2" on:click={() => {notesDialogEl.open()}}>View Prep Notes</Button>
     {/each}
     {:else}
         <p>You are not currently substituting any classes.</p>
