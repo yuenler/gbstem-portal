@@ -8,7 +8,7 @@
   import { getDoc, doc } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import { alert } from '$lib/stores'
-    import { registrationsCollection } from '$lib/data/constants'
+    import { registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
 
   // if this is a registration, iterate through the user's uid and check if uid-1, uid-2, etc. exists
   // if it does, add it to the options array
@@ -19,9 +19,28 @@
   let value = ''
   let ready = false
   let uid = ''
+  let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue: '',
+    instructorOrientation: '',
+    newInstructorAppsOpen: '',
+    returningInstructorAppsOpen: '',
+    studentOrientation: '',
+    registrationsDue: '',
+  }
 
   const fetchData = async (user: Data.User.Store) => {
     uid = user.object.uid
+    await getDoc(doc(db, 'semesterDates', semesterDatesDocument)).then((datesDoc) => {
+        const datesDocExists = datesDoc.exists()
+        if (datesDocExists) {
+          semesterDates = datesDoc.data() as Data.SemesterDates
+        }
+        console.log(semesterDates)
+    })
     for (let i = 1; i < 6; ++i) {
       const docRef = await getDoc(
         doc(db, registrationsCollection, `${uid}-${i}`),
@@ -82,7 +101,7 @@
 {#if $user?.profile.role === 'instructor'}
   <PageLayout>
     <svelte:fragment slot="title">Apply</svelte:fragment>
-    <ApplyForm />
+    <ApplyForm semesterDates = {semesterDates}/>
   </PageLayout>
 {:else}
   <PageLayout>
@@ -111,7 +130,7 @@
       </div>
     {/if}
     {#if nameToUid[value]}
-      <RegistrationForm childUid={nameToUid[value]} />
+      <RegistrationForm childUid={nameToUid[value]} semesterDates = {semesterDates}/>
     {/if}
   </PageLayout>
 {/if}

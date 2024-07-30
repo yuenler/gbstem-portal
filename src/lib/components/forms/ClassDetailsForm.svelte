@@ -8,12 +8,23 @@
   import { cn } from '$lib/utils'
   import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
   import { onMount } from 'svelte'
-  import Link from '$lib/components/Link.svelte'
   import { coursesJson, daysOfWeekJson } from '$lib/data'
-  import { create } from 'lodash-es'
-    import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
-    import { ClassStatus } from '../helpers/ClassStatus'
-    import Dialog from '../Dialog.svelte'
+  import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
+  import { ClassStatus } from '../helpers/ClassStatus'
+
+  export let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue: '',
+    instructorOrientation: '',
+    newInstructorAppsOpen: '',
+    returningInstructorAppsOpen: '',
+    studentOrientation: '',
+    registrationsDue: '',
+  }
+      import Dialog from '../Dialog.svelte'
     import Card from '../Card.svelte'
 
  export let classDetailsDialogEl: Dialog | undefined
@@ -46,14 +57,6 @@
   }
 
   let createClassSchedule = true
-
-  let semesterDates: Data.SemesterDates = {
-    classesEnd: '',
-    classesStart: '',
-    leadershipAppsDue: '',
-    newInstructorAppsDue: '',
-    returningInstructorAppsDue: '',
-  }
 
   function getMeetingDates(
     classDay1: string,
@@ -108,12 +111,6 @@
             }
             disabled = true
             createClassSchedule = false
-          }
-        })
-        getDoc(doc(db, 'semesterDates', semesterDatesDocument)).then((datesDoc) => {
-          const datesDocExists = datesDoc.exists()
-          if (datesDocExists) {
-            semesterDates = datesDoc.data() as Data.SemesterDates
           }
         })
       }

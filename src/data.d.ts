@@ -64,6 +64,11 @@ declare global {
       leadershipAppsDue: string,
       newInstructorAppsDue: string,
       returningInstructorAppsDue: string,
+      instructorOrientation: string,
+      newInstructorAppsOpen: string,
+      returningInstructorAppsOpen: string,
+      studentOrientation: string,
+      registrationsDue: string,
     }
 
     type InterviewSlot = {

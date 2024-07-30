@@ -35,6 +35,19 @@
 
   export let childUid: string = ''
 
+  export let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue: '',
+    instructorOrientation: '',
+    newInstructorAppsOpen: '',
+    returningInstructorAppsOpen: '',
+    studentOrientation: '',
+    registrationsDue: '',
+  }
+
   let disabled = true
   let showValidation = false
   let dbValues: Data.Registration
@@ -170,7 +183,7 @@
           },
         )
       }
-    })
+   })
   }
 
   onMount(() => initializeForm())
@@ -740,7 +753,7 @@
         <Input
           type="checkbox"
           bind:value={values.agreements.entireProgram}
-          label="gbSTEM will run from March 17th to June 15th, 2024. Will the student be able to participate throughout the entirety of the program?"
+          label={`gbSTEM will run from ${new Date(semesterDates.classesStart).toDateString()} to ${new Date(semesterDates.classesEnd).toDateString()}. Will the student be able to participate throughout the entirety of the program?`}
           required
         />
 
