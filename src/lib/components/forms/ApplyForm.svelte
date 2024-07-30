@@ -23,6 +23,19 @@
   import Link from '../Link.svelte'
     import { applicationsCollection } from '$lib/data/constants'
 
+  export let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue: '',
+    instructorOrientation: '',
+    newInstructorAppsOpen: '',
+    returningInstructorAppsOpen: '',
+    studentOrientation: '',
+    registrationsDue: '',
+  }
+
   let disabled = true
   let showValidation = false
   let dbValues: Data.Application
@@ -442,7 +455,7 @@
           <Input
             type="checkbox"
             bind:value={values.agreements.entireProgram}
-            label="gbSTEM will run from March 17th to June 15th, 2024. Do you confirm that you will be able to teach for the entirety of the program?"
+            label={`gbSTEM will run from ${new Date(semesterDates.classesStart).toDateString()} to ${new Date(semesterDates.classesEnd).toDateString()}. Do you confirm that you will be able to teach for the entirety of the program?`}
             required
           />
           <Input

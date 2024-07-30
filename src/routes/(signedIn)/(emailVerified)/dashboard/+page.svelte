@@ -48,6 +48,11 @@
     leadershipAppsDue: '',
     newInstructorAppsDue: '',
     returningInstructorAppsDue: '',
+    instructorOrientation: '',
+    newInstructorAppsOpen: '',
+    returningInstructorAppsOpen: '',
+    studentOrientation: '',
+    registrationsDue: '',
   }
 
   let isStudent = false
@@ -61,6 +66,7 @@
         if (datesDocExists) {
           semesterDates = datesDoc.data() as Data.SemesterDates
         }
+        console.log(semesterDates)
       })
       Promise.all([
         new Promise<void>((resolve) => {
@@ -134,6 +140,7 @@
       }}
     >
     <StudentSelect/>
+    {#if new Date() < new Date(semesterDates.classesStart)}
       <Card class="space-y-2">
         <h2 class="text-xl font-bold">Application</h2>
         {#if !isStudent}
@@ -143,7 +150,7 @@
                 Applications to be an instructor are due <span
                   class="font-bold"
                 >
-                  March 2, 2024
+                 {new Date(semesterDates.newInstructorAppsDue).toDateString()}
                 </span>
                 at 11:59 PM ET.
               </p>
@@ -175,7 +182,7 @@
         {:else}
           <p>
             Pre-registrations to be a student are due
-            <span class="font-bold"> March 7, 2024 </span> at 11:59 PM ET. Be sure
+            <span class="font-bold"> {new Date(semesterDates.registrationsDue).toDateString()} </span> at 11:59 PM ET. Be sure
             you have pre-registered each student by the deadline!
           </p>
           {#if numSubmitted > 0}
@@ -196,6 +203,9 @@
           </div>
         {/if}
       </Card>
+      {:else if isStudent}
+        <StudentFeedbackForm />
+      {/if}
       {#if data.application.status === 'accepted'}
         {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
           <Card>
@@ -206,11 +216,8 @@
           </Card>
         {/if}
         <Card class="space-y-4">
-          <ClassDetailsForm />
+          <ClassDetailsForm semesterDates = {semesterDates}/>
         </Card>
-      {/if}
-      {#if isStudent && Date.now() > new Date(semesterDates.classesStart).getTime()}
-        <StudentFeedbackForm />
       {/if}
     </div>
 

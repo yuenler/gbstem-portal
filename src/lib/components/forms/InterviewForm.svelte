@@ -17,7 +17,9 @@
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
     import { formatDate } from '$lib/utils'
-    import { applicationsCollection, semesterDatesDocument } from '$lib/data/constants'
+    import { applicationsCollection } from '$lib/data/constants'
+
+  let dueDate = ''
 
   let showValidation = false
   let valuesJson: Data.InterviewSlot[] = []
@@ -30,11 +32,9 @@
   let dateToAdd = ''
 
   async function sendSlotRequest() {
-    const dueDate = await getDoc(doc(db, 'semesterDates', semesterDatesDocument))
-    if (dueDate.exists()) {
       if (
-        new Date(dateToAdd) > new Date(dueDate.data().instructorOrientation)
-      ) {
+        new Date(dateToAdd) > new Date(dueDate))
+     {
         alert.trigger(
           'error',
           'Instructor interviews close on ' +
@@ -43,7 +43,6 @@
         )
         return
       }
-    }
     fetch('/api/slotRequest', {
       method: 'POST',
       headers: {
@@ -129,7 +128,11 @@
     return user.subscribe(async (user) => {
       if (user) {
         currentUser = user
-        data = await getData()
+        data = await getData() 
+        const semesterDatesDoc = await getDoc(doc(db, 'data', 'semesterDates')).then((semesterData) => {
+          const data = semesterData.data()
+          if(data) dueDate = data.instructorOrientation
+        })
         loading = false
       }
     })

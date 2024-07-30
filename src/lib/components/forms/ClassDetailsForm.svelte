@@ -12,6 +12,19 @@
   import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
   import { ClassStatus } from '../helpers/ClassStatus'
 
+  export let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue: '',
+    instructorOrientation: '',
+    newInstructorAppsOpen: '',
+    returningInstructorAppsOpen: '',
+    studentOrientation: '',
+    registrationsDue: '',
+  }
+  
   let disabled = false
   let showValidation = false
   let values: Data.Class = {
@@ -37,14 +50,6 @@
   }
 
   let createClassSchedule = true
-
-  let semesterDates: Data.SemesterDates = {
-    classesEnd: '',
-    classesStart: '',
-    leadershipAppsDue: '',
-    newInstructorAppsDue: '',
-    returningInstructorAppsDue: '',
-  }
 
   function getMeetingDates(
     classDay1: string,
@@ -96,12 +101,6 @@
             values = data as Data.Class
             disabled = true
             createClassSchedule = false
-          }
-        })
-        getDoc(doc(db, 'semesterDates', semesterDatesDocument)).then((datesDoc) => {
-          const datesDocExists = datesDoc.exists()
-          if (datesDocExists) {
-            semesterDates = datesDoc.data() as Data.SemesterDates
           }
         })
       }
