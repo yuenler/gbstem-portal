@@ -15,9 +15,10 @@
     updateDoc
   } from 'firebase/firestore'
   import { onMount } from 'svelte'
-    import { classesCollection, registrationsCollection } from '$lib/data/constants'
+    import { classesCollection, registrationsCollection, substituteRequestsCollection } from '$lib/data/constants'
     import Dialog from '../Dialog.svelte'
     import Card from '../Card.svelte'
+    import { SubRequestStatus } from '../helpers/SubRequestStatus'
 
   export let feedbackDialogEl: Dialog
   export let classBeingSubbed: Data.SubRequest | undefined
@@ -126,6 +127,12 @@
           doc(db, classesCollection, frozenUser.object.uid),
           { feedbackCompleted: feedbackCompleted },
         )
+        if(classBeingSubbed !== undefined) {
+          updateDoc(
+            doc(db, substituteRequestsCollection, classBeingSubbed.id),
+            { subRequestStatus: SubRequestStatus.NoSubstituteNeeded },
+          )
+        }
         alert.trigger('success', 'Class Feedback saved!')
         setTimeout(() => location.reload(), 1000)
       }

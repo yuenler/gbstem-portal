@@ -87,7 +87,7 @@
 
   onMount(() => {
     return user.subscribe((user) => {
-      if (user && user.profile.role === 'student') {
+      if (user) {
         fetchData(user)
       }
     })

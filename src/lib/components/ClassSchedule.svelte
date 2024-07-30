@@ -488,7 +488,7 @@ onMount(() => {
       class="mb-2 mt-4"
       on:click={() => {
         recordClass(classId)
-      }}>Start Class</Button
+      }}>Join Class</Button
     >
     <Button
       color="blue"
