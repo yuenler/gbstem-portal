@@ -13,7 +13,6 @@
     import { db } from '$lib/client/firebase'
 
   export let user: Data.User.Peek
-  let isInstructor = false
 
   let shadow = false
   let open = false
@@ -31,7 +30,7 @@
       try {
         const document = await getDoc(doc(db, decisionsCollection, user.uid));
         if (document.exists() && document.data().type === 'accepted') {
-          pages = [...pages, { name: 'Curriculum', href: '/curriculum' }];
+          pages = [...pages, { name: 'Curriculum', href: '/curriculum' }, { name:'Community Service Hours Tracker', 'href':'/community-service'}];
         }
       } catch (error) {
         console.error('Error fetching document:', error);
