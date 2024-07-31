@@ -60,6 +60,7 @@
   let addClassDialogEl: Dialog
   let feedbackDialogEl: Dialog
   let classDetailsDialogEl: Dialog
+  let studentDetailsDialogEl: Dialog
   let subRequestDialogEl: Dialog
   let emailHtmlContent = ''
   let studentList: Student[] = []
@@ -373,15 +374,20 @@ onMount(() => {
     </DialogActions>
   </div>
 </Dialog>
-
-<InstructorFeedbackForm bind:feedbackDialogEl classBeingSubbed={undefined}/>
+<Dialog bind:this={feedbackDialogEl} size="full" alert>
+  <svelte:fragment slot="title"><div class = "flex justify-between items-center">Weekly {values.course} Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl.cancel}>Close</Button></div> </svelte:fragment>
+  <div slot="description">
+    <InstructorFeedbackForm classBeingSubbed={undefined}/>
+  </div>
+</Dialog>
 <ClassDetailsForm bind:classDetailsDialogEl dialog={true}/>
 
 <div class="p-0">
-  <Card class="mb-4">
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="font-bold">Class List</h2>
-      <Button on:click={copyEmails} class="flex items-center gap-1">
+  <Dialog bind:this={studentDetailsDialogEl} size="min">
+    <svelte:fragment slot="title"><div class = "flex justify-between items-center"> Class List <Button color = 'red' class="font-light" on:click={studentDetailsDialogEl.cancel}>Close</Button></div> </svelte:fragment>
+  <Card slot="description" class="mb-4">
+    <div class="mb-4 flex items-center justify-end">
+      <Button on:click={copyEmails} class="flex items-center gap-1 justify-end">
         <svg
           fill="#000000"
           height="20"
@@ -473,6 +479,7 @@ onMount(() => {
       </table>
     </div>
   </Card>
+  </Dialog>
   <Card class="mb-4">
     <div class="mb-2 font-bold">Next Upcoming Class:</div>
     <div>
@@ -485,7 +492,7 @@ onMount(() => {
       class="mb-2 mt-4"
       on:click={() => {
         recordClass(classId)
-      }}>Start Class</Button
+      }}>Join Class</Button
     >
     <Button
       color="blue"
@@ -504,6 +511,7 @@ onMount(() => {
     >
     <Button color="blue" class="mt-2" on:click={() => feedbackDialogEl.open()}>Submit Class Feedback</Button>
     <Button color="blue" class="mt-2" on:click={() => classDetailsDialogEl.open()}>Edit Class Details</Button>
+    <Button color="blue" class="mt-2" on:click={() => studentDetailsDialogEl.open()}>View Class List</Button>
   </Card>
 
   <div class="mb-4 flex justify-between">
