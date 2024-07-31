@@ -23,6 +23,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
           hours: body.hours,
           season: body.season,
           year: body.year,
+          course: body.course,
           presidents: body.presidents,
           name: 'Portal',
           link: 'https://portal.gbstem.org',

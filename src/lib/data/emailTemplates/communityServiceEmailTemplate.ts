@@ -175,6 +175,7 @@ export const communityServiceEmailTemplate = `<!doctype html>
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
                                                     <p style="margin: 20px 0"><p style="margin: 0 0">Hi {{app.firstName}},</p>This email is to confirm that you have completed {{app.hours}} hours as a {{app.course}} class instructor in the {{app.season}} {{app.year}} semester! Thank you for the time and effort you have dedicated to gbSTEM. </p> 
                                                     <p>Warmly,<br>{{app.presidents}}</p>
+                                                    <p><em>Presidents, The Greater Boston STEM Program</em></p>
                                                 </div>
                                             </td>
                                         </tr>

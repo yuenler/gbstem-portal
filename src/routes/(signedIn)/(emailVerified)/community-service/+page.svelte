@@ -17,6 +17,7 @@
     let currentUser: Data.User.Store
     let year: number = new Date().getFullYear()
     let isFall = false
+    let course = ''
 
     user.subscribe((user) => {
         if(user) {
@@ -26,6 +27,7 @@
                 const data = doc.data() as Data.Class
                 numRegHours = data.classStatuses.filter((classStatus) => classStatus === ClassStatus.EverythingComplete || classStatus === ClassStatus.FeedbackIncomplete).length
                 numHours = numHours + numRegHours
+                course = data.course
                 const startDate = timestampToDate(data.meetingTimes[0])
                 isFall = startDate.getMonth() > 6
                 year = startDate.getFullYear()
@@ -56,6 +58,7 @@
                 firstName: currentUser.profile.firstName,
                 hours: numHours,
                 season: isFall ? "fall" : "spring",
+                course: course,
                 email: currentUser.object.email,
                 year: year,
                 presidents: 'Kendree Chen, Dea Pance, and Michael Bolgov',
