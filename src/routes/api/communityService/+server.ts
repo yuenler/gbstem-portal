@@ -5,36 +5,38 @@ import {
   POSTMARK_API_TOKEN,
 } from '$env/static/private'
 import { addDataToHtmlTemplate } from '$lib/utils'
-import { substituteClassEmailTemplate } from '$lib/data/emailTemplates/substituteClassEmailTemplate'
+import { communityServiceEmailTemplate } from '$lib/data/emailTemplates/communityServiceEmailTemplate'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   const body = await request.json();
+  const firstName = body.firstName;
+  const email = body.email;
   if (locals.user === null) {
     throw error(400, 'User not signed in.')
   } else {
-    const subInstructorEmail = body.subInstructorEmail;
-    const originalInstructorEmail = body.originalInstructorEmail;
     const template = {
-      name: 'interviewSlotRequest',
+      name: 'communityServiceEmail',
       data: {
-        subject: `Class Substitute Confirmation`,
+        subject: `gbSTEM Community Service Hours Confirmation for ${firstName}`,
         app: {
-          firstName: body.firstName,
+          firstName: firstName,
+          hours: body.hours,
+          season: body.season,
+          year: body.year,
           course: body.course,
-          classNumber: body.classNumber,
-          date: body.date,
+          presidents: body.presidents,
           name: 'Portal',
           link: 'https://portal.gbstem.org',
         },
       },
     }
 
-    const htmlBody = addDataToHtmlTemplate(substituteClassEmailTemplate, template);
+    const htmlBody = addDataToHtmlTemplate(communityServiceEmailTemplate, template);
 
     const emailData: Data.EmailData = {
       From: 'donotreply@gbstem.org',
-      To: subInstructorEmail,
-      Cc: originalInstructorEmail,
+      To: email,
+      Cc: '',
       Subject: String(template.data.subject),
       HTMLBody: htmlBody,
       ReplyTo: 'contact@gbstem.org',

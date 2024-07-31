@@ -216,10 +216,13 @@ declare global {
       classNumber: number
       course: string
       dateOfClass: Date
+      originalInstructorEmail: string
       subInstructorId: string
       subInstructorFirstName: string
       subInstructorEmail: string
       subRequestStatus: SubRequestStatus
+      link: string
+      notes: string
     }
 
     type Announcement<T extends 'client' | 'server' | 'pojo'> = {

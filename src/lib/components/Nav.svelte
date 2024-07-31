@@ -8,35 +8,52 @@
   // import AnnouncementsBell from './AnnouncementsBell.svelte'
   import { cubicInOut } from 'svelte/easing'
   import { cn } from '$lib/utils'
+    import { doc, getDoc } from 'firebase/firestore'
+    import { decisionsCollection } from '$lib/data/constants'
+    import { db } from '$lib/client/firebase'
 
   export let user: Data.User.Peek
 
   let shadow = false
   let open = false
-  onMount(() => {
-    updateShadow()
-    return navigating.subscribe((navigating) => {
-      if (navigating) {
-        open = false
-      }
-    })
-  })
-  $: pathname = $page.url.pathname
-  const pages = [
+  let pages = [
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Apply / Register', href: '/apply' },
-    // ...(new Date() >= new Date('2024-03-31')
-    //   ? [{ name: 'Class Catalog', href: '/classes' }]
-    //   : []),
     { name: 'Class Catalog', href: '/classes' },
     { name: 'FAQ', href: '/faq' },
   ]
+
+  onMount(() => {
+    updateShadow();
+
+    (async () => {
+      try {
+        const document = await getDoc(doc(db, decisionsCollection, user.uid));
+        if (document.exists() && document.data().type === 'accepted') {
+          pages = [...pages, { name: 'Curriculum', href: '/curriculum' }, { name:'Community Service Hours Tracker', 'href':'/community-service'}];
+        }
+      } catch (error) {
+        console.error('Error fetching document:', error);
+      }
+    })();
+
+    const unsubscribe = navigating.subscribe((navigating) => {
+      if (navigating) {
+        open = false;
+      }
+    });
+
+    // Return the cleanup function
+    return () => {
+      unsubscribe();
+    };
+  })
+  $: pathname = $page.url.pathname
 
   function updateShadow() {
     shadow = window.scrollY !== 0
   }
 </script>
-
 <svelte:window on:scroll={updateShadow} />
 <nav
   class={cn(
@@ -44,6 +61,7 @@
     shadow && !open ? 'shadow-b border-gray-200' : 'border-white',
   )}
 >
+{#await pages then pages}
   <div class="flex items-center gap-8">
     <Brand />
     {#if user.emailVerified}
@@ -107,6 +125,7 @@
       {/if}
     </button>
   </div>
+  {/await}
 </nav>
 {#if open}
   <div
@@ -134,7 +153,6 @@
     </div>
   </div>
 {/if}
-
 <style>
   .shadow-b {
     box-shadow: 0 1px 2px -1px rgb(0 0 0 / 0.1);

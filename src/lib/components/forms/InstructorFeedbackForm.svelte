@@ -16,13 +16,18 @@
   } from 'firebase/firestore'
   import { onMount } from 'svelte'
     import { classesCollection, registrationsCollection } from '$lib/data/constants'
+    import Dialog from '../Dialog.svelte'
+    import Card from '../Card.svelte'
+
+  export let feedbackDialogEl: Dialog
+  export let classBeingSubbed: Data.SubRequest | undefined
 
   let disabled = false
   let showValidation = false
   let currentUser: Data.User.Store
   let loading = true
   let classDate = ''
-  let classNumber = 0
+  let classNumber = classBeingSubbed === undefined ? 0 : classBeingSubbed.classNumber
   let course = ''
   let feedbackCompleted: boolean[] = []
   let values: {
@@ -43,21 +48,20 @@
 
   let classList: string[] = []
 
-  onMount(() => {
-    return user.subscribe(async (user) => {
+  $: if(classBeingSubbed !== undefined) {
+   user.subscribe(async (user) => {
       if (user) {
         currentUser = user
         getData()
         loading = false
       }
     })
-  })
+  }
 
   async function getData() {
-    const q = query(collection(db, classesCollection))
-    const querySnapshot = await getDocs(q)
-    querySnapshot.forEach((document) => {
-      if (document.id === currentUser.object.uid) {
+    if(classBeingSubbed !== undefined) {
+    const document = await getDoc(doc(db, classesCollection, classBeingSubbed.id))
+     if(document.exists()) {
         const uids = document.data()['students']
         feedbackCompleted = document.data().feedbackCompleted
         const classListPromises = uids.map((uid: string) =>
@@ -77,8 +81,7 @@
             classList = list
             course = document.data()['course']
             values.courseName = course
-            values.instructorName =
-              currentUser.profile.firstName + ' ' + currentUser.profile.lastName
+            values.instructorName = classBeingSubbed === undefined ? currentUser.profile.firstName + ' ' + currentUser.profile.lastName : classBeingSubbed.subInstructorFirstName
             classList.forEach((student: string) => {
               values.attendanceList[student] = {
                 present: false,
@@ -90,7 +93,7 @@
             console.error('Error with class list:', error)
           })
       }
-    })
+    }
     return classList
   }
 
@@ -129,13 +132,10 @@
     }
   }
 </script>
-
-<h2 class="ml-2 mt-2 text-xl font-bold">{course} Weekly Class Feedback Form</h2>
-{#if disabled}
-  <Button color="blue" class="m-5" on:click={() => (disabled = false)}
-    >Edit class feedback</Button
-  >
-{:else}
+<Dialog bind:this={feedbackDialogEl} size="full" alert>
+  <svelte:fragment slot="title"><div class = "flex justify-between items-center">{course} {classBeingSubbed !== undefined ? 'Substitute' : 'Weekly'} Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl.cancel}>Close</Button></div> </svelte:fragment>
+  <div slot="description">
+    <Card class="sticky top-2 z-50 flex justify-between gap-3 p-3 md:p-3">
   <hr class="mb-3 mt-5" />
   <Form
     class={cn(showValidation && 'show-validation')}
@@ -191,4 +191,6 @@
       <Button color="blue" type="submit">Submit</Button>
     </div>
   </Form>
-{/if}
+</Card>
+  </div>
+</Dialog>
