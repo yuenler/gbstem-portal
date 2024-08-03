@@ -138,7 +138,6 @@
     }).then(() => {
       nextClassIndex = findNextClassDate()
       alert.trigger('success', 'Meeting times updated!')
-      location.reload()
     })
   }
 
@@ -371,7 +370,7 @@ onMount(() => {
     {@html emailHtmlContent}
 
     <DialogActions>
-      <Button on:click={dialogEl.cancel}>Close</Button>
+      <Button on:click={() => {dialogEl.cancel(); location.reload();}}>Close</Button>
     </DialogActions>
   </div>
 </Dialog>
