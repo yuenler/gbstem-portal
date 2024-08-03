@@ -226,7 +226,7 @@
       {/if}
         {#if data.application.status === 'accepted'}
           {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
-            <ClassSchedule />
+            <ClassSchedule semesterDates={semesterDates}/>
           {/if}
         {/if}
       </div>

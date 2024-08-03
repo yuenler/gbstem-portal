@@ -35,6 +35,7 @@
     import { bind } from 'lodash-es'
     import { SubRequestStatus } from './helpers/SubRequestStatus'
 
+  export let semesterDates: Data.SemesterDates
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
   let editedMeetingTimes: string[] = []
@@ -380,10 +381,10 @@ onMount(() => {
     <InstructorFeedbackForm classBeingSubbed={undefined}/>
   </div>
 </Dialog>
-<ClassDetailsForm bind:classDetailsDialogEl dialog={true}/>
+<ClassDetailsForm bind:classDetailsDialogEl dialog={true} semesterDates={semesterDates}/>
 
 <div class="p-0">
-  <Dialog bind:this={studentDetailsDialogEl} size="min">
+  <Dialog bind:this={studentDetailsDialogEl} size="full">
     <svelte:fragment slot="title"><div class = "flex justify-between items-center"> Class List <Button color = 'red' class="font-light" on:click={studentDetailsDialogEl.cancel}>Close</Button></div> </svelte:fragment>
   <Card slot="description" class="mb-4">
     <div class="mb-4 flex items-center justify-end">
