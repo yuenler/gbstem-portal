@@ -46,6 +46,7 @@
     returningInstructorAppsOpen: '',
     studentOrientation: '',
     registrationsDue: '',
+    parentOrientation: '',
   }
 
   let disabled = true
@@ -470,6 +471,7 @@
                   body: JSON.stringify({
                     firstName: frozenUser.profile.firstName,
                     studentName: values.personal.studentFirstName,
+                    parentOrientationDate: semesterDates.parentOrientation,
                     secondaryEmail: values.personal.secondaryEmail,
                   }),
                 }).then(async (res) => {

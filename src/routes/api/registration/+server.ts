@@ -22,6 +22,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         app: {
           firstName: firstName,
           studentName: studentName,
+          parentOrientationDate: body.parentOrientationDate,
           name: 'Portal',
           link: 'https://portal.gbstem.org',
         },

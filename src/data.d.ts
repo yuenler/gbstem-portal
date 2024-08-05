@@ -69,6 +69,7 @@ declare global {
       returningInstructorAppsOpen: string,
       studentOrientation: string,
       registrationsDue: string,
+      parentOrientation: string,
     }
 
     type InterviewSlot = {

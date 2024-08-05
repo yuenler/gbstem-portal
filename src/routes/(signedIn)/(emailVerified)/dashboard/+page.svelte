@@ -53,6 +53,7 @@
     returningInstructorAppsOpen: '',
     studentOrientation: '',
     registrationsDue: '',
+    parentOrientation: '',
   }
 
   let isStudent = false

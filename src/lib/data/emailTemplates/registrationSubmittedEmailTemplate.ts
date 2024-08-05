@@ -175,12 +175,11 @@ export const registrationSubmittedEmailTemplate = `<!doctype html>
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
                                                     <p style="margin: 20px 0"><p style="margin: 0 0">Hi {{app.firstName}},</p>Thanks for pre-registering {{app.studentName}} for gbSTEM's spring
                                                         semester! Please note that your pre-registration does <span
-                                                            style="font-weight: 700">not</span> guarantee your child a
-                                                        class for the spring semester, but it helps us ensure there will
-                                                        be enough slots for each class and makes enrollment very simple
-                                                        for you. We will be sending out an email a week or two before
-                                                        the semester starts for you to enroll your child in their
-                                                        classes. </p>
+                                                            style="font-weight: 700">not</span> sign you up for a
+                                                        class for the semester, but it registers them to be on the enrollment list. 
+                                                        Parent orientation will be on {{app.parentOrientationDate}}; please keep an eye out 
+                                                        for an email with details. At parent orientation you will learn how to enroll your child in their classes, so be sure to try to attend!
+                                                       </p>
                                                     <p style="margin: 30px 0">In the meantime, follow us on <a
                                                             href="https://instagram.com/gbstem" target="_blank"
                                                             rel="noopener noreferrer">Instagram</a> so you can stay up
