@@ -172,7 +172,7 @@
               values.personal.parentLastName = user.profile.lastName
               handleSave()
             }
-            if (!values.meta.submitted) {
+            if (!values.meta.submitted && new Date() > new Date(semesterDates.newInstructorAppsOpen)) {
               disabled = false
               if (saveInterval === undefined) {
                 saveInterval = window.setInterval(() => {
@@ -514,6 +514,7 @@
 </script>
 
 <svelte:window on:beforeunload={handleUnload} />
+<div class="rounded-lg bg-red-100 p-4 mt-8 w-full text-center">Pre-registration will open on {semesterDates.newInstructorAppsOpen}!</div>
 <Form
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
