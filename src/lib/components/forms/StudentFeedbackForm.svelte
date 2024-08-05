@@ -8,7 +8,7 @@
   import { doc, getDoc, setDoc } from 'firebase/firestore'
   import Card from '../Card.svelte'
   import StudentSelect from '../StudentSelect.svelte'
-    import { classesCollection, registrationsCollection } from '$lib/data/constants'
+    import { classesCollection, registrationsCollection, studentFeedbackCollection } from '$lib/data/constants'
 
   let disabled = false
   let showValidation = false
@@ -49,7 +49,6 @@
     selectedStudentCourses = courseDocs
       .map((doc) => {
         if (doc.exists() && doc.data()) {
-          console.log(doc.data())
           return {
             classId: doc.id,
             course: doc.data().course,
@@ -76,7 +75,7 @@
       disabled = true
       if ($user) {
         setDoc(
-          doc(db, 'classFeedback24', `${values.classId}-${Date.now()}`),
+          doc(db, studentFeedbackCollection, `${values.classId}-${Date.now()}`),
           values,
         )
           .then(() => {

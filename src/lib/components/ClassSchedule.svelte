@@ -35,6 +35,7 @@
     import { bind } from 'lodash-es'
     import { SubRequestStatus } from './helpers/SubRequestStatus'
 
+  export let semesterDates: Data.SemesterDates
   let editMode: boolean = false
   let originalMeetingTimes: string[] = []
   let editedMeetingTimes: string[] = []
@@ -137,7 +138,6 @@
     }).then(() => {
       nextClassIndex = findNextClassDate()
       alert.trigger('success', 'Meeting times updated!')
-      location.reload()
     })
   }
 
@@ -370,7 +370,7 @@ onMount(() => {
     {@html emailHtmlContent}
 
     <DialogActions>
-      <Button on:click={dialogEl.cancel}>Close</Button>
+      <Button on:click={() => {dialogEl.cancel(); location.reload();}}>Close</Button>
     </DialogActions>
   </div>
 </Dialog>
@@ -380,7 +380,7 @@ onMount(() => {
     <InstructorFeedbackForm classBeingSubbed={undefined}/>
   </div>
 </Dialog>
-<ClassDetailsForm bind:classDetailsDialogEl dialog={true}/>
+<ClassDetailsForm bind:classDetailsDialogEl dialog={true} semesterDates={semesterDates}/>
 
 <div class="p-0">
   <Dialog bind:this={studentDetailsDialogEl} size="full">
@@ -480,6 +480,7 @@ onMount(() => {
     </div>
   </Card>
   </Dialog>
+  {#if values.id !== ''}
   <Card class="mb-4">
     <div class="mb-2 font-bold">Next Upcoming Class:</div>
     <div>
@@ -564,6 +565,11 @@ onMount(() => {
       <Button color="green" on:click={saveChanges}>Save Changes</Button>
     {/if}
   </div>
+  {:else}
+  <Card>
+    <div class="mb-2 font-bold">Fill out the class details form to get your schedule!</div>
+  </Card>
+  {/if}
   <ul class="list-none space-y-2">
     {#each editedMeetingTimes as classTime, classNumber }
     <Dialog bind:this={subRequestDialogEl} initial={false} size="min">

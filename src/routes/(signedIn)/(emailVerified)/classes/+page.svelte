@@ -63,10 +63,10 @@
     'Python I': 3,
     'Web Development': 5,
     'Python II': 5,
-    'Mathematics 2b': 1,
-    'Mathematics 3b': 3,
-    'Mathematics 4b': 5,
-    'Mathematics 5b': 6,
+    'Mathematics 2a': 1,
+    'Mathematics 3a': 3,
+    'Mathematics 4a': 5,
+    'Mathematics 5a': 6,
     'Engineering I': 2,
     'Engineering II': 4,
     'Engineering III': 5,
@@ -434,6 +434,7 @@
                   {/each}
                 </ul>
               </div>
+              {#if isStudent}
               <Button
                 class="mt-2"
                 color="blue"
@@ -441,6 +442,7 @@
               >
                 Add/Drop class
               </Button>
+              {/if}
               {#if Object.entries(studentUidToClassIds).some( ([studentUid, classIds]) => classIds.includes(classInfo.id), )}
                 <div class="mt-2">
                   <h4 class="font-semibold text-gray-700">

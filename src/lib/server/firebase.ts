@@ -23,4 +23,4 @@ try {
 }
 
 export const adminAuth = getAuth()
-export const adminDb = getFirestore('gbstem-testing')
+export const adminDb = getFirestore()

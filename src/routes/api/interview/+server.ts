@@ -15,7 +15,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     try {
       const interviewerEmail = body.email;
       const interviewDate = body.date
-      console.log(body.date);
       const interviewLink = body.link;
       const interviewerName = body.interviewer;
       const intervieweeFirstName = body.firstName;

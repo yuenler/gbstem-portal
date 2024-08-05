@@ -5,27 +5,17 @@
   import Button from '../Button.svelte'
   import Select from '$lib/components/Select.svelte'
   import Input from '$lib/components/Input.svelte'
-  import { cn } from '$lib/utils'
+  import { cn, formatDate, timestampToDate } from '$lib/utils'
   import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import { coursesJson, daysOfWeekJson } from '$lib/data'
-  import { classesCollection, semesterDatesDocument } from '$lib/data/constants'
+  import { classesCollection } from '$lib/data/constants'
   import { ClassStatus } from '../helpers/ClassStatus'
 
-  export let semesterDates: Data.SemesterDates = {
-    classesEnd: '',
-    classesStart: '',
-    leadershipAppsDue: '',
-    newInstructorAppsDue: '',
-    returningInstructorAppsDue: '',
-    instructorOrientation: '',
-    newInstructorAppsOpen: '',
-    returningInstructorAppsOpen: '',
-    studentOrientation: '',
-    registrationsDue: '',
-  }
-      import Dialog from '../Dialog.svelte'
-    import Card from '../Card.svelte'
+  export let semesterDates: Data.SemesterDates
+
+  import Dialog from '../Dialog.svelte'
+  import Card from '../Card.svelte'
 
  export let classDetailsDialogEl: Dialog | undefined
  export let dialog = false
@@ -33,6 +23,7 @@
   let disabled = false
   let showValidation = false
   let submitted = false
+  let meetingLink
 
   let values: Data.Class = {
     classDay1: '',
@@ -93,13 +84,8 @@
     return meetingDates
   }
 
-  function parseTime(time: string, date: Date): Date {
-    const [hours, minutes] = time.split(':').map((str) => parseInt(str, 10))
-    date.setHours(hours, minutes, 0, 0)
-    return date
-  }
-
-  onMount(() => {
+  
+  onMount(() => {    
     return user.subscribe((user) => {
       if (user) {
         getDoc(doc(db, classesCollection, user.object.uid)).then((snapshot) => {
@@ -117,7 +103,85 @@
     })
   })
 
-  function handleSubmit(e: CustomEvent<SubmitData>) {
+  function parseTime(time: string, date: Date): Date {
+    const [hours, minutes] = time.split(':').map((str) => parseInt(str, 10))
+    date.setHours(hours, minutes, 0, 0)
+    return date
+  }
+
+  function formatIntlDate(date: Date) {
+        var month = '' + (date.getMonth() + 1)
+        var day = '' + date.getDate()
+        var year = date.getFullYear()
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+  async function createLink(): Promise<string> { 
+    const time1 = new Date(values.meetingTimes[0]).getHours()
+    const time2 = new Date(values.meetingTimes[1]).getHours()
+    let url: string = ''
+
+    const earliestClassPossible = new Date(semesterDates.classesStart)
+    const earliestClassLatestPossibleEndTime = new Date(semesterDates.classesStart)
+    earliestClassPossible.setHours(Math.min(time1, time2))
+    earliestClassLatestPossibleEndTime.setHours(Math.max(time1, time2) + 2)
+
+    const event = {
+      subject: `${values.course} Class Meeting`,
+      body: {
+        contentType: 'HTML',
+        content: `${values.course} Class Meeting`
+      },
+      start: {
+          dateTime: earliestClassPossible,
+          timeZone: 'UTC'
+      },
+      end: {
+          dateTime: earliestClassLatestPossibleEndTime,
+          timeZone: 'UTC'
+      },
+      recurrence: {
+        pattern: {
+          type: 'weekly',
+          interval: 1,
+          daysOfWeek: [values.classDay1, values.classDay2],
+        },
+        range: {
+          type: 'numbered',
+          startDate: formatIntlDate(new Date(semesterDates.classesStart)),
+          numberOfOccurrences: 100,
+        },
+      },
+      location: {
+          displayName: 'Online'
+      },
+      attendees: [],
+      isOnlineMeeting: true,
+      onlineMeetingProvider: 'teamsForBusiness'
+    };
+    await fetch('https://graph.microsoft.com/v1.0/users/kendree@gbstem.onmicrosoft.com/calendar/events', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${'eyJ0eXAiOiJKV1QiLCJub25jZSI6IkMwQmdwcU82OEdpVTNoeUJQLTBPTmxlOG1YN0Y3TUllRl9VVElXaGVrajQiLCJhbGciOiJSUzI1NiIsIng1dCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCIsImtpZCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jOWY5ODNkOC02Yzg2LTQ1MzQtODQ3MS05OWM0OGVhYWI4ODIvIiwiaWF0IjoxNzIyNjYwMTAyLCJuYmYiOjE3MjI2NjAxMDIsImV4cCI6MTcyMjc0NjgwMiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFWUUFxLzhYQUFBQWV4T01xTDc1N2Mza1BNMmlocUZmRVhzeHVoNDlJekl6dERmWHJrUmVLWWFSWWR3ODkzaklUUTNXL045UWRSRU9XWXNHdnBHc0lJd2dFK1UrNWF5VUNTcTNnS1ViTHlXNVdBdW5xYVNHaWUwPSIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwX2Rpc3BsYXluYW1lIjoiR3JhcGggRXhwbG9yZXIiLCJhcHBpZCI6ImRlOGJjOGI1LWQ5ZjktNDhiMS1hOGFkLWI3NDhkYTcyNTA2NCIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQ2hlbiIsImdpdmVuX25hbWUiOiJLZW5kcmVlIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiOTYuMjM3LjU2LjEzMSIsIm5hbWUiOiJLZW5kcmVlIENoZW4iLCJvaWQiOiI1ZDc0ZmNkMS0xZmZkLTQzNzUtYmY5Ny0yZWIyMDc0NzY3ZmUiLCJwbGF0ZiI6IjMiLCJwdWlkIjoiMTAwMzIwMDNBQjNCRjRGMCIsInJoIjoiMC5BYmNBMklQNXlZWnNORVdFY1puRWpxcTRnZ01BQUFBQUFBQUF3QUFBQUFBQUFBRDhBSm8uIiwic2NwIjoiQ2FsZW5kYXJzLlJlYWRXcml0ZSBvcGVuaWQgcHJvZmlsZSBVc2VyLlJlYWQgZW1haWwiLCJzdWIiOiJMeGFIRkp6aXJtdWlUZHBaX0RoR0k2OEw4cGt6RDZIQ2VOVjVacG5MUFJJIiwidGVuYW50X3JlZ2lvbl9zY29wZSI6Ik5BIiwidGlkIjoiYzlmOTgzZDgtNmM4Ni00NTM0LTg0NzEtOTljNDhlYWFiODgyIiwidW5pcXVlX25hbWUiOiJrZW5kcmVlQGdic3RlbS5vbm1pY3Jvc29mdC5jb20iLCJ1cG4iOiJrZW5kcmVlQGdic3RlbS5vbm1pY3Jvc29mdC5jb20iLCJ1dGkiOiItMTBha3FIcWNFV0NUanQ4TXpVSUFBIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiLCJiNzlmYmY0ZC0zZWY5LTQ2ODktODE0My03NmIxOTRlODU1MDkiXSwieG1zX2NjIjpbIkNQMSJdLCJ4bXNfaWRyZWwiOiIxIDE2IiwieG1zX3NzbSI6IjEiLCJ4bXNfc3QiOnsic3ViIjoiUThCeElNUkdvWDBCMG1EOTkyWE1kQ2tWbWNOMzNwWngtYlY4UHZPYzhXcyJ9LCJ4bXNfdGNkdCI6MTcyMjAxODY4Nn0.Vu9_SvYpv89EvBJVyUOEGncoJ1UMDrMoOGOva5mobYOBIq5x3LdFgZNtC5UXGCRzg5PXxZPyTzJFb1VSP2K2cH3lx5gW2AmUcBLeTrpeyrpP8SD998JnUgeLfUVQKLuw-QTSyXbkRoQ5Gr4mCdhl-tBMPQsS6OUEEZ8oiAdAJiHZCn_3Xro7Y9i5qzo4ESIe1SkJflC-PylNPJMI5nEC3rkzrHesiuF-OY02T64ThQNgNzPguXMPkErg_W5jFNeICjVT4SM3_xKLHfBL8lNMMHl-2oRtOTJAJH5bsSqUwkvMKaMbb7Hm-J-BAwBNnj13C6Lc-0KQdglDoo0USRvVMg'}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(event)
+    }).then((response) => response.json()).then((res) => {
+      url = res.onlineMeeting.joinUrl
+      return res.onlineMeeting.joinUrl
+    }).catch((err) => {
+      console.log(err)
+    })
+    return url
+  }
+
+  async function handleSubmit(e: CustomEvent<SubmitData>) {
     if (e.detail.error === null) {
       showValidation = false
       disabled = true
@@ -139,11 +203,14 @@
         values.instructorFirstName = frozenUser.profile.firstName
         values.instructorLastName = frozenUser.profile.lastName
         values.instructorEmail = frozenUser.object.email as string
+        if(values.meetingLink === '') {
+          values.meetingLink = await createLink()
+        }
         setDoc(doc(db, classesCollection, frozenUser.object.uid), values)
           .then(() => {
             disabled = true
             submitted = true
-             alert.trigger('success', 'Class details saved!');
+             alert.trigger('success', `Class details saved! You can join class by clicking the Join Class button above!`);
              setTimeout(() => location.reload(), 2000)
           })
           .catch((err) => {
@@ -173,7 +240,7 @@
   <fieldset class="mt-4 space-y-4" {disabled}>
     <p>
       Please do not fill this form out until you have been told by gbSTEM
-      leadership what class you will be teaching.
+      leadership what class you will be teaching. Submitting this form will generate a meeting link for your class; you can join using the 'Join Class' button in the portal.
     </p>
     <h2 class="text-xl font-bold">Your class details</h2>
 
@@ -190,16 +257,6 @@
       bind:value={values.gradeRecommendation}
       label="Grade recommendation. For example, 3-5 or 6-8."
     />
-
-    {#if values.online}
-      <Input
-        type="text"
-        bind:value={values.meetingLink}
-        label="Meeting link"
-        floating
-        required
-      />
-    {/if}
 
     <div class="grid gap-1">
       <span class="font-bold"
@@ -319,16 +376,6 @@
       bind:value={values.gradeRecommendation}
       label="Grade recommendation. For example, 3-5 or 6-8."
     />
-
-    {#if values.online}
-      <Input
-        type="text"
-        bind:value={values.meetingLink}
-        label="Meeting link"
-        floating
-        required
-      />
-    {/if}
 
     <div class="grid gap-1">
       <span class="font-bold"
