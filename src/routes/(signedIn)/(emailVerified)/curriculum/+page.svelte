@@ -4,8 +4,8 @@
     import Card from '$lib/components/Card.svelte'
     import Button from '$lib/components/Button.svelte'
     import Dialog from '$lib/components/Dialog.svelte'
-    import { curriculums, tracks } from '$lib/data/curriculum'
-    import { Curriculum } from '$lib/components/types/Curriculum'
+    import { curriculums, tracks } from '$lib/components/helpers/curriculum'
+    import type Curriculum from '$lib/components/types/Curriculum'
 
     let dialogEl: Dialog
     let selectedCurriculum: Curriculum = {

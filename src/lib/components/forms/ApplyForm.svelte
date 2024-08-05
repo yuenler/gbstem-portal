@@ -34,6 +34,7 @@
     returningInstructorAppsOpen: '',
     studentOrientation: '',
     registrationsDue: '',
+    parentOrientation : '',
   }
 
   let disabled = true

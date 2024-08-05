@@ -30,6 +30,7 @@
     returningInstructorAppsOpen: '',
     studentOrientation: '',
     registrationsDue: '',
+    parentOrientation: '',
   }
 
   const fetchData = async (user: Data.User.Store) => {

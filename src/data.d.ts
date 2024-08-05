@@ -69,6 +69,7 @@ declare global {
       returningInstructorAppsOpen: string,
       studentOrientation: string,
       registrationsDue: string,
+      parentOrientation: string,
     }
 
     type InterviewSlot = {
@@ -161,7 +162,12 @@ declare global {
         bypassAgeLimits: boolean
         entireProgram: boolean
         timeCommitment: boolean
+        mediaRelease: boolean
         submitting: boolean
+      }
+      inPerson: {
+        allergies: string
+        parentPickup: string
       }
       meta: {
         id: string
