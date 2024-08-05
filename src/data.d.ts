@@ -223,7 +223,7 @@ declare global {
       subRequestStatus: SubRequestStatus
       link: string
       notes: string
-    }
+    } 
 
     type Announcement<T extends 'client' | 'server' | 'pojo'> = {
       title: string

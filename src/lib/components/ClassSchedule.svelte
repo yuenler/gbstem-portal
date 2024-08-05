@@ -34,6 +34,7 @@
     import ClassDetailsForm from './forms/ClassDetailsForm.svelte'
     import { bind } from 'lodash-es'
     import { SubRequestStatus } from './helpers/SubRequestStatus'
+    import { curriculums } from './helpers/curriculum'
 
   export let semesterDates: Data.SemesterDates
   let editMode: boolean = false
@@ -482,15 +483,16 @@ onMount(() => {
   </Dialog>
   {#if values.id !== ''}
   <Card class="mb-4">
-    <div class="mb-2 font-bold">Next Upcoming Class:</div>
+    <div class="font-bold">Next Upcoming Class:</div>
     <div>
       {nextClassIndex === -1
         ? 'No Upcoming Classes'
         : values.course + ', ' + formatDateString(editedMeetingTimes[nextClassIndex])}
     </div>
+    <Button color="blue" class="mt-2" on:click={() => window.open(`${curriculums.filter((curriculum) => curriculum.class === values.course)[0].url}`)}>Curriculum</Button>
     <Button
       color="blue"
-      class="mb-2 mt-4"
+      class="mt-4"
       on:click={() => {
         recordClass(classId)
       }}>Join Class</Button
@@ -508,11 +510,11 @@ onMount(() => {
           nextMeetingTime: nextClassIndex === -1
             ? 'No Upcoming Classes'
             : values.course + ', ' + formatDateString(editedMeetingTimes[nextClassIndex]),
-        })}>Send Class Reminder</Button
+        })}>Send Reminder</Button
     >
-    <Button color="blue" class="mt-2" on:click={() => feedbackDialogEl.open()}>Submit Class Feedback</Button>
-    <Button color="blue" class="mt-2" on:click={() => classDetailsDialogEl.open()}>Edit Class Details</Button>
-    <Button color="blue" class="mt-2" on:click={() => studentDetailsDialogEl.open()}>View Class List</Button>
+    <Button color="blue" class="mt-2" on:click={() => feedbackDialogEl.open()}>Submit Feedback</Button>
+    <Button color="blue" class="mt-2" on:click={() => classDetailsDialogEl.open()}>Class Details</Button>
+    <Button color="blue" class="mt-2" on:click={() => studentDetailsDialogEl.open()}>View Student List</Button>
   </Card>
 
   <div class="mb-4 flex justify-between">

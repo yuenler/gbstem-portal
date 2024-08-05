@@ -14,6 +14,7 @@
      import Dialog from './Dialog.svelte'
      import InstructorFeedbackForm from './forms/InstructorFeedbackForm.svelte'
      import Card from "./Card.svelte"
+    import { curriculums } from "./helpers/curriculum"
 
     let feedbackDialogEl: Dialog[] = []
     let notesDialogEl: Dialog[] = []
@@ -201,10 +202,11 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
         <p>{classBeingSubbed.course} class #{classBeingSubbed.classNumber} at {formatDate(timestampToDate(classBeingSubbed.dateOfClass))}</p>
     </div>
     <div class='text-sm italic'>{classBeingSubbed.subRequestStatus === SubRequestStatus.SubstituteFeedbackNeeded ? 'Please remember to fill out the feedback form for this class!' : timestampToDate(classBeingSubbed.dateOfClass) > new Date() ? 'Please remember to review the notes and prep for the class. Thank you for substituting!' : 'Looks like the substitute class was not held! Please reach out to the usual instructor to let them know.'}</div>
-    <Button color = 'blue' class = "mt-2" on:click={() => recordClass(classBeingSubbed)}>Join Class</Button>
-    <Button color = 'blue' on:click={() => {feedbackDialogEl[i].open()}}>Submit Class Feedback</Button>
-    <Button color = 'blue' on:click={() => sendReminder(classBeingSubbed)}> Send Class Reminder</Button>
     <Button color = 'blue' class = "mt-2 mb-4" on:click={() => {notesDialogEl[i].open()}}>View Prep Notes</Button>
+    <Button color = 'blue' class = "mt-2" on:click={() => window.open(`${curriculums.filter((curriculum) => curriculum.class === classBeingSubbed.course)[0].url}`)}>Curriculum</Button>
+    <Button color = 'blue' class = "mt-2" on:click={() => recordClass(classBeingSubbed)}>Join</Button>
+    <Button color = 'blue' on:click={() => sendReminder(classBeingSubbed)}> Send Reminder</Button>
+    <Button color = 'blue' on:click={() => {feedbackDialogEl[i].open()}}>Submit Feedback</Button>
     {/each}
     {:else}
         <p>You are not currently substituting any classes.</p>
@@ -216,22 +218,22 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
         {#if subRequestsFromUser.length > 0}
         {#each subRequestsFromUser as subRequest}
             {#if subRequest.subRequestStatus === SubRequestStatus.SubstituteFound}
-                <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4">
+                <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Found</strong></p>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteNeeded}
-                <div class="flex items-center justify-between rounded-lg bg-red-100 p-4">
+                <div class="flex items-center justify-between rounded-lg bg-red-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Needed</strong></p>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteFeedbackNeeded}
-                <div class="flex items-center justify-between rounded-lg bg-yellow-100 p-4">
+                <div class="flex items-center justify-between rounded-lg bg-yellow-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Awaiting Substitute Feedback Submission</strong></p>
                 </div>
             {:else}
-                <div class="flex items-center justify-between rounded-lg bg-green-100 p-4">
+                <div class="flex items-center justify-between rounded-lg bg-green-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substituted Class Complete</strong></p>
                 </div>
