@@ -39,7 +39,6 @@
         if (datesDocExists) {
           semesterDates = datesDoc.data() as Data.SemesterDates
         }
-        console.log(semesterDates)
     })
     for (let i = 1; i < 6; ++i) {
       const docRef = await getDoc(

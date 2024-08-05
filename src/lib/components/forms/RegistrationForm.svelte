@@ -354,7 +354,7 @@
 
     // math II only for 1st grade and up
     if (
-      values.program.mathCourse === 'Mathematics 2b' &&
+      values.program.mathCourse === 'Mathematics 2a' &&
       (parseInt(values.academic.grade) < 1 || values.academic.grade === 'K')
     ) {
       alert.trigger(
@@ -367,7 +367,7 @@
 
     // math III only for 2nd grade and up
     if (
-      values.program.mathCourse === 'Mathematics 3b' &&
+      values.program.mathCourse === 'Mathematics 3a' &&
       (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
     ) {
       alert.trigger(
@@ -380,7 +380,7 @@
 
     // math IV only for 4th grade and up
     if (
-      values.program.mathCourse === 'Mathematics 4b' &&
+      values.program.mathCourse === 'Mathematics 4a' &&
       (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
     ) {
       alert.trigger(
@@ -393,7 +393,7 @@
 
     // math V only for 5th grade and up
     if (
-      values.program.mathCourse === 'Mathematics 5b' &&
+      values.program.mathCourse === 'Mathematics 5a' &&
       (parseInt(values.academic.grade) < 6 || values.academic.grade === 'K')
     ) {
       alert.trigger(

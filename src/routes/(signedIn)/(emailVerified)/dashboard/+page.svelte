@@ -66,7 +66,6 @@
         if (datesDocExists) {
           semesterDates = datesDoc.data() as Data.SemesterDates
         }
-        console.log(semesterDates)
       })
       Promise.all([
         new Promise<void>((resolve) => {
@@ -84,11 +83,9 @@
                     data.application.status = 'submitted'
                     getDoc(doc(db, decisionsCollection, user.object.uid)).then(
                       (snapshot) => {
-                        console.log(user.object.uid)
                         if (snapshot.exists()) {
                           data.application.status = snapshot.data()
                             .type as Data.Decision
-                          console.log(data.application.status)
                         }
                         resolve()
                       },

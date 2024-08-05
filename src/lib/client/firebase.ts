@@ -25,7 +25,7 @@ const config = {
 
 initializeApp(config)
 export const auth = getAuth()
-export const db = getFirestore('gbstem-testing')
+export const db = getFirestore()
 export const storage = getStorage()
 
 function userStore() {

@@ -33,7 +33,6 @@
                 year = startDate.getFullYear()
             }
         }).then(() => {
-            console.log(numHours);
             const q = query(collection(db, substituteRequestsCollection));
             getDocs(q).then((document) => {
                 document.forEach((doc) => {

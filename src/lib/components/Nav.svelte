@@ -18,9 +18,9 @@
   let open = false
   let pages = [
     { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Apply / Register', href: '/apply' },
+    { name: 'Application', href: '/apply' },
     { name: 'Class Catalog', href: '/classes' },
-    { name: 'FAQ', href: '/faq' },
+    // { name: 'FAQ', href: '/faq' },
   ]
 
   onMount(() => {

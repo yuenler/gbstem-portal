@@ -480,6 +480,7 @@ onMount(() => {
     </div>
   </Card>
   </Dialog>
+  {#if values.id !== ''}
   <Card class="mb-4">
     <div class="mb-2 font-bold">Next Upcoming Class:</div>
     <div>
@@ -564,6 +565,11 @@ onMount(() => {
       <Button color="green" on:click={saveChanges}>Save Changes</Button>
     {/if}
   </div>
+  {:else}
+  <Card>
+    <div class="mb-2 font-bold">Fill out the class details form to get your schedule!</div>
+  </Card>
+  {/if}
   <ul class="list-none space-y-2">
     {#each editedMeetingTimes as classTime, classNumber }
     <Dialog bind:this={subRequestDialogEl} initial={false} size="min">

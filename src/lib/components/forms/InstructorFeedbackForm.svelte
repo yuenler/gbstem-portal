@@ -15,7 +15,7 @@
     updateDoc
   } from 'firebase/firestore'
   import { onMount } from 'svelte'
-    import { classesCollection, registrationsCollection, substituteRequestsCollection } from '$lib/data/constants'
+    import { classesCollection, instructorFeedbackCollection, registrationsCollection, substituteRequestsCollection } from '$lib/data/constants'
     import Dialog from '../Dialog.svelte'
     import Card from '../Card.svelte'
     import { SubRequestStatus } from '../helpers/SubRequestStatus'
@@ -62,14 +62,11 @@
 
   async function getData() {
     let id = classBeingSubbed === undefined ? currentUser.object.uid : classBeingSubbed.id.split('---')[0]
-    console.log(id)
-    console.log(classBeingSubbed === undefined)
     const document = await getDoc(doc(db, classesCollection, id))
      if(document.exists()) {
         const data = document.data() as Data.Class
         const {students, feedbackCompleted, classStatuses} = data
         const uids = students
-        console.log(data)
         feedbackCompletedArray = feedbackCompleted
         classStatusesArray = classStatuses
         const classListPromises = uids.map((uid: string) =>
@@ -113,19 +110,16 @@
         disabled = true
         values.date = classDate
         values.classNumber = classNumber
-        console.log(values.classNumber)
-        console.log(feedbackCompletedArray)
         if(classNumber - 1 < 0 || classNumber - 1 >= feedbackCompletedArray.length) {
           alert.trigger('error', 'Invalid class number.')
           return
         }
         feedbackCompletedArray[classNumber - 1] = true
         classStatusesArray[classNumber - 1] = ClassStatus.EverythingComplete
-        console.log(feedbackCompletedArray)
         setDoc(
           doc(
             db,
-            'instructorFeedback24',
+            instructorFeedbackCollection,
             `${id}-${Date.now()}`,
           ),
           values,

@@ -46,7 +46,6 @@
         return fetchedClasses
       }
 
-    console.log(selectedStudentUid)
   $: if (selectedStudentUid) {
     getDoc(doc(db, registrationsCollection, selectedStudentUid)).then(
       async (docSnapshot) => {
