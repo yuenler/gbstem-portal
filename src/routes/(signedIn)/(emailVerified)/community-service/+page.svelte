@@ -82,8 +82,8 @@
     <div class="relative w-full">
         <Card>
             <div class="p-2">
-                <h2 class="text-lg font-bold">You have completed {numHours} total hours of community service this year!</h2>
-                <div>You have completed <strong>{numRegHours}</strong> hour{numRegHours === 1 ? '' : 's'} of instruction for your class and <strong>{numSubHours}</strong> hour{numSubHours === 1 ? '' : 's'}  as a substitute instructor. Thank you for contributing to gbSTEM.</div>
+                <h2 class="text-lg font-bold">You have completed {numHours} classes equaling {numHours * 1.25} total hours (including prep time) of community service this year!</h2>
+                <div>You have completed <strong>{numRegHours * 1.25}</strong> hour{numRegHours * 1.25 === 1 ? '' : 's'} of instruction for your class and <strong>{numSubHours * 1.5}</strong> hour{numSubHours * 1.5 === 1 ? '' : 's'}  as a substitute instructor. Thank you for contributing to gbSTEM.</div>
                 <Button color="blue" class="mt-2" on:click={sendEmail}>Get Hours Confirmation Email</Button>
             </div>
         </Card>
