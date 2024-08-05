@@ -80,10 +80,15 @@
       inPerson: false,
       reason: '',
     },
+    inPerson: {
+      allergies: '',
+      parentPickup: '',
+    },
     agreements: {
       bypassAgeLimits: false,
       entireProgram: false,
       timeCommitment: false,
+      mediaRelease: false,
       submitting: false,
     },
     meta: {
@@ -124,10 +129,15 @@
       inPerson: false,
       reason: '',
     },
+    inPerson: {
+      allergies: '',
+      parentPickup: '',
+    },
     agreements: {
       bypassAgeLimits: false,
       entireProgram: false,
       timeCommitment: false,
+      mediaRelease: false,
       submitting: false,
     },
     meta: {
@@ -748,17 +758,37 @@
         bind:value={values.program.inPerson}
         label="gbSTEM will offer in-person classes at the Cambridge Public Library on Saturdays 2:30-4:30pm. Would you like to opt for the in-person option if available for your child? Note that we cannot guarantee that in-person classes will be available for all students."
       />
+      {#if values.program.inPerson}
+        <Input
+        type="text"
+        bind:value={values.inPerson.allergies}
+        label="Please list any allergies the student has."
+        />
+        <Input
+        type="text"
+        bind:value={values.inPerson.parentPickup}
+        label="Please list the names, emails, and phone numbers of the people who are authorized to pick up the student from in-person classes."
+        required
+      />
+      {/if}
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Agreements</span>
       <div class="grid">
+        {#if values.program.inPerson}
+          <Input
+          type="checkbox"
+          bind:value={values.agreements.mediaRelease}
+          label="For in-person classes, do you give consent to your child's picture being used in gbSTEM publications, including website, newsletter, and social media posts? Names and personal information will not be shared."
+          required
+        />
+        {/if}
         <Input
           type="checkbox"
           bind:value={values.agreements.entireProgram}
           label={`gbSTEM will run from ${new Date(semesterDates.classesStart).toDateString()} to ${new Date(semesterDates.classesEnd).toDateString()}. Will the student be able to participate throughout the entirety of the program?`}
           required
         />
-
         <Input
           type="checkbox"
           bind:value={values.agreements.timeCommitment}
