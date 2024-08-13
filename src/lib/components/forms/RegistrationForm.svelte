@@ -468,6 +468,19 @@
       )
       return true
     }
+
+    // robotics only for grade 5 and up
+    if (
+      values.program.robotics === true &&
+      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
+    ) {
+      alert.trigger(
+        'error',
+        'Lego Robotics is only available to students in at least 5th grade.',
+        false,
+      )
+      return true
+    }
   }
 
     return false
