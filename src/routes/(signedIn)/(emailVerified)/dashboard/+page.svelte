@@ -185,6 +185,7 @@
             <span class="font-bold"> {new Date(semesterDates.registrationsDue).toDateString()} </span> at 11:59 PM ET. Be sure
             you have pre-registered each student by the deadline!
           </p>
+          <div class="flex items-center justify-between rounded-lg bg-red-100 p-4 mt-2">NOTICE: gbSTEM is bumping up the minimum grade requirement to 1st grade. We have found that at this age, students are more able to gain a meaningful experience out of our classes.</div>
           {#if numSubmitted > 0}
             <p>
               You currently have {numSubmitted} student{numSubmitted > 1

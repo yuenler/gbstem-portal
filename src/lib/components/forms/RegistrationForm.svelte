@@ -363,20 +363,33 @@
       return true
     }
 
-    // math II only for 1st grade and up
+    // math I only for 1st grade and up
     if (
-      values.program.mathCourse === 'Mathematics 2a' &&
+      values.program.mathCourse === 'Mathematics 1a' &&
       (parseInt(values.academic.grade) < 1 || values.academic.grade === 'K')
     ) {
       alert.trigger(
         'error',
-        'Math II is only available to students in at least 1st grade.',
+        'Math I is only available to students in at least 1st grade.',
         false,
       )
       return true
     }
 
-    // math III only for 2nd grade and up
+    // math II only for 2nd grade and up
+    if (
+      values.program.mathCourse === 'Mathematics 2a' &&
+      (parseInt(values.academic.grade) < 2 || values.academic.grade === 'K')
+    ) {
+      alert.trigger(
+        'error',
+        'Math II is only available to students in at least 2nd grade.',
+        false,
+      )
+      return true
+    }
+
+    // math III only for 3rd grade and up
     if (
       values.program.mathCourse === 'Mathematics 3a' &&
       (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
