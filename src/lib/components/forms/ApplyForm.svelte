@@ -229,6 +229,17 @@
         //   )
         //   return
         // }
+        if (
+          values.program.courses.includes('lego-robotics-competition') &&
+          values.program.inPerson === false
+        ) {
+          alert.trigger(
+            'error',
+            'Please confirm that you are available to teach in-person if you want to teach Lego Robotics.',
+            false,
+          )
+          return true
+        }
         showValidation = false
         disabled = true
         values.meta.submitted = true
@@ -419,9 +430,9 @@
       <Input
         type="checkbox"
         bind:value={values.program.inPerson}
-        label="gbSTEM will offer some in-person classes at the Cambridge Public Library. Check this box if you would be able to conduct in-person lessons on Saturdays 2:30-4:30pm."
+        label="gbSTEM will offer some in-person classes at the Cambridge Public Library. Check this box if you would be able to conduct in-person lessons on Saturdays 2:30-4:30pm. Please note that if you are interested in teaching the compeitive Lego Robotics program, you must be able to teach in-person and therefore must check this box."
       />
-
+      
       <div class="mt-2">
         <Select
           bind:value={values.program.reason}
@@ -470,7 +481,7 @@
       </div>
       {#if values.program.inPerson}
       <div class="grid gap-1">
-      <span class="font-bold">Additional Information</span>
+      <span class="font-bold mt-8">Additional Information</span>
        <div>
         <p>
           For safety reasons, all in-person instructors must provide
@@ -545,12 +556,11 @@
         label="Last 6 digits of your Social Security Number"
         floating
         required
-        pattern="[0-9]{6}"
       />
       </div>
       {/if}
       <div class="grid gap-1">
-        <span class="font-bold">Agreements</span>
+        <span class="font-bold mt-8">Agreements</span>
         <div class="grid">
           <Input
             type="checkbox"
