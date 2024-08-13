@@ -77,6 +77,7 @@
       engineeringCourse: '',
       mathCourse: '',
       scienceCourse: '',
+      robotics: false,
       inPerson: false,
       reason: '',
     },
@@ -127,6 +128,7 @@
       mathCourse: '',
       scienceCourse: '',
       inPerson: false,
+      robotics: false,
       reason: '',
     },
     inPerson: {
@@ -757,6 +759,23 @@
           required
         />
       </div>
+      <span
+      >Go to <Link
+        href="https://gbstem.org/#/robotics"
+        class="link mt-2"
+        target="_blank"
+        >https://gbstem.org/#/robotics
+      </Link> for more information</span
+      >
+      <div class="mt-2">
+        <Input
+          type="checkbox"
+          bind:value={values.program.robotics}
+          label="In the fall, gbSTEM is offering a new Lego Robotics competition program for students grade 5 and up. The program will meet weekly in-person (location details coming); parents are welcome to help coach robotics teams. There are 10 slots available this year and will be more in the future. You may apply for this program on top of two courses, but if you are selected you will only be able to enroll in one additional course. Would you like to apply for the robotics program?"
+          required
+        />
+      </div>
+      <span class="font-bold mt-8">Additional Information</span>
       <div class="mt-2">
         <Select
           bind:value={values.program.reason}

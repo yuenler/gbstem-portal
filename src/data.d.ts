@@ -166,6 +166,7 @@ declare global {
         mathCourse: string
         engineeringCourse: string
         scienceCourse: string
+        robotics: boolean
         reason: string
         inPerson: boolean
       }
