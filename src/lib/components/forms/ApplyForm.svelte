@@ -10,7 +10,7 @@
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import Textarea from '$lib/components/Textarea.svelte'
-  import { gendersJson, reasonsJson, raceJson, coursesJson } from '$lib/data'
+  import { gendersJson, reasonsJson, raceJson, coursesJson, coriRacesJson, coriSexesJson } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
   import Card from '$lib/components/Card.svelte'
@@ -463,10 +463,11 @@
       </div>
       <div class="grid gap-1">
         <span class="font-bold">Agreements</span>
-        {#if values.program.inPerson}
+        <!-- {#if values.program.inPerson} -->
         <div>
           <p>For safety reasons, all in-person instructors must provide identifying information so that we can background check you. This information will not be accessible or visible to anyone besides yourself and the background checker.</p>
         </div>
+        <div class = "flex gap-2">
         <Input
           type="text"
           bind:value={values.background.legalFirstName}
@@ -481,6 +482,9 @@
           floating
           required
         />
+        </div>
+        <div class="flex gap-8">
+        <div class="flex gap-2">
         <Input
           type="text"
           bind:value={values.background.parent1FirstName}
@@ -495,6 +499,8 @@
           floating
           required
         />
+        </div>
+        <div class="flex gap-2">
         <Input
           type="text"
           bind:value={values.background.parent2FirstName}
@@ -507,17 +513,20 @@
           label="Parent 2 last name"
           floating
         />
+        </div>
+      </div>
+      <div class="flex gap-2">
         <Select
           bind:value={values.background.legalSex}
           label="Sex"
-          options={gendersJson}
+          options={coriSexesJson}
           floating
           required
         />
         <Select
           bind:value={values.background.race}
-          label="Race"
-          options={raceJson}
+          label="Please select the race that best describes you"
+          options={coriRacesJson}
           floating
           required
         />
@@ -529,7 +538,8 @@
           required
           pattern="[0-9]{6}"
         />
-        {/if}
+      </div>
+        <!-- {/if} -->
         <div class="grid">
           <Input
             type="checkbox"
