@@ -10,7 +10,14 @@
   import Input from '$lib/components/Input.svelte'
   import Select from '$lib/components/Select.svelte'
   import Textarea from '$lib/components/Textarea.svelte'
-  import { gendersJson, reasonsJson, raceJson, coursesJson } from '$lib/data'
+  import {
+    gendersJson,
+    reasonsJson,
+    raceJson,
+    coursesJson,
+    coriRacesJson,
+    coriSexesJson,
+  } from '$lib/data'
   import { alert } from '$lib/stores'
   import { onDestroy, onMount } from 'svelte'
   import Card from '$lib/components/Card.svelte'
@@ -21,7 +28,7 @@
   // import value from '$lib/components/value.svelte'
   import Button from '../Button.svelte'
   import Link from '../Link.svelte'
-    import { applicationsCollection } from '$lib/data/constants'
+  import { applicationsCollection } from '$lib/data/constants'
 
   export let semesterDates: Data.SemesterDates = {
     classesEnd: '',
@@ -34,7 +41,7 @@
     returningInstructorAppsOpen: '',
     studentOrientation: '',
     registrationsDue: '',
-    parentOrientation : '',
+    parentOrientation: '',
   }
 
   let disabled = true
@@ -62,6 +69,17 @@
       notAvailable: '',
       inPerson: false,
       reason: '',
+    },
+    background: {
+      legalFirstName: '',
+      legalLastName: '',
+      parent1FirstName: '',
+      parent1LastName: '',
+      parent2FirstName: '',
+      parent2LastName: '',
+      legalSex: '',
+      race: '',
+      last6SSN: '',
     },
     essay: {
       taughtBefore: false,
@@ -450,13 +468,98 @@
           </div>
         {/if}
       </div>
+      {#if values.program.inPerson}
+      <div class="grid gap-1">
+      <span class="font-bold">Additional Information</span>
+       <div>
+        <p>
+          For safety reasons, all in-person instructors must provide
+          identifying information so that we can background check you. This
+          information will not be accessible or visible to anyone besides
+          yourself and the background checker.
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <Input
+          type="text"
+          bind:value={values.background.legalFirstName}
+          label="Legal first name"
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.background.legalLastName}
+          label="Legal last name"
+          floating
+          required
+        />
+      </div>
+      <div class="flex gap-2">
+        <Input
+          type="text"
+          bind:value={values.background.parent1FirstName}
+          label="Parent 1 first name"
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.background.parent1LastName}
+          label="Parent 1 last name"
+          floating
+          required
+        />
+      </div>
+      <div class="flex gap-2">
+        <Input
+          type="text"
+          bind:value={values.background.parent2FirstName}
+          label="Parent 2 first name"
+          floating
+        />
+        <Input
+          type="text"
+          bind:value={values.background.parent2LastName}
+          label="Parent 2 last name"
+          floating
+        />
+      </div>
+        <Select
+          bind:value={values.background.legalSex}
+          label="Sex"
+          options={coriSexesJson}
+          floating
+          required
+        />
+        <Select
+        bind:value={values.background.race}
+        label="Select the race that best describes you"
+        options={coriRacesJson}
+        floating
+        required
+      />
+        <Input
+        type="text"
+        bind:value={values.background.last6SSN}
+        label="Last 6 digits of your Social Security Number"
+        floating
+        required
+        pattern="[0-9]{6}"
+      />
+      </div>
+      {/if}
       <div class="grid gap-1">
         <span class="font-bold">Agreements</span>
         <div class="grid">
           <Input
             type="checkbox"
             bind:value={values.agreements.entireProgram}
-            label={`gbSTEM will run from ${new Date(semesterDates.classesStart).toDateString()} to ${new Date(semesterDates.classesEnd).toDateString()}. Do you confirm that you will be able to teach for the entirety of the program?`}
+            label={`gbSTEM will run from ${new Date(
+              semesterDates.classesStart,
+            ).toDateString()} to ${new Date(
+              semesterDates.classesEnd,
+            ).toDateString()}. Do you confirm that you will be able to teach for the entirety of the program?`}
             required
           />
           <Input

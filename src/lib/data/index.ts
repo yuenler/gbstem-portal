@@ -16,6 +16,8 @@ import timeSlotsJson from './timeSlots.json'
 import coursesJson from './courses.json'
 import classesPerWeekJson from './classesPerWeek.json'
 import daysOfWeekJson from './daysOfWeek.json'
+import coriRacesJson from './coriRace.json'
+import coriSexesJson from './coriSexes.json'
 
 export {
   raceJson,
@@ -36,4 +38,6 @@ export {
   coursesJson,
   classesPerWeekJson,
   daysOfWeekJson,
+  coriRacesJson,
+  coriSexesJson,
 }
