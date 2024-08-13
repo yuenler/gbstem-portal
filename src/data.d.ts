@@ -108,6 +108,17 @@ declare global {
         inPerson: boolean
         reason: string
       }
+      background: {
+        legalFirstName: string
+        legalLastName: string
+        parent1FirstName: string
+        parent1LastName: string
+        parent2FirstName: string
+        parent2LastName: string
+        legalSex: string
+        race: string
+        last6SSN: string
+      }
       essay: {
         taughtBefore: boolean
         academicBackground: string

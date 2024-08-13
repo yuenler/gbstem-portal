@@ -63,6 +63,17 @@
       inPerson: false,
       reason: '',
     },
+    background: {
+      legalFirstName: '',
+      legalLastName: '',
+      parent1FirstName: '',
+      parent1LastName: '',
+      parent2FirstName: '',
+      parent2LastName: '',
+      legalSex: '',
+      race: '',
+      last6SSN: '',
+    },
     essay: {
       taughtBefore: false,
       academicBackground: '',
@@ -452,6 +463,73 @@
       </div>
       <div class="grid gap-1">
         <span class="font-bold">Agreements</span>
+        {#if values.program.inPerson}
+        <div>
+          <p>For safety reasons, all in-person instructors must provide identifying information so that we can background check you. This information will not be accessible or visible to anyone besides yourself and the background checker.</p>
+        </div>
+        <Input
+          type="text"
+          bind:value={values.background.legalFirstName}
+          label="Legal first name"
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.background.legalLastName}
+          label="Legal last name"
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.background.parent1FirstName}
+          label="Parent 1 first name"
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.background.parent1LastName}
+          label="Parent 1 last name"
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.background.parent2FirstName}
+          label="Parent 2 first name"
+          floating
+        />
+        <Input
+          type="text"
+          bind:value={values.background.parent2LastName}
+          label="Parent 2 last name"
+          floating
+        />
+        <Select
+          bind:value={values.background.legalSex}
+          label="Sex"
+          options={gendersJson}
+          floating
+          required
+        />
+        <Select
+          bind:value={values.background.race}
+          label="Race"
+          options={raceJson}
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.background.last6SSN}
+          label="Last 6 digits of your Social Security Number"
+          floating
+          required
+          pattern="[0-9]{6}"
+        />
+        {/if}
         <div class="grid">
           <Input
             type="checkbox"
