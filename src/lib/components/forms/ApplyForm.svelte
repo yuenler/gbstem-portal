@@ -468,79 +468,77 @@
           </div>
         {/if}
       </div>
+      {#if values.program.inPerson}
       <div class="grid gap-1">
-        <span class="font-bold">Agreements</span>
-        <!-- {#if values.program.inPerson} -->
-        <div>
-          <p>
-            For safety reasons, all in-person instructors must provide
-            identifying information so that we can background check you. This
-            information will not be accessible or visible to anyone besides
-            yourself and the background checker.
-          </p>
-        </div>
-        <div class="flex gap-2">
-          <Input
-            type="text"
-            bind:value={values.background.legalFirstName}
-            label="Legal first name"
-            floating
-            required
-          />
-          <Input
-            type="text"
-            bind:value={values.background.legalLastName}
-            label="Legal last name"
-            floating
-            required
-          />
-        </div>
-        <div class="flex gap-2">
-          <Input
-            type="text"
-            bind:value={values.background.parent1FirstName}
-            label="Parent 1 first name"
-            floating
-            required
-          />
-          <Input
-            type="text"
-            bind:value={values.background.parent1LastName}
-            label="Parent 1 last name"
-            floating
-            required
-          />
-        </div>
-        <div class="flex gap-2">
-          <Input
-            type="text"
-            bind:value={values.background.parent2FirstName}
-            label="Parent 2 first name"
-            floating
-          />
-          <Input
-            type="text"
-            bind:value={values.background.parent2LastName}
-            label="Parent 2 last name"
-            floating
-          />
-        </div>
-        <div class="flex gap-2">
-          <Select
-            bind:value={values.background.legalSex}
-            label="Sex"
-            options={coriSexesJson}
-            floating
-            required
-          />
-          <Select
-          bind:value={values.background.race}
-          label="Select the race that best describes you"
-          options={coriRacesJson}
+      <span class="font-bold">Additional Information</span>
+       <div>
+        <p>
+          For safety reasons, all in-person instructors must provide
+          identifying information so that we can background check you. This
+          information will not be accessible or visible to anyone besides
+          yourself and the background checker.
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <Input
+          type="text"
+          bind:value={values.background.legalFirstName}
+          label="Legal first name"
           floating
           required
         />
-        </div>
+        <Input
+          type="text"
+          bind:value={values.background.legalLastName}
+          label="Legal last name"
+          floating
+          required
+        />
+      </div>
+      <div class="flex gap-2">
+        <Input
+          type="text"
+          bind:value={values.background.parent1FirstName}
+          label="Parent 1 first name"
+          floating
+          required
+        />
+        <Input
+          type="text"
+          bind:value={values.background.parent1LastName}
+          label="Parent 1 last name"
+          floating
+          required
+        />
+      </div>
+      <div class="flex gap-2">
+        <Input
+          type="text"
+          bind:value={values.background.parent2FirstName}
+          label="Parent 2 first name"
+          floating
+        />
+        <Input
+          type="text"
+          bind:value={values.background.parent2LastName}
+          label="Parent 2 last name"
+          floating
+        />
+      </div>
+        <Select
+          bind:value={values.background.legalSex}
+          label="Sex"
+          options={coriSexesJson}
+          floating
+          required
+        />
+        <Select
+        bind:value={values.background.race}
+        label="Select the race that best describes you"
+        options={coriRacesJson}
+        floating
+        required
+      />
         <Input
         type="text"
         bind:value={values.background.last6SSN}
@@ -549,7 +547,10 @@
         required
         pattern="[0-9]{6}"
       />
-        <!-- {/if} -->
+      </div>
+      {/if}
+      <div class="grid gap-1">
+        <span class="font-bold">Agreements</span>
         <div class="grid">
           <Input
             type="checkbox"
