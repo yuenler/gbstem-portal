@@ -70,6 +70,7 @@
     'Engineering I': 2,
     'Engineering II': 4,
     'Engineering III': 5,
+    'Lego Robotics Competition' : 5,
   }
 
   let isStudent = true
