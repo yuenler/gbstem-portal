@@ -229,17 +229,17 @@
         //   )
         //   return
         // }
-        if (
-          values.program.courses.includes('lego-robotics-competition') &&
-          values.program.inPerson === false
-        ) {
-          alert.trigger(
-            'error',
-            'Please confirm that you are available to teach in-person if you want to teach Lego Robotics.',
-            false,
-          )
-          return true
-        }
+        // if (
+        //   values.program.courses.includes('lego-robotics-competition') &&
+        //   values.program.inPerson === false
+        // ) {
+        //   alert.trigger(
+        //     'error',
+        //     'Please confirm that you are available to teach in-person if you want to teach Lego Robotics.',
+        //     false,
+        //   )
+        //   return true
+        // }
         showValidation = false
         disabled = true
         values.meta.submitted = true
@@ -430,7 +430,7 @@
       <Input
         type="checkbox"
         bind:value={values.program.inPerson}
-        label="gbSTEM will offer some in-person classes at the Cambridge Public Library. Check this box if you would be able to conduct in-person lessons on Saturdays 2:30-4:30pm. Please note that if you are interested in teaching the compeitive Lego Robotics program, you must be able to teach in-person and therefore must check this box."
+        label="gbSTEM will offer FIRST Lego League Robotics in-person at the Cambridge Public Library. Check this box if you would be able to mentor and instruct Lego Robotics on Saturdays 1:00-3:00 pm. Please note that if you are interested in instructing Lego Robotics, you must be able to teach in-person and therefore must check this box."
       />
       
       <div class="mt-2">

@@ -77,7 +77,6 @@
       engineeringCourse: '',
       mathCourse: '',
       scienceCourse: '',
-      robotics: false,
       inPerson: false,
       reason: '',
     },
@@ -128,7 +127,6 @@
       mathCourse: '',
       scienceCourse: '',
       inPerson: false,
-      robotics: false,
       reason: '',
     },
     inPerson: {
@@ -471,7 +469,7 @@
 
     // robotics only for grade 5 and up
     if (
-      values.program.robotics === true &&
+      values.program.inPerson === true &&
       (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
     ) {
       alert.trigger(
@@ -781,14 +779,6 @@
         >https://gbstem.org/#/robotics
       </Link> for more information</span
       >
-      <div class="mt-2">
-        <Input
-          type="checkbox"
-          bind:value={values.program.robotics}
-          label="In the fall, gbSTEM is offering a new Lego Robotics competition program for students grade 5 and up. The program will meet weekly in-person (location details coming); parents are welcome to help coach robotics teams. There are 10 slots available this year and will be more in the future. You may apply for this program on top of two courses, but if you are selected you will only be able to enroll in one additional course. Would you like to apply for the robotics program?"
-          required
-        />
-      </div>
       <span class="font-bold mt-8">Additional Information</span>
       <div class="mt-2">
         <Select
@@ -802,7 +792,7 @@
       <Input
         type="checkbox"
         bind:value={values.program.inPerson}
-        label="gbSTEM will offer in-person classes at the Cambridge Public Library on Saturdays 2:30-4:30pm. Would you like to opt for the in-person option if available for your child? Note that we cannot guarantee that in-person classes will be available for all students."
+        label="For our in-person offering in the fall, gbSTEM is holding a new Lego Robotics competition program for students grade 5 and up. The program will meet weekly in-person at the Cambridge Public Library on Saturdays 1:00-3:00pm; parents are welcome to help coach the robotics team. There are 10 slots available this year and will be more in the future. You may apply for this program on top of two courses, but if you are selected you will only be able to enroll in one additional course. Would you like to apply for the robotics program?"
       />
       {#if values.program.inPerson}
         <Input
@@ -825,7 +815,7 @@
           <Input
           type="checkbox"
           bind:value={values.agreements.mediaRelease}
-          label="For in-person classes, do you give consent to your child's picture being used in gbSTEM publications, including website, newsletter, and social media posts? Names and personal information will not be shared."
+          label="Do you give consent to your child's picture being used in gbSTEM publications, including website, newsletter, and social media posts? Names and personal information will not be shared."
           required
         />
         {/if}
