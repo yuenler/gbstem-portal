@@ -552,7 +552,7 @@
 </script>
 
 <svelte:window on:beforeunload={handleUnload} />
-<div class="rounded-lg bg-red-100 p-4 mt-8 w-full text-center">Do not fill out this form. Pre-registration will open on {semesterDates.newInstructorAppsOpen}!</div>
+<!-- <div class="rounded-lg bg-red-100 p-4 mt-8 w-full text-center">Do not fill out this form. Pre-registration will open on {semesterDates.newInstructorAppsOpen}!</div> -->
 <Form
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
