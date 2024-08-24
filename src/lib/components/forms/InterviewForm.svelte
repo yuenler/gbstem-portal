@@ -19,7 +19,7 @@
     import { formatDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
 
-  let dueDate = ''
+  export let semesterDates: Data.SemesterDates
 
   let showValidation = false
   let valuesJson: Data.InterviewSlot[] = []
@@ -33,12 +33,12 @@
 
   async function sendSlotRequest() {
       if (
-        new Date(dateToAdd) > new Date(dueDate))
+        new Date(dateToAdd) > new Date(semesterDates.instructorOrientation))
      {
         alert.trigger(
           'error',
           'Instructor interviews close on ' +
-            new Date(dateToAdd).toDateString() +
+            semesterDates.instructorOrientation +
             '. Please pick a time before then.',
         )
         return
