@@ -217,7 +217,7 @@
       {/if}
       <div>
         {#if data.application.status === 'interview'}
-          <InterviewForm />
+          <InterviewForm semesterDates = {semesterDates}/>
         {/if}
       </div>
      </div>

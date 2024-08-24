@@ -16,10 +16,10 @@
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
-    import { formatDate } from '$lib/utils'
+    import { formatDate, timestampToDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
 
-  let dueDate = ''
+  export let semesterDates: Data.SemesterDates
 
   let showValidation = false
   let valuesJson: Data.InterviewSlot[] = []
@@ -33,12 +33,12 @@
 
   async function sendSlotRequest() {
       if (
-        new Date(dateToAdd) > new Date(dueDate))
+        new Date(dateToAdd) > new Date(semesterDates.instructorOrientation))
      {
         alert.trigger(
           'error',
           'Instructor interviews close on ' +
-            new Date(dateToAdd).toDateString() +
+            semesterDates.instructorOrientation +
             '. Please pick a time before then.',
         )
         return
@@ -143,7 +143,7 @@
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach((doc) => {
       const interviewInfo = doc.data()
-      if (interviewInfo['intervieweeId'] === currentUser.object.uid) {
+      if (interviewInfo['intervieweeId'] === currentUser.object.uid && timestampToDate(interviewInfo['date']) > new Date(semesterDates.returningInstructorAppsOpen)) {
         scheduledInterview = {
           ...interviewInfo,
           id: doc.id,

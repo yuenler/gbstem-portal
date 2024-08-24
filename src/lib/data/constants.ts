@@ -6,3 +6,4 @@
   export const substituteRequestsCollection = 'subRequests'
   export const studentFeedbackCollection = 'classFeedback24'
   export const instructorFeedbackCollection = 'instructorFeedbackFall24'
+  export const interviewCollection = 'instructorInterviewTimesFall24'
