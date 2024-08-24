@@ -129,10 +129,10 @@
       if (user) {
         currentUser = user
         data = await getData() 
-        const semesterDatesDoc = await getDoc(doc(db, 'data', 'semesterDates')).then((semesterData) => {
-          const data = semesterData.data()
-          if(data) dueDate = data.instructorOrientation
-        })
+        // const semesterDatesDoc = await getDoc(doc(db, 'data', 'semesterDates')).then((semesterData) => {
+        //   const data = semesterData.data()
+        //   if(data) dueDate = data.instructorOrientation
+        // })
         loading = false
       }
     })
