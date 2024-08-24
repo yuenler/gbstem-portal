@@ -29,7 +29,7 @@
   let data: Data.InterviewSlot[] = []
   let loading = true
   let showRequestNewTime = false
-  let dateToAdd = ''
+  let dateToAdd = '9/20/24'
 
   async function sendSlotRequest() {
       if (
