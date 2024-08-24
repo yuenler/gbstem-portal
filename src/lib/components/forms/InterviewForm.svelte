@@ -16,7 +16,7 @@
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
-    import { formatDate } from '$lib/utils'
+    import { formatDate, timestampToDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
 
   export let semesterDates: Data.SemesterDates
@@ -143,7 +143,7 @@
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach((doc) => {
       const interviewInfo = doc.data()
-      if (interviewInfo['intervieweeId'] === currentUser.object.uid) {
+      if (interviewInfo['intervieweeId'] === currentUser.object.uid && timestampToDate(interviewInfo['date']) > new Date(semesterDates.returningInstructorAppsOpen)) {
         scheduledInterview = {
           ...interviewInfo,
           id: doc.id,
