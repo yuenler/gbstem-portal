@@ -462,7 +462,7 @@
     />
 
     {#if values.meetingLink === '' && values.online}
-      <Button color="blue" on:click={createLink}>Create meeting link</Button>
+      <Button color="blue" on:click={async () => values.meetingLink = await createLink()}>Create meeting link</Button>
     {/if}
 
     {#if values.online}
