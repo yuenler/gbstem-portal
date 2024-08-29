@@ -329,6 +329,9 @@
       <Button color="blue" on:click={createLink}>Create meeting link</Button>
     {/if}
 
+    <div>{values.online}</div>
+    <div>{values.meetingLink}</div>
+
     {#if values.online}
       <Input
         type="text"
