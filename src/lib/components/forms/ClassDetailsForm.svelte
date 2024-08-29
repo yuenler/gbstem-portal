@@ -18,7 +18,7 @@
 
   import Dialog from '../Dialog.svelte'
   import Card from '../Card.svelte'
-  import CLIENT_ID from '$env/static/public'
+  import CLIENT_ID from '$env/dynamic/private'
 
  export let classDetailsDialogEl: Dialog | undefined
  export let dialog = false
