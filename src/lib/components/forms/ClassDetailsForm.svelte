@@ -11,7 +11,7 @@
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { classesCollection } from '$lib/data/constants'
   import { ClassStatus } from '../helpers/ClassStatus'
-  import { Providers, ProviderState } from '@microsoft/mgt-element'
+  import { Providers } from '@microsoft/mgt-element'
   import { Msal2Provider } from '@microsoft/mgt-msal2-provider'
 
   export let semesterDates: Data.SemesterDates
@@ -174,8 +174,8 @@
       scopes: ["User.Read", "Calendars.ReadWrite"]
     });
 
-    // await Providers.globalProvider.login();
-    Providers.globalProvider.setState(ProviderState.SignedIn)
+    await Providers.globalProvider.login();
+    // Providers.globalProvider.setState(ProviderState.SignedIn)
 
     const token = await Providers.globalProvider.getAccessToken({
     scopes: ["User.Read"],
