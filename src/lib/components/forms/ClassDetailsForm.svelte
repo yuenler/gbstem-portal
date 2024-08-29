@@ -20,9 +20,6 @@
  export let classDetailsDialogEl: Dialog | undefined
  export let dialog = false
 
-  const CLIENT_ID: string = process.env.CLIENT_ID? process.env.CLIENT_ID : ''
-  const CLIENT_SECRET: string = process.env.CLIENT_SECRET ? process.env.CLIENT_SECRET : ''
-
   let disabled = false
   let showValidation = false
   let submitted = false
@@ -170,26 +167,17 @@
       onlineMeetingProvider: 'teamsForBusiness'
     };
 
-    console.log(CLIENT_ID)
-    console.log(CLIENT_SECRET)
-
-   const token = await fetch ('https://login.microsoftonline.com/c9f983d8-6c86-4534-8471-99c48eaab882/oauth2/v2.0/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: new URLSearchParams({
-        'client_id': CLIENT_ID,
-        'scope': 'https://graph.microsoft.com/.default',
-        'client_secret': CLIENT_SECRET,
-        'grant_type': 'client_credentials'
-    })
-    }).then((response) => response.json()).then((res) => {
-      return res.access_token
-    }).catch((err) => {
-      console.log(err)
-    })
+    const token = await fetch('/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => response.json()).then((res) => {
+        console.log(res)
+        return res.access_token
+      }).catch((err) => {
+        console.log(err)
+      })
 
     await fetch('https://graph.microsoft.com/v1.0/users/kendree@gbstem.onmicrosoft.com/calendar/events', {
       method: 'POST',
