@@ -173,6 +173,7 @@
       },
       body: JSON.stringify(event)
     }).then((response) => response.json()).then((res) => {
+      console.log(res)
       url = res.onlineMeeting.joinUrl
       return res.onlineMeeting.joinUrl
     }).catch((err) => {
