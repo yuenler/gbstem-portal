@@ -168,8 +168,8 @@
     await fetch ('https://login.microsoftonline.com/c9f983d8-6c86-4534-8471-99c48eaab882/oauth2/v2.0/authorize', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Host': 'login.microsoftonline.com',
+        'Mode': 'no-cors',
       },
       body: JSON.stringify({
         client_id: '504d54dc-0e38-417f-b167-fe6f77a56cbd',
