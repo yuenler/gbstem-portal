@@ -11,13 +11,14 @@
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { classesCollection } from '$lib/data/constants'
   import { ClassStatus } from '../helpers/ClassStatus'
-  import { Providers } from '@microsoft/mgt-element'
+  import { Providers, ProviderState } from '@microsoft/mgt-element'
   import { Msal2Provider } from '@microsoft/mgt-msal2-provider'
 
   export let semesterDates: Data.SemesterDates
 
   import Dialog from '../Dialog.svelte'
   import Card from '../Card.svelte'
+  import { CLIENT_ID } from '$env/static/private'
 
  export let classDetailsDialogEl: Dialog | undefined
  export let dialog = false
@@ -169,11 +170,12 @@
     };
 
     Providers.globalProvider = new Msal2Provider({
-      clientId: "YOUR_CLIENT_ID",
+      clientId: CLIENT_ID,
       scopes: ["User.Read", "Calendars.ReadWrite"]
     });
 
-    await Providers.globalProvider.login();
+    // await Providers.globalProvider.login();
+    Providers.globalProvider.setState(ProviderState.SignedIn)
 
     const token = await Providers.globalProvider.getAccessToken({
     scopes: ["User.Read"],
