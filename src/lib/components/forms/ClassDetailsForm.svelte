@@ -325,6 +325,18 @@
       label="Class taught online?"
     />
 
+    {#if values.meetingLink === '' && values.online}
+      <Button color="blue" on:click={createLink}>Create meeting link</Button>
+    {/if}
+
+    {#if values.online}
+      <Input
+        type="text"
+        bind:value={values.meetingLink}
+        label="Your meeting link. If you have Zoom Pro/Google Meet Pro and prefer to use it, you may enter the link here. Otherwise, you should use the Teams link."
+        />
+    {/if}
+
     <Input
       type="checkbox"
       bind:value={values.submitting}
