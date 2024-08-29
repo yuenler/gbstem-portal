@@ -132,7 +132,7 @@
     const earliestClassPossible = new Date()
     earliestClassPossible.setHours(Math.min(time1, time2))
     const earliestClassLatestPossibleEndTime = new Date()
-    earliestClassPossible.setHours(Math.max(time1, time2) + 2)
+    earliestClassLatestPossibleEndTime.setHours(Math.max(time1, time2) + 2)
 
     console.log(earliestClassPossible)
     console.log(earliestClassLatestPossibleEndTime)
