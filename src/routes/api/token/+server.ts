@@ -1,5 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { CLIENT_ID, CLIENT_SECRET } from '$env/static/private';
+
+const CLIENT_ID = import.meta.env.CLIENT_ID;
+const CLIENT_SECRET = import.meta.env.CLIENT_SECRET;
 
 export const POST: RequestHandler = async (): Promise<Response> => {
   try {
