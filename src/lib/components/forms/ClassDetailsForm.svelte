@@ -130,9 +130,10 @@
     console.log(semesterDates.classesStart)
 
     const earliestClassPossible = new Date()
-    earliestClassPossible.setHours(Math.min(time1, time2))
+    // earliestClassPossible.setHours(Math.min(time1, time2))
+    earliestClassPossible.setHours(9)
     const earliestClassLatestPossibleEndTime = new Date()
-    earliestClassLatestPossibleEndTime.setHours(Math.max(time1, time2) + 2)
+    earliestClassLatestPossibleEndTime.setHours(23)
 
     console.log(earliestClassPossible)
     console.log(earliestClassLatestPossibleEndTime)
