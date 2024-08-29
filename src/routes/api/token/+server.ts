@@ -1,12 +1,12 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import dotenv from 'dotenv';
 
-dotenv.config();
-
-const CLIENT_ID: string = process.env.CLIENT_ID ?? '';
-const CLIENT_SECRET: string = process.env.CLIENT_SECRET ?? '';
-
 export const POST: RequestHandler = async (): Promise<Response> => {
+    dotenv.config();
+    const CLIENT_ID: string = process.env.CLIENT_ID ?? '';
+    const CLIENT_SECRET: string = process.env.CLIENT_SECRET ?? '';
+ console.log(CLIENT_ID);
+ console.log(CLIENT_SECRET);
   try {
     const response = await fetch('https://login.microsoftonline.com/c9f983d8-6c86-4534-8471-99c48eaab882/oauth2/v2.0/token', {
       method: 'POST',
