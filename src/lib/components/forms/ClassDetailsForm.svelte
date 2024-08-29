@@ -325,21 +325,6 @@
       label="Class taught online?"
     />
 
-    {#if values.meetingLink === '' && values.online}
-      <Button color="blue" on:click={createLink}>Create meeting link</Button>
-    {/if}
-
-    <div>{values.online}</div>
-    <div>{values.meetingLink}</div>
-
-    {#if values.online}
-      <Input
-        type="text"
-        bind:value={values.meetingLink}
-        label="Your meeting link. If you have Zoom Pro/Google Meet Pro and prefer to use it, you may enter the link here. Otherwise, you should use the Teams link."
-        />
-    {/if}
-
     <Input
       type="checkbox"
       bind:value={values.submitting}
@@ -452,12 +437,25 @@
       bind:value={values.otherInstructorEmails}
       label="Enter the emails of any co-instructors here, comma separated. Keep in mind that only one instructor per class should fill out this form."
     />
+    
 
     <Input
       type="checkbox"
       bind:value={values.online}
       label="Class taught online?"
     />
+
+    {#if values.meetingLink === '' && values.online}
+      <Button color="blue" on:click={createLink}>Create meeting link</Button>
+    {/if}
+
+    {#if values.online}
+      <Input
+        type="text"
+        bind:value={values.meetingLink}
+        label="Your meeting link. If you have Zoom Pro/Google Meet Pro and prefer to use it, you may enter the link here. Otherwise, you should use the Teams link."
+        />
+    {/if}
 
     <Input
       type="checkbox"
