@@ -127,16 +127,11 @@
     const time2 = new Date(values.meetingTimes[1]).getHours()
     let url: string = ''
 
-    console.log(semesterDates.classesStart)
-
     const earliestClassPossible = new Date()
     // earliestClassPossible.setHours(Math.min(time1, time2))
     earliestClassPossible.setHours(9)
     const earliestClassLatestPossibleEndTime = new Date()
     earliestClassLatestPossibleEndTime.setHours(23)
-
-    console.log(earliestClassPossible)
-    console.log(earliestClassLatestPossibleEndTime)
 
     const event = {
       subject: `${values.course} Class Meeting`,
@@ -186,6 +181,7 @@
     }).catch((err) => {
       console.log(err)
     })
+    alert.trigger('success', 'Meeting link created!')
     return url
   }
 
