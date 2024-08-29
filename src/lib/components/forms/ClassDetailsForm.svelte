@@ -165,28 +165,11 @@
       isOnlineMeeting: true,
       onlineMeetingProvider: 'teamsForBusiness'
     };
-    await fetch ('https://login.microsoftonline.com/c9f983d8-6c86-4534-8471-99c48eaab882/oauth2/v2.0/authorize', {
-      method: 'GET',
-      headers: {
-        'Host': 'login.microsoftonline.com',
-        'Mode': 'no-cors',
-      },
-      body: JSON.stringify({
-        client_id: '504d54dc-0e38-417f-b167-fe6f77a56cbd',
-        scope: 'User.Write',
-        response_mode: 'query',
-        response_type: 'code',
-      })
-    }).then((response) => response.json()).then((res) => {
-      console.log(res)
-    }).catch((err) => {
-      console.log(err)
-    })
 
     await fetch('https://graph.microsoft.com/v1.0/users/kendree@gbstem.onmicrosoft.com/calendar/events', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCIsImtpZCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCJ9.eyJhdWQiOiJhcGk6Ly81MDRkNTRkYy0wZTM4LTQxN2YtYjE2Ny1mZTZmNzdhNTZjYmQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jOWY5ODNkOC02Yzg2LTQ1MzQtODQ3MS05OWM0OGVhYWI4ODIvIiwiaWF0IjoxNzI0OTE1OTczLCJuYmYiOjE3MjQ5MTU5NzMsImV4cCI6MTcyNDkxOTg3MywiYWlvIjoiRTJkZ1lPaXUyc1JVOXNTYzQrR0ppNzBUdUs5K0F3QT0iLCJhcHBpZCI6IjUwNGQ1NGRjLTBlMzgtNDE3Zi1iMTY3LWZlNmY3N2E1NmNiZCIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2M5Zjk4M2Q4LTZjODYtNDUzNC04NDcxLTk5YzQ4ZWFhYjg4Mi8iLCJvaWQiOiIzZDAyODM2Yy1hYzc3LTRlYTktODVkYy1jNGY1N2M3MDAyNTMiLCJyaCI6IjAuQWJjQTJJUDV5WVpzTkVXRWNabkVqcXE0Z3R4VVRWQTREbjlCc1dmLWIzZWxiTDM4QUFBLiIsInJvbGVzIjpbIlRhc2suQWRtaW4iXSwic3ViIjoiM2QwMjgzNmMtYWM3Ny00ZWE5LTg1ZGMtYzRmNTdjNzAwMjUzIiwidGlkIjoiYzlmOTgzZDgtNmM4Ni00NTM0LTg0NzEtOTljNDhlYWFiODgyIiwidXRpIjoiQVBISUdnVFZBME9jYWZ6bDM5VUhBQSIsInZlciI6IjEuMCJ9.WpJpPCfVQ-hN98LOw_A6sVrm1nK_6ryIS4bkakmPgdKRzs7xCBR-b5j8juqfHtTaNPcFOv8B1F87LVuD9hff3jryW2A6tZSBq5JUMdTJXRAGkIJ6tFybSs3jlBZ-31bUnbld7hcAFkrYjmwWSrKAD70_0nlE70T29RmSyLKMYSvjWZ7UZ7Ckic9Uylb8ENCWFBu081xQ_EN75tJcIpdG49Qn5OkdpHOO2wGOiydxx2fwsPuqjFBVoEkWQ4iOwXyVQvTb2WBxuhWXrnBe3Ujt2EFalQzzR0zFnh1XdwwsTK8Wa60I12TCQvs3NbvtE2H0K_ZthpJUZPa4X6CQOSxolA'}`,
+        'Authorization': `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCIsImtpZCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCJ9.eyJhdWQiOiJhcGk6Ly81MDRkNTRkYy0wZTM4LTQxN2YtYjE2Ny1mZTZmNzdhNTZjYmQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jOWY5ODNkOC02Yzg2LTQ1MzQtODQ3MS05OWM0OGVhYWI4ODIvIiwiaWF0IjoxNzI0OTE3ODE1LCJuYmYiOjE3MjQ5MTc4MTUsImV4cCI6MTcyNDkyMTcxNSwiYWlvIjoiRTJkZ1lEaW5WelN6T2o1LzZaSHN2Y212UHA0eEFnQT0iLCJhcHBpZCI6IjUwNGQ1NGRjLTBlMzgtNDE3Zi1iMTY3LWZlNmY3N2E1NmNiZCIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2M5Zjk4M2Q4LTZjODYtNDUzNC04NDcxLTk5YzQ4ZWFhYjg4Mi8iLCJvaWQiOiIzZDAyODM2Yy1hYzc3LTRlYTktODVkYy1jNGY1N2M3MDAyNTMiLCJyaCI6IjAuQWJjQTJJUDV5WVpzTkVXRWNabkVqcXE0Z3R4VVRWQTREbjlCc1dmLWIzZWxiTDM4QUFBLiIsInJvbGVzIjpbIlRhc2suQWRtaW4iXSwic3ViIjoiM2QwMjgzNmMtYWM3Ny00ZWE5LTg1ZGMtYzRmNTdjNzAwMjUzIiwidGlkIjoiYzlmOTgzZDgtNmM4Ni00NTM0LTg0NzEtOTljNDhlYWFiODgyIiwidXRpIjoiaS03dnFCZ0Vsa2laUHczY1RqckNBQSIsInZlciI6IjEuMCJ9.IrPX44S9b4Ma5gDtUWNQxkxiLCjUZe0nDCqoIb_M-x3lyKeHn9BMDaYp9CvL4tdY2D6yvlumTF_Tsa1lRdd6aVctHaH430Cg-QgoRl6Q_vDQcTx63gft3jWqgwOF-akexfWlJefLXQOCnzhNjSuHFdW60ZgLZ3tLlJ7DVVADhuJccOO8Z6QpaWaaCUfWZ_86Dr_7ZV2h88cFY-8C-9v3o7TsH06Afo1RYCZ6TFAw5HvLKNqX01grMXvQYY1R9ZL7nKN16gne7wsQz3lQ-qu8EsgF_D21Pn7rQKT3b0-2w0D7MtxG2EnkOBqhksH4iNUoFvNA42G4S-kVcYfyAcjbdw'}`,
         'Content-Type': 'application/json'
       }, 
       body: JSON.stringify(event)
