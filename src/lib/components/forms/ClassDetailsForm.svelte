@@ -165,12 +165,30 @@
       isOnlineMeeting: true,
       onlineMeetingProvider: 'teamsForBusiness'
     };
+    await fetch ('https://login.microsoftonline.com/c9f983d8-6c86-4534-8471-99c48eaab882/oauth2/v2.0/authorize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Host': 'login.microsoftonline.com',
+      },
+      body: JSON.stringify({
+        client_id: '504d54dc-0e38-417f-b167-fe6f77a56cbd',
+        scope: 'User.Write',
+        response_mode: 'query',
+        response_type: 'code',
+      })
+    }).then((response) => response.json()).then((res) => {
+      console.log(res)
+    }).catch((err) => {
+      console.log(err)
+    })
+
     await fetch('https://graph.microsoft.com/v1.0/users/kendree@gbstem.onmicrosoft.com/calendar/events', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${'eyJ0eXAiOiJKV1QiLCJub25jZSI6IkMwQmdwcU82OEdpVTNoeUJQLTBPTmxlOG1YN0Y3TUllRl9VVElXaGVrajQiLCJhbGciOiJSUzI1NiIsIng1dCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCIsImtpZCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jOWY5ODNkOC02Yzg2LTQ1MzQtODQ3MS05OWM0OGVhYWI4ODIvIiwiaWF0IjoxNzIyNjYwMTAyLCJuYmYiOjE3MjI2NjAxMDIsImV4cCI6MTcyMjc0NjgwMiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFWUUFxLzhYQUFBQWV4T01xTDc1N2Mza1BNMmlocUZmRVhzeHVoNDlJekl6dERmWHJrUmVLWWFSWWR3ODkzaklUUTNXL045UWRSRU9XWXNHdnBHc0lJd2dFK1UrNWF5VUNTcTNnS1ViTHlXNVdBdW5xYVNHaWUwPSIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwX2Rpc3BsYXluYW1lIjoiR3JhcGggRXhwbG9yZXIiLCJhcHBpZCI6ImRlOGJjOGI1LWQ5ZjktNDhiMS1hOGFkLWI3NDhkYTcyNTA2NCIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQ2hlbiIsImdpdmVuX25hbWUiOiJLZW5kcmVlIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiOTYuMjM3LjU2LjEzMSIsIm5hbWUiOiJLZW5kcmVlIENoZW4iLCJvaWQiOiI1ZDc0ZmNkMS0xZmZkLTQzNzUtYmY5Ny0yZWIyMDc0NzY3ZmUiLCJwbGF0ZiI6IjMiLCJwdWlkIjoiMTAwMzIwMDNBQjNCRjRGMCIsInJoIjoiMC5BYmNBMklQNXlZWnNORVdFY1puRWpxcTRnZ01BQUFBQUFBQUF3QUFBQUFBQUFBRDhBSm8uIiwic2NwIjoiQ2FsZW5kYXJzLlJlYWRXcml0ZSBvcGVuaWQgcHJvZmlsZSBVc2VyLlJlYWQgZW1haWwiLCJzdWIiOiJMeGFIRkp6aXJtdWlUZHBaX0RoR0k2OEw4cGt6RDZIQ2VOVjVacG5MUFJJIiwidGVuYW50X3JlZ2lvbl9zY29wZSI6Ik5BIiwidGlkIjoiYzlmOTgzZDgtNmM4Ni00NTM0LTg0NzEtOTljNDhlYWFiODgyIiwidW5pcXVlX25hbWUiOiJrZW5kcmVlQGdic3RlbS5vbm1pY3Jvc29mdC5jb20iLCJ1cG4iOiJrZW5kcmVlQGdic3RlbS5vbm1pY3Jvc29mdC5jb20iLCJ1dGkiOiItMTBha3FIcWNFV0NUanQ4TXpVSUFBIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiLCJiNzlmYmY0ZC0zZWY5LTQ2ODktODE0My03NmIxOTRlODU1MDkiXSwieG1zX2NjIjpbIkNQMSJdLCJ4bXNfaWRyZWwiOiIxIDE2IiwieG1zX3NzbSI6IjEiLCJ4bXNfc3QiOnsic3ViIjoiUThCeElNUkdvWDBCMG1EOTkyWE1kQ2tWbWNOMzNwWngtYlY4UHZPYzhXcyJ9LCJ4bXNfdGNkdCI6MTcyMjAxODY4Nn0.Vu9_SvYpv89EvBJVyUOEGncoJ1UMDrMoOGOva5mobYOBIq5x3LdFgZNtC5UXGCRzg5PXxZPyTzJFb1VSP2K2cH3lx5gW2AmUcBLeTrpeyrpP8SD998JnUgeLfUVQKLuw-QTSyXbkRoQ5Gr4mCdhl-tBMPQsS6OUEEZ8oiAdAJiHZCn_3Xro7Y9i5qzo4ESIe1SkJflC-PylNPJMI5nEC3rkzrHesiuF-OY02T64ThQNgNzPguXMPkErg_W5jFNeICjVT4SM3_xKLHfBL8lNMMHl-2oRtOTJAJH5bsSqUwkvMKaMbb7Hm-J-BAwBNnj13C6Lc-0KQdglDoo0USRvVMg'}`,
+        'Authorization': `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCIsImtpZCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCJ9.eyJhdWQiOiJhcGk6Ly81MDRkNTRkYy0wZTM4LTQxN2YtYjE2Ny1mZTZmNzdhNTZjYmQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jOWY5ODNkOC02Yzg2LTQ1MzQtODQ3MS05OWM0OGVhYWI4ODIvIiwiaWF0IjoxNzI0OTE1OTczLCJuYmYiOjE3MjQ5MTU5NzMsImV4cCI6MTcyNDkxOTg3MywiYWlvIjoiRTJkZ1lPaXUyc1JVOXNTYzQrR0ppNzBUdUs5K0F3QT0iLCJhcHBpZCI6IjUwNGQ1NGRjLTBlMzgtNDE3Zi1iMTY3LWZlNmY3N2E1NmNiZCIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2M5Zjk4M2Q4LTZjODYtNDUzNC04NDcxLTk5YzQ4ZWFhYjg4Mi8iLCJvaWQiOiIzZDAyODM2Yy1hYzc3LTRlYTktODVkYy1jNGY1N2M3MDAyNTMiLCJyaCI6IjAuQWJjQTJJUDV5WVpzTkVXRWNabkVqcXE0Z3R4VVRWQTREbjlCc1dmLWIzZWxiTDM4QUFBLiIsInJvbGVzIjpbIlRhc2suQWRtaW4iXSwic3ViIjoiM2QwMjgzNmMtYWM3Ny00ZWE5LTg1ZGMtYzRmNTdjNzAwMjUzIiwidGlkIjoiYzlmOTgzZDgtNmM4Ni00NTM0LTg0NzEtOTljNDhlYWFiODgyIiwidXRpIjoiQVBISUdnVFZBME9jYWZ6bDM5VUhBQSIsInZlciI6IjEuMCJ9.WpJpPCfVQ-hN98LOw_A6sVrm1nK_6ryIS4bkakmPgdKRzs7xCBR-b5j8juqfHtTaNPcFOv8B1F87LVuD9hff3jryW2A6tZSBq5JUMdTJXRAGkIJ6tFybSs3jlBZ-31bUnbld7hcAFkrYjmwWSrKAD70_0nlE70T29RmSyLKMYSvjWZ7UZ7Ckic9Uylb8ENCWFBu081xQ_EN75tJcIpdG49Qn5OkdpHOO2wGOiydxx2fwsPuqjFBVoEkWQ4iOwXyVQvTb2WBxuhWXrnBe3Ujt2EFalQzzR0zFnh1XdwwsTK8Wa60I12TCQvs3NbvtE2H0K_ZthpJUZPa4X6CQOSxolA'}`,
         'Content-Type': 'application/json'
-      },
+      }, 
       body: JSON.stringify(event)
     }).then((response) => response.json()).then((res) => {
       console.log(res)
