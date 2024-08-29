@@ -11,6 +11,8 @@
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { classesCollection } from '$lib/data/constants'
   import { ClassStatus } from '../helpers/ClassStatus'
+  import { Providers } from '@microsoft/mgt-element'
+  import { Msal2Provider } from '@microsoft/mgt-msal2-provider'
 
   export let semesterDates: Data.SemesterDates
 
@@ -165,6 +167,20 @@
       isOnlineMeeting: true,
       onlineMeetingProvider: 'teamsForBusiness'
     };
+
+    Providers.globalProvider = new Msal2Provider({
+      clientId: "YOUR_CLIENT_ID",
+      scopes: ["User.Read", "Calendars.ReadWrite"]
+    });
+
+    await Providers.globalProvider.login();
+
+    const token = await Providers.globalProvider.getAccessToken({
+    scopes: ["User.Read"],
+    });
+
+    console.log(token);
+
     await fetch('https://graph.microsoft.com/v1.0/users/kendree@gbstem.onmicrosoft.com/calendar/events', {
       method: 'POST',
       headers: {
