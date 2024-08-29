@@ -16,10 +16,12 @@
 
   import Dialog from '../Dialog.svelte'
   import Card from '../Card.svelte'
-  import { CLIENT_ID, CLIENT_SECRET } from '$env/static/private'
 
  export let classDetailsDialogEl: Dialog | undefined
  export let dialog = false
+
+  const CLIENT_ID = process.env.CLIENT_ID
+  const CLIENT_SECRET = process.env.CLIENT_SECRET
 
   let disabled = false
   let showValidation = false
