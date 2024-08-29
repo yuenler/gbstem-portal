@@ -11,14 +11,12 @@
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { classesCollection } from '$lib/data/constants'
   import { ClassStatus } from '../helpers/ClassStatus'
-  import { Providers } from '@microsoft/mgt-element'
-  import { Msal2Provider } from '@microsoft/mgt-msal2-provider'
+  import { CLIENT_ID, CLIENT_SECRET, TENANT_ID } from '$env/static/private'
 
   export let semesterDates: Data.SemesterDates
 
   import Dialog from '../Dialog.svelte'
   import Card from '../Card.svelte'
-  import { CLIENT_ID } from '$env/static/private'
 
  export let classDetailsDialogEl: Dialog | undefined
  export let dialog = false
@@ -168,27 +166,26 @@
       isOnlineMeeting: true,
       onlineMeetingProvider: 'teamsForBusiness'
     };
+    
+    await fetch (`https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&scope=api%3A%2F%2F504d54dc-0e38-417f-b167-fe6f77a56cbd%2F.default&grant_type=client_credentials`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Host': 'login.microsoftonline.com',
+      },
+    }).then((response) => response.json()).then((res) => {
+      console.log(res)
+    }).catch((err) => {
+      console.log(err)
+    })
 
-    Providers.globalProvider = new Msal2Provider({
-      clientId: CLIENT_ID,
-      scopes: ["User.Read", "Calendars.ReadWrite"]
-    });
-
-    await Providers.globalProvider.login();
-    // Providers.globalProvider.setState(ProviderState.SignedIn)
-
-    const token = await Providers.globalProvider.getAccessToken({
-    scopes: ["User.Read"],
-    });
-
-    console.log(token);
 
     await fetch('https://graph.microsoft.com/v1.0/users/kendree@gbstem.onmicrosoft.com/calendar/events', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${'eyJ0eXAiOiJKV1QiLCJub25jZSI6IkMwQmdwcU82OEdpVTNoeUJQLTBPTmxlOG1YN0Y3TUllRl9VVElXaGVrajQiLCJhbGciOiJSUzI1NiIsIng1dCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCIsImtpZCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jOWY5ODNkOC02Yzg2LTQ1MzQtODQ3MS05OWM0OGVhYWI4ODIvIiwiaWF0IjoxNzIyNjYwMTAyLCJuYmYiOjE3MjI2NjAxMDIsImV4cCI6MTcyMjc0NjgwMiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFWUUFxLzhYQUFBQWV4T01xTDc1N2Mza1BNMmlocUZmRVhzeHVoNDlJekl6dERmWHJrUmVLWWFSWWR3ODkzaklUUTNXL045UWRSRU9XWXNHdnBHc0lJd2dFK1UrNWF5VUNTcTNnS1ViTHlXNVdBdW5xYVNHaWUwPSIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwX2Rpc3BsYXluYW1lIjoiR3JhcGggRXhwbG9yZXIiLCJhcHBpZCI6ImRlOGJjOGI1LWQ5ZjktNDhiMS1hOGFkLWI3NDhkYTcyNTA2NCIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQ2hlbiIsImdpdmVuX25hbWUiOiJLZW5kcmVlIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiOTYuMjM3LjU2LjEzMSIsIm5hbWUiOiJLZW5kcmVlIENoZW4iLCJvaWQiOiI1ZDc0ZmNkMS0xZmZkLTQzNzUtYmY5Ny0yZWIyMDc0NzY3ZmUiLCJwbGF0ZiI6IjMiLCJwdWlkIjoiMTAwMzIwMDNBQjNCRjRGMCIsInJoIjoiMC5BYmNBMklQNXlZWnNORVdFY1puRWpxcTRnZ01BQUFBQUFBQUF3QUFBQUFBQUFBRDhBSm8uIiwic2NwIjoiQ2FsZW5kYXJzLlJlYWRXcml0ZSBvcGVuaWQgcHJvZmlsZSBVc2VyLlJlYWQgZW1haWwiLCJzdWIiOiJMeGFIRkp6aXJtdWlUZHBaX0RoR0k2OEw4cGt6RDZIQ2VOVjVacG5MUFJJIiwidGVuYW50X3JlZ2lvbl9zY29wZSI6Ik5BIiwidGlkIjoiYzlmOTgzZDgtNmM4Ni00NTM0LTg0NzEtOTljNDhlYWFiODgyIiwidW5pcXVlX25hbWUiOiJrZW5kcmVlQGdic3RlbS5vbm1pY3Jvc29mdC5jb20iLCJ1cG4iOiJrZW5kcmVlQGdic3RlbS5vbm1pY3Jvc29mdC5jb20iLCJ1dGkiOiItMTBha3FIcWNFV0NUanQ4TXpVSUFBIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiLCJiNzlmYmY0ZC0zZWY5LTQ2ODktODE0My03NmIxOTRlODU1MDkiXSwieG1zX2NjIjpbIkNQMSJdLCJ4bXNfaWRyZWwiOiIxIDE2IiwieG1zX3NzbSI6IjEiLCJ4bXNfc3QiOnsic3ViIjoiUThCeElNUkdvWDBCMG1EOTkyWE1kQ2tWbWNOMzNwWngtYlY4UHZPYzhXcyJ9LCJ4bXNfdGNkdCI6MTcyMjAxODY4Nn0.Vu9_SvYpv89EvBJVyUOEGncoJ1UMDrMoOGOva5mobYOBIq5x3LdFgZNtC5UXGCRzg5PXxZPyTzJFb1VSP2K2cH3lx5gW2AmUcBLeTrpeyrpP8SD998JnUgeLfUVQKLuw-QTSyXbkRoQ5Gr4mCdhl-tBMPQsS6OUEEZ8oiAdAJiHZCn_3Xro7Y9i5qzo4ESIe1SkJflC-PylNPJMI5nEC3rkzrHesiuF-OY02T64ThQNgNzPguXMPkErg_W5jFNeICjVT4SM3_xKLHfBL8lNMMHl-2oRtOTJAJH5bsSqUwkvMKaMbb7Hm-J-BAwBNnj13C6Lc-0KQdglDoo0USRvVMg'}`,
         'Content-Type': 'application/json'
-      },
+      }, 
       body: JSON.stringify(event)
     }).then((response) => response.json()).then((res) => {
       console.log(res)
