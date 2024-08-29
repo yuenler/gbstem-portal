@@ -1,7 +1,10 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import dotenv from 'dotenv';
 
-const CLIENT_ID = import.meta.env.CLIENT_ID;
-const CLIENT_SECRET = import.meta.env.CLIENT_SECRET;
+dotenv.config();
+
+const CLIENT_ID: string = process.env.CLIENT_ID ?? '';
+const CLIENT_SECRET: string = process.env.CLIENT_SECRET ?? '';
 
 export const POST: RequestHandler = async (): Promise<Response> => {
   try {
