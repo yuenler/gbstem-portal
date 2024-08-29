@@ -127,10 +127,12 @@
     const time2 = new Date(values.meetingTimes[1]).getHours()
     let url: string = ''
 
-    const earliestClassPossible = new Date(semesterDates.classesStart)
-    const earliestClassLatestPossibleEndTime = new Date(semesterDates.classesStart)
+    console.log(semesterDates.classesStart)
+
+    const earliestClassPossible = new Date()
     earliestClassPossible.setHours(Math.min(time1, time2))
-    earliestClassLatestPossibleEndTime.setHours(Math.max(time1, time2) + 2)
+    const earliestClassLatestPossibleEndTime = new Date()
+    earliestClassPossible.setHours(Math.max(time1, time2) + 2)
 
     console.log(earliestClassPossible)
     console.log(earliestClassLatestPossibleEndTime)
