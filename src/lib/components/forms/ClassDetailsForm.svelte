@@ -132,6 +132,9 @@
     earliestClassPossible.setHours(Math.min(time1, time2))
     earliestClassLatestPossibleEndTime.setHours(Math.max(time1, time2) + 2)
 
+    console.log(earliestClassPossible)
+    console.log(earliestClassLatestPossibleEndTime)
+
     const event = {
       subject: `${values.course} Class Meeting`,
       body: {
@@ -139,11 +142,11 @@
         content: `${values.course} Class Meeting`
       },
       start: {
-          dateTime: earliestClassPossible,
+          dateTime: earliestClassPossible.toISOString(),
           timeZone: 'UTC'
       },
       end: {
-          dateTime: earliestClassLatestPossibleEndTime,
+          dateTime: earliestClassLatestPossibleEndTime.toISOString(),
           timeZone: 'UTC'
       },
       recurrence: {
