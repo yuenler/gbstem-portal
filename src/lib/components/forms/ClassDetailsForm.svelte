@@ -85,7 +85,7 @@
   }
 
   
-  onMount(() => {    
+  onMount(() => {   
     return user.subscribe((user) => {
       if (user) {
         getDoc(doc(db, classesCollection, user.object.uid)).then((snapshot) => {
@@ -167,11 +167,20 @@
       onlineMeetingProvider: 'teamsForBusiness'
     };
 
+    const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
+    const CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET
+
     const token = await fetch('/api/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          scope: 'https://graph.microsoft.com/.default',
+          grant_type: 'client_credentials'
+        })
       }).then((response) => response.json()).then((res) => {
         console.log(res)
         return res.access_token

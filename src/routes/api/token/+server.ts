@@ -1,22 +1,18 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import dotenv from 'dotenv';
 
-export const POST: RequestHandler = async (): Promise<Response> => {
-    dotenv.config();
-    const CLIENT_ID: string = process.env.CLIENT_ID ?? '';
-    const CLIENT_SECRET: string = process.env.CLIENT_SECRET ?? '';
- console.log(CLIENT_ID);
- console.log(CLIENT_SECRET);
+export const POST: RequestHandler = async ({request}): Promise<Response> => {
+
   try {
+    const body = await request.json();
     const response = await fetch('https://login.microsoftonline.com/c9f983d8-6c86-4534-8471-99c48eaab882/oauth2/v2.0/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        'client_id': CLIENT_ID,
+        'client_id': body.client_id,
         'scope': 'https://graph.microsoft.com/.default',
-        'client_secret': CLIENT_SECRET,
+        'client_secret': body.client_secret,
         'grant_type': 'client_credentials'
       }).toString()
     }).then(res => res.json());
