@@ -176,7 +176,8 @@
       body: JSON.stringify({
         client_id: '504d54dc-0e38-417f-b167-fe6f77a56cbd',
         scope: 'User.Write',
-        response_type: 'query',
+        response_mode: 'query',
+        response_type: 'code',
       })
     }).then((response) => response.json()).then((res) => {
       console.log(res)
