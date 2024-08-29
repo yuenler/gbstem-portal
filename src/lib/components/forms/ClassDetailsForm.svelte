@@ -175,6 +175,7 @@
 
    const token = await fetch ('https://login.microsoftonline.com/c9f983d8-6c86-4534-8471-99c48eaab882/oauth2/v2.0/token', {
       method: 'POST',
+      mode: 'no-cors',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
