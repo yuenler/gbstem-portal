@@ -1,18 +1,17 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import { VITE_CLIENT_ID, VITE_CLIENT_SECRET } from '$env/static/private';
 
-export const POST: RequestHandler = async ({request}): Promise<Response> => {
-
+export const POST: RequestHandler = async (): Promise<Response> => {
   try {
-    const body = await request.json();
     const response = await fetch('https://login.microsoftonline.com/c9f983d8-6c86-4534-8471-99c48eaab882/oauth2/v2.0/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        'client_id': body.client_id,
+        'client_id': VITE_CLIENT_ID,
         'scope': 'https://graph.microsoft.com/.default',
-        'client_secret': body.client_secret,
+        'client_secret': VITE_CLIENT_SECRET,
         'grant_type': 'client_credentials'
       }).toString()
     }).then(res => res.json());
