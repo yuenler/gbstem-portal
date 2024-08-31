@@ -85,7 +85,7 @@
   }
 
   
-  onMount(() => {    
+  onMount(() => {   
     return user.subscribe((user) => {
       if (user) {
         getDoc(doc(db, classesCollection, user.object.uid)).then((snapshot) => {
@@ -167,10 +167,23 @@
       onlineMeetingProvider: 'teamsForBusiness'
     };
 
+
+    const token = await fetch('/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      }).then((response) => response.json()).then((res) => {
+        console.log(res)
+        return res.access_token
+      }).catch((err) => {
+        console.log(err)
+      })
+
     await fetch('https://graph.microsoft.com/v1.0/users/kendree@gbstem.onmicrosoft.com/calendar/events', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${'eyJ0eXAiOiJKV1QiLCJub25jZSI6IktQek5Ya3Nub3hGR05FNE1VaG91NWt1QWJEdmJRbTlhTkFOVUg5akVlSXMiLCJhbGciOiJSUzI1NiIsIng1dCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCIsImtpZCI6IktRMnRBY3JFN2xCYVZWR0JtYzVGb2JnZEpvNCJ9.eyJhdWQiOiJodHRwczovL2dyYXBoLm1pY3Jvc29mdC5jb20iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9jOWY5ODNkOC02Yzg2LTQ1MzQtODQ3MS05OWM0OGVhYWI4ODIvIiwiaWF0IjoxNzI0OTIxNzk4LCJuYmYiOjE3MjQ5MjE3OTgsImV4cCI6MTcyNDkyNTY5OCwiYWlvIjoiRTJkZ1lKanArRjJ3YlBxcnRscS80RThPTWthMkFBPT0iLCJhcHBfZGlzcGxheW5hbWUiOiJnYlNURU0gTWVldGluZyBTY2hlZHVsZXIiLCJhcHBpZCI6IjUwNGQ1NGRjLTBlMzgtNDE3Zi1iMTY3LWZlNmY3N2E1NmNiZCIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2M5Zjk4M2Q4LTZjODYtNDUzNC04NDcxLTk5YzQ4ZWFhYjg4Mi8iLCJpZHR5cCI6ImFwcCIsIm9pZCI6IjNkMDI4MzZjLWFjNzctNGVhOS04NWRjLWM0ZjU3YzcwMDI1MyIsInJoIjoiMC5BYmNBMklQNXlZWnNORVdFY1puRWpxcTRnZ01BQUFBQUFBQUF3QUFBQUFBQUFBRDhBQUEuIiwicm9sZXMiOlsiVGVhbVNldHRpbmdzLlJlYWRXcml0ZS5BbGwiLCJPbmxpbmVNZWV0aW5ncy5SZWFkLkFsbCIsIk9ubGluZU1lZXRpbmdzLlJlYWRXcml0ZS5BbGwiLCJPbmxpbmVNZWV0aW5nUmVjb3JkaW5nLlJlYWQuQWxsIiwiQ2FsZW5kYXJzLlJlYWQiLCJPbmxpbmVNZWV0aW5nVHJhbnNjcmlwdC5SZWFkLkFsbCIsIkNhbGVuZGFycy5SZWFkQmFzaWMuQWxsIiwiVGVhbVNldHRpbmdzLlJlYWQuQWxsIiwiQ2FsZW5kYXJzLlJlYWRXcml0ZSJdLCJzdWIiOiIzZDAyODM2Yy1hYzc3LTRlYTktODVkYy1jNGY1N2M3MDAyNTMiLCJ0ZW5hbnRfcmVnaW9uX3Njb3BlIjoiTkEiLCJ0aWQiOiJjOWY5ODNkOC02Yzg2LTQ1MzQtODQ3MS05OWM0OGVhYWI4ODIiLCJ1dGkiOiI4NWFIQkp6MldVdVpGWThhTDc2RkFBIiwidmVyIjoiMS4wIiwid2lkcyI6WyIwOTk3YTFkMC0wZDFkLTRhY2ItYjQwOC1kNWNhNzMxMjFlOTAiXSwieG1zX2lkcmVsIjoiNyAxOCIsInhtc190Y2R0IjoxNzIyMDE4Njg2fQ.p2DGYLex2pG5n6q8fTq5zivckjenJENhpJkUOw9GM_8huXZdcjpFYYLpkyF1EdI7K-GTRJDPOVask3d85C937IwgEmwEcad1dWb6H4CD0rKRhrYtyggUamJNiZ9OCr6u80ztpeNLuBcwwzFrLCobgIj11ISURoJjnITOcXWjb_i4ME4uAZqrBVtGRq8uQWRaOYeN_c01_fE0kGInPIchZybfUhoGOPXqb_VOX3PT41gKlr2O_KBBvJBTv8unvANsIGXCW3HWIddu1A9Iayq5ksu6Rdxdboz65Wc89eukIHlXOZEgVz7HFYZjhQMWE_FfbYMwOLf7BXjMp7zk4Ob7jA'}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }, 
       body: JSON.stringify(event)
