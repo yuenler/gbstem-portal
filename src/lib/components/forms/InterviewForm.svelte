@@ -16,7 +16,7 @@
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
-    import { formatDate, formatDateLocal, timestampToDate } from '$lib/utils'
+    import { formatDate, formatDateLocal, formatDateStringLocal, timestampToDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
 
   export let semesterDates: Data.SemesterDates
@@ -104,7 +104,7 @@
       },
       body: JSON.stringify({
         email: scheduledInterview.interviewerEmail,
-        date: scheduledInterview.date + ' Eastern Time',
+        date: formatDateStringLocal(scheduledInterview.date),
         link: scheduledInterview.meetingLink,
         interviewer: scheduledInterview.interviewerName,
         firstName: currentUser.profile.firstName,
@@ -254,7 +254,7 @@
             class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
           >
             <p>
-              Your interview will be on {scheduledInterview.date} Eastern Time with
+              Your interview will be on {formatDateStringLocal(scheduledInterview.date)} with
               {scheduledInterview.interviewerName}.
             </p>
             <p>
@@ -271,7 +271,7 @@
           <div
             class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
           >
-            Your interview was on {scheduledInterview.date} Eastern Time.
+            Your interview was on {formatDateStringLocal(scheduledInterview.date)}.
           </div>
         {/if}
       </Card>
