@@ -173,7 +173,7 @@ export const interviewRequestedEmailTemplate = `<!doctype html>
                                                 style="font-size:0px;padding:10px 25px;padding-top:0px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
-                                                    <p style="margin: 20px 0"><p style="margin: 0 0"> {{interview.firstName}} is requesting a new interview timeslot at {{interview.timeSlot}}
+                                                    <p style="margin: 20px 0"><p style="margin: 0 0"> {{interview.firstName}}, email {{interview.email}}, is requesting a new interview timeslot at {{interview.timeSlot}}. You can set the slot and assign them through the admin portal, which will notify them. 
                                                     <p>With love 🤍,<br>The gbSTEM Team</p>
                                                 </div>
                                             </td>

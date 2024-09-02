@@ -16,7 +16,7 @@
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
-    import { formatDate, timestampToDate } from '$lib/utils'
+    import { formatDate, formatDateLocal, timestampToDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
 
   export let semesterDates: Data.SemesterDates
@@ -50,7 +50,8 @@
       },
       body: JSON.stringify({
         firstName: currentUser.profile.firstName,
-        timeSlot: formatDate(new Date(dateToAdd)) + ' Eastern Time.',
+        intervieweeEmail: currentUser.object.email,
+        timeSlot: formatDateLocal(new Date(dateToAdd)),
       }),
     }).then(async (res) => {
       if (!res.ok) {
