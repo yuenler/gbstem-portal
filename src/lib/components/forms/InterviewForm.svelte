@@ -66,7 +66,7 @@
     showRequestNewTime = false
     alert.trigger(
       'success',
-      `Thank you for requesting a new timeslot! We will add new times soon. Please check back here soon to schedule your interview.`,
+      `Thank you for requesting a new timeslot! We will add new times soon, and you will be notified if your slot is created. If you do not receive an email within a few days, please check back here soon to find another slot that works for you.`,
     )
   }
 
