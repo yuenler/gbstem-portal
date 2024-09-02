@@ -16,7 +16,7 @@
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
-    import { formatDate, timestampToDate } from '$lib/utils'
+    import { formatDate, formatDateLocal, formatDateStringLocal, timestampToDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
 
   export let semesterDates: Data.SemesterDates
@@ -50,7 +50,8 @@
       },
       body: JSON.stringify({
         firstName: currentUser.profile.firstName,
-        timeSlot: formatDate(new Date(dateToAdd)) + ' Eastern Time.',
+        intervieweeEmail: currentUser.object.email,
+        timeSlot: formatDateLocal(new Date(dateToAdd)),
       }),
     }).then(async (res) => {
       if (!res.ok) {
@@ -65,7 +66,7 @@
     showRequestNewTime = false
     alert.trigger(
       'success',
-      `Thank you for requesting a new timeslot! We will add new times soon. Please check back here soon to schedule your interview.`,
+      `Thank you for requesting a new timeslot! We will add new times soon, and you will be notified if your slot is created. If you do not receive an email within a few days, please check back here soon to find another slot that works for you.`,
     )
   }
 
@@ -103,7 +104,7 @@
       },
       body: JSON.stringify({
         email: scheduledInterview.interviewerEmail,
-        date: scheduledInterview.date + ' Eastern Time',
+        date: formatDateStringLocal(scheduledInterview.date),
         link: scheduledInterview.meetingLink,
         interviewer: scheduledInterview.interviewerName,
         firstName: currentUser.profile.firstName,
@@ -253,7 +254,7 @@
             class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
           >
             <p>
-              Your interview will be on {scheduledInterview.date} Eastern Time with
+              Your interview will be on {formatDateStringLocal(scheduledInterview.date)} with
               {scheduledInterview.interviewerName}.
             </p>
             <p>
@@ -270,7 +271,7 @@
           <div
             class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
           >
-            Your interview was on {scheduledInterview.date} Eastern Time.
+            Your interview was on {formatDateStringLocal(scheduledInterview.date)}.
           </div>
         {/if}
       </Card>

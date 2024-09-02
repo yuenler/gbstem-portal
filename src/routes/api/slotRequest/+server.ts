@@ -19,8 +19,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         interview: {
           firstName: body.firstName,
           timeSlot: body.timeSlot,
+          email: body.intervieweeEmail,
           name: 'Portal',
-          link: 'https://portal.gbstem.org',
+          link: 'https://admin.gbstem.org',
         },
       },
     }

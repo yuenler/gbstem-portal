@@ -136,6 +136,31 @@ export const formatDate = (date: Date) => {
   })
 }
 
+export function formatDateLocal(date: Date) {
+  return date.toLocaleString('en-US', {
+    weekday: 'long', // long, short, narrow
+    month: 'long', // numeric, 2-digit, long, short, narrow
+    day: 'numeric', // numeric, 2-digit
+    hour: 'numeric', // numeric, 2-digit
+    minute: 'numeric', // numeric, 2-digit
+    hour12: true, // use 12-hour time format with AM/PM
+    timeZoneName: 'long', 
+  })
+}
+
+export function formatDateStringLocal(time: string) {
+  const date = new Date(time)
+  return date.toLocaleString('en-US', {
+    weekday: 'long', // long, short, narrow
+    month: 'long', // numeric, 2-digit, long, short, narrow
+    day: 'numeric', // numeric, 2-digit
+    hour: 'numeric', // numeric, 2-digit
+    minute: 'numeric', // numeric, 2-digit
+    hour12: true, // use 12-hour time format with AM/PM
+    timeZoneName: 'long', 
+  })
+}
+
 export function htmlToPlainText(html: string): string {
   const doc = new DOMParser().parseFromString(html, 'text/html')
 
