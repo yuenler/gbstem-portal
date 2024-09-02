@@ -187,7 +187,7 @@ export const interviewRequestedEmailTemplate = `<!doctype html>
                                                             <td align="center" bgcolor="darkblue" role="presentation"
                                                                 style="border:none;border-radius:100px;cursor:auto;mso-padding-alt:15px 25px 15px 25px;background:darkblue;"
                                                                 valign="middle"><a
-                                                                    href="https://portal.gbstem.org/dashboard"
+                                                                    href="https://admin.gbstem.org/dashboard"
                                                                     style="display:inline-block;background:darkblue;color:#ffffff;font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:14px;font-weight:normal;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:15px 25px 15px 25px;mso-padding-alt:0px;border-radius:100px;"
                                                                     target="_blank"><b style="font-weight: 700"><b
                                                                             style="font-weight: 700">Access Portal
