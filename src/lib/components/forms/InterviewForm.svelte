@@ -16,7 +16,7 @@
   import { onMount } from 'svelte'
   import Loading from '../Loading.svelte'
   import Input from '$lib/components/Input.svelte'
-    import { formatDate, formatDateLocal, formatDateStringLocal, timestampToDate } from '$lib/utils'
+    import { formatDateLocal, timestampToDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
 
   export let semesterDates: Data.SemesterDates
@@ -104,7 +104,7 @@
       },
       body: JSON.stringify({
         email: scheduledInterview.interviewerEmail,
-        date: formatDateStringLocal(scheduledInterview.date),
+        date: scheduledInterview.date,
         link: scheduledInterview.meetingLink,
         interviewer: scheduledInterview.interviewerName,
         firstName: currentUser.profile.firstName,
@@ -148,7 +148,7 @@
         scheduledInterview = {
           ...interviewInfo,
           id: doc.id,
-          date: formatDate(new Date(interviewInfo['date'].seconds * 1000)),
+          date: formatDateLocal(new Date(interviewInfo['date'].seconds * 1000)),
           interviewSlotStatus:
             new Date(interviewInfo['date'].seconds * 1000) < new Date()
               ? 'completed'
@@ -163,7 +163,7 @@
           valuesJson.push({
             ...interviewInfo,
             id: doc.id,
-            date: formatDate(new Date(interviewInfo['date'].seconds * 1000)),
+            date: formatDateLocal(new Date(interviewInfo['date'].seconds * 1000)),
           } as Data.InterviewSlot)
         }
       }
@@ -254,7 +254,7 @@
             class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
           >
             <p>
-              Your interview will be on {formatDateStringLocal(scheduledInterview.date)} with
+              Your interview will be on {scheduledInterview.date} with
               {scheduledInterview.interviewerName}.
             </p>
             <p>
@@ -271,7 +271,7 @@
           <div
             class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
           >
-            Your interview was on {formatDateStringLocal(scheduledInterview.date)}.
+            Your interview was on {scheduledInterview.date}.
           </div>
         {/if}
       </Card>
