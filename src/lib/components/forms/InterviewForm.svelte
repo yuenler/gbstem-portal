@@ -156,9 +156,11 @@
         } as Data.InterviewSlot
         scheduled = true
       } else {
+        const interviewDate = new Date(interviewInfo['date'].seconds * 1000)
+        const inFourHours = new Date(new Date().getTime() + 4 * 60 * 60 * 1000)
         if (
           interviewInfo['interviewSlotStatus'] === 'available' &&
-          new Date(interviewInfo['date'].seconds * 1000) > new Date()
+          interviewDate > inFourHours && interviewDate < new Date(semesterDates.instructorOrientation)
         ) {
           valuesJson.push({
             ...interviewInfo,
