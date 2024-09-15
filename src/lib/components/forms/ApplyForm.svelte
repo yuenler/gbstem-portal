@@ -371,7 +371,7 @@
           type="number"
           bind:value={values.academic.graduationYear}
           label="Graduation year"
-          min={new Date().getFullYear()}
+          min={new Date().getFullYear() - 30}
           max={new Date().getFullYear() + 20}
           floating
           required
