@@ -561,9 +561,9 @@
     <div class="grid gap-1">
       <span class="mt-3 font-bold">Registration</span>
       <p class="mb-2">
-        To register for our spring semester, you must first fill out this form,
-        providing your availability and course preferences. After this initial
-        registration, class schedules will be posted once registration
+        To register for our semester, you must first fill out this form,
+        providing your course preferences. After this initial
+        registration, class options and their weekly times will be posted once registration
         closes. You will then receive an email notification to proceed with
         class enrollment on a first-come, first-served basis.
       </p>
