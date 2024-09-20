@@ -213,9 +213,9 @@
       
       {#if data.application.status === 'accepted'}
         <ClassDetailsForm semesterDates = {semesterDates} classDetailsDialogEl={undefined} dialog={false}/>
-          <SubClasses />
+          <SubClasses subInstructor={false} />
       {:else if data.application.status === 'substitute'}
-          <SubClasses />
+          <SubClasses subInstructor={true}/>
       {:else if isStudent && new Date() > new Date(semesterDates.classesStart)}
         <StudentSchedule />
       {/if}
