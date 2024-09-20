@@ -230,7 +230,7 @@
         <StudentFeedbackForm />
       {/if}
         {#if data.application.status === 'accepted'}
-          {#if Date.now() > new Date(semesterDates.classesStart).getTime()}
+          {#if Date.now() > new Date(semesterDates.instructorOrientation).getTime()}
             <ClassSchedule semesterDates={semesterDates}/>
           {/if}
         {/if}
