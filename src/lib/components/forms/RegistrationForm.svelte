@@ -250,7 +250,7 @@
                   if (disable) {
                     disabled = false
                   }
-                  alert.trigger('success', 'Your pre-registration was saved.')
+                  alert.trigger('success', 'Your registration was saved.')
                   resolve()
                 },
               )
@@ -498,7 +498,7 @@
           .then(() => {
             alert.trigger(
               'success',
-              'Your pre-registration has been submitted!',
+              'Your registration has been submitted!',
             )
             getDoc(doc(db, registrationsCollection, childUid)).then(
               (applicationDoc) => {
@@ -526,7 +526,7 @@
                   })
                   alert.trigger(
                     'success',
-                    'Your pre-registration has been submitted!',
+                    'Your registration has been submitted!',
                   )
                 })
               },
@@ -552,18 +552,18 @@
 </script>
 
 <svelte:window on:beforeunload={handleUnload} />
-<!-- <div class="rounded-lg bg-red-100 p-4 mt-8 w-full text-center">Do not fill out this form. Pre-registration will open on {semesterDates.newInstructorAppsOpen}!</div> -->
+<!-- <div class="rounded-lg bg-red-100 p-4 mt-8 w-full text-center">Do not fill out this form. Registration will open on {semesterDates.newInstructorAppsOpen}!</div> -->
 <Form
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
   <fieldset class="space-y-14" {disabled}>
     <div class="grid gap-1">
-      <span class="mt-3 font-bold">Pre-Registration</span>
+      <span class="mt-3 font-bold">Registration</span>
       <p class="mb-2">
         To register for our spring semester, you must first fill out this form,
         providing your availability and course preferences. After this initial
-        registration, class schedules will be posted once pre-registration
+        registration, class schedules will be posted once registration
         closes. You will then receive an email notification to proceed with
         class enrollment on a first-come, first-served basis.
       </p>
@@ -834,7 +834,7 @@
         <Input
           type="checkbox"
           bind:value={values.agreements.submitting}
-          label="I understand submitting means I can no longer make changes to my pre-registration. Don't check this box until you are sure that you are ready to submit."
+          label="I understand submitting means I can no longer make changes to my registration. Don't check this box until you are sure that you are ready to submit."
           required
         />
       </div>
@@ -850,7 +850,7 @@
         <div
           class="rounded-md bg-green-100 px-4 py-2 text-center text-green-900 shadow-sm"
         >
-          Pre-registration submitted!
+          Registration submitted!
         </div>
       {:else}
         <button

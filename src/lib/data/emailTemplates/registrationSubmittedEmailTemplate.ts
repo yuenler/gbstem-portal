@@ -164,7 +164,7 @@ export const registrationSubmittedEmailTemplate = `<!doctype html>
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:13px;line-height:1;text-align:left;color:#797e82;">
                                                     <h1
                                                         style="text-align: center;               color: #000000;               font-weight: 700;               font-size: 34px;">
-                                                        Pre-registration Submitted</h1>
+                                                        Registration Submitted</h1>
                                                 </div>
                                             </td>
                                         </tr>
@@ -173,8 +173,8 @@ export const registrationSubmittedEmailTemplate = `<!doctype html>
                                                 style="font-size:0px;padding:10px 25px;padding-top:0px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
-                                                    <p style="margin: 20px 0"><p style="margin: 0 0">Hi {{app.firstName}},</p>Thanks for pre-registering {{app.studentName}} for gbSTEM's fall
-                                                        semester! Please note that your pre-registration does <span
+                                                    <p style="margin: 20px 0"><p style="margin: 0 0">Hi {{app.firstName}},</p>Thanks for registering {{app.studentName}} for gbSTEM's fall
+                                                        semester! Please note that your registration does <span
                                                             style="font-weight: 700">not</span> sign you up for a
                                                         class for the semester, but it registers them to be on the enrollment list. 
                                                         Parent orientation will be on {{app.parentOrientationDate}}; please keep an eye out 
