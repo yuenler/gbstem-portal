@@ -6,6 +6,7 @@
     updateDoc,
     doc,
     getDoc,
+    setDoc,
   } from 'firebase/firestore'
   import { db, user } from '$lib/client/firebase'
   import Form from '$lib/components/Form.svelte'
@@ -18,6 +19,7 @@
   import Input from '$lib/components/Input.svelte'
     import { formatDateLocal, timestampToDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
+    import { last } from 'lodash-es'
 
   export let semesterDates: Data.SemesterDates
 
@@ -43,7 +45,13 @@
         )
         return
       }
-    fetch('/api/slotRequest', {
+    await setDoc(doc(db, 'interviewTimeRequests', currentUser.object.uid+'-'+dateToAdd), {
+      firstName: currentUser.profile.firstName,
+      lastName: currentUser.profile.lastName,
+      email: currentUser.object.email,
+      date: new Date(dateToAdd),
+    })
+    await fetch('/api/slotRequest', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
