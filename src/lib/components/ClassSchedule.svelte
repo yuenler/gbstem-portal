@@ -269,6 +269,9 @@
       subRequestStatus: SubRequestStatus.SubstituteNeeded,
       link: values.meetingLink,
     }
+
+    console.log('subRequest:', subRequest);
+
     setDoc(doc(db, 'subRequests', classId + '---' + subRequestClassNumber), subRequest).then((res) => {
       alert.trigger('success', 'Sub request sent!')
       window.setTimeout(() => { location.reload() }, 1000)
