@@ -123,6 +123,10 @@
 }
 
   async function createLink(): Promise<string> { 
+    if(values.classDay1 === '' || values.classDay2 === '') {
+      alert.trigger('error', 'Please select your class days before creating a meeting link.')
+      return ''
+    }
     const time1 = new Date(values.meetingTimes[0]).getHours()
     const time2 = new Date(values.meetingTimes[1]).getHours()
     let url: string = ''
@@ -166,7 +170,6 @@
       isOnlineMeeting: true,
       onlineMeetingProvider: 'teamsForBusiness'
     };
-
 
     const token = await fetch('/api/token', {
         method: 'POST',
