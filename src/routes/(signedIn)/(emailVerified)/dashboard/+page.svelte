@@ -25,6 +25,7 @@
     | 'rejected'
     | 'submitted'
     | 'interview'
+    | 'substitute'
     | null
 
   type DashboardData = {
@@ -170,6 +171,8 @@
                 for gbSTEM.
               {:else if data.application.status === 'submitted' || data.application.status === 'interview'}
                 Your application is submitted and in review!
+              {:else if data.application.status === 'substitute'}
+                You have been accepted as a substitute instructor. Keep an eye on this page for listings!
               {:else}
                 Your application is in progress. Make sure to submit by the
                 deadline!
@@ -210,10 +213,11 @@
       
       {#if data.application.status === 'accepted'}
         <ClassDetailsForm semesterDates = {semesterDates} classDetailsDialogEl={undefined} dialog={false}/>
-          <SubClasses />
+          <SubClasses subInstructor={false} />
+      {:else if data.application.status === 'substitute'}
+          <SubClasses subInstructor={true}/>
       {:else if isStudent && new Date() > new Date(semesterDates.classesStart)}
         <StudentSchedule />
-        
       {/if}
       <div>
         {#if data.application.status === 'interview'}

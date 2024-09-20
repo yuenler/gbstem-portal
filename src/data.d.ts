@@ -46,7 +46,7 @@ declare global {
       name: string
     }
 
-    type Decision = 'accepted' | 'waitlisted' | 'rejected'
+    type Decision = 'accepted' | 'waitlisted' | 'rejected' | 'substitute'
 
     type EmailData = {
       Subject: string,

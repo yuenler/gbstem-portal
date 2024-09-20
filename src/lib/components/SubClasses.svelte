@@ -16,6 +16,8 @@
      import Card from "./Card.svelte"
     import { curriculums } from "./helpers/curriculum"
 
+    export let subInstructor: boolean
+
     let feedbackDialogEl: Dialog[] = []
     let notesDialogEl: Dialog[] = []
     let currentUser: Data.User.Store
@@ -212,6 +214,7 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
         <p>You are not currently substituting any classes.</p>
     {/if}
     </Card>
+    {#if subInstructor !== true}    
     <Card class = 'mb-2 mt-2'>
     <h2 class="my-2 text-xl font-bold">Your Sub Requests</h2>
     <div>
@@ -244,6 +247,7 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
         {/if}
     </div>
     </Card>
+    {/if}
     <Card>
     <h2 class="ml-2 mt-2 text-xl font-bold">Substituting Classes</h2>
     <hr class="mb-3 mt-5" />
