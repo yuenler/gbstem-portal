@@ -55,6 +55,8 @@
           selectedStudentName = data.personal.studentFirstName
           classes = await fetchClassSchedules(classIds)
           nextClass = classes.filter(classDate => new Date(classDate.meetingTime) > new Date()).sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime))[0]
+          console.log(nextClass.meetingTime)
+          console.log(formatDate(timestampToDate(new Date(nextClass.meetingTime))))
         }
       },
     )
