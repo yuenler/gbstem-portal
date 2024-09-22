@@ -13,7 +13,7 @@
   type ClassDate = {course: string, meetingTime: Date, link: string}
   let classes: ClassDate[] = []
   let nextClass: ClassDate = null 
-  let listView: boolean = true
+  let listView: boolean = false
   let courses = new Set()
   let selectedStudentUid = ''
   let selectedStudentName = ''
