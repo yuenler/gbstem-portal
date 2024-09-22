@@ -55,8 +55,6 @@
           selectedStudentName = data.personal.studentFirstName
           classes = await fetchClassSchedules(classIds)
           nextClass = classes.filter(classDate => new Date(classDate.meetingTime) > new Date()).sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime))[0]
-          console.log(nextClass.meetingTime)
-          console.log(formatDate(timestampToDate(new Date(nextClass.meetingTime))))
         }
       },
     )
@@ -74,7 +72,7 @@
     <Card>
       <div class="font-bold mb-2">Next Upcoming Class For {selectedStudentName}:</div>
         <div>
-          {nextClass === undefined ? 'No Upcoming Classes' :  nextClass.course + ' ' + formatDate(timestampToDate(new Date(nextClass.meetingTime)))}
+          {nextClass === undefined ? 'No Upcoming Classes' :  nextClass.course + ' ' + formatDate(nextClass.meetingTime)}
         </div>
         <Button color="blue" class="mb-2 mt-4" on:click={() => {window.open(nextClass?.link)}}
           >Join Class</Button>
