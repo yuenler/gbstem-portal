@@ -399,7 +399,7 @@
         placeholder="Filter by course"
         options={coursesJson}
       />
-      <Button color="red" on:click={() => clearFilter()}>Clear Filter</Button>
+      <Button color="blue" on:click={() => clearFilter()}>Remove Filter</Button>
     </div>
       {#if isStudent}
         <Button
