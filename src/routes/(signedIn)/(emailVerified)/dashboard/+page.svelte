@@ -216,7 +216,7 @@
           <SubClasses subInstructor={false} />
       {:else if data.application.status === 'substitute'}
           <SubClasses subInstructor={true}/>
-      {:else if isStudent && new Date() > new Date(semesterDates.classesStart)}
+      {:else if isStudent && new Date() > new Date(semesterDates.studentOrientation)}
         <StudentSchedule />
       {/if}
       <div>
@@ -226,7 +226,7 @@
       </div>
      </div>
      <div>
-     {#if isStudent && new Date() > new Date(semesterDates.classesStart)}
+     {#if isStudent && new Date() > new Date(semesterDates.studentOrientation)}
         <StudentFeedbackForm />
       {/if}
         {#if data.application.status === 'accepted'}

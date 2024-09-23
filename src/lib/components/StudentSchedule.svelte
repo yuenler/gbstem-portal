@@ -13,7 +13,7 @@
   type ClassDate = {course: string, meetingTime: Date, link: string}
   let classes: ClassDate[] = []
   let nextClass: ClassDate = null 
-  let listView: boolean = true
+  let listView: boolean = false
   let courses = new Set()
   let selectedStudentUid = ''
   let selectedStudentName = ''
@@ -72,7 +72,7 @@
     <Card>
       <div class="font-bold mb-2">Next Upcoming Class For {selectedStudentName}:</div>
         <div>
-          {nextClass === undefined ? 'No Upcoming Classes' :  nextClass.course + ' ' + formatDate(timestampToDate(new Date(nextClass.meetingTime)))}
+          {nextClass === undefined ? 'No Upcoming Classes' :  nextClass.course + ' ' + formatDate(nextClass.meetingTime)}
         </div>
         <Button color="blue" class="mb-2 mt-4" on:click={() => {window.open(nextClass?.link)}}
           >Join Class</Button>
