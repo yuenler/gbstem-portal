@@ -190,7 +190,7 @@
             you have registered each student by the deadline!
           </p>
           <div class="flex items-center justify-between rounded-lg bg-red-100 p-4 mt-2">NOTICE: gbSTEM is bumping up the minimum grade requirement to 1st grade. We have found that at this age, students are more able to gain a meaningful experience out of our classes.</div>
-          <div class="rounded-lg bg-green-100 p-4 mt-2">NEW COURSE: gbSTEM is now offering a Lego Robotics Competition program. Sessions will be held in person weekly on Saturdays at the Cambridge Public Library. Students enrolled will get the chance to work together to build a robot and compete in an international competition. Learn more <a class="underline" href='www.gbstem.org/#/robotics'>here</a>.</div>
+          <div class="rounded-lg bg-green-100 p-4 mt-2">NEW COURSE: gbSTEM is now offering a Lego Robotics Competition program. Sessions will be held in person weekly on Saturdays at the Cambridge Public Library. Students enrolled will get the chance to work together to build a robot to solve mission puzzles. Learn more <a class="underline" href='www.gbstem.org/#/robotics'>here</a>.</div>
           {#if numSubmitted > 0}
             <p>
               You currently have {numSubmitted} student{numSubmitted > 1
