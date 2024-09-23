@@ -277,6 +277,15 @@
       })
   }
 
+  function clearFilter() {
+    classFilter = ''
+  }
+
+  function clearEnrolled() {
+    clearFilter()
+    onlyShowEnrolled = !onlyShowEnrolled
+  }
+
   async function unenrollFromClass(classId: string): Promise<void> {
     const classDocRef = doc(db, classesCollection, classId)
     await updateDoc(classDocRef, {
@@ -384,17 +393,20 @@
     <Loading />
   {:else}
     <div class="mb-5 flex items-center justify-between">
+      <div class="flex gap-2">
       <Select
         bind:value={classFilter}
         placeholder="Filter by course"
         options={coursesJson}
       />
+      <Button color="red" on:click={() => clearFilter()}>Clear Filter</Button>
+    </div>
       {#if isStudent}
         <Button
           color={onlyShowEnrolled ? 'blue' : 'gray'}
-          on:click={() => (onlyShowEnrolled = !onlyShowEnrolled)}
+          on:click={() => clearEnrolled()}
         >
-          {onlyShowEnrolled ? 'Show all classes' : 'Show only enrolled classes'}
+          {onlyShowEnrolled ? 'Show all classes' : 'Show enrolled classes'}
         </Button>
       {/if}
     </div>
