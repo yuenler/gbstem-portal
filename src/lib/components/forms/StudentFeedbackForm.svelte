@@ -72,7 +72,7 @@
     values.studentId = selectedStudentUid
     if (e.detail.error === null) {
       showValidation = false
-      disabled = true
+      disabled = false
       if ($user) {
         setDoc(
           doc(db, studentFeedbackCollection, `${values.classId}-${Date.now()}`),
@@ -85,6 +85,10 @@
             disabled = false
             alert.trigger('error', err.code, true)
           })
+          values.classId = ''
+          values.rating = 0
+          values.feedback = ''
+          values.date = new Date().toISOString().slice(0, 10)
       }
     } else {
       showValidation = true
