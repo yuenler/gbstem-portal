@@ -393,20 +393,22 @@
     <Loading />
   {:else}
     <div class="mb-5 flex items-center justify-between">
-      <div class="flex gap-2">
+      <div class="flex gap-2 items-center">
       <Select
         bind:value={classFilter}
         placeholder="Filter by course"
         options={coursesJson}
       />
-      <Button color="blue" on:click={() => clearFilter()}>Remove Filter</Button>
+      {#if classFilter !== ''}
+       <Button color="blue" on:click={() => clearFilter()}>Remove Filter</Button>
+      {/if}
     </div>
       {#if isStudent}
         <Button
           color={onlyShowEnrolled ? 'blue' : 'gray'}
           on:click={() => clearEnrolled()}
         >
-          {onlyShowEnrolled ? 'Show all classes' : 'Show enrolled classes'}
+          {onlyShowEnrolled ? 'Show all classes' : 'Show all enrolled classes'}
         </Button>
       {/if}
     </div>
