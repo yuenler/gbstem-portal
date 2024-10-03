@@ -213,9 +213,11 @@
    */
   function findNextClassDate() {
      const todayDates = values.meetingTimes.filter(schedule => new Date(schedule).toDateString() === new Date().toDateString())
-     if (todayDates.length > 1) {
-       return todayDates.findIndex(date => date.getHours() + 1 >= new Date().getHours())
-     } else {
+     if(todayDates.length === 1) {
+        return values.meetingTimes.findIndex(schedule => new Date(schedule).toDateString() === new Date().toDateString())
+     } else if (todayDates.length > 1) {
+       return values.meetingTimes.findIndex(date => new Date(date).toDateString() === new Date().toDateString() && date.getHours() + 1 >= new Date().getHours())
+     } else{
       return values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
      }
   }
@@ -324,6 +326,7 @@ onMount(() => {
             if (students) {
               getStudentList(students)
             }
+            console.log(meetingTimes)
             if (values && meetingTimes) {
               meetingTimes.sort((a, b) => {
                 return a.getTime() - b.getTime()
