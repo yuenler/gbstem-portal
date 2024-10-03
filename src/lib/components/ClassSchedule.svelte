@@ -201,6 +201,7 @@
     })
 
     originalMeetingTimes = [...editedMeetingTimes]
+    values.meetingTimes = editedMeetingTimes.map((time: string) => new Date(time))
     feedbackCompleted = newFeedback
     classStatuses = newClassStatuses
     updateMeetingTimes(feedbackCompleted, classStatuses)
