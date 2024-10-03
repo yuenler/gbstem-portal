@@ -85,7 +85,7 @@
     setDoc(doc(db, 'subRequests', currentUser.object.uid + '---' + editingSubRequest.classNumber), editingSubRequest).then((res) => {
       alert.trigger('success', 'Sub request updated!')
       if(editingSubRequest.classNumber !== originalSubClassNumbers[i]) {
-        deleteSubRequest(originalSubClassNumbers[i])
+        deleteSubRequest(originalSubClassNumbers[i], false)
       }
       getData(currentUser.object.uid);
     }).catch((err) => {
@@ -93,8 +93,8 @@
     })
   }
 
-  function deleteSubRequest(classNumber: number) {
-        if (confirm('Are you sure you want to delete this sub request?')) {
+  function deleteSubRequest(classNumber: number, check: boolean) {
+        if (check === false || confirm('Are you sure you want to delete this sub request?')) {
             deleteDoc(doc(db, substituteRequestsCollection, currentUser.object.uid + '---' + classNumber)).then(() => {
                 alert.trigger('success', 'Sub request deleted!')
                 getData(currentUser.object.uid)
@@ -293,27 +293,27 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Found</strong></p>
                     <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
-                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i])}><Trash2Icon class="h-8"/></Button>
+                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i], true)}><Trash2Icon class="h-8"/></Button>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteNeeded}
                 <div class="flex items-center justify-between rounded-lg bg-red-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Needed</strong></p>
                     <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
-                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i])}><Trash2Icon class="h-8" /></Button>
+                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i], true)}><Trash2Icon class="h-8" /></Button>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteFeedbackNeeded}
                 <div class="flex items-center justify-between rounded-lg bg-yellow-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Awaiting Substitute Feedback Submission</strong></p>
                     <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
-                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i])}><Trash2Icon class="h-8" /></Button>
+                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i], true)}><Trash2Icon class="h-8" /></Button>
                 </div>
             {:else}
                 <div class="flex items-center justify-between rounded-lg bg-green-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substituted Class Complete</strong></p>
-                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i])}><Trash2Icon class="h-8"/></Button>
+                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i], true)}><Trash2Icon class="h-8"/></Button>
                 </div>
             {/if}
         {/each}
