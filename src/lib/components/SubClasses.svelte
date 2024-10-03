@@ -96,7 +96,7 @@
   function deleteSubRequest(classNumber: number, check: boolean) {
         if (check === false || confirm('Are you sure you want to delete this sub request?')) {
             deleteDoc(doc(db, substituteRequestsCollection, currentUser.object.uid + '---' + classNumber)).then(() => {
-                alert.trigger('success', 'Sub request deleted!')
+                alert.trigger('success', check ? 'Sub request deleted!' : 'Sub request updated!')
                 getData(currentUser.object.uid)
             }).catch(() => {
                 alert.trigger('error', 'Failed to delete sub request, please try again.')
@@ -284,7 +284,7 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
                     on:click={() => {
                         sendSubRequest(i)
                         subRequestDialogEl[i].close()
-                    }}>Confirm Request</Button
+                    }}>Save Edits</Button
                     >
                 </div>
             </Dialog>
