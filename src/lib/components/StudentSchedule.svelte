@@ -54,7 +54,12 @@
           const classIds = data.classes || []
           selectedStudentName = data.personal.studentFirstName
           classes = await fetchClassSchedules(classIds)
-          nextClass = classes.filter(classDate => new Date(classDate.meetingTime) > new Date()).sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime))[0]
+          const classesToday = classes.filter(classDate => new Date(classDate.meetingTime).toDateString() === new Date().toDateString())
+          if (classesToday.length > 0) {
+            nextClass = classesToday.filter((classDate) => new Date(classDate.meetingTime).getHours() >= new Date().getHours()).sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime))[0]
+          } else {
+            nextClass = classes.filter(classDate => new Date(classDate.meetingTime) > new Date()).sort((a, b) => new Date(a.meetingTime) - new Date(b.meetingTime))[0]
+          }
         }
       },
     )
