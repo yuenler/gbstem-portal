@@ -211,7 +211,12 @@
    * @returns The index of the next class date
    */
   function findNextClassDate() {
-     return values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
+     const todayDates = values.meetingTimes.filter(schedule => new Date(schedule).toDateString() === new Date().toDateString())
+     if (todayDates.length > 1) {
+       return todayDates.findIndex(date => date.getHours() + 1 >= new Date().getHours())
+     } else {
+      return values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
+     }
   }
 
   /**
@@ -228,6 +233,7 @@
         if (!classTodayHeld(completedClassDates))
           completedClassDates = [...completedClassDates, new Date()]
         let classToday = false
+        console.log(nextClassIndex)
         if (
           nextClassIndex !== -1 &&
           nextClassIndex < meetingTimes.length &&
