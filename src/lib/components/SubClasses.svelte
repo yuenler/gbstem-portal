@@ -292,21 +292,21 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
                 <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Found</strong></p>
-                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit Request</Button>
+                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
                     <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i])}><Trash2Icon class="h-8"/></Button>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteNeeded}
                 <div class="flex items-center justify-between rounded-lg bg-red-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Needed</strong></p>
-                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit Request</Button>
+                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
                     <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i])}><Trash2Icon class="h-8" /></Button>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteFeedbackNeeded}
                 <div class="flex items-center justify-between rounded-lg bg-yellow-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Awaiting Substitute Feedback Submission</strong></p>
-                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit Request</Button>
+                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
                     <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i])}><Trash2Icon class="h-8" /></Button>
                 </div>
             {:else}
