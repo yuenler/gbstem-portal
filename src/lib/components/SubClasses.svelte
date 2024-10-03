@@ -67,7 +67,7 @@
             }
         })
         subRequestsFromUser = userSubRequests
-        stringSubRequestDates = userSubRequests.map((subRequest) => timestampToDate(subRequest.dateOfClass).toISOString())
+        stringSubRequestDates = userSubRequests.map((subRequest) => timestampToDate(subRequest.dateOfClass).toString())
         userSubClassesList = userSubClasses
         return classesMissingSubs;
     }
@@ -239,7 +239,7 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
     <div>
         {#if subRequestsFromUser.length > 0}
         {#each subRequestsFromUser as subRequest, i}
-            <Dialog bind:this={subRequestDialogEl[i]} size="full" alert>
+            <Dialog bind:this={subRequestDialogEl[i]} size="min" alert>
                 <svelte:fragment slot="title"><div class = "flex justify-between items-center">{subRequest.course} Substitute Class Feedback Form <Button color = 'red' class="font-light" on:click={subRequestDialogEl[i].cancel}>Close</Button></div> </svelte:fragment>
                 <div slot="description">
                     <Input
