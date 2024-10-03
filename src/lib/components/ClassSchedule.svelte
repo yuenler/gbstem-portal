@@ -387,7 +387,7 @@ onMount(() => {
     </DialogActions>
   </div>
 </Dialog>
-<Dialog bind:this={feedbackDialogEl} size="full" alert>
+<Dialog bind:this={feedbackDialogEl} size="min" alert>
   <svelte:fragment slot="title"><div class = "flex justify-between items-center">Weekly {values.course} Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl.cancel}>Close</Button></div> </svelte:fragment>
   <div slot="description">
     <InstructorFeedbackForm classBeingSubbed={undefined} sessionNumber = {nextClassIndex + 1}/>

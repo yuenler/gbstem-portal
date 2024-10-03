@@ -29,6 +29,7 @@
     let classesCheckedOff: any[] = []
     let updating = false
     let subRequestsFromUser: Data.SubRequest[] = []
+    let stringSubRequestDates: string[] = []
 
     onMount(() => {
         return user.subscribe(async (user) => {
@@ -66,6 +67,7 @@
             }
         })
         subRequestsFromUser = userSubRequests
+        stringSubRequestDates = userSubRequests.map((subRequest) => timestampToDate(subRequest.dateOfClass).toISOString())
         userSubClassesList = userSubClasses
         return classesMissingSubs;
     }
@@ -76,6 +78,7 @@
       return
     }
     const editingSubRequest = subRequestsFromUser[i]
+    editingSubRequest.dateOfClass = new Date(stringSubRequestDates[i])
     setDoc(doc(db, 'subRequests', currentUser.object.uid + '---' + editingSubRequest.classNumber), editingSubRequest).then((res) => {
       alert.trigger('success', 'Sub request updated!')
       getData(currentUser.object.uid);
@@ -201,7 +204,7 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
         <h2 class="font-bold mt-4 text-xl mb-2">Your Classes To Substitute</h2>
     {#if userSubClassesList.length > 0}
     {#each userSubClassesList as classBeingSubbed, i}
-    <Dialog bind:this={feedbackDialogEl[i]} size="full" alert>
+    <Dialog bind:this={feedbackDialogEl[i]} size="min" alert>
         <svelte:fragment slot="title"><div class = "flex justify-between items-center">{classBeingSubbed.course} Substitute Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl[i].cancel}>Close</Button></div> </svelte:fragment>
         <div slot="description">
             <InstructorFeedbackForm classBeingSubbed={classBeingSubbed} sessionNumber={classBeingSubbed.classNumber}/>
@@ -249,7 +252,7 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
                     <Input
                     type="datetime-local"
                     class="rounded border p-1"
-                    bind:value={subRequestsFromUser[i].dateOfClass}
+                    bind:value={stringSubRequestDates[i]}
                     floating
                     label="Please confirm the date and time of the class you would like to request a sub for."
                     />
