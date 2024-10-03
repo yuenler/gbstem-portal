@@ -84,7 +84,7 @@
     setDoc(doc(db, 'subRequests', currentUser.object.uid + '---' + editingSubRequest.classNumber), editingSubRequest).then((res) => {
       alert.trigger('success', 'Sub request updated!')
       if(editingSubRequest.classNumber !== originalSubClassNumbers[i]) {
-        deleteSubRequest(i)
+        deleteSubRequest(originalSubClassNumbers[i])
       }
       getData(currentUser.object.uid);
     }).catch((err) => {
@@ -92,9 +92,9 @@
     })
   }
 
-  function deleteSubRequest(i: number) {
+  function deleteSubRequest(classNumber: number) {
         if (confirm('Are you sure you want to delete this sub request?')) {
-            deleteDoc(doc(db, substituteRequestsCollection, currentUser.object.uid + '---' + subRequestsFromUser[i].classNumber)).then(() => {
+            deleteDoc(doc(db, substituteRequestsCollection, currentUser.object.uid + '---' + classNumber)).then(() => {
                 alert.trigger('success', 'Sub request deleted!')
                 getData(currentUser.object.uid)
             }).catch(() => {
