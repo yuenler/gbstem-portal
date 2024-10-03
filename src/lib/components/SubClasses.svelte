@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte"
     import { db, user } from '$lib/client/firebase'
-    import { collection, doc, DocumentReference, getDoc, getDocs, query, updateDoc, setDoc } from "firebase/firestore"
+    import { collection, doc, DocumentReference, getDoc, getDocs, query, updateDoc, setDoc, deleteDoc } from "firebase/firestore"
     import { classesCollection, registrationsCollection, substituteRequestsCollection } from "$lib/data/constants"
     import { SubRequestStatus } from "./helpers/SubRequestStatus"
     import { classTodayHeld, formatDate, timestampToDate } from "$lib/utils"
@@ -30,6 +30,7 @@
     let updating = false
     let subRequestsFromUser: Data.SubRequest[] = []
     let stringSubRequestDates: string[] = []
+    let originalSubClassNumbers: number[] = []
 
     onMount(() => {
         return user.subscribe(async (user) => {
@@ -68,6 +69,7 @@
         })
         subRequestsFromUser = userSubRequests
         stringSubRequestDates = userSubRequests.map((subRequest) => timestampToDate(subRequest.dateOfClass).toString())
+        originalSubClassNumbers = userSubRequests.map((subRequest) => subRequest.classNumber)
         userSubClassesList = userSubClasses
         return classesMissingSubs;
     }
@@ -81,11 +83,25 @@
     editingSubRequest.dateOfClass = new Date(stringSubRequestDates[i])
     setDoc(doc(db, 'subRequests', currentUser.object.uid + '---' + editingSubRequest.classNumber), editingSubRequest).then((res) => {
       alert.trigger('success', 'Sub request updated!')
+      if(editingSubRequest.classNumber !== originalSubClassNumbers[i]) {
+        deleteSubRequest(i)
+      }
       getData(currentUser.object.uid);
     }).catch((err) => {
       alert.trigger('error', 'Failed to update sub request, please try again.')
     })
   }
+
+  function deleteSubRequest(i: number) {
+        if (confirm('Are you sure you want to delete this sub request?')) {
+            deleteDoc(doc(db, substituteRequestsCollection, currentUser.object.uid + '---' + subRequestsFromUser[i].classNumber)).then(() => {
+                alert.trigger('success', 'Sub request deleted!')
+                getData(currentUser.object.uid)
+            }).catch(() => {
+                alert.trigger('error', 'Failed to delete sub request, please try again.')
+            })
+        }
+    }
 
     function handleSubmit() {
         const classesToSub = classesCheckedOff.filter((classCheckedOff: any) => classCheckedOff !== null).map((classCheckedOff: any) => classCheckedOff[0])
@@ -276,23 +292,27 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Found</strong></p>
                     <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit Request</Button>
+                    <Button color="red" on:click={() => deleteSubRequest(i)}><i class="fa fa-trash-o"></i></Button>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteNeeded}
                 <div class="flex items-center justify-between rounded-lg bg-red-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Needed</strong></p>
                     <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit Request</Button>
+                    <Button color="red" on:click={() => deleteSubRequest(i)}><i class="fa fa-trash-o"></i></Button>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteFeedbackNeeded}
                 <div class="flex items-center justify-between rounded-lg bg-yellow-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Awaiting Substitute Feedback Submission</strong></p>
                     <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit Request</Button>
+                    <Button color="red" on:click={() => deleteSubRequest(i)}><i class="fa fa-trash-o"></i></Button>
                 </div>
             {:else}
                 <div class="flex items-center justify-between rounded-lg bg-green-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substituted Class Complete</strong></p>
+                    <Button color="red" on:click={() => deleteSubRequest(i)}><i class="fa fa-trash-o"></i></Button>
                 </div>
             {/if}
         {/each}
