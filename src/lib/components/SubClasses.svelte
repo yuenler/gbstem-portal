@@ -188,7 +188,7 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
     <Dialog bind:this={feedbackDialogEl[i]} size="full" alert>
         <svelte:fragment slot="title"><div class = "flex justify-between items-center">{classBeingSubbed.course} Substitute Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl[i].cancel}>Close</Button></div> </svelte:fragment>
         <div slot="description">
-            <InstructorFeedbackForm classBeingSubbed={classBeingSubbed}/>
+            <InstructorFeedbackForm classBeingSubbed={classBeingSubbed} sessionNumber={classBeingSubbed.classNumber}/>
         </div>
     </Dialog>
     <Dialog bind:this={notesDialogEl[i]} size="min">

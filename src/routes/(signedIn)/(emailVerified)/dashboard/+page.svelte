@@ -13,7 +13,6 @@
   import { getDoc, doc, collection, getDocs, query } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
   import StudentFeedbackForm from '$lib/components/forms/StudentFeedbackForm.svelte'
-  import InstructorFeedbackForm from '$lib/components/forms/InstructorFeedbackForm.svelte'
   import Button from '$lib/components/Button.svelte'
   import { applicationsCollection, decisionsCollection, registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
   import SubClasses from '$lib/components/SubClasses.svelte'
