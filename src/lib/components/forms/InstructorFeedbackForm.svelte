@@ -24,13 +24,14 @@
 
   // export let feedbackDialogEl: Dialog
   export let classBeingSubbed: Data.SubRequest | undefined
+  export let sessionNumber: number
 
   let disabled = false
   let showValidation = false
   let currentUser: Data.User.Store
   let loading = true
   let classDate = ''
-  let classNumber = classBeingSubbed === undefined ? 0 : classBeingSubbed.classNumber
+  let classNumber = sessionNumber !== undefined ? sessionNumber : classBeingSubbed === undefined ? 0 : classBeingSubbed.classNumber
   let course = ''
   let feedbackCompletedArray: boolean[] = []
   let classStatusesArray: string[] = []
@@ -169,7 +170,7 @@
           type="number"
           bind:value={classNumber}
           floating
-          label="Class Number"
+          label="Class Session Number"
           required
         />
       </div>

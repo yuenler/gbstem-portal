@@ -201,6 +201,7 @@
     })
 
     originalMeetingTimes = [...editedMeetingTimes]
+    values.meetingTimes = editedMeetingTimes.map((time: string) => new Date(time))
     feedbackCompleted = newFeedback
     classStatuses = newClassStatuses
     updateMeetingTimes(feedbackCompleted, classStatuses)
@@ -211,7 +212,15 @@
    * @returns The index of the next class date
    */
   function findNextClassDate() {
-     return values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
+     const todayDates = values.meetingTimes.filter(schedule => new Date(schedule).toDateString() === new Date().toDateString())
+     if(todayDates.length === 1) {
+        return values.meetingTimes.findIndex(schedule => new Date(schedule).toDateString() === new Date().toDateString())
+     } else if (todayDates.length > 1) {
+       const futureTodayClasses = todayDates.filter((classDate) => new Date(classDate).getHours() >= new Date().getHours())
+       return futureTodayClasses.length > 0 ? values.meetingTimes.findIndex(date => new Date(date).toDateString() === new Date().toDateString() && date.getHours() >= new Date().getHours()) : values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
+     } else{
+       return values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
+     }
   }
 
   /**
@@ -228,6 +237,7 @@
         if (!classTodayHeld(completedClassDates))
           completedClassDates = [...completedClassDates, new Date()]
         let classToday = false
+        console.log(nextClassIndex)
         if (
           nextClassIndex !== -1 &&
           nextClassIndex < meetingTimes.length &&
@@ -317,6 +327,7 @@ onMount(() => {
             if (students) {
               getStudentList(students)
             }
+            console.log(meetingTimes)
             if (values && meetingTimes) {
               meetingTimes.sort((a, b) => {
                 return a.getTime() - b.getTime()
@@ -376,10 +387,10 @@ onMount(() => {
     </DialogActions>
   </div>
 </Dialog>
-<Dialog bind:this={feedbackDialogEl} size="full" alert>
+<Dialog bind:this={feedbackDialogEl} size="min" alert>
   <svelte:fragment slot="title"><div class = "flex justify-between items-center">Weekly {values.course} Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl.cancel}>Close</Button></div> </svelte:fragment>
   <div slot="description">
-    <InstructorFeedbackForm classBeingSubbed={undefined}/>
+    <InstructorFeedbackForm classBeingSubbed={undefined} sessionNumber = {nextClassIndex + 1}/>
   </div>
 </Dialog>
 <ClassDetailsForm bind:classDetailsDialogEl dialog={true} semesterDates={semesterDates}/>

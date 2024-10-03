@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte"
     import { db, user } from '$lib/client/firebase'
-    import { collection, doc, DocumentReference, getDoc, getDocs, query, updateDoc } from "firebase/firestore"
+    import { collection, doc, DocumentReference, getDoc, getDocs, query, updateDoc, setDoc, deleteDoc } from "firebase/firestore"
     import { classesCollection, registrationsCollection, substituteRequestsCollection } from "$lib/data/constants"
     import { SubRequestStatus } from "./helpers/SubRequestStatus"
     import { classTodayHeld, formatDate, timestampToDate } from "$lib/utils"
@@ -14,12 +14,15 @@
      import Dialog from './Dialog.svelte'
      import InstructorFeedbackForm from './forms/InstructorFeedbackForm.svelte'
      import Card from "./Card.svelte"
+     import Input from "./Input.svelte"
     import { curriculums } from "./helpers/curriculum"
+    import { Trash2Icon } from "svelte-feather-icons"
 
     export let subInstructor: boolean
 
     let feedbackDialogEl: Dialog[] = []
     let notesDialogEl: Dialog[] = []
+    let subRequestDialogEl: Dialog[] = []
     let currentUser: Data.User.Store
     let classesMissingSubs: Data.SubRequest[] = []
     let userSubClassesList: Data.SubRequest[] = []
@@ -27,6 +30,8 @@
     let classesCheckedOff: any[] = []
     let updating = false
     let subRequestsFromUser: Data.SubRequest[] = []
+    let stringSubRequestDates: string[] = []
+    let originalSubClassNumbers: number[] = []
 
     onMount(() => {
         return user.subscribe(async (user) => {
@@ -64,8 +69,39 @@
             }
         })
         subRequestsFromUser = userSubRequests
+        stringSubRequestDates = userSubRequests.map((subRequest) => timestampToDate(subRequest.dateOfClass).toString())
+        originalSubClassNumbers = userSubRequests.map((subRequest) => subRequest.classNumber)
         userSubClassesList = userSubClasses
         return classesMissingSubs;
+    }
+
+    function sendSubRequest(i: number) {
+    if(subRequestsFromUser[i] === null) {
+      alert.trigger('error', 'You are not currently editing a sub request.')
+      return
+    }
+    const editingSubRequest = subRequestsFromUser[i]
+    editingSubRequest.dateOfClass = new Date(stringSubRequestDates[i])
+    setDoc(doc(db, 'subRequests', currentUser.object.uid + '---' + editingSubRequest.classNumber), editingSubRequest).then((res) => {
+      alert.trigger('success', 'Sub request updated!')
+      if(editingSubRequest.classNumber !== originalSubClassNumbers[i]) {
+        deleteSubRequest(originalSubClassNumbers[i], false)
+      }
+      getData(currentUser.object.uid);
+    }).catch((err) => {
+      alert.trigger('error', 'Failed to update sub request, please try again.')
+    })
+  }
+
+  function deleteSubRequest(classNumber: number, check: boolean) {
+        if (check === false || confirm('Are you sure you want to delete this sub request?')) {
+            deleteDoc(doc(db, substituteRequestsCollection, currentUser.object.uid + '---' + classNumber)).then(() => {
+                alert.trigger('success', check ? 'Sub request deleted!' : 'Sub request updated!')
+                getData(currentUser.object.uid)
+            }).catch(() => {
+                alert.trigger('error', 'Failed to delete sub request, please try again.')
+            })
+        }
     }
 
     function handleSubmit() {
@@ -185,10 +221,10 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
         <h2 class="font-bold mt-4 text-xl mb-2">Your Classes To Substitute</h2>
     {#if userSubClassesList.length > 0}
     {#each userSubClassesList as classBeingSubbed, i}
-    <Dialog bind:this={feedbackDialogEl[i]} size="full" alert>
+    <Dialog bind:this={feedbackDialogEl[i]} size="min" alert>
         <svelte:fragment slot="title"><div class = "flex justify-between items-center">{classBeingSubbed.course} Substitute Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl[i].cancel}>Close</Button></div> </svelte:fragment>
         <div slot="description">
-            <InstructorFeedbackForm classBeingSubbed={classBeingSubbed}/>
+            <InstructorFeedbackForm classBeingSubbed={classBeingSubbed} sessionNumber={classBeingSubbed.classNumber}/>
         </div>
     </Dialog>
     <Dialog bind:this={notesDialogEl[i]} size="min">
@@ -219,26 +255,65 @@ function getStudentList(studentUids: string[]): Promise<Student[]> {
     <h2 class="my-2 text-xl font-bold">Your Sub Requests</h2>
     <div>
         {#if subRequestsFromUser.length > 0}
-        {#each subRequestsFromUser as subRequest}
+        {#each subRequestsFromUser as subRequest, i}
+            <Dialog bind:this={subRequestDialogEl[i]} size="min" alert>
+                <svelte:fragment slot="title"><div class = "flex justify-between items-center">{subRequest.course} Substitute Class Feedback Form <Button color = 'red' class="font-light" on:click={subRequestDialogEl[i].cancel}>Close</Button></div> </svelte:fragment>
+                <div slot="description">
+                    <Input
+                    type="number"
+                    class="rounded border p-1"
+                    bind:value={subRequestsFromUser[i].classNumber}
+                    floating
+                    label="Please confirm the class number ."
+                    />
+                    <Input
+                    type="datetime-local"
+                    class="rounded border p-1"
+                    bind:value={stringSubRequestDates[i]}
+                    floating
+                    label="Please confirm the date and time of the class you would like to request a sub for."
+                    />
+                    <Input
+                    type="text"
+                    class="rounded border p-1"
+                    bind:value={subRequestsFromUser[i].notes}
+                    label="Please describe what topic/lesson the substitute class will cover, and any helpful notes for the substitute instructor."
+                    />
+                    <Button
+                    color="green"
+                    on:click={() => {
+                        sendSubRequest(i)
+                        subRequestDialogEl[i].close()
+                    }}>Save Edits</Button
+                    >
+                </div>
+            </Dialog>
             {#if subRequest.subRequestStatus === SubRequestStatus.SubstituteFound}
                 <div class="flex items-center justify-between rounded-lg bg-blue-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Found</strong></p>
+                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
+                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i], true)}><Trash2Icon class="h-8"/></Button>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteNeeded}
                 <div class="flex items-center justify-between rounded-lg bg-red-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substitute Needed</strong></p>
+                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
+                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i], true)}><Trash2Icon class="h-8" /></Button>
                 </div>
             {:else if subRequest.subRequestStatus === SubRequestStatus.SubstituteFeedbackNeeded}
                 <div class="flex items-center justify-between rounded-lg bg-yellow-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Awaiting Substitute Feedback Submission</strong></p>
+                    <Button color="gray" on:click={() => {subRequestDialogEl[i].open()}}>Edit</Button>
+                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i], true)}><Trash2Icon class="h-8" /></Button>
                 </div>
             {:else}
                 <div class="flex items-center justify-between rounded-lg bg-green-100 p-4 mt-2">
                     <p>{subRequest.course} class #{subRequest.classNumber} at {formatDate(timestampToDate(subRequest.dateOfClass))}</p>
                     <p><strong>Status: Substituted Class Complete</strong></p>
+                    <Button color="red" on:click={() => deleteSubRequest(originalSubClassNumbers[i], true)}><Trash2Icon class="h-8"/></Button>
                 </div>
             {/if}
         {/each}
