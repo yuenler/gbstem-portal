@@ -216,9 +216,10 @@
      if(todayDates.length === 1) {
         return values.meetingTimes.findIndex(schedule => new Date(schedule).toDateString() === new Date().toDateString())
      } else if (todayDates.length > 1) {
-       return values.meetingTimes.findIndex(date => new Date(date).toDateString() === new Date().toDateString() && date.getHours() + 1 >= new Date().getHours())
+       const futureTodayClasses = todayDates.filter((classDate) => new Date(classDate).getHours() >= new Date().getHours())
+       return futureTodayClasses.length > 0 ? values.meetingTimes.findIndex(date => new Date(date).toDateString() === new Date().toDateString() && date.getHours() >= new Date().getHours()) : values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
      } else{
-      return values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
+       return values.meetingTimes.findIndex(schedule => new Date(schedule) > new Date())
      }
   }
 
