@@ -31,7 +31,7 @@
   let currentUser: Data.User.Store
   let loading = true
   let classDate = ''
-  let classNumber = sessionNumber === undefined ? sessionNumber : classBeingSubbed === undefined ? 0 : classBeingSubbed.classNumber
+  let classNumber = sessionNumber !== undefined ? sessionNumber : classBeingSubbed === undefined ? 0 : classBeingSubbed.classNumber
   let course = ''
   let feedbackCompletedArray: boolean[] = []
   let classStatusesArray: string[] = []
