@@ -2,10 +2,11 @@ import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import postmark from 'postmark'
 import {
-  POSTMARK_API_TOKEN,
+  SENDGRID_API_TOKEN,
 } from '$env/static/private'
 import { addDataToHtmlTemplate } from '$lib/utils'
 import { applicationSubmittedEmailTemplate } from '$lib/data/emailTemplates/applicationSubmittedEmailTemplate'
+import MailService, { MailDataRequired } from '@sendgrid/mail'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   const body = await request.json();
@@ -27,22 +28,25 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
     const htmlBody = addDataToHtmlTemplate(applicationSubmittedEmailTemplate, template);
 
-    const emailData: Data.EmailData = {
-      From: 'donotreply@gbstem.org',
-      To: locals.user.email,
-      Cc: '',
-      Subject: String(template.data.subject),
-      HTMLBody: htmlBody,
-      ReplyTo: 'contact@gbstem.org',
-      MessageStream: 'outbound'
+    const emailData: MailDataRequired = {
+      from: 'donotreply@gbstem.org',
+      to: locals.user.email,
+      cc: '',
+      subject: String(template.data.subject),
+      html: htmlBody,
+      replyTo: 'contact@gbstem.org',
+      text: 'Application Submitted',
     }
-    try {
-      const client = new postmark.ServerClient(POSTMARK_API_TOKEN);
-      await client.sendEmail(emailData);
+    MailService.setApiKey(SENDGRID_API_TOKEN)
+    MailService
+    .send(emailData)
+    .then(() => {
+      console.log('Email sent')
+    })
+    .catch((error) => {
+      console.error(error.toString())
+    })
 
-      return new Response()
-    } catch (err) {
-      throw error(400, 'Failed to send email.')
-    }
+    return new Response()
   }
 }

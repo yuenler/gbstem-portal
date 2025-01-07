@@ -3,11 +3,12 @@ import type { RequestHandler } from './$types'
 import postmark from 'postmark'
 import type { FirebaseError } from 'firebase-admin'
 import {
-  POSTMARK_API_TOKEN,
+  SENDGRID_API_TOKEN,
 } from '$env/static/private'
 import { addDataToHtmlTemplate, formatTime24to12 } from '$lib/utils'
 import { onlineClassEnrolledEmailTemplate } from '$lib/data/emailTemplates/onlineClassEnrolledEmailTemplate'
 import { inPersonClassEnrolledEmailTemplate } from '$lib/data/emailTemplates/inPersonClassEnrolledEmailTemplate'
+import MailService, { MailDataRequired } from '@sendgrid/mail'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   let topError
@@ -49,23 +50,26 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
         const htmlBody = addDataToHtmlTemplate(emailTemplate, template);
 
-        const emailData: Data.EmailData = {
-          From: 'donotreply@gbstem.org',
-          To: locals.user.email,
-          Cc: body.instructorEmail,
-          Subject: String(template.data.subject),
-          HTMLBody: htmlBody,
-          ReplyTo: 'contact@gbstem.org',
-          MessageStream: 'outbound'
+        const emailData: MailDataRequired = {
+          to: locals.user.email,
+          cc: body.instructorEmail,
+          from: 'donotreply@gbstem.org',
+          subject: String(template.data.subject),
+          html: htmlBody,
+          replyTo: 'contact@gbstem.org',
+          text: 'Class Enrollment Confirmation',
         }
-        try {
-          const client = new postmark.ServerClient(POSTMARK_API_TOKEN);
-          await client.sendEmail(emailData);
-
-          return new Response()
-        } catch (err) {
-          throw error(400, 'Failed to send email.')
-        }
+        MailService.setApiKey(SENDGRID_API_TOKEN)
+        MailService
+        .send(emailData)
+        .then(() => {
+        console.log('Email sent')
+        })
+        .catch((error) => {
+        console.error(error.toString())
+        })
+        
+        return new Response()
       }
     } catch (err) {
       if (typeof err === 'string') {
@@ -94,5 +98,5 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     topError = error(400, 'Invalid request body.')
   }
   throw topError
-
 }
+

@@ -40,11 +40,12 @@
   },
   "type": "module",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.4",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "dotenv": "^16.4.5",
     "file-saver": "^2.0.5",
-    "firebase": "^10.4.0",
+    "firebase": "^10.14.1",
     "firebase-admin": "^11.11.0",
     "lodash-es": "^4.17.21",
     "nanoid": "^5.0.1",

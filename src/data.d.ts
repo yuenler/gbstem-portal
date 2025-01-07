@@ -49,13 +49,13 @@ declare global {
     type Decision = 'accepted' | 'waitlisted' | 'rejected' | 'substitute'
 
     type EmailData = {
-      Subject: string,
-      From: string,
-      To: string,
-      Cc: string,
-      HTMLBody: string,
-      ReplyTo: string,
-      MessageStream: 'outbound'
+      subject: string,
+      from: string,
+      to: string,
+      cc: string,
+      replyTo: string,
+      text: string,
+      html: string,
     }
 
     type SemesterDates = {
