@@ -5,6 +5,7 @@
   import RegistrationForm from '$lib/components/forms/RegistrationForm.svelte'
   import Button from '$lib/components/Button.svelte'
   import Select from '$lib/components/Select.svelte'
+  import Card from '$lib/components/Card.svelte'
   import { getDoc, doc } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import { alert } from '$lib/stores'
@@ -105,8 +106,9 @@
   </PageLayout>
 {:else}
   <PageLayout>
-    <svelte:fragment slot="title">Register</svelte:fragment>
+    <svelte:fragment slot="title">Student Account Creation</svelte:fragment>
     {#if ready}
+      <div class="font-bold">Your Existing Accounts</div>
       <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
         <div class="sm:col-span-2">
           {#each [options] as optionList (optionList.length)}
@@ -124,13 +126,16 @@
             on:click={addChild}
             color="blue"
             class="px-2 py-1"
-            type="button">Add Child</Button
+            type="button">Add Child Account</Button
           >
         </div>
       </div>
     {/if}
     {#if nameToUid[value]}
+    <div class="rounded-lg bg-red-100 p-4 mt-8 w-full text-center"> This form is not available yet. Student account creation for this semester will open on {semesterDates.newInstructorAppsOpen}!</div>
+    <Card class="mx-auto w-fit mt-4">
       <RegistrationForm childUid={nameToUid[value]} semesterDates = {semesterDates}/>
+    </Card>
     {/if}
   </PageLayout>
 {/if}

@@ -18,8 +18,8 @@
   let open = false
   let pages = [
     { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Application', href: '/apply' },
-    { name: 'Class Catalog', href: '/classes' },
+    { name: 'Forms', href: '/apply' },
+    { name: 'Classes', href: '/classes' },
     // { name: 'FAQ', href: '/faq' },
   ]
 

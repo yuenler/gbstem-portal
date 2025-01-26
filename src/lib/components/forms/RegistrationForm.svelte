@@ -250,7 +250,7 @@
                   if (disable) {
                     disabled = false
                   }
-                  alert.trigger('success', 'Your registration was saved.')
+                  alert.trigger('success', 'Your progress was saved.')
                   resolve()
                 },
               )
@@ -498,7 +498,7 @@
           .then(() => {
             alert.trigger(
               'success',
-              'Your registration has been submitted!',
+              'Your student account has been created!',
             )
             getDoc(doc(db, registrationsCollection, childUid)).then(
               (applicationDoc) => {
@@ -526,7 +526,7 @@
                   })
                   alert.trigger(
                     'success',
-                    'Your registration has been submitted!',
+                    'Your student account has been created!',
                   )
                 })
               },
@@ -552,20 +552,35 @@
 </script>
 
 <svelte:window on:beforeunload={handleUnload} />
-<!-- <div class="rounded-lg bg-red-100 p-4 mt-8 w-full text-center">Do not fill out this form. Registration will open on {semesterDates.newInstructorAppsOpen}!</div> -->
 <Form
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
+{#if values.meta.submitted}
+<div
+  class="rounded-md bg-green-100 px-4 py-2 text-green-900 shadow-sm w-full"
+>
+  An account has been created for {values.personal.studentFirstName}{' '}! You will be able to enroll this child in classes once enrollment opens. Please make sure that you have successfully created an account for each child you wish to enroll this semester. 
+  <br/> <br/> Parent orientation will be on {new Date(semesterDates.parentOrientation).toDateString()}, so keep an eye out for an email with details!
+  <br/> <br/> If you have any questions, or want to update something about a student account, reach out to contact@gbstem.org!
+</div>
+{:else}
   <fieldset class="space-y-14" {disabled}>
+    {#if values.personal.studentFirstName !== ''}
+      <div
+        class="rounded-md bg-red-100 px-4 py-2 text-center text-green-900 shadow-sm w-full"
+      >
+        You have a student account creation in progress for {values.personal.studentFirstName}. Remember to complete this form and submit it by the deadline of {new Date(semesterDates.registrationsDue).toDateString()}! If you have any questions or problems with the form, please reach out to us at contact@gbstem.org!
+      </div>
+    {/if}
     <div class="grid gap-1">
-      <span class="mt-3 font-bold">Registration</span>
+      <span class="mt-3 font-bold">Student Account Creation Form</span>
       <p class="mb-2">
-        To register for our semester, you must first fill out this form,
-        providing your course preferences. After this initial
-        registration, class options and their weekly times will be posted once registration
-        closes. You will then receive an email notification to proceed with
-        class enrollment on a first-come, first-served basis.
+        Please fill out this form with some basic information to create a student account for the semester. 
+        Once you have created an account for a student, you can sign that student up for classes when enrollment opens in a few weeks.
+        Please ensure to create a different account for each student you intend to sign up.        
+        You will receive an email notification when class enrollment opens. 
+        Slots are on a first-come, first-served basis.
       </p>
       <span class="font-bold">Personal</span>
       <Card class="my-2 grid gap-3">
@@ -709,23 +724,21 @@
         level. For example, we offer Math 1a in the Fall and Math 1b in the
         Spring.
 
-        <p class="font-bold">Students from Fall 2023:</p>
+        <p class="font-bold">Students whose last gbSTEM math class was in the fall:</p>
         <p>
-          If you took a math class in the fall 2023 semester, it's advisable to
-          opt for the “b” version of the course. For example, if you completed
+          If you took an "a" math class in the fall semester, it's advisable to
+          opt for the “b” version of the course in the spring. For example, if you completed
           Math 2a in the fall, you should proceed to Math 2b.
         </p>
 
-        <p class="font-bold">Students from Spring 2023:</p>
+        <p class="font-bold">Students whose last gbSTEM math class was in the spring:</p>
 
         <p>
-          If your most recent math class was in the spring semester of 2023 (and
-          you did not take any math class in the fall 2023 semester), you should
-          continue with the “a” semester of the next level course you were
-          enrolled in. For example, if you completed Math 3b in the spring, you
-          would proceed to Math 4a. Unfortunately, we don't offer the "a"
-          section of math courses in the spring, so we recommend waiting until
-          next fall to enroll in a math course.
+          If your most recent math class was in the spring semester (and
+          you did not take any math class in the fall semester), we recommend waiting until
+          next fall to enroll in a math course. This is because if you completed Math 3b in the spring, you
+          should proceed to Math 4a, but unfortunately, we don't offer the "a"
+          section of math courses in the spring, so we recommend waiting until the fall.
         </p>
       </span>
       <div class="mb-2">
@@ -782,7 +795,7 @@
       <Input
         type="checkbox"
         bind:value={values.program.inPerson}
-        label="For our in-person offering in the fall, gbSTEM is holding a new Lego Robotics competition program for students grade 5 and up. The program will meet weekly in-person at the Cambridge Public Library on Saturdays 1:00-3:00pm; parents are encouraged to help coach the robotics team. There are 10 slots available this year and will be more in the future. You may apply for this program on top of two courses, but if you are selected you will only be able to enroll in one additional course. Would you like to apply for the robotics program?"
+        label="For our in-person offering in the spring, gbSTEM is holding a new Lego Robotics competition program for students grade 5 and up. The program will meet weekly in-person at the Cambridge Public Library on Saturdays 1:00-3:00pm; parents are encouraged to help coach the robotics team. There are 20 slots available this year and will be more in the future. You may apply for this program on top of two courses, but if you are selected you will only be able to enroll in one additional course. Would you like to apply for the robotics program?"
       />
       <span class="font-bold mt-8">Additional Information</span>
       <div class="mt-2">
@@ -875,4 +888,5 @@
       {/if}
     </div>
   </fieldset>
+{/if}
 </Form>

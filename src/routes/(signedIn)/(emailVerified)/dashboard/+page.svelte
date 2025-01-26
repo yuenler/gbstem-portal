@@ -142,8 +142,8 @@
 
       {#if new Date() < new Date(semesterDates.classesStart)}
       <Card class="space-y-2">
-        <h2 class="text-xl font-bold">Application</h2>
         {#if !isStudent}
+        <h2 class="text-xl font-bold">Application</h2>
           {#if data.application.status === null}
             <div class="space-y-1">
               <p>
@@ -177,33 +177,33 @@
                 deadline!
               {/if}
             </p>
-            <div class="rounded-lg bg-green-100 p-4 mt-2">NEW COURSE: gbSTEM is now offering a Lego Robotics Competition program for the fall. Sessions will be held in person weekly on Saturdays at the Cambridge Public Library. Instructors will get the chance to mentor students in design, robotics coding, and Lego engineering as well as strategy and gameplay. Learn more <a class="underline" href='www.gbstem.org/#/robotics'>here</a>.</div>
+            <div class="rounded-lg bg-green-100 p-4 mt-2">gbSTEM is offering a Lego Robotics Competition program for the spring. Sessions will be held in person weekly on Saturdays 1-3 pm at the Cambridge Public Library. Instructors will get the chance to mentor students in design, robotics coding, and Lego engineering as well as strategy and gameplay. Learn more <a class="underline" href='www.gbstem.org/#/robotics'>here</a>.</div>
             <a href="/apply">
               <Button class="mt-5">View Application</Button>
             </a>
           </div>
         {:else}
+        <h2 class="text-xl font-bold">Set Up Your Student Semester Accounts</h2>
           <p>
-            Registrations to be a student are due
+           You must fill out the form to create an account for each of your students for this semester by
             <span class="font-bold"> {new Date(semesterDates.registrationsDue).toDateString()} </span> at 11:59 PM ET. Be sure
-            you have registered each student by the deadline!
+            you have created an account for each child you wish to register, by the deadline!
           </p>
-          <div class="flex items-center justify-between rounded-lg bg-red-100 p-4 mt-2">NOTICE: gbSTEM is bumping up the minimum grade requirement to 1st grade. We have found that at this age, students are more able to gain a meaningful experience out of our classes.</div>
           <div class="rounded-lg bg-green-100 p-4 mt-2">NEW COURSE: gbSTEM is now offering a Lego Robotics Competition program. Sessions will be held in person weekly on Saturdays at the Cambridge Public Library. Students enrolled will get the chance to work together to build a robot to solve mission puzzles. Learn more <a class="underline" href='www.gbstem.org/#/robotics'>here</a>.</div>
           {#if numSubmitted > 0}
             <p>
               You currently have {numSubmitted} student{numSubmitted > 1
                 ? 's'
-                : ''}{' '} registered for this semester.
+                : ''}{' '} with accounts for this semester.
             </p>
           {:else}
             <p>
-              You have not yet registered any students for this semester.
+              You have no student accounts set up for this semester.
             </p>
           {/if}
           <div>
             <a href="/apply">
-              <Button class="mt-5">View Registration Form</Button>
+              <Button class="mt-5">Create or View A Student Account</Button>
             </a>
           </div>
         {/if}
