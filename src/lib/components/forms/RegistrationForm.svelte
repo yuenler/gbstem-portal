@@ -183,7 +183,7 @@
               values.personal.parentLastName = user.profile.lastName
               handleSave()
             }
-            if (!values.meta.submitted && new Date() > new Date(semesterDates.newInstructorAppsOpen)) {
+            if (new Date() > new Date(semesterDates.newInstructorAppsOpen)) {
               disabled = false
               if (saveInterval === undefined) {
                 saveInterval = window.setInterval(() => {
