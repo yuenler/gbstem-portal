@@ -556,6 +556,34 @@
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
+  {#if new Date() >= new Date(semesterDates.registrationsDue)}
+    <Card class="mb-6 bg-red-50 border-red-200">
+      <div class="flex items-start gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-6 w-6 text-red-600 shrink-0 mt-0.5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+          />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-red-800">Registration Deadline Passed</h3>
+          <p class="text-red-700 text-sm mt-1">
+            The student registration deadline has passed. Registrations were due <span class="font-semibold">
+              {new Date(semesterDates.registrationsDue).toDateString()}
+            </span> at 11:59 PM ET. Unfortunately, you cannot register students for this semester.
+          </p>
+        </div>
+      </div>
+    </Card>
+  {/if}
 {#if values.meta.submitted}
 <div
   class="rounded-md bg-green-100 px-4 py-2 text-green-900 shadow-sm w-full"
@@ -727,7 +755,7 @@
         <p class="font-bold">Students whose last gbSTEM math class was in the fall:</p>
         <p>
           If you took an "a" math class in the fall semester, it's advisable to
-          opt for the “b” version of the course in the spring. For example, if you completed
+          opt for the "b" version of the course in the spring. For example, if you completed
           Math 2a in the fall, you should proceed to Math 2b.
         </p>
 
