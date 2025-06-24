@@ -208,6 +208,40 @@
           </div>
         {/if}
       </Card>
+      {:else if (new Date() >= new Date(semesterDates.classesStart)) && ((!isStudent && data.application.status === null) || (isStudent && numSubmitted === 0))}
+      <Card class="space-y-2">
+        {#if !isStudent}
+        <h2 class="text-xl font-bold">Application Deadline Passed</h2>
+          <div class="space-y-1">
+            <p>
+              The instructor application deadline has passed. Applications were due <span
+                class="font-bold"
+              >
+               {new Date(semesterDates.newInstructorAppsDue).toDateString()}
+              </span>
+              at 11:59 PM ET.
+            </p>
+            <p>
+              Unfortunately, you cannot apply to be an instructor for this semester. Please check back for future opportunities.
+            </p>
+          </div>
+        {:else}
+        <h2 class="text-xl font-bold">Registration Deadline Passed</h2>
+          <div class="space-y-1">
+            <p>
+              The student registration deadline has passed. Registrations were due <span
+                class="font-bold"
+              >
+               {new Date(semesterDates.registrationsDue).toDateString()}
+              </span>
+              at 11:59 PM ET.
+            </p>
+            <p>
+              Unfortunately, you cannot register students for this semester. Please check back for future opportunities.
+            </p>
+          </div>
+        {/if}
+      </Card>
       {/if}
       
       {#if data.application.status === 'accepted'}
