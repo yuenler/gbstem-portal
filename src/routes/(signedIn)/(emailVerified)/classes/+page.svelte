@@ -329,6 +329,8 @@
   <svelte:fragment slot="title">Class Details</svelte:fragment>
 
   <div slot="description" class="space-y-4 p-4">
+    <!-- Hidden focusable element to prevent auto-focus on StudentSelect -->
+    <div tabindex="0" style="position: absolute; left: -9999px; width: 1px; height: 1px;"></div>
     {#if dialogClassDetails !== null}
       <h2 class="text-2xl font-bold text-gray-800">
         {dialogClassDetails.course}
