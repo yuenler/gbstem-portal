@@ -129,6 +129,19 @@
     <Loading class="col-span-2 h-96 flex items-center justify-center" />
   {:else}
     <div class="flex flex-col gap-8">
+      {#if $user?.profile?.role === 'instructor' && new Date() >= new Date(semesterDates.classesStart) && data.application.status === 'submitted'}
+        <Card class="p-6 bg-white shadow-lg rounded-xl">
+          <div class="flex items-center mb-4">
+            <svg class="h-6 w-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01" />
+            </svg>
+            <h2 class="text-xl font-bold text-gray-900">Application Received</h2>
+          </div>
+          <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-2">
+            Your instructor application was submitted after the deadline. Applications are now closed for this semester. We will keep your application on file and notify you about future opportunities.
+          </div>
+        </Card>
+      {/if}
       {#if isStudent}
         <Card class="p-6 bg-white shadow-lg rounded-xl">
           <div class="flex items-center mb-4">
