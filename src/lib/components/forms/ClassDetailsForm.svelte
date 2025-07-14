@@ -374,7 +374,7 @@
 </Card>
 </div>
 </Dialog>
-{:else if values.course === '' ||  submitted === false} 
+{:else}
 <Card>
 <Form class={cn(showValidation && 'show-validation')} on:submit={handleSubmit}>
   {#if disabled}
@@ -504,6 +504,4 @@
   </fieldset>
 </Form>
 </Card>
-{:else}
-<div></div>
 {/if}
