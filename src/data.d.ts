@@ -162,10 +162,6 @@ declare global {
         grade: string
       }
       program: {
-        csCourse: string
-        mathCourse: string
-        engineeringCourse: string
-        scienceCourse: string
         reason: string
         inPerson: boolean
       }

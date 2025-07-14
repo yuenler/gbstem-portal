@@ -16,11 +16,18 @@
 
   let shadow = false
   let open = false
-  let pages = [
+  let showAdditionalPages = false
+
+  // Reactive statement to update the forms page name based on user role
+  $: pages = [
     { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Forms', href: '/apply' },
+    { name: user.role === 'student' ? 'Register' : 'Apply', href: '/apply' },
     { name: 'Classes', href: '/classes' },
     // { name: 'FAQ', href: '/faq' },
+    ...(showAdditionalPages ? [
+      { name: 'Curriculum', href: '/curriculum' }, 
+      { name:'Community Service Hours Tracker', href:'/community-service'}
+    ] : [])
   ]
 
   onMount(() => {
@@ -30,7 +37,7 @@
       try {
         const document = await getDoc(doc(db, decisionsCollection, user.uid));
         if (document.exists() && document.data().type === 'accepted') {
-          pages = [...pages, { name: 'Curriculum', href: '/curriculum' }, { name:'Community Service Hours Tracker', 'href':'/community-service'}];
+          showAdditionalPages = true;
         }
       } catch (error) {
         console.error('Error fetching document:', error);

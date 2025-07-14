@@ -73,10 +73,6 @@
       grade: '',
     },
     program: {
-      csCourse: '',
-      engineeringCourse: '',
-      mathCourse: '',
-      scienceCourse: '',
       inPerson: false,
       reason: '',
     },
@@ -122,10 +118,6 @@
       grade: '',
     },
     program: {
-      csCourse: '',
-      engineeringCourse: '',
-      mathCourse: '',
-      scienceCourse: '',
       inPerson: false,
       reason: '',
     },
@@ -268,229 +260,10 @@
     }
   }
 
-  function customErrors() {
-    const selectedCS = values.program.csCourse.startsWith('I am not') ? 0 : 1
-    const selectedMath = values.program.mathCourse.startsWith('I am not')
-      ? 0
-      : 1
-    const selectedEngineering = values.program.engineeringCourse.startsWith(
-      'I am not',
-    )
-      ? 0
-      : 1
-    const selectedScience = values.program.scienceCourse.startsWith('I am not')
-      ? 0
-      : 1
-
-    if (selectedCS + selectedMath + selectedEngineering + selectedScience > 2) {
-      alert.trigger('error', 'You can only select up to 2 courses.', false)
-      return true
-    } else if (
-      selectedCS + selectedMath + selectedEngineering + selectedScience ==
-      0
-    ) {
-      alert.trigger('error', 'You must select at least 1 course.', false)
-      return true
-    }
-
-    // check if the user has selected more timeslots than number of courses
-    const numClasses =
-      selectedCS + selectedMath + selectedEngineering + selectedScience
-
-    if(!values.agreements.bypassAgeLimits) {
-    // if environmental science was selected, make sure that the student is at least in 4 grade or older
-    if (
-      values.program.scienceCourse === 'Environmental Science' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Environmental Science is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
-
-    // if python was selected, make sure that the student is at least in 3rd grade or older
-    if (
-      values.program.csCourse === 'Python I' &&
-      (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Python I is only available to students in at least 3rd grade.',
-        false,
-      )
-      return true
-    }
-
-    // if java was selected, make sure that the student is at least in 4th grade or older
-    if (
-      values.program.csCourse === 'Java' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Java is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
-
-    // if web development was selected, make sure that the student is at least in 4th grade or older
-    if (
-      values.program.csCourse === 'Web Development' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Web Development is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
-
-    // if python II was selected, make sure that the student is at least in 5th grade or older
-    if (
-      values.program.csCourse === 'Python II' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Python II is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
-
-    // math I only for 1st grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 1a' &&
-      (parseInt(values.academic.grade) < 1 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math I is only available to students in at least 1st grade.',
-        false,
-      )
-      return true
-    }
-
-    // math II only for 2nd grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 2a' &&
-      (parseInt(values.academic.grade) < 2 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math II is only available to students in at least 2nd grade.',
-        false,
-      )
-      return true
-    }
-
-    // math III only for 3rd grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 3a' &&
-      (parseInt(values.academic.grade) < 3 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math III is only available to students in at least 3rd grade.',
-        false,
-      )
-      return true
-    }
-
-    // math IV only for 4th grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 4a' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math IV is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
-
-    // math V only for 5th grade and up
-    if (
-      values.program.mathCourse === 'Mathematics 5a' &&
-      (parseInt(values.academic.grade) < 6 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Math V is only available to students in at least 6th grade.',
-        false,
-      )
-      return true
-    }
-
-    // engineering I only for grade 2 and up
-    if (
-      values.program.engineeringCourse === 'Engineering I' &&
-      (parseInt(values.academic.grade) < 2 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Engineering I is only available to students in at least 2nd grade.',
-        false,
-      )
-      return true
-    }
-
-    // engineering II only for grade 4 and up
-    if (
-      values.program.engineeringCourse === 'Engineering II' &&
-      (parseInt(values.academic.grade) < 4 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Engineering II is only available to students in at least 4th grade.',
-        false,
-      )
-      return true
-    }
-
-    // engineering III only for grade 5 and up
-    if (
-      values.program.engineeringCourse === 'Engineering III' &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Engineering III is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
-
-    // robotics only for grade 5 and up
-    if (
-      values.program.inPerson === true &&
-      (parseInt(values.academic.grade) < 5 || values.academic.grade === 'K')
-    ) {
-      alert.trigger(
-        'error',
-        'Lego Robotics is only available to students in at least 5th grade.',
-        false,
-      )
-      return true
-    }
-  }
-
-    return false
-  }
-
   function handleSubmit(e: CustomEvent<SubmitData>) {
     if ($user) {
       const frozenUser = $user
       if (e.detail.error === null) {
-        if (customErrors()) {
-          return
-        }
         showValidation = false
         disabled = true
         values.meta.submitted = true
@@ -586,9 +359,9 @@
   {/if}
 {#if values.meta.submitted}
 <div
-  class="rounded-md bg-green-100 px-4 py-2 text-green-900 shadow-sm w-full"
+  class="rounded-md bg-green-100 px-4 py-2 text-green-900 shadow-sm w-full border border-green-200"
 >
-  An account has been created for {values.personal.studentFirstName}{' '}! You will be able to enroll this child in classes once enrollment opens. Please make sure that you have successfully created an account for each child you wish to enroll this semester. 
+  An account has been created for {values.personal.studentFirstName}! You will be able to enroll this child in classes once enrollment opens. Please make sure that you have successfully created an account for each child you wish to enroll this semester. 
   <br/> <br/> Parent orientation will be on {new Date(semesterDates.parentOrientation).toDateString()}, so keep an eye out for an email with details!
   <br/> <br/> If you have any questions, or want to update something about a student account, reach out to contact@gbstem.org!
 </div>
@@ -668,7 +441,7 @@
         floating
         required
       />
-      <div class="grid gap-1">
+      <div class="grid gap-1 mt-5">
         <span>Race / ethnicity (check all that apply)</span>
         <div class="grid grid-cols-2">
           {#each raceJson as race}
@@ -716,138 +489,6 @@
           required
         />
       </div>
-    </div>
-    <div class="grid gap-1">
-      <span class="font-bold">Course Interest (max 2 courses)</span>
-      <span
-        >Note that selecting your courses below is NOT formally enrolling in the
-        course. Your response here will help us estimate the number of sections
-        for each course. Course enrollment will be on a first-come, first-served
-        basis, and you will be notified via email when enrollment opens.
-      </span>
-      <span
-        >Go to <Link href="https://gbstem.org/#/cs" class="link" target="_blank"
-          >https://gbstem.org/#/cs
-        </Link> for more information</span
-      >
-      <div class="mb-2">
-        <Select
-          bind:value={values.program.csCourse}
-          label="Computer Science course"
-          options={csCoursesJson}
-          floating
-          required
-        />
-      </div>
-      <span
-        >Go to <Link
-          href="https://gbstem.org/#/math"
-          class="link"
-          target="_blank"
-          >https://gbstem.org/#/math
-        </Link> for more information.
-      </span>
-      <span class="text-sm"
-        >gbSTEM math classes have a separate fall and spring curriculum for each
-        level. For example, we offer Math 1a in the Fall and Math 1b in the
-        Spring.
-
-        <p class="font-bold">Students whose last gbSTEM math class was in the fall:</p>
-        <p>
-          If you took an "a" math class in the fall semester, it's advisable to
-          opt for the "b" version of the course in the spring. For example, if you completed
-          Math 2a in the fall, you should proceed to Math 2b.
-        </p>
-
-        <p class="font-bold">Students whose last gbSTEM math class was in the spring:</p>
-
-        <p>
-          If your most recent math class was in the spring semester (and
-          you did not take any math class in the fall semester), we recommend waiting until
-          next fall to enroll in a math course. This is because if you completed Math 3b in the spring, you
-          should proceed to Math 4a, but unfortunately, we don't offer the "a"
-          section of math courses in the spring, so we recommend waiting until the fall.
-        </p>
-      </span>
-      <div class="mb-2">
-        <Select
-          bind:value={values.program.mathCourse}
-          label="Math course"
-          options={mathCoursesJson}
-          floating
-          required
-        />
-      </div>
-      <span
-        >Go to <Link
-          href="https://gbstem/#/engineering"
-          class="link"
-          target="_blank"
-          >https://gbstem.org/#/engineering
-        </Link> for more information</span
-      >
-      <div class="mb-2">
-        <Select
-          bind:value={values.program.engineeringCourse}
-          label="Engineering course"
-          options={engineeringCoursesJson}
-          floating
-          required
-        />
-      </div>
-      <span
-        >Go to <Link
-          href="https://gbstem.org/#/science"
-          class="link"
-          target="_blank"
-          >https://gbstem.org/#/science
-        </Link> for more information</span
-      >
-      <div class="mt-2">
-        <Select
-          bind:value={values.program.scienceCourse}
-          label="Science course"
-          options={scienceCoursesJson}
-          floating
-          required
-        />
-      </div>
-      <span
-      >Go to <Link
-        href="https://gbstem.org/#/robotics"
-        class="link mt-2"
-        target="_blank"
-        >https://gbstem.org/#/robotics
-      </Link> for more information</span
-      >
-      <Input
-        type="checkbox"
-        bind:value={values.program.inPerson}
-        label="For our in-person offering in the spring, gbSTEM is holding a new Lego Robotics competition program for students grade 5 and up. The program will meet weekly in-person at the Cambridge Public Library on Saturdays 1:00-3:00pm; parents are encouraged to help coach the robotics team. There are 20 slots available this year and will be more in the future. You may apply for this program on top of two courses, but if you are selected you will only be able to enroll in one additional course. Would you like to apply for the robotics program?"
-      />
-      <span class="font-bold mt-8">Additional Information</span>
-      <div class="mt-2">
-        <Select
-          bind:value={values.program.reason}
-          label="How did you learn about gbSTEM?"
-          options={reasonsJson}
-          floating
-          required
-        />
-      </div>
-      {#if values.program.inPerson}
-        <Input
-        type="text"
-        bind:value={values.inPerson.allergies}
-        label="Please list any allergies the student has."
-        />
-        <Input
-        type="text"
-        bind:value={values.inPerson.parentPickup}
-        label="Please list the names, emails, and phone numbers of the people who are authorized to pick up the student from in-person classes."
-        required
-      />
-      {/if}
     </div>
     <div class="grid gap-1">
       <span class="font-bold">Agreements</span>
