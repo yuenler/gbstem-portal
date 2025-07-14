@@ -115,7 +115,6 @@
   }
 </script>
 
-<Card class="ml-2">
   <Form
     class={cn(showValidation && 'show-validation')}
     on:submit={handleSubmit}
@@ -176,4 +175,3 @@
       </fieldset>
     {/if}
   </Form>
-</Card>

@@ -8,7 +8,6 @@
   import StudentSchedule from '$lib/components/StudentSchedule.svelte'
   import ClassDetailsForm from '$lib/components/forms/ClassDetailsForm.svelte'
   import is from 'date-fns/locale/is'
-  import ConfirmationForm from '$lib/components/forms/ConfirmationForm.svelte'
   import InterviewForm from '$lib/components/forms/InterviewForm.svelte'
   import { getDoc, doc, collection, getDocs, query } from 'firebase/firestore'
   import { fade } from 'svelte/transition'
@@ -295,30 +294,7 @@
           <InterviewForm semesterDates={semesterDates}/>
         </Card>
       {/if}
-      <!-- Student Schedule Section -->
-      {#if isStudent && new Date() > new Date(semesterDates.studentOrientation)}
-        <Card class="p-6 bg-white shadow-lg rounded-xl">
-          <div class="flex items-center mb-4">
-            <svg class="h-6 w-6 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <h2 class="text-xl font-bold text-gray-900">Student Schedule</h2>
-          </div>
-          <StudentSchedule />
-        </Card>
-      {/if}
-      <!-- Student Feedback Section (students only, after orientation) -->
-      {#if isStudent && new Date() > new Date(semesterDates.studentOrientation)}
-        <Card class="p-6 bg-white shadow-lg rounded-xl">
-          <div class="flex items-center mb-4">
-            <svg class="h-6 w-6 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h2 class="text-xl font-bold text-gray-900">Class Feedback</h2>
-          </div>
-          <StudentFeedbackForm />
-        </Card>
-      {/if}
+    
     </div>
     <div class="flex flex-col gap-8">
       <!-- Class Details Form for accepted instructors (moved to right column) -->
@@ -333,6 +309,18 @@
           <ClassDetailsForm semesterDates={semesterDates} dialog={false} classDetailsDialogEl={undefined} />
         </Card>
       {/if}
+       <!-- Student Schedule Section -->
+       {#if isStudent && new Date() > new Date(semesterDates.studentOrientation)}
+       <Card class="p-6 bg-white shadow-lg rounded-xl">
+         <div class="flex items-center mb-4">
+           <svg class="h-6 w-6 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+           </svg>
+           <h2 class="text-xl font-bold text-gray-900">Student Schedule</h2>
+         </div>
+         <StudentSchedule />
+       </Card>
+     {/if}
     </div>
   {/if}
 </div>
