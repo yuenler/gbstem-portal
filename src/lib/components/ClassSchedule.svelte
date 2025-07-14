@@ -584,166 +584,99 @@ onMount(() => {
     <div class="mb-2 font-bold">Fill out the class details form to get your schedule!</div>
   </Card>
   {/if}
-  <ul class="list-none space-y-2">
-    {#each editedMeetingTimes as classTime, classNumber }
-    <Dialog bind:this={subRequestDialogEl} initial={false} size="min">
-      <svelte:fragment slot="title"><div class="flex items-center justify-between">Submit A Sub Request<DialogActions>
-        <Button on:click={() => subRequestDialogEl.close()} color='red'>Close</Button>
-      </DialogActions></div></svelte:fragment>
-      <div slot="description" class="space-y-4">
-        <Input
-          type="number"
-          class="rounded border p-1"
-          bind:value={subRequestClassNumber}
-          floating
-          label="Please confirm the class number ."
-        />
-        <Input
-          type="datetime-local"
-          class="rounded border p-1"
-          bind:value={subRequestDate}
-          floating
-          label="Please confirm the date and time of the class you would like to request a sub for."
-        />
-        <Input
-          type="text"
-          class="rounded border p-1"
-          bind:value={subRequestNotes}
-          label="Please describe what topic/lesson the substitute class will cover, and any helpful notes for the substitute instructor."
-        />
-        <Button
-          color="green"
-          on:click={() => {
-            sendSubRequest()
-            subRequestDialogEl.close()
-          }}>Confirm Request</Button
-        >
-      </div>
-      </Dialog>
-      {#if values.classStatuses[classNumber] === ClassStatus.ClassNotHeld}
-        <li
-          class="flex items-center justify-between rounded-lg bg-red-100 p-4"
-          transition:slide={{ duration: 1000 }}
-        >
-          <span class="font-semibold">Class {classNumber + 1}:</span>
-          {#if editMode}
-            <Input
-              type="datetime-local"
-              class="rounded border p-1"
-              bind:value={editedMeetingTimes[classNumber]}
-            />
-            <Button
-              color="red"
-              on:click={() => {
-                editedMeetingTimes.splice(classNumber, 1)
-                editedMeetingTimes = editedMeetingTimes.slice()
-              }}>Delete</Button
-            >
+  <ul class="list-none space-y-4">
+    {#each editedMeetingTimes as classTime, classNumber}
+      <li class="rounded-xl shadow border flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-white relative transition hover:shadow-lg">
+        <div class="flex items-center gap-4 flex-1 min-w-0">
+          <!-- Status badge -->
+          {#if values.classStatuses[classNumber] === ClassStatus.ClassNotHeld}
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              Not Held
+            </span>
+          {:else if values.classStatuses[classNumber] === ClassStatus.FeedbackIncomplete}
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/></svg>
+              Feedback Needed
+            </span>
+          {:else if values.classStatuses[classNumber] === ClassStatus.ClassUpcomingSoon}
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"/></svg>
+              Upcoming
+            </span>
+          {:else if values.classStatuses[classNumber] === ClassStatus.EverythingComplete}
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-semibold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Complete
+            </span>
           {:else}
-            <span>{values.course + ' at ' + formatDateString(classTime)}</span>
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-200 text-gray-700 text-xs font-semibold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              Scheduled
+            </span>
           {/if}
-        </li>
-      {:else if values.classStatuses[classNumber] === ClassStatus.FeedbackIncomplete}
-        <li
-          class="flex items-center justify-between rounded-lg bg-yellow-100 p-4"
-          transition:slide={{ duration: 1000 }}
-        >
-          <span class="font-semibold">Class {classNumber + 1}:</span>
+          <div class="flex flex-col min-w-0">
+            <span class="font-semibold text-lg truncate">Class {classNumber + 1}: {values.course}</span>
+            <span class="text-gray-600 text-sm truncate">{formatDateString(classTime)}</span>
+          </div>
+        </div>
+        <div class="flex flex-col md:flex-row gap-2 md:gap-4 items-end md:items-center mt-2 md:mt-0">
           {#if editMode}
-            <Input
-              type="datetime-local"
-              class="rounded border p-1"
-              bind:value={editedMeetingTimes[classNumber]}
-            />
-            <Button
-              color="red"
-              on:click={() => {
-                editedMeetingTimes.splice(classNumber, 1)
-                editedMeetingTimes = editedMeetingTimes.slice()
-              }}>Delete</Button
-            >
+            <Input type="datetime-local" class="rounded border p-1" bind:value={editedMeetingTimes[classNumber]} />
+            <Button color="red" on:click={() => { editedMeetingTimes.splice(classNumber, 1); editedMeetingTimes = editedMeetingTimes.slice(); }}>
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              Delete
+            </Button>
           {:else}
-            <span>{values.course + ' at ' + formatDateString(classTime)}</span>
+            {#if values.classStatuses[classNumber] !== ClassStatus.ClassNotHeld && values.classStatuses[classNumber] !== ClassStatus.FeedbackIncomplete && values.classStatuses[classNumber] !== ClassStatus.ClassUpcomingSoon && values.classStatuses[classNumber] !== ClassStatus.EverythingComplete}
+              <Button color="blue" on:click={() => { subRequestDate = classTime; subRequestClassNumber = classNumber + 1; subRequestNotes = ''; subRequestDialogEl.open(); }}>
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Request Sub
+              </Button>
+            {/if}
           {/if}
-        </li>
-      {:else if values.classStatuses[classNumber] === ClassStatus.ClassUpcomingSoon}
-        <li
-          class="flex items-center justify-between rounded-lg bg-blue-100 p-4"
-          transition:slide={{ duration: 1000 }}
-        >
-          <span class="font-semibold">Class {classNumber + 1}:</span>
-          {#if editMode}
-            <Input
-              type="datetime-local"
-              class="rounded border p-1"
-              bind:value={editedMeetingTimes[classNumber]}
-            />
-            <Button
-              color="red"
-              on:click={() => {
-                editedMeetingTimes.splice(classNumber, 1)
-                editedMeetingTimes = editedMeetingTimes.slice()
-              }}>Delete</Button
-            >
-          {:else}
-            <span>{values.course + ' at ' + formatDateString(classTime)}</span>
-          {/if}
-        </li>
-      {:else if values.classStatuses[classNumber] === ClassStatus.EverythingComplete}
-        <li
-          class="flex items-center justify-between rounded-lg bg-green-100 p-4"
-          transition:slide={{ duration: 1000 }}
-        >
-          <span class="font-semibold">Class {classNumber + 1}:</span>
-          {#if editMode}
-            <Input
-              type="datetime-local"
-              class="rounded border p-1"
-              bind:value={editedMeetingTimes[classNumber]}
-            />
-            <Button
-              color="red"
-              on:click={() => {
-                editedMeetingTimes.splice(classNumber, 1)
-                editedMeetingTimes = editedMeetingTimes.slice()
-              }}>Delete</Button
-            >
-          {:else}
-            <span>{values.course + ' at ' + formatDateString(classTime)}</span>
-          {/if}
-        </li>
-      {:else}
-        <li
-          class="flex items-center justify-between rounded-lg bg-gray-100 p-4"
-          transition:slide={{ duration: 1000 }}
-        >
-          <span class="font-semibold">Class {classNumber + 1}:</span>
-          {#if editMode}
-            <Input
-              type="datetime-local"
-              class="rounded border p-1"
-              bind:value={editedMeetingTimes[classNumber]}
-            />
-            <Button
-              color="red"
-              on:click={() => {
-                editedMeetingTimes.splice(classNumber, 1)
-                editedMeetingTimes = editedMeetingTimes.slice()
-              }}>Delete</Button
-            >
-          {:else}
-            <Button color = "blue" on:click={() => {
-              subRequestDate = classTime
-              subRequestClassNumber = classNumber + 1
-              subRequestNotes = ''
-              subRequestDialogEl.open()
-            }}>Request A Sub</Button>
-            <span>{values.course + ' at ' + formatDateString(classTime)}</span>
-          {/if}
-        </li>
-      {/if}
+        </div>
+      </li>
     {/each}
   </ul>
+  <!-- Sub Request Dialog (restored, available for all sessions) -->
+  <Dialog bind:this={subRequestDialogEl} initial={false} size="min">
+    <svelte:fragment slot="title">
+      <div class="flex items-center justify-between">Submit A Sub Request
+        <DialogActions>
+          <Button on:click={() => subRequestDialogEl.close()} color='red'>Close</Button>
+        </DialogActions>
+      </div>
+    </svelte:fragment>
+    <div slot="description" class="space-y-4">
+      <Input
+        type="number"
+        class="rounded border p-1"
+        bind:value={subRequestClassNumber}
+        floating
+        label="Please confirm the class number ."
+      />
+      <Input
+        type="datetime-local"
+        class="rounded border p-1"
+        bind:value={subRequestDate}
+        floating
+        label="Please confirm the date and time of the class you would like to request a sub for."
+      />
+      <Input
+        type="text"
+        class="rounded border p-1"
+        bind:value={subRequestNotes}
+        label="Please describe what topic/lesson the substitute class will cover, and any helpful notes for the substitute instructor."
+      />
+      <Button
+        color="green"
+        on:click={() => {
+          sendSubRequest()
+          subRequestDialogEl.close()
+        }}>Confirm Request</Button>
+    </div>
+  </Dialog>
 </div>
 
 <style>
