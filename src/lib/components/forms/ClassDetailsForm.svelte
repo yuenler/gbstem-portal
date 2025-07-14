@@ -375,7 +375,6 @@
 </div>
 </Dialog>
 {:else}
-<Card>
 <Form class={cn(showValidation && 'show-validation')} on:submit={handleSubmit}>
   {#if disabled}
     <Button color="blue" class="mb-5" on:click={() => (disabled = false)}
@@ -503,5 +502,4 @@
     </div>
   </fieldset>
 </Form>
-</Card>
 {/if}
