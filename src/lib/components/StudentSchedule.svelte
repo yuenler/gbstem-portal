@@ -73,7 +73,16 @@
   </div> -->
   {#if selectedStudentUid}
     {#if classes.length === 0}
-      <p>This student is not enrolled in any classes.</p>
+      <div class="rounded-lg bg-gray-100 p-6 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        <p class="text-lg font-medium text-gray-900">No Classes Found</p>
+        <p class="mt-1 text-sm text-gray-500">This student is not currently enrolled in any classes.</p>
+        <a href="/classes">
+          <Button color="blue" class="mt-4">Browse Available Classes</Button>
+        </a>
+      </div>
     {:else}
     <Card>
       <div class="font-bold mb-2">Next Upcoming Class For {selectedStudentName}:</div>

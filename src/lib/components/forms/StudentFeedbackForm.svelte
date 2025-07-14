@@ -126,7 +126,7 @@
       >
     {:else}
       <fieldset class="space-y-4" {disabled}>
-        <h2 class="font-bold">Weekly Class Feedback Form{#if values.studentName} For {values.studentName}{/if}</h2>
+        <h2 class="font-bold">Weekly Class Feedback Form{' '}{#if values.studentName} For {values.studentName}{/if}</h2>
         {#if selectedStudentCourses.length == 0}
           <div>This student is not currently enrolled in a course.</div>
         {:else}
