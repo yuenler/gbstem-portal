@@ -19,17 +19,19 @@
 
 <button
   class={cn(
-    'rounded-md px-4 py-2 shadow-sm transition-colors duration-300',
+    'inline-flex items-center justify-center gap-2 font-semibold rounded-md px-4 py-2 min-h-[2.5rem] min-w-[2.5rem] shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+    'hover:shadow-md active:shadow',
+    'disabled:cursor-not-allowed',
     color === 'red' &&
-      'bg-red-100 text-red-900 hover:bg-red-200 disabled:bg-red-200 disabled:text-red-700',
+      'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300 disabled:text-white focus-visible:ring-red-400',
     color === 'blue' &&
-      'bg-blue-100 text-blue-900 hover:bg-blue-200 disabled:bg-blue-200 disabled:text-blue-700',
+      'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300 disabled:text-white focus-visible:ring-blue-400',
     color === 'gray' &&
-      'bg-gray-100 text-gray-900 hover:bg-gray-200 disabled:bg-gray-200 disabled:text-gray-700',
+      'bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 focus-visible:ring-gray-300',
     color === 'green' &&
-      'bg-green-100 text-green-900 hover:bg-green-200 disabled:bg-green-200 disabled:text-green-700',
+      'bg-green-600 text-white hover:bg-green-700 disabled:bg-green-300 disabled:text-white focus-visible:ring-green-400',
     color === 'yellow' &&
-      'bg-yellow-100 text-yellow-900 hover:bg-yellow-200 disabled:bg-yellow-200 disabled:text-yellow-700',
+      'bg-yellow-500 text-white hover:bg-yellow-600 disabled:bg-yellow-200 disabled:text-white focus-visible:ring-yellow-300',
     className,
   )}
   {type}

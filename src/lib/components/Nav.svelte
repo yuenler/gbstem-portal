@@ -68,9 +68,10 @@
 <svelte:window on:scroll={updateShadow} />
 <nav
   class={cn(
-    'fixed left-0 top-0 z-40 flex h-20 w-full items-center justify-between border-b bg-white px-d transition-all',
+    'fixed left-0 top-0 z-40 flex h-20 w-full items-center justify-between border-b bg-white/70 backdrop-blur-md px-d transition-all duration-300',
     shadow && !open ? 'shadow-b border-gray-200' : 'border-white',
   )}
+  style="backdrop-filter: blur(12px);"
 >
 {#await pages then pages}
   <div class="flex items-center gap-8">
@@ -80,25 +81,30 @@
         {#each pages as page}
           <a
             class={cn(
-              'rounded-md px-4 py-2 transition-colors',
-              pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
+              'relative rounded-full px-4 py-2 font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
+              pathname === page.href
+                ? 'bg-blue-100 text-blue-700 shadow-sm'
+                : 'hover:bg-gray-100 hover:text-blue-600',
             )}
             href={page.href}
+            aria-current={pathname === page.href ? 'page' : undefined}
+            tabindex="0"
           >
             {page.name}
+            {#if pathname === page.href}
+              <span class="absolute left-2 right-2 -bottom-1 h-1 rounded-full bg-blue-400/70" style="z-index:1;"></span>
+            {/if}
           </a>
         {/each}
       </div>
     {/if}
   </div>
   <div class="flex items-center gap-1 sm:gap-3 md:gap-4">
-    <!-- {#if user.emailVerified}
-      <AnnouncementsBell />
-    {/if} -->
     <ProfileMenu class="hidden sm:block" />
     <button
-      class="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-200 sm:hidden"
+      class="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:hidden"
       type="button"
+      aria-label={open ? 'Close menu' : 'Open menu'}
       on:click={() => {
         open = !open
       }}
@@ -140,20 +146,25 @@
 </nav>
 {#if open}
   <div
-    class="fixed left-0 top-20 z-50 flex h-[calc(100vh-5rem)] w-screen flex-col gap-2 bg-white p-d sm:hidden"
+    class="fixed left-0 top-20 z-50 flex h-[calc(100vh-5rem)] w-screen flex-col gap-2 bg-white/90 backdrop-blur-md p-d sm:hidden animate-slideDown shadow-lg border-t border-gray-200"
     transition:fade={{
       easing: cubicInOut,
       duration: 200,
     }}
+    style="backdrop-filter: blur(12px);"
   >
     {#if $user?.object?.emailVerified}
       {#each pages as page}
         <a
           class={cn(
-            'rounded-md px-3 py-2 transition-colors',
-            pathname === page.href ? 'bg-gray-200' : 'hover:bg-gray-100',
+            'rounded-full px-3 py-2 font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
+            pathname === page.href
+              ? 'bg-blue-100 text-blue-700 shadow-sm'
+              : 'hover:bg-gray-100 hover:text-blue-600',
           )}
           href={page.href}
+          aria-current={pathname === page.href ? 'page' : undefined}
+          tabindex="0"
         >
           {page.name}
         </a>
@@ -167,5 +178,20 @@
 <style>
   .shadow-b {
     box-shadow: 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+  @media (max-width: 640px) {
+    .animate-slideDown {
+      animation: slideDown 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   }
 </style>
