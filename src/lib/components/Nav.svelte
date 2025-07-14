@@ -30,13 +30,11 @@
     ] : [])
   ]
 
-  onMount(() => {
-    updateShadow();
-    console.log('user', $user);
-
+  // Only fetch document when user is loaded and has a uid
+  $: if ($user?.object?.uid) {
     (async () => {
       try {
-        const document = await getDoc(doc(db, decisionsCollection, $user?.object?.uid));
+        const document = await getDoc(doc(db, decisionsCollection, $user.object.uid));
         if (document.exists() && document.data().type === 'accepted') {
           showAdditionalPages = true;
         }
@@ -44,6 +42,11 @@
         console.error('Error fetching document:', error);
       }
     })();
+  }
+
+  onMount(() => {
+    updateShadow();
+    console.log('user', $user);
 
     const unsubscribe = navigating.subscribe((navigating) => {
       if (navigating) {
