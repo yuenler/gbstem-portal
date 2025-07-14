@@ -191,7 +191,6 @@
     <Loading />
   {:else}
     {#await data then value}
-      <Card class="my-2 grid gap-3">
         {#if scheduled === false}
           <h2 class="font-bold">Available Interview Slots</h2>
 
@@ -284,7 +283,6 @@
             Your interview was on {scheduledInterview.date}.
           </div>
         {/if}
-      </Card>
     {/await}
   {/if}
 </div>

@@ -174,7 +174,7 @@
         </Card>
       {/if}
       <!-- Application & Registration Section (conditionally rendered) -->
-      {#if (new Date() < new Date(semesterDates.classesStart)) || ((new Date() >= new Date(semesterDates.classesStart)) && ((!isStudent && data.application.status === null) || (isStudent && numSubmitted === 0)))}
+      {#if (new Date() < new Date(semesterDates.classesStart)) || ((new Date() >= new Date(semesterDates.classesStart)) && ((!isStudent && data.application.status !== 'accepted') || (isStudent && numSubmitted === 0)))}
         <Card class="p-6 bg-white shadow-lg rounded-xl">
           <div class="flex items-center mb-4">
             <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,7 +182,7 @@
             </svg>
             <h2 class="text-xl font-bold text-gray-900">Application & Registration</h2>
           </div>
-          {#if new Date() < new Date(semesterDates.classesStart)}
+          {#if (new Date() < new Date(semesterDates.classesStart)) || ((new Date() >= new Date(semesterDates.classesStart)) && ((!isStudent && data.application.status !== 'accepted') ))}
             {#if !isStudent}
               <div class="mb-4">
                 <h3 class="text-lg font-semibold">Instructor Application</h3>
