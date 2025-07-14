@@ -67,14 +67,12 @@
   }
 </script>
 
-<div class="p-0">
-  <!-- <div class="mb-5">
-    <StudentSelect bind:selectedStudentUid />
-  </div> -->
+<div class="bg-white rounded-lg shadow-sm p-6">
+
   {#if selectedStudentUid}
     {#if classes.length === 0}
-      <div class="rounded-lg bg-gray-100 p-6 text-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="flex flex-col items-center justify-center py-8">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
         <p class="text-lg font-medium text-gray-900">No Classes Found</p>
@@ -84,58 +82,24 @@
         </a>
       </div>
     {:else}
-    <Card>
-      <div class="font-bold mb-2">Next Upcoming Class For {selectedStudentName}:</div>
-        <div>
-          {nextClass === undefined ? 'No Upcoming Classes' :  nextClass.course + ' ' + formatDate(nextClass.meetingTime)}
-        </div>
-        <Button color="blue" class="mb-2 mt-4" on:click={() => {window.open(nextClass?.link)}}
-          >Join Class</Button>
-      </Card>
-
-      <div class="font-bold mb-2 mt-4">{selectedStudentName}'s Class Schedule</div>
-
-      <Input type="checkbox" bind:value={listView} label={'Show As List?'} />
-
-      {#if listView}
-        <ul class="list-none space-y-2">
-          {#each classes as classSession}
-            <li
-              class="flex items-center justify-between rounded-lg bg-gray-100 p-4"
-            >
-              <p class="class-name">{classSession.course}</p>
-              <p class="meeting-time">{formatDate(classSession.meetingTime)}</p>
-            </li>
-          {/each}
-        </ul>
-      {:else}
-        <table
-          class={`grid grid-cols-${courses.size} justify-between gap-1`}
-          style="margin-top:1rem;"
-        >
-          {#each courses as course}
-            <div class="rounded-lg bg-gray-100 p-4">
-              <div class="flex items-center justify-between p-4">
-                <strong>{course}</strong>
-              </div>
-              {#each classes as classSession}
-                {#if classSession.course === course}
-                  <div
-                    style="border-width:1px 0 0 0; border-color:gray; padding:1rem;"
-                  >
-                    <p class="meeting-time">
-                      {formatDate(classSession.meetingTime)}
-                    </p>
-                  </div>
-                {/if}
-              {/each}
+      <div class="mb-4 font-bold">Next Upcoming Class For {selectedStudentName}:</div>
+      <div class="mb-6 text-blue-700 font-semibold">
+        {nextClass === undefined ? 'No Upcoming Classes' :  nextClass.course + ' ' + formatDate(nextClass.meetingTime)}
+      </div>
+      <div class="font-bold mb-2">{selectedStudentName}'s Class Schedule</div>
+      <ul class="space-y-3">
+        {#each classes as classSession}
+          <li class="flex items-center bg-blue-50 rounded-lg px-4 py-3 shadow-sm">
+            <div class="flex-1">
+              <div class="font-semibold text-blue-900">{classSession.course}</div>
+              <div class="text-sm text-gray-700">{formatDate(classSession.meetingTime)}</div>
             </div>
-          {/each}
-        </table>
-      {/if}
+          </li>
+        {/each}
+      </ul>
     {/if}
   {:else}
-    <p>Please select a student to view their class schedule.</p>
+    <p class="text-gray-500 italic">Please select a student to view their class schedule.</p>
   {/if}
 </div>
 

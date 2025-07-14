@@ -91,17 +91,21 @@
   }
 </script>
 
-<div>
+<div class="bg-white rounded-lg shadow-sm p-4">
+  <label class="block text-sm font-medium text-gray-700 mb-2">Select Student</label>
   {#if loading}
     <Loading />
   {:else if studentsOptions.length === 1}
-    <div></div>
+    <div class="bg-blue-50 text-blue-900 rounded px-4 py-2 font-semibold text-center">{studentsOptions[0].name}</div>
+  {:else if studentsOptions.length === 0}
+    <div class="text-gray-500 italic">No students found.</div>
   {:else}
     <Select
       bind:value={selectedStudent}
       options={studentsOptions}
       label="Select a child"
       floating
+      class="w-full"
     />
   {/if}
 </div>
