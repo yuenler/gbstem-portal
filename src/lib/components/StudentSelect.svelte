@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { doc, getDoc, collection, getDocs } from 'firebase/firestore'
+  import { doc, getDoc } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import Loading from '$lib/components/Loading.svelte'
   import Select from '$lib/components/Select.svelte'
@@ -12,7 +12,21 @@
   let studentsOptions: { name: string }[] = []
   export let selectedStudent = ''
   export let selectedStudentUid = ''
+  export let preloadedStudents: { uid: string; name: string }[] = []
   const nameToUid: Record<string, string> = {}
+
+  const initializeFromPreloadedData = () => {
+    studentsOptions = preloadedStudents.map(student => ({ name: student.name }))
+    preloadedStudents.forEach(student => {
+      nameToUid[student.name] = student.uid
+    })
+    
+    // Set the selected student to the first student if available
+    if (studentsOptions.length > 0 && !selectedStudent) {
+      selectedStudent = studentsOptions[0].name
+    }
+    loading = false
+  }
 
   const fetchData = async (user: Data.User.Store) => {
     const uid = user.object.uid
@@ -43,19 +57,29 @@
     }
   }
 
+  $: if (preloadedStudents.length > 0) {
+    initializeFromPreloadedData()
+  }
+
   onMount(() => {
-    return user.subscribe(async (userData) => {
-      if (userData) {
-        if (userData && userData.profile.role === 'student') {
-          await fetchData(userData)
+    // If we have preloaded data, use it immediately
+    if (preloadedStudents.length > 0) {
+      initializeFromPreloadedData()
+    } else {
+      // Fall back to original logic if no preloaded data
+      return user.subscribe(async (userData) => {
+        if (userData) {
+          if (userData && userData.profile.role === 'student') {
+            await fetchData(userData)
+          }
+          // set the selected student to the first student
+          if (studentsOptions.length > 0) {
+            selectedStudent = studentsOptions[0].name
+          }
+          loading = false
         }
-        // set the selected student to the first student
-        if (studentsOptions.length > 0) {
-          selectedStudent = studentsOptions[0].name
-        }
-        loading = false
-      }
-    })
+      })
+    }
   })
 
   export const load = () => {

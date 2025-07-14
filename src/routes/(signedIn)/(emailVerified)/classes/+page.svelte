@@ -57,6 +57,9 @@
   const studentUidToGrade: Record<string, string> = {}
 
   const uidToName: Record<string, string> = {}
+  
+  // Preload student data for the StudentSelect component
+  let preloadedStudents: { uid: string; name: string }[] = []
 
   const courseToMinGrade = {
     'Environmental Science': 5,
@@ -91,6 +94,12 @@
           }`.trim() || `Child ${i}`
         uidToName[studentUid] = name
         studentUidToGrade[studentUid] = docRef.data()?.academic.grade ?? ''
+        
+        // Add to preloaded students for StudentSelect component
+        preloadedStudents.push({
+          uid: studentUid,
+          name: name
+        })
       }
     }
   }
@@ -363,7 +372,7 @@
       </div>
       {#if isStudent}
         <div class="mt-2 flex items-center gap-2">
-          <StudentSelect bind:selectedStudentUid />
+          <StudentSelect bind:selectedStudentUid {preloadedStudents} />
           <Button
             color={isEnrolled(dialogClassDetails.id, selectedStudentUid)
               ? 'red'
