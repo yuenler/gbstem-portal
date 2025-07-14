@@ -11,9 +11,9 @@
     import { doc, getDoc } from 'firebase/firestore'
     import { decisionsCollection } from '$lib/data/constants'
     import { db } from '$lib/client/firebase'
+  import { user } from '$lib/client/firebase';
 
-  export let user: Data.User.Peek
-
+  $: userRole = $user?.profile?.role;
   let shadow = false
   let open = false
   let showAdditionalPages = false
@@ -21,7 +21,7 @@
   // Reactive statement to update the forms page name based on user role
   $: pages = [
     { name: 'Dashboard', href: '/dashboard' },
-    { name: user.role === 'student' ? 'Register' : 'Apply', href: '/apply' },
+    { name: userRole === 'student' ? 'Register' : 'Apply', href: '/apply' },
     { name: 'Classes', href: '/classes' },
     // { name: 'FAQ', href: '/faq' },
     ...(showAdditionalPages ? [
@@ -32,10 +32,11 @@
 
   onMount(() => {
     updateShadow();
+    console.log('user', $user);
 
     (async () => {
       try {
-        const document = await getDoc(doc(db, decisionsCollection, user.uid));
+        const document = await getDoc(doc(db, decisionsCollection, $user?.object?.uid));
         if (document.exists() && document.data().type === 'accepted') {
           showAdditionalPages = true;
         }
@@ -71,7 +72,7 @@
 {#await pages then pages}
   <div class="flex items-center gap-8">
     <Brand />
-    {#if user.emailVerified}
+    {#if $user?.object?.emailVerified}
       <div class="hidden items-center gap-3 sm:flex">
         {#each pages as page}
           <a
@@ -142,7 +143,7 @@
       duration: 200,
     }}
   >
-    {#if user.emailVerified}
+    {#if $user?.object?.emailVerified}
       {#each pages as page}
         <a
           class={cn(
@@ -155,7 +156,7 @@
         </a>
       {/each}
     {/if}
-    <div class={cn(user.emailVerified && 'mt-d')}>
+    <div class={cn($user?.object?.emailVerified && 'mt-d')}>
       <ProfileMenu />
     </div>
   </div>
