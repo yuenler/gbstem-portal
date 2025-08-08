@@ -122,20 +122,26 @@
     return [year, month, day].join('-');
 }
 
-  async function createLink(): Promise<string> { 
-    if(values.classDay1 === '' || values.classDay2 === '') {
-      alert.trigger('error', 'Please select your class days before creating a meeting link.')
+ async function createLink(): Promise<string> { 
+    if (values.classDay1 === '') {
+      alert.trigger('error', 'Please select at least one class day before creating a meeting link.')
       return ''
     }
-    const time1 = new Date(values.meetingTimes[0]).getHours()
-    const time2 = new Date(values.meetingTimes[1]).getHours()
-    let url: string = ''
 
-    const earliestClassPossible = new Date()
-    // earliestClassPossible.setHours(Math.min(time1, time2))
-    earliestClassPossible.setHours(9)
-    const earliestClassLatestPossibleEndTime = new Date()
-    earliestClassLatestPossibleEndTime.setHours(23)
+  const time1 = values.meetingTimes?.[0] ? new Date(values.meetingTimes[0]).getHours() : 9
+  const time2 = values.meetingTimes?.[1] ? new Date(values.meetingTimes[1]).getHours() : 9
+
+  let url: string = ''
+
+  const earliestClassPossible = new Date()
+  earliestClassPossible.setHours(9)
+  const earliestClassLatestPossibleEndTime = new Date()
+  earliestClassLatestPossibleEndTime.setHours(23)
+
+  const daysOfWeek = [values.classDay1]
+  if (values.classDay2) {
+    daysOfWeek.push(values.classDay2)
+  }
 
     const event = {
       subject: `${values.course} Class Meeting`,
@@ -155,7 +161,7 @@
         pattern: {
           type: 'weekly',
           interval: 1,
-          daysOfWeek: [values.classDay1, values.classDay2],
+          daysOfWeek: daysOfWeek,
         },
         range: {
           type: 'numbered',
@@ -280,8 +286,8 @@
 
     <div class="grid gap-1">
       <span class="font-bold"
-        >Online classes meet twice weekly at consistent days and times
-        throughout the semester and run for 45-60 minutes each. In-person
+        >Online classes meet once weekly at consistent days and times
+        throughout the semester and run for 60 minutes each; with the exception of math, which meets twice weekly for 60 minutes each. In-person
         classes meet once a week on a weekend afternoon at the Cambridge Public
         Library.
       </span>
@@ -305,7 +311,7 @@
         />
       </div>
 
-      {#if values.online}
+      {#if values.course && values.course.toLowerCase().includes('math') && values.online}
         <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
           <div class="sm:col-span-2">
             <Select
@@ -406,8 +412,8 @@
 
     <div class="grid gap-1">
       <span class="font-bold"
-        >Online classes meet twice weekly at consistent days and times
-        throughout the semester and run for 45-60 minutes each. In-person
+        >Online classes meet once weekly at consistent days and times
+        throughout the semester and run for 60 minutes each; with the exception of math, which meets twice weekly for 60 minutes each. In-person
         classes meet once a week on a weekend afternoon at the Cambridge Public
         Library.
       </span>
@@ -431,7 +437,7 @@
         />
       </div>
 
-      {#if values.online}
+      {#if values.course && values.course.toLowerCase().includes('math') && values.online}
         <div class="grid gap-1 sm:grid-cols-3 sm:gap-3">
           <div class="sm:col-span-2">
             <Select
