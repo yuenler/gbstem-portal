@@ -515,14 +515,12 @@
     <div class="grid gap-1">
       <span class="font-bold">Agreements</span>
       <div class="grid">
-        {#if values.program.inPerson}
-          <Input
+        <Input
           type="checkbox"
           bind:value={values.agreements.mediaRelease}
-          label="Do you give consent to your child's picture being used in gbSTEM publications, including website, newsletter, and social media posts? Names and personal information will not be shared."
+          label="If your child is participating in an in-person program, do you give consent to your child's picture being used in gbSTEM publications, including website, newsletter, and social media posts? Names and personal information will not be shared."
           required
         />
-        {/if}
         <Input
           type="checkbox"
           bind:value={values.agreements.entireProgram}

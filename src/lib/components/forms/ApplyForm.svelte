@@ -71,17 +71,6 @@
       inPerson: false,
       reason: '',
     },
-    background: {
-      legalFirstName: '',
-      legalLastName: '',
-      parent1FirstName: '',
-      parent1LastName: '',
-      parent2FirstName: '',
-      parent2LastName: '',
-      legalSex: '',
-      race: '',
-      last6SSN: '',
-    },
     essay: {
       taughtBefore: false,
       academicBackground: '',
@@ -446,6 +435,11 @@
           required
         />
       </div>
+      <Input
+      type="checkbox"
+      bind:value={values.program.inPerson}
+      label="gbSTEM will offer FIRST Lego League Robotics in-person at the Cambridge Public Library. Check this box if you would be able to mentor and instruct Lego Robotics on Saturdays 1:00-3:00 pm. Please note that if you are interested in instructing Lego Robotics, you must be able to teach in-person and therefore must check this box."
+      />
 
       <div class="mt-2">
         <Textarea
@@ -463,11 +457,6 @@
           required
         />
       </div>
-      <Input
-      type="checkbox"
-      bind:value={values.program.inPerson}
-      label="gbSTEM will offer FIRST Lego League Robotics in-person at the Cambridge Public Library. Check this box if you would be able to mentor and instruct Lego Robotics on Saturdays 1:00-3:00 pm. Please note that if you are interested in instructing Lego Robotics, you must be able to teach in-person and therefore must check this box."
-      />
       <div class="mt-5">
         <span class="font-bold">Essays</span>
         <div class="mt-2">
@@ -504,86 +493,6 @@
           </div>
         {/if}
       </div>
-      {#if values.program.inPerson}
-      <div class="grid gap-1">
-      <span class="font-bold mt-8">Additional Information</span>
-       <div>
-        <p>
-          For safety reasons, all in-person instructors must provide
-          identifying information so that we can background check you. This
-          information will not be accessible or visible to anyone besides
-          yourself and the background checker.
-        </p>
-      </div>
-      <div class="flex gap-2">
-        <Input
-          type="text"
-          bind:value={values.background.legalFirstName}
-          label="Legal first name"
-          floating
-          required
-        />
-        <Input
-          type="text"
-          bind:value={values.background.legalLastName}
-          label="Legal last name"
-          floating
-          required
-        />
-      </div>
-      <div class="flex gap-2">
-        <Input
-          type="text"
-          bind:value={values.background.parent1FirstName}
-          label="Parent 1 first name"
-          floating
-          required
-        />
-        <Input
-          type="text"
-          bind:value={values.background.parent1LastName}
-          label="Parent 1 last name"
-          floating
-          required
-        />
-      </div>
-      <div class="flex gap-2">
-        <Input
-          type="text"
-          bind:value={values.background.parent2FirstName}
-          label="Parent 2 first name"
-          floating
-        />
-        <Input
-          type="text"
-          bind:value={values.background.parent2LastName}
-          label="Parent 2 last name"
-          floating
-        />
-      </div>
-        <Select
-          bind:value={values.background.legalSex}
-          label="Sex"
-          options={coriSexesJson}
-          floating
-          required
-        />
-        <Select
-        bind:value={values.background.race}
-        label="Select the race that best describes you"
-        options={coriRacesJson}
-        floating
-        required
-      />
-        <Input
-        type="text"
-        bind:value={values.background.last6SSN}
-        label="Last 6 digits of your Social Security Number"
-        floating
-        required
-      />
-      </div>
-      {/if}
       <div class="grid gap-1">
         <span class="font-bold mt-8">Agreements</span>
         <div class="grid">

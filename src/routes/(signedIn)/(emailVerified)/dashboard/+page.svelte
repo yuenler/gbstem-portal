@@ -212,7 +212,6 @@
                     {/if}
                   </p>
                 </div>
-                <div class="rounded-lg bg-green-100 p-4 mt-2 text-green-900">gbSTEM is offering a Lego Robotics Competition program for the spring. Sessions will be held in person weekly on Saturdays 1-3 pm at the Cambridge Public Library. Instructors will get the chance to mentor students in design, robotics coding, and Lego engineering as well as strategy and gameplay. Learn more <a class="underline" href='www.gbstem.org/#/robotics'>here</a>.</div>
                 <a href="/apply">
                   <Button class="mt-5 w-full flex items-center justify-center gap-2" color="blue">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
