@@ -32,6 +32,7 @@
     studentOrientation: '',
     registrationsDue: '',
     parentOrientation: '',
+    registrationsOpen: '',
   }
 
   const fetchData = async (user: Data.User.Store) => {

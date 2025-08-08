@@ -16,6 +16,7 @@
     returningInstructorAppsOpen: '',
     studentOrientation: '',
     registrationsDue: '',
+    registrationsOpen: '',
     parentOrientation: '',
   }
 

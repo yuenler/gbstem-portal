@@ -42,6 +42,7 @@
     studentOrientation: '',
     registrationsDue: '',
     parentOrientation: '',
+    registrationsOpen: '',
   }
 
   let disabled = true

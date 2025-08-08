@@ -53,6 +53,7 @@
     studentOrientation: '',
     registrationsDue: '',
     parentOrientation: '',
+    registrationsOpen: '',
   }
 
   let isStudent = false
@@ -224,7 +225,6 @@
             {:else}
               <div class="mb-4">
                 <h3 class="text-lg font-semibold">Student Registration</h3>
-                <div class="rounded-lg bg-green-100 p-4 mt-2 text-green-900">NEW COURSE: gbSTEM is now offering a Lego Robotics Competition program. Sessions will be held in person weekly on Saturdays at the Cambridge Public Library. Students enrolled will get the chance to work together to build a robot to solve mission puzzles. Learn more <a class="underline" href='www.gbstem.org/#/robotics'>here</a>.</div>
                 {#if numSubmitted > 0}
                   <div class="mt-2 text-blue-700 font-semibold">You currently have {numSubmitted} student{numSubmitted > 1 ? 's' : ''} with accounts for this semester.</div>
                 {:else}

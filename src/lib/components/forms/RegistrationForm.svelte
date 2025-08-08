@@ -47,6 +47,7 @@
     studentOrientation: '',
     registrationsDue: '',
     parentOrientation: '',
+    registrationsOpen: '',
   }
 
   let disabled = true
@@ -175,7 +176,7 @@
               values.personal.parentLastName = user.profile.lastName
               handleSave()
             }
-            if (new Date() > new Date(semesterDates.newInstructorAppsOpen)) {
+            if (new Date() > new Date(semesterDates.registrationsOpen)) {
               disabled = false
               if (saveInterval === undefined) {
                 saveInterval = window.setInterval(() => {
@@ -329,6 +330,27 @@
   class={clsx('max-w-2xl', showValidation && 'show-validation')}
   on:submit={handleSubmit}
 >
+  {#if new Date() < new Date (semesterDates.registrationsOpen)}
+  <Card class="mb-6 bg-red-50 border-red-200">
+      <div class="flex items-start gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-6 w-6 text-red-600 shrink-0 mt-0.5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+          />
+        </svg>
+      You may register for the upcoming semester starting on <b>{new Date(semesterDates.registrationsOpen).toDateString()}</b>.
+    </div>
+  </Card>
+  {:else}
   {#if new Date() >= new Date(semesterDates.registrationsDue)}
     <Card class="mb-6 bg-red-50 border-red-200">
       <div class="flex items-start gap-3">
@@ -510,7 +532,7 @@
         <Input
           type="checkbox"
           bind:value={values.agreements.timeCommitment}
-          label="Do you hereby confirm that the student can meet the gbSTEM weekly time commitment? Please understand that an unused spot for your child prevents others from joining or getting their preferred time slots. The time commitment for EACH course selected is at minimum 2 hours per week.  This means that if your student takes an engineering and math course the time commitment will be 4 hours a week. Students are not allowed to miss classes unless for medical reasons or family emergencies."
+          label="Do you hereby confirm that the student can meet the gbSTEM weekly time commitment? Please understand that an unused spot for your child prevents others from joining or getting their preferred time slots. Students should not miss classes unless for medical reasons or family emergencies."
           required
         />
         <Input
@@ -557,5 +579,6 @@
       {/if}
     </div>
   </fieldset>
+{/if}
 {/if}
 </Form>

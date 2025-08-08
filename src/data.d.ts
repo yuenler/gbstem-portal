@@ -68,6 +68,7 @@ declare global {
       newInstructorAppsOpen: string,
       returningInstructorAppsOpen: string,
       studentOrientation: string,
+      registrationsOpen: string,
       registrationsDue: string,
       parentOrientation: string,
     }
