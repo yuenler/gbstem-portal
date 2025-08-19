@@ -25,7 +25,6 @@
     { name: 'Classes', href: '/classes' },
     // { name: 'FAQ', href: '/faq' },
     ...(showAdditionalPages ? [
-      { name: 'Curriculum', href: '/curriculum' }, 
       { name:'Community Service Hours Tracker', href:'/community-service'}
     ] : [])
   ]
