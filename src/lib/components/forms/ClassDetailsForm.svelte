@@ -5,8 +5,8 @@
   import Button from '../Button.svelte'
   import Select from '$lib/components/Select.svelte'
   import Input from '$lib/components/Input.svelte'
-  import { cn, formatDate, timestampToDate } from '$lib/utils'
-  import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+  import { cn } from '$lib/utils'
+  import { doc, setDoc, getDocs, collection } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { classesCollection } from '$lib/data/constants'
@@ -24,6 +24,7 @@
   let showValidation = false
   let submitted = false
   let meetingLink
+  let isCreatingNewClass = false
 
   let values: Data.Class = {
     classDay1: '',
@@ -48,6 +49,46 @@
   }
 
   let createClassSchedule = true
+
+  function selectClass(classKey: string) {
+    selectedClassKey = classKey
+    values = instructorClasses[classKey]
+    if(values.course !== '') {
+      submitted = true
+    }
+    disabled = true
+    createClassSchedule = false
+    isCreatingNewClass = false
+  }
+
+  function createNewClass() {
+    selectedClassKey = ''
+    values = {
+      classDay1: '',
+      classTime1: '',
+      classDay2: '',
+      classTime2: '',
+      meetingLink: '',
+      gradeRecommendation: '',
+      course: '',
+      submitting: false,
+      meetingTimes: [],
+      completedClassDates: [],
+      feedbackCompleted: [],
+      classStatuses: [],
+      instructorFirstName: '',
+      instructorLastName: '',
+      instructorEmail: '',
+      otherInstructorEmails: '',
+      classCap: 7,
+      online: true,
+      students: [],
+    }
+    submitted = false
+    disabled = false
+    createClassSchedule = true
+    isCreatingNewClass = true
+  }
 
   function getMeetingDates(
     classDay1: string,
@@ -85,13 +126,31 @@
   }
 
   
+  let instructorClasses: {[key: string]: Data.Class} = {}
+  let selectedClassKey = ''
+  let availableClassKeys: string[] = []
+
   onMount(() => {   
     return user.subscribe((user) => {
       if (user) {
-        getDoc(doc(db, classesCollection, user.object.uid)).then((snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.data()
-            values = data as Data.Class
+        // Get all classes for this instructor
+        getDocs(collection(db, classesCollection)).then((querySnapshot) => {
+          const userClasses: {[key: string]: Data.Class} = {}
+          
+          querySnapshot.forEach((doc) => {
+            if (doc.id.startsWith(user.object.uid + '-')) {
+              const classNumber = doc.id.split('-')[1]
+              userClasses[classNumber] = doc.data() as Data.Class
+            }
+          })
+          
+          instructorClasses = userClasses
+          availableClassKeys = Object.keys(instructorClasses)
+          
+          // If instructor has classes, select the first one
+          if (availableClassKeys.length > 0) {
+            selectedClassKey = availableClassKeys[0]
+            values = instructorClasses[selectedClassKey]
             if(values.course !== '') {
               submitted = true
             }
@@ -232,7 +291,17 @@
         if(values.meetingLink === '') {
           values.meetingLink = await createLink()
         }
-        setDoc(doc(db, classesCollection, frozenUser.object.uid), values)
+        
+        // Determine class number for new classes
+        let classNumber = selectedClassKey
+        if (!classNumber) {
+          // For new classes, find the next available number
+          const existingNumbers = availableClassKeys.map(key => parseInt(key)).filter(n => !isNaN(n))
+          classNumber = existingNumbers.length > 0 ? (Math.max(...existingNumbers) + 1).toString() : '1'
+        }
+        
+        const classId = `${frozenUser.object.uid}-${classNumber}`
+        setDoc(doc(db, classesCollection, classId), values)
           .then(() => {
             disabled = true
             submitted = true
@@ -268,7 +337,41 @@
       Please do not fill this form out until you have been told by gbSTEM
       leadership what class you will be teaching. Submitting this form will generate a meeting link for your class; you can join using the 'Join Class' button in the portal.
     </p>
-    <h2 class="text-xl font-bold">Your class details</h2>
+    
+    <!-- Class Management Section -->
+    <div class="bg-gray-50 p-4 rounded-lg">
+      <h3 class="text-lg font-semibold mb-3">Manage Your Classes</h3>
+      
+      <div class="flex flex-wrap gap-2 mb-3">
+        {#each availableClassKeys as classKey}
+          <Button 
+            color={selectedClassKey === classKey ? "blue" : "gray"}
+            on:click={() => selectClass(classKey)}
+          >
+            Class {classKey}
+            {#if instructorClasses[classKey]?.course}
+              - {instructorClasses[classKey].course}
+            {/if}
+          </Button>
+        {/each}
+        
+        <Button color="green" on:click={createNewClass}>
+          + Create New Class
+        </Button>
+      </div>
+      
+      {#if isCreatingNewClass}
+        <p class="text-sm text-blue-600">Creating new class...</p>
+      {:else if selectedClassKey}
+        <p class="text-sm text-gray-600">Editing Class {selectedClassKey}</p>
+      {:else if availableClassKeys.length === 0}
+        <p class="text-sm text-gray-600">No classes created yet. Click "Create New Class" to start.</p>
+      {/if}
+    </div>
+
+    <h2 class="text-xl font-bold">
+      {isCreatingNewClass ? 'New Class Details' : selectedClassKey ? `Class ${selectedClassKey} Details` : 'Class Details'}
+    </h2>
 
     <Select
       bind:value={values.course}
@@ -394,7 +497,41 @@
       Please do not fill this form out until you have been told by gbSTEM
       leadership what class you will be teaching.
     </p>
-    <h2 class="text-xl font-bold">Your class details</h2>
+    
+    <!-- Class Management Section -->
+    <div class="bg-gray-50 p-4 rounded-lg">
+      <h3 class="text-lg font-semibold mb-3">Manage Your Classes</h3>
+      
+      <div class="flex flex-wrap gap-2 mb-3">
+        {#each availableClassKeys as classKey}
+          <Button 
+            color={selectedClassKey === classKey ? "blue" : "gray"}
+            on:click={() => selectClass(classKey)}
+          >
+            Class {classKey}
+            {#if instructorClasses[classKey]?.course}
+              - {instructorClasses[classKey].course}
+            {/if}
+          </Button>
+        {/each}
+        
+        <Button color="green" on:click={createNewClass}>
+          + Create New Class
+        </Button>
+      </div>
+      
+      {#if isCreatingNewClass}
+        <p class="text-sm text-blue-600">Creating new class...</p>
+      {:else if selectedClassKey}
+        <p class="text-sm text-gray-600">Editing Class {selectedClassKey}</p>
+      {:else if availableClassKeys.length === 0}
+        <p class="text-sm text-gray-600">No classes created yet. Click "Create New Class" to start.</p>
+      {/if}
+    </div>
+
+    <h2 class="text-xl font-bold">
+      {isCreatingNewClass ? 'New Class Details' : selectedClassKey ? `Class ${selectedClassKey} Details` : 'Class Details'}
+    </h2>
 
     <Select
       bind:value={values.course}

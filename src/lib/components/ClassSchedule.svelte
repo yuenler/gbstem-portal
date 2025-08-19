@@ -6,8 +6,9 @@
     getDoc,
     updateDoc,
     DocumentReference,
-    Timestamp,
     setDoc,
+    getDocs,
+    collection,
   } from 'firebase/firestore'
   import Input from './Input.svelte'
   import { slide } from 'svelte/transition'
@@ -58,6 +59,9 @@
   //index of the next class date from the list of meeting times
   let nextClassIndex = -1
   let classId = ''
+  let instructorClasses: {[key: string]: Data.ClassDetails} = {}
+  let availableClassKeys: string[] = []
+  let selectedClassKey = ''
   let dialogEl: Dialog
   let addClassDialogEl: Dialog
   let feedbackDialogEl: Dialog
@@ -308,37 +312,53 @@
     })
 }
 
+  function selectClass(classKey: string) {
+    selectedClassKey = classKey
+    classId = `${$user?.object.uid}-${classKey}`
+    values = instructorClasses[classKey]
+    studentList = [] // Reset student list
+    
+    let { students, meetingTimes } = values
+    if (students) {
+      getStudentList(students)
+    }
+    if (values && meetingTimes) {
+      meetingTimes.sort((a, b) => {
+        return a.getTime() - b.getTime()
+      })
+      originalMeetingTimes = meetingTimes.map((time: Date) =>
+        toLocalISOString(time),
+      )
+      editedMeetingTimes = [...originalMeetingTimes]
+      checkStatuses()
+      nextClassIndex = findNextClassDate()
+    }
+  }
+
 onMount(() => {
     return user.subscribe((user) => {
       if (user) {
-        classId = user.object.uid
-        const classDocRef: DocumentReference = doc(
-          db,
-          classesCollection,
-          classId,
-        )
-        getDoc(classDocRef).then((classDoc) => {
-          if (classDoc.exists()) {
-            const classData = classDoc.data()
-            values = classData as Data.ClassDetails
-            values.meetingTimes = values.meetingTimes.map((time: Date) => (timestampToDate(time)))
-            values.completedClassDates = values.completedClassDates.map((time: Date) => (timestampToDate(time)))
-            let { students, meetingTimes } = values
-            if (students) {
-              getStudentList(students)
+        // Get all classes for this instructor
+        getDocs(collection(db, classesCollection)).then((querySnapshot) => {
+          const userClasses: {[key: string]: Data.ClassDetails} = {}
+          
+          querySnapshot.forEach((doc) => {
+            if (doc.id.startsWith(user.object.uid + '-')) {
+              const classNumber = doc.id.split('-')[1]
+              const classData = doc.data() as Data.ClassDetails
+              classData.id = doc.id
+              classData.meetingTimes = classData.meetingTimes.map((time: any) => timestampToDate(time))
+              classData.completedClassDates = classData.completedClassDates.map((time: any) => timestampToDate(time))
+              userClasses[classNumber] = classData
             }
-            console.log(meetingTimes)
-            if (values && meetingTimes) {
-              meetingTimes.sort((a, b) => {
-                return a.getTime() - b.getTime()
-              })
-              originalMeetingTimes = meetingTimes.map((time: Date) =>
-                toLocalISOString(time),
-              )
-              editedMeetingTimes = [...originalMeetingTimes]
-              checkStatuses()
-              nextClassIndex = findNextClassDate()
-            }
+          })
+          
+          instructorClasses = userClasses
+          availableClassKeys = Object.keys(instructorClasses).sort()
+          
+          // Auto-select first class if available
+          if (availableClassKeys.length > 0) {
+            selectClass(availableClassKeys[0])
           }
         })
       }
@@ -390,7 +410,7 @@ onMount(() => {
 <Dialog bind:this={feedbackDialogEl} size="min" alert>
   <svelte:fragment slot="title"><div class = "flex justify-between items-center">Weekly {values.course} Class Feedback Form <Button color = 'red' class="font-light" on:click={feedbackDialogEl.cancel}>Close</Button></div> </svelte:fragment>
   <div slot="description">
-    <InstructorFeedbackForm classBeingSubbed={undefined} sessionNumber = {nextClassIndex + 1}/>
+    <InstructorFeedbackForm classBeingSubbed={undefined} sessionNumber = {nextClassIndex + 1} classId={classId}/>
   </div>
 </Dialog>
 <ClassDetailsForm bind:classDetailsDialogEl dialog={true} semesterDates={semesterDates}/>
@@ -493,6 +513,26 @@ onMount(() => {
     </div>
   </Card>
   </Dialog>
+  <!-- Class Selector -->
+  {#if availableClassKeys.length > 1}
+    <Card class="mb-4">
+      <h3 class="text-lg font-semibold mb-3">Select Class</h3>
+      <div class="flex flex-wrap gap-2">
+        {#each availableClassKeys as classKey}
+          <Button 
+            color={selectedClassKey === classKey ? "blue" : "gray"}
+            on:click={() => selectClass(classKey)}
+          >
+            Class {classKey}
+            {#if instructorClasses[classKey]?.course}
+              - {instructorClasses[classKey].course}
+            {/if}
+          </Button>
+        {/each}
+      </div>
+    </Card>
+  {/if}
+
   {#if values.id !== ''}
   <Card class="mb-4">
     <div class="font-bold">Next Upcoming Class:</div>

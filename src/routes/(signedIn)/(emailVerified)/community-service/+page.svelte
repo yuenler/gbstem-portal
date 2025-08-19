@@ -22,15 +22,35 @@
     user.subscribe((user) => {
         if(user) {
         currentUser = user
-        getDoc(doc(db, classesCollection, user.object.uid)).then((doc) => {
-            if (doc.exists()) {
-                const data = doc.data() as Data.Class
-                numRegHours = data.classStatuses.filter((classStatus) => classStatus === ClassStatus.EverythingComplete || classStatus === ClassStatus.FeedbackIncomplete).length
-                numHours = numHours + numRegHours
-                course = data.course
-                const startDate = timestampToDate(data.meetingTimes[0])
-                isFall = startDate.getMonth() > 6
-                year = startDate.getFullYear()
+        // Get all classes for this instructor
+        getDocs(collection(db, classesCollection)).then((querySnapshot) => {
+            let courses: string[] = []
+            let totalRegHours = 0
+            
+            querySnapshot.forEach((doc) => {
+                if (doc.id.startsWith(user.object.uid + '-')) {
+                    const data = doc.data() as Data.Class
+                    const classHours = data.classStatuses.filter((classStatus) => 
+                        classStatus === ClassStatus.EverythingComplete || 
+                        classStatus === ClassStatus.FeedbackIncomplete
+                    ).length
+                    totalRegHours += classHours
+                    courses.push(data.course)
+                    
+                    // Use the first class to determine semester info
+                    if (course === '' && data.meetingTimes.length > 0) {
+                        course = courses.length > 1 ? `${courses.join(', ')}` : data.course
+                        const startDate = timestampToDate(data.meetingTimes[0])
+                        isFall = startDate.getMonth() > 6
+                        year = startDate.getFullYear()
+                    }
+                }
+            })
+            
+            numRegHours = totalRegHours
+            numHours = numHours + numRegHours
+            if (courses.length > 1) {
+                course = courses.join(', ')
             }
         }).then(() => {
             const q = query(collection(db, substituteRequestsCollection));

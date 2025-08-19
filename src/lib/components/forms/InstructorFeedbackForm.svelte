@@ -25,6 +25,7 @@
   // export let feedbackDialogEl: Dialog
   export let classBeingSubbed: Data.SubRequest | undefined
   export let sessionNumber: number
+  export let classId: string | undefined = undefined
 
   let disabled = false
   let showValidation = false
@@ -62,7 +63,7 @@
     })
 
   async function getData() {
-    let id = classBeingSubbed === undefined ? currentUser.object.uid : classBeingSubbed.id.split('---')[0]
+    let id = classBeingSubbed === undefined ? (classId || currentUser.object.uid) : classBeingSubbed.id.split('---')[0]
     const document = await getDoc(doc(db, classesCollection, id))
      if(document.exists()) {
         const data = document.data() as Data.Class
@@ -104,7 +105,7 @@
   function handleSubmit() {
     if ($user) {
       const frozenUser = $user
-      let id = classBeingSubbed === undefined ? frozenUser.object.uid : classBeingSubbed.id.split('---')[0]
+      let id = classBeingSubbed === undefined ? (classId || frozenUser.object.uid) : classBeingSubbed.id.split('---')[0]
       if (classDate === '') {
         alert.trigger('error', 'Please enter class date.')
       } else {
