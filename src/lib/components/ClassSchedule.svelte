@@ -24,7 +24,8 @@
           isClassUpcoming, 
           normalizeCapitals, 
           timestampToDate, 
-          toLocalISOString
+          toLocalISOString,
+          getInstructorClasses
         } from '$lib/utils'
   import sendClassReminder from './helpers/sendClassReminder'
   import type Student from './types/Student'
@@ -59,9 +60,9 @@
   //index of the next class date from the list of meeting times
   let nextClassIndex = -1
   let classId = ''
-  let instructorClasses: {[key: string]: Data.ClassDetails} = {}
-  let availableClassKeys: string[] = []
-  let selectedClassKey = ''
+  let instructorClasses: {[classId: string]: Data.ClassDetails} = {}
+  let availableClassIds: string[] = []
+  let selectedClassId = ''
   let dialogEl: Dialog
   let addClassDialogEl: Dialog
   let feedbackDialogEl: Dialog
@@ -312,10 +313,10 @@
     })
 }
 
-  function selectClass(classKey: string) {
-    selectedClassKey = classKey
-    classId = `${$user?.object.uid}-${classKey}`
-    values = instructorClasses[classKey]
+  function selectClass(newClassId: string) {
+    selectedClassId = newClassId
+    classId = newClassId
+    values = instructorClasses[newClassId]
     studentList = [] // Reset student list
     
     let { students, meetingTimes } = values
@@ -336,31 +337,37 @@
   }
 
 onMount(() => {
-    return user.subscribe((user) => {
+    return user.subscribe(async (user) => {
       if (user) {
-        // Get all classes for this instructor
-        getDocs(collection(db, classesCollection)).then((querySnapshot) => {
-          const userClasses: {[key: string]: Data.ClassDetails} = {}
-          
-          querySnapshot.forEach((doc) => {
-            if (doc.id.startsWith(user.object.uid + '-')) {
-              const classNumber = doc.id.split('-')[1]
-              const classData = doc.data() as Data.ClassDetails
-              classData.id = doc.id
-              classData.meetingTimes = classData.meetingTimes.map((time: any) => timestampToDate(time))
-              classData.completedClassDates = classData.completedClassDates.map((time: any) => timestampToDate(time))
-              userClasses[classNumber] = classData
-            }
-          })
-          
-          instructorClasses = userClasses
-          availableClassKeys = Object.keys(instructorClasses).sort()
-          
-          // Auto-select first class if available
-          if (availableClassKeys.length > 0) {
-            selectClass(availableClassKeys[0])
+        // Get all classes for this instructor using helper function
+        const userClasses = await getInstructorClasses(user.object.uid, user.object.email || '')
+        
+        // Convert to ClassDetails format and add id field
+        const classDetails: {[classId: string]: Data.ClassDetails} = {}
+        Object.entries(userClasses).forEach(([classId, classData]) => {
+          classDetails[classId] = {
+            id: classId,
+            students: classData.students,
+            classStatuses: classData.classStatuses,
+            feedbackCompleted: classData.feedbackCompleted,
+            instructorFirstName: classData.instructorFirstName,
+            instructorLastName: classData.instructorLastName,
+            instructorEmail: classData.instructorEmail,
+            otherInstructorEmails: classData.otherInstructorEmails,
+            course: classData.course,
+            meetingLink: classData.meetingLink,
+            meetingTimes: classData.meetingTimes,
+            completedClassDates: classData.completedClassDates
           }
         })
+        
+        instructorClasses = classDetails
+        availableClassIds = Object.keys(instructorClasses).sort()
+        
+        // Auto-select first class if available
+        if (availableClassIds.length > 0) {
+          selectClass(availableClassIds[0])
+        }
       }
     })
   })
@@ -514,18 +521,18 @@ onMount(() => {
   </Card>
   </Dialog>
   <!-- Class Selector -->
-  {#if availableClassKeys.length > 1}
+  {#if availableClassIds.length > 1}
     <Card class="mb-4">
       <h3 class="text-lg font-semibold mb-3">Select Class</h3>
       <div class="flex flex-wrap gap-2">
-        {#each availableClassKeys as classKey}
+        {#each availableClassIds as classId}
           <Button 
-            color={selectedClassKey === classKey ? "blue" : "gray"}
-            on:click={() => selectClass(classKey)}
+            color={selectedClassId === classId ? "blue" : "gray"}
+            on:click={() => selectClass(classId)}
           >
-            Class {classKey}
-            {#if instructorClasses[classKey]?.course}
-              - {instructorClasses[classKey].course}
+            Class {classId.split('-')[1]}
+            {#if instructorClasses[classId]?.course}
+              - {instructorClasses[classId].course}
             {/if}
           </Button>
         {/each}

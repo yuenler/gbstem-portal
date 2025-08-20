@@ -5,8 +5,8 @@
   import Button from '../Button.svelte'
   import Select from '$lib/components/Select.svelte'
   import Input from '$lib/components/Input.svelte'
-  import { cn } from '$lib/utils'
-  import { doc, setDoc, getDocs, collection } from 'firebase/firestore'
+  import { cn, getInstructorClasses, updateInstructorClassMappings } from '$lib/utils'
+  import { doc, setDoc } from 'firebase/firestore'
   import { onMount } from 'svelte'
   import { coursesJson, daysOfWeekJson } from '$lib/data'
   import { classesCollection } from '$lib/data/constants'
@@ -50,9 +50,9 @@
 
   let createClassSchedule = true
 
-  function selectClass(classKey: string) {
-    selectedClassKey = classKey
-    values = instructorClasses[classKey]
+  function selectClass(classId: string) {
+    selectedClassId = classId
+    values = instructorClasses[classId]
     if(values.course !== '') {
       submitted = true
     }
@@ -62,7 +62,7 @@
   }
 
   function createNewClass() {
-    selectedClassKey = ''
+    selectedClassId = ''
     values = {
       classDay1: '',
       classTime1: '',
@@ -126,38 +126,29 @@
   }
 
   
-  let instructorClasses: {[key: string]: Data.Class} = {}
-  let selectedClassKey = ''
-  let availableClassKeys: string[] = []
+  let instructorClasses: {[classId: string]: Data.Class} = {}
+  let selectedClassId = ''
+  let availableClassIds: string[] = []
 
   onMount(() => {   
-    return user.subscribe((user) => {
+    return user.subscribe(async (user) => {
       if (user) {
-        // Get all classes for this instructor
-        getDocs(collection(db, classesCollection)).then((querySnapshot) => {
-          const userClasses: {[key: string]: Data.Class} = {}
-          
-          querySnapshot.forEach((doc) => {
-            if (doc.id.startsWith(user.object.uid + '-')) {
-              const classNumber = doc.id.split('-')[1]
-              userClasses[classNumber] = doc.data() as Data.Class
-            }
-          })
-          
-          instructorClasses = userClasses
-          availableClassKeys = Object.keys(instructorClasses)
-          
-          // If instructor has classes, select the first one
-          if (availableClassKeys.length > 0) {
-            selectedClassKey = availableClassKeys[0]
-            values = instructorClasses[selectedClassKey]
-            if(values.course !== '') {
-              submitted = true
-            }
-            disabled = true
-            createClassSchedule = false
+        // Get all classes for this instructor using helper function
+        const userClasses = await getInstructorClasses(user.object.uid, user.object.email || '')
+        
+        instructorClasses = userClasses
+        availableClassIds = Object.keys(instructorClasses).sort()
+        
+        // If instructor has classes, select the first one
+        if (availableClassIds.length > 0) {
+          selectedClassId = availableClassIds[0]
+          values = instructorClasses[selectedClassId]
+          if(values.course !== '') {
+            submitted = true
           }
-        })
+          disabled = true
+          createClassSchedule = false
+        }
       }
     })
   })
@@ -271,7 +262,8 @@
       showValidation = false
       disabled = true
       if ($user) {
-        const frozenUser = $user
+        try {
+          const frozenUser = $user
         if (createClassSchedule) {
           const meetingTimes = getMeetingDates(
             values.classDay1,
@@ -292,26 +284,31 @@
           values.meetingLink = await createLink()
         }
         
-        // Determine class number for new classes
-        let classNumber = selectedClassKey
-        if (!classNumber) {
+        // Determine class ID for new classes
+        let classId = selectedClassId
+        if (!classId) {
           // For new classes, find the next available number
-          const existingNumbers = availableClassKeys.map(key => parseInt(key)).filter(n => !isNaN(n))
-          classNumber = existingNumbers.length > 0 ? (Math.max(...existingNumbers) + 1).toString() : '1'
+          const existingNumbers = availableClassIds
+            .filter(id => id.startsWith(frozenUser.object.uid + '-'))
+            .map(id => parseInt(id.split('-')[1]))
+            .filter(n => !isNaN(n))
+          const classNumber = existingNumbers.length > 0 ? (Math.max(...existingNumbers) + 1).toString() : '1'
+          classId = `${frozenUser.object.uid}-${classNumber}`
         }
         
-        const classId = `${frozenUser.object.uid}-${classNumber}`
-        setDoc(doc(db, classesCollection, classId), values)
-          .then(() => {
-            disabled = true
-            submitted = true
-             alert.trigger('success', `Class details saved! You can join class by clicking the Join Class button above!`);
-             setTimeout(() => location.reload(), 2000)
-          })
-          .catch((err) => {
-            disabled = false
-            alert.trigger('error', err.code, true)
-          })
+        await setDoc(doc(db, classesCollection, classId), values)
+        
+        // Update instructor class mappings for co-instructors
+        await updateInstructorClassMappings(classId, frozenUser.object.email || '', values.otherInstructorEmails)
+        
+        disabled = true
+        submitted = true
+        alert.trigger('success', `Class details saved! You can join class by clicking the Join Class button above!`);
+        setTimeout(() => location.reload(), 2000)
+        } catch (err: any) {
+          disabled = false
+          alert.trigger('error', err.code || err.message, true)
+        }
       }
     } else {
       showValidation = true
@@ -343,14 +340,14 @@
       <h3 class="text-lg font-semibold mb-3">Manage Your Classes</h3>
       
       <div class="flex flex-wrap gap-2 mb-3">
-        {#each availableClassKeys as classKey}
+        {#each availableClassIds as classId}
           <Button 
-            color={selectedClassKey === classKey ? "blue" : "gray"}
-            on:click={() => selectClass(classKey)}
+            color={selectedClassId === classId ? "blue" : "gray"}
+            on:click={() => selectClass(classId)}
           >
-            Class {classKey}
-            {#if instructorClasses[classKey]?.course}
-              - {instructorClasses[classKey].course}
+            Class {classId.split('-')[1]}
+            {#if instructorClasses[classId]?.course}
+              - {instructorClasses[classId].course}
             {/if}
           </Button>
         {/each}
@@ -362,15 +359,15 @@
       
       {#if isCreatingNewClass}
         <p class="text-sm text-blue-600">Creating new class...</p>
-      {:else if selectedClassKey}
-        <p class="text-sm text-gray-600">Editing Class {selectedClassKey}</p>
-      {:else if availableClassKeys.length === 0}
+      {:else if selectedClassId}
+        <p class="text-sm text-gray-600">Editing Class {selectedClassId.split('-')[1]}</p>
+      {:else if availableClassIds.length === 0}
         <p class="text-sm text-gray-600">No classes created yet. Click "Create New Class" to start.</p>
       {/if}
     </div>
 
     <h2 class="text-xl font-bold">
-      {isCreatingNewClass ? 'New Class Details' : selectedClassKey ? `Class ${selectedClassKey} Details` : 'Class Details'}
+      {isCreatingNewClass ? 'New Class Details' : selectedClassId ? `Class ${selectedClassId.split('-')[1]} Details` : 'Class Details'}
     </h2>
 
     <Select
@@ -503,14 +500,14 @@
       <h3 class="text-lg font-semibold mb-3">Manage Your Classes</h3>
       
       <div class="flex flex-wrap gap-2 mb-3">
-        {#each availableClassKeys as classKey}
+        {#each availableClassIds as classId}
           <Button 
-            color={selectedClassKey === classKey ? "blue" : "gray"}
-            on:click={() => selectClass(classKey)}
+            color={selectedClassId === classId ? "blue" : "gray"}
+            on:click={() => selectClass(classId)}
           >
-            Class {classKey}
-            {#if instructorClasses[classKey]?.course}
-              - {instructorClasses[classKey].course}
+            Class {classId.split('-')[1]}
+            {#if instructorClasses[classId]?.course}
+              - {instructorClasses[classId].course}
             {/if}
           </Button>
         {/each}
@@ -522,15 +519,15 @@
       
       {#if isCreatingNewClass}
         <p class="text-sm text-blue-600">Creating new class...</p>
-      {:else if selectedClassKey}
-        <p class="text-sm text-gray-600">Editing Class {selectedClassKey}</p>
-      {:else if availableClassKeys.length === 0}
+      {:else if selectedClassId}
+        <p class="text-sm text-gray-600">Editing Class {selectedClassId.split('-')[1]}</p>
+      {:else if availableClassIds.length === 0}
         <p class="text-sm text-gray-600">No classes created yet. Click "Create New Class" to start.</p>
       {/if}
     </div>
 
     <h2 class="text-xl font-bold">
-      {isCreatingNewClass ? 'New Class Details' : selectedClassKey ? `Class ${selectedClassKey} Details` : 'Class Details'}
+      {isCreatingNewClass ? 'New Class Details' : selectedClassId ? `Class ${selectedClassId.split('-')[1]} Details` : 'Class Details'}
     </h2>
 
     <Select

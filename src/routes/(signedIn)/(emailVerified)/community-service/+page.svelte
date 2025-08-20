@@ -7,7 +7,7 @@
     import { SubRequestStatus } from "$lib/components/helpers/SubRequestStatus"
     import PageLayout from "$lib/components/PageLayout.svelte";
     import { classesCollection, substituteRequestsCollection } from "$lib/data/constants"
-    import { timestampToDate } from "$lib/utils"
+    import { timestampToDate, getInstructorClasses } from "$lib/utils"
     import { collection, doc, getDoc, getDocs, query } from "firebase/firestore"
     import { alert } from '$lib/stores'
 
@@ -19,51 +19,49 @@
     let isFall = false
     let course = ''
 
-    user.subscribe((user) => {
+    user.subscribe(async (user) => {
         if(user) {
         currentUser = user
-        // Get all classes for this instructor
-        getDocs(collection(db, classesCollection)).then((querySnapshot) => {
-            let courses: string[] = []
-            let totalRegHours = 0
+        // Get all classes for this instructor using helper function
+        const userClasses = await getInstructorClasses(user.object.uid, user.object.email || '')
+        
+        let courses: string[] = []
+        let totalRegHours = 0
+        
+        Object.entries(userClasses).forEach(([classId, data]) => {
+            const classHours = data.classStatuses.filter((classStatus) => 
+                classStatus === ClassStatus.EverythingComplete || 
+                classStatus === ClassStatus.FeedbackIncomplete
+            ).length
+            totalRegHours += classHours
+            courses.push(data.course)
             
-            querySnapshot.forEach((doc) => {
-                if (doc.id.startsWith(user.object.uid + '-')) {
-                    const data = doc.data() as Data.Class
-                    const classHours = data.classStatuses.filter((classStatus) => 
-                        classStatus === ClassStatus.EverythingComplete || 
-                        classStatus === ClassStatus.FeedbackIncomplete
-                    ).length
-                    totalRegHours += classHours
-                    courses.push(data.course)
-                    
-                    // Use the first class to determine semester info
-                    if (course === '' && data.meetingTimes.length > 0) {
-                        course = courses.length > 1 ? `${courses.join(', ')}` : data.course
-                        const startDate = timestampToDate(data.meetingTimes[0])
-                        isFall = startDate.getMonth() > 6
-                        year = startDate.getFullYear()
-                    }
-                }
-            })
-            
-            numRegHours = totalRegHours
-            numHours = numHours + numRegHours
-            if (courses.length > 1) {
-                course = courses.join(', ')
+            // Use the first class to determine semester info
+            if (course === '' && data.meetingTimes.length > 0) {
+                const startDate = timestampToDate(data.meetingTimes[0])
+                isFall = startDate.getMonth() > 6
+                year = startDate.getFullYear()
             }
-        }).then(() => {
-            const q = query(collection(db, substituteRequestsCollection));
-            getDocs(q).then((document) => {
-                document.forEach((doc) => {
-                    const data = doc.data() as Data.SubRequest
-                    if (data.subInstructorId === user.object.uid && data.subRequestStatus === SubRequestStatus.NoSubstituteNeeded) {
-                        numHours = numHours + 1
-                        numSubHours = numSubHours + 1
-                    }
-                })
-            })
-        });
+        })
+        
+        numRegHours = totalRegHours
+        numHours = numHours + numRegHours
+        if (courses.length > 1) {
+            course = courses.join(', ')
+        } else if (courses.length === 1) {
+            course = courses[0]
+        }
+        
+        // Then get substitute hours
+        const q = query(collection(db, substituteRequestsCollection));
+        const subDocs = await getDocs(q)
+        subDocs.forEach((doc) => {
+            const data = doc.data() as Data.SubRequest
+            if (data.subInstructorId === user.object.uid && data.subRequestStatus === SubRequestStatus.NoSubstituteNeeded) {
+                numHours = numHours + 1
+                numSubHours = numSubHours + 1
+            }
+        })
      }
     });
 
