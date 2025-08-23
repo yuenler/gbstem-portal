@@ -21,8 +21,9 @@
   import Select from '$lib/components/Select.svelte'
   import coursesJson from '$lib/data/courses.json'
   import Alert from '$lib/components/Alert.svelte'
-  import { formatTime24to12 } from '$lib/utils'
-    import { classesCollection, registrationsCollection } from '$lib/data/constants'
+  import { formatDate, formatTime24to12 } from '$lib/utils'
+    import { classesCollection, registrationsCollection, semesterDatesDocument } from '$lib/data/constants'
+    import Link from '$lib/components/Link.svelte'
 
   type ClassInfo = {
     id: string
@@ -49,6 +50,21 @@
 
   let classFilter = ''
   let onlyShowEnrolled = false
+
+    let semesterDates: Data.SemesterDates = {
+    classesEnd: '',
+    classesStart: '',
+    leadershipAppsDue: '',
+    newInstructorAppsDue: '',
+    returningInstructorAppsDue: '',
+    instructorOrientation: '',
+    newInstructorAppsOpen: '',
+    returningInstructorAppsOpen: '',
+    studentOrientation: '',
+    registrationsDue: '',
+    parentOrientation: '',
+    registrationsOpen: '',
+  }
 
   const studentUidToClassIds: {
     [studentUid: string]: string[]
@@ -153,6 +169,12 @@
   }
 
   onMount(() => {
+    getDoc(doc(db, 'semesterDates', semesterDatesDocument)).then((datesDoc) => {
+        const datesDocExists = datesDoc.exists()
+        if (datesDocExists) {
+          semesterDates = datesDoc.data() as Data.SemesterDates
+        }
+    })
     getData()
   })
 
@@ -471,6 +493,8 @@
 <div>
   {#if loading}
     <Loading />
+  {:else if new Date() < new Date(semesterDates.registrationsDue)}
+    <div class="p-4 bg-red-50 rounded-lg text-2xl text-red-700">Class enrollment is not open yet. Class times will be posted and class enrollment will open on September 23rd. Before then, ensure you have filled out the form for each student you wish to enroll this semester, <Link href="/apply">here</Link>. This is a mandatory step; without it, you will not be able to enroll your student when classes are posted. You will be notified by email when enrollment opens.</div>
   {:else}
     <div class="mb-5 flex items-center justify-between">
       <div class="flex gap-2 items-center">
