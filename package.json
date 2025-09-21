@@ -39,9 +39,6 @@
     "vite": "^4.4.9"
   },
   "type": "module",
-  "engines": {
-    "node": "18.x"
-  },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
     "clsx": "^2.0.0",
