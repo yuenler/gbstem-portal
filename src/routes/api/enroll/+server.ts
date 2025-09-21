@@ -8,7 +8,7 @@ import {
 import { addDataToHtmlTemplate, formatTime24to12 } from '$lib/utils'
 import { onlineClassEnrolledEmailTemplate } from '$lib/data/emailTemplates/onlineClassEnrolledEmailTemplate'
 import { inPersonClassEnrolledEmailTemplate } from '$lib/data/emailTemplates/inPersonClassEnrolledEmailTemplate'
-import MailService, { MailDataRequired } from '@sendgrid/mail'
+import MailService, { type MailDataRequired } from '@sendgrid/mail'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   let topError

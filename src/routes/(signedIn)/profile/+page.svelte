@@ -23,10 +23,10 @@
   let disabled = false
 
   onMount(() => {
-    return user.subscribe((user) => {
+    return user.subscribe((userValue) => {
       new QRious({
         element: document.getElementById('qr'),
-        value: `https://admin.gbstem.org/user/${$user ? $user.profile.id : ''}`,
+        value: `https://admin.gbstem.org/user/${userValue ? userValue.profile.id : ''}`,
         size: 200,
       })
     })

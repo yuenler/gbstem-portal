@@ -7,7 +7,7 @@ import {
 } from '$env/static/private'
 import { addDataToHtmlTemplate } from '$lib/utils'
 import { interviewScheduledEmailTemplate } from '$lib/data/emailTemplates/interviewScheduledEmailTemplate'
-import MailService, { MailDataRequired } from '@sendgrid/mail'
+import MailService, { type MailDataRequired } from '@sendgrid/mail'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   let topError

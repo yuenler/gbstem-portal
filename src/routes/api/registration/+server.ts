@@ -6,7 +6,7 @@ import {
 } from '$env/static/private'
 import { addDataToHtmlTemplate } from '$lib/utils'
 import { registrationSubmittedEmailTemplate } from '$lib/data/emailTemplates/registrationSubmittedEmailTemplate'
-import MailService, { MailDataRequired } from '@sendgrid/mail'
+import MailService, { type MailDataRequired } from '@sendgrid/mail'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   const body = await request.json();

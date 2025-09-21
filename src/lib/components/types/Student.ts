@@ -1,4 +1,4 @@
-type Student = {
+export default interface Student {
   name: string
   email: string
   secondaryEmail: string
@@ -6,5 +6,3 @@ type Student = {
   grade: number
   school: string
 }
-
-export default Student;
