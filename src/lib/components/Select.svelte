@@ -57,14 +57,10 @@
         open = value
       },
     }
-  } else {
-    // validate value before close
-    if (!options.includes(value)) {
-      value = ''
-    }
   }
-  $: ((_) => {
-    // validate updated value
+  
+  // Only run validation, don't modify value in reactive statements
+  $: {
     filterOptionsBy(value)
     if (self) {
       if (value === '' && required) {
@@ -77,7 +73,7 @@
         }
       }
     }
-  })(value)
+  }
 
   filterOptionsBy(value)
 
@@ -94,6 +90,10 @@
     switch (e.code) {
       case 'Escape':
         open = false
+        // validate value when closing
+        if (!options.includes(value)) {
+          value = ''
+        }
         break
       case 'Enter':
         e.preventDefault()
@@ -137,6 +137,10 @@
   use:clickOutside
   on:outclick={() => {
     open = false
+    // validate value when closing
+    if (!options.includes(value)) {
+      value = ''
+    }
   }}
 >
   {#if floating}

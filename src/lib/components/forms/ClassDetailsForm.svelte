@@ -17,7 +17,7 @@
   import Dialog from '../Dialog.svelte'
   import Card from '../Card.svelte'
 
- export let classDetailsDialogEl: Dialog | undefined
+ export let classDetailsDialogEl: Dialog | undefined = undefined
  export let dialog = false
 
   let disabled = false
