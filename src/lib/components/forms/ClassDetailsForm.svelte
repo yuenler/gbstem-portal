@@ -25,6 +25,7 @@
   let submitted = false
   let meetingLink
   let isCreatingNewClass = false
+  let isCreatingLink = false
 
   let values: Data.Class = {
     classDay1: '',
@@ -177,6 +178,8 @@
       alert.trigger('error', 'Please select at least one class day before creating a meeting link.')
       return ''
     }
+    
+    isCreatingLink = true
 
   const time1 = values.meetingTimes?.[0] ? new Date(values.meetingTimes[0]).getHours() : 9
   const time2 = values.meetingTimes?.[1] ? new Date(values.meetingTimes[1]).getHours() : 9
@@ -237,6 +240,9 @@
         return res.access_token
       }).catch((err) => {
         console.log(err)
+        alert.trigger('error', 'Failed to get authentication token. Please try again.')
+        isCreatingLink = false
+        throw err
       })
 
     await fetch('https://graph.microsoft.com/v1.0/users/kendree@gbstem.onmicrosoft.com/calendar/events', {
@@ -252,8 +258,11 @@
       return res.onlineMeeting.joinUrl
     }).catch((err) => {
       console.log(err)
+      alert.trigger('error', 'Failed to create meeting link. Please try again.')
+      isCreatingLink = false
     })
     alert.trigger('success', 'Meeting link created!')
+    isCreatingLink = false
     return url
   }
 
@@ -613,7 +622,17 @@
     />
 
     {#if values.meetingLink === '' && values.online}
-      <Button color="blue" on:click={async () => values.meetingLink = await createLink()}>Create meeting link</Button>
+      <Button 
+        color="blue" 
+        disabled={isCreatingLink}
+        on:click={async () => values.meetingLink = await createLink()}
+      >
+        {#if isCreatingLink}
+          Creating link...
+        {:else}
+          Create meeting link
+        {/if}
+      </Button>
     {/if}
 
     {#if values.online}
