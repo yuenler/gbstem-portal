@@ -351,7 +351,7 @@
     </div>
   </Card>
   {:else}
-  {#if new Date() >= new Date(semesterDates.registrationsDue)}
+  {#if new Date() >= new Date(semesterDates.registrationsDue + 604800000) && !values.meta.submitted}
     <Card class="mb-6 bg-red-50 border-red-200">
       <div class="flex items-start gap-3">
         <svg
