@@ -29,8 +29,8 @@
     ] : [])
   ]
 
-  // Only fetch document when user is loaded and has a uid
-  $: if ($user?.object?.uid) {
+  // Only fetch document when user is loaded, has a uid, and is an instructor
+  $: if ($user?.object?.uid && userRole === 'instructor') {
     (async () => {
       try {
         const document = await getDoc(doc(db, decisionsCollection, $user.object.uid));
@@ -45,7 +45,6 @@
 
   onMount(() => {
     updateShadow();
-    console.log('user', $user);
 
     const unsubscribe = navigating.subscribe((navigating) => {
       if (navigating) {
