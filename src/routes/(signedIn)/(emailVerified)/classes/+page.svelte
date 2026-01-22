@@ -347,7 +347,7 @@
   <title>Classes Overview</title>
 </svelte:head>
 
-<Dialog bind:this={dialogEl} initial={dialogClassDetails !== null} size="min">
+<Dialog bind:this={dialogEl} size="min">
   <svelte:fragment slot="title">Class Details</svelte:fragment>
 
   <div slot="description" class="space-y-6 p-6">
@@ -658,7 +658,10 @@
                   <Button
                     class="w-full flex items-center justify-center gap-2"
                     color="blue"
-                    on:click={() => (dialogClassDetails = classInfo)}
+                    on:click={() => {
+                      dialogClassDetails = classInfo
+                      dialogEl.open()
+                    }}
                   >
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

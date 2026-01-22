@@ -305,7 +305,7 @@
             </svg>
             <h2 class="text-xl font-bold text-gray-900">Class Details</h2>
           </div>
-          <ClassDetailsForm semesterDates={semesterDates} dialog={false} classDetailsDialogEl={undefined} />
+          <ClassDetailsForm semesterDates={semesterDates} dialog={false} />
         </Card>
       {/if}
        <!-- Student Schedule Section -->
