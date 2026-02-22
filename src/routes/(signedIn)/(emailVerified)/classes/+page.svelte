@@ -494,7 +494,11 @@
   {#if loading}
     <Loading />
   {:else if new Date() < new Date(semesterDates.registrationsDue)}
-    <div class="p-4 bg-red-50 rounded-lg text-2xl text-red-700">Class enrollment is not open yet. Class times will be posted and class enrollment will open on September 23rd. Before then, ensure you have filled out the form for each student you wish to enroll this semester, <Link href="/apply">here</Link>. This is a mandatory step; without it, you will not be able to enroll your student when classes are posted. You will be notified by email when enrollment opens.</div>
+    <div class="p-4 bg-red-50 rounded-lg text-2xl text-red-700">
+      <p>{`Class enrollment is not open yet. Class times will be posted and class enrollment will open on ${semesterDates.registrationsDue}.`}
+      </p>
+      <p>Before then, ensure you have filled out the form for each student you wish to enroll this semester, <Link href="/apply">here</Link>. This is a mandatory step; without it, you will not be able to enroll your student when classes are posted. You will be notified by email when enrollment opens.</p>
+    </div>
   {:else}
     <div class="mb-5 flex items-center justify-between">
       <div class="flex gap-2 items-center">

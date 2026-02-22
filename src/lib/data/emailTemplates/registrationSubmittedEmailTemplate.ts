@@ -173,7 +173,7 @@ export const registrationSubmittedEmailTemplate = `<!doctype html>
                                                 style="font-size:0px;padding:10px 25px;padding-top:0px;word-break:break-word;">
                                                 <div
                                                     style="font-family:Open Sans, Helvetica, Arial, sans-serif;font-size:16px;line-height:22px;text-align:left;color:#000000;">
-                                                    <p style="margin: 20px 0"><p style="margin: 0 0">Hi {{app.firstName}},</p>Thanks for registering {{app.studentName}} for gbSTEM's fall
+                                                    <p style="margin: 20px 0"><p style="margin: 0 0">Hi {{app.firstName}},</p>Thanks for registering {{app.studentName}} for the
                                                         semester! Please note that your registration does <span
                                                             style="font-weight: 700">not</span> sign you up for a
                                                         class for the semester, but it registers them to be on the enrollment list. 
