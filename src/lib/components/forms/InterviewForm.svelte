@@ -19,6 +19,7 @@
   import Input from '$lib/components/Input.svelte'
     import { formatDateLocal, timestampToDate } from '$lib/utils'
     import { applicationsCollection } from '$lib/data/constants'
+    import { interviewCollection } from '$lib/data/constants'
     import { last } from 'lodash-es'
 
   export let semesterDates: Data.SemesterDates
@@ -80,7 +81,7 @@
 
   async function handleSubmit() {
     // get the doc for the interview again to confirm that it is still available
-    const docRef = doc(db, 'instructorInterviewTimes', scheduledInterview.id)
+    const docRef = doc(db, interviewCollection, scheduledInterview.id)
     const docSnap = await getDoc(docRef)
     // check that interviewSlotStatus is still available
     if (docSnap.data()?.interviewSlotStatus !== 'available') {
@@ -98,7 +99,7 @@
       'meta.interview': true,
     })
 
-    updateDoc(doc(db, 'instructorInterviewTimes', scheduledInterview.id), {
+    updateDoc(doc(db, interviewCollection, scheduledInterview.id), {
       interviewSlotStatus: scheduledInterview.interviewSlotStatus,
       intervieweeFirstName: currentUser.profile.firstName,
       intervieweeLastName: currentUser.profile.lastName,
@@ -148,7 +149,7 @@
   })
 
   async function getData() {
-    const q = query(collection(db, 'instructorInterviewTimes'))
+    const q = query(collection(db, interviewCollection))
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach((doc) => {
       const interviewInfo = doc.data()
